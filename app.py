@@ -22,7 +22,10 @@ password = quote_plus("Lexia2025")
 
 # ✅ On utilise la variable d'environnement de Render si elle existe
 db_url = os.getenv("DATABASE_URL", f'postgresql://user3:{password}@localhost:5432/Boostdb')
-app.config['SQLALCHEMY_DATABASE_URI'] = os.environ["DATABASE_URL"]
+db_url = os.getenv("DATABASE_URL")
+if not db_url:
+    raise RuntimeError("DATABASE_URL is not set. Assure-toi que la base de données Render est bien attachée au service.")
+app.config['SQLALCHEMY_DATABASE_URI'] = db_url
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 db = SQLAlchemy(app)
