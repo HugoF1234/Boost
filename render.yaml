@@ -9,5 +9,5 @@ services:
     envVars:
       - key: postgresql://boostdb_xv71_user:2EwmwbLwbmsvz5AL2BcYMK9AYNslg5oj@dpg-d0iv5oadbo4c738tk6eg-a/boostdb_xv71
         fromDatabase:
-          name: boostdb_xv71
+          name: Boostdb
           property: connectionString
