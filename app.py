@@ -15,13 +15,17 @@ app.secret_key = os.urandom(24)
 app.config['SESSION_COOKIE_NAME'] = 'linkedin_session'
 
 # ✅ CONFIGURATION BASE DE DONNÉES
+import os
 from urllib.parse import quote_plus
 
 password = quote_plus("Lexia2025")
-app.config['SQLALCHEMY_DATABASE_URI'] = f'postgresql://user3:{password}@localhost:5432/Boostdb'
-app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-db = SQLAlchemy(app)
 
+# ✅ On utilise la variable d'environnement de Render si elle existe
+db_url = os.getenv("DATABASE_URL", f'postgresql://user3:{password}@localhost:5432/Boostdb')
+app.config['SQLALCHEMY_DATABASE_URI'] = db_url
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+
+db = SQLAlchemy(app)
 # -----------------------
 # MODÈLES SQLALCHEMY
 # -----------------------
