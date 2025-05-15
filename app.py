@@ -57,7 +57,7 @@ class Post(db.Model):
 # -----------------------
 CLIENT_ID = "86occjps58doir"
 CLIENT_SECRET = "WPL_AP1.C8C6uXjTbpJyQUx2.Y7COPg=="
-REDIRECT_URI = "http://localhost:5000/callback"
+REDIRECT_URI = "https://linkedinboost.onrender.com/callback"
 
 LINKEDIN_AUTH_URL = "https://www.linkedin.com/oauth/v2/authorization"
 LINKEDIN_TOKEN_URL = "https://www.linkedin.com/oauth/v2/accessToken"
