@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>{{ title or "LinkedBoost" }}</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 0; padding: 0; background: #f8f9fb; }
+        .sidebar {
+            width: 220px;
+            background: #ffffff;
+            height: 100vh;
+            position: fixed;
+            border-right: 1px solid #ddd;
+            padding: 30px 15px;
+        }
+        .sidebar h2 { font-size: 22px; margin-bottom: 20px; }
+        .sidebar a {
+            display: block;
+            color: #333;
+            padding: 10px 0;
+            text-decoration: none;
+            font-weight: 500;
+        }
+        .sidebar a:hover { color: #0073b1; }
+        .main {
+            margin-left: 240px;
+            padding: 40px;
+        }
+    </style>
+</head>
+<body>
+    <div class="sidebar">
+        <h2>📈 LinkedBoost</h2>
+        <a href="{{ url_for('dashboard') }}">📊 Dashboard</a>
+        <a href="{{ url_for('profil') }}">👤 Profil</a>
+        <a href="{{ url_for('historique') }}">📚 Historique</a>
+        <a href="{{ url_for('parametres') }}">⚙️ Paramètres</a>
+        <a href="{{ url_for('calendar') }}">📅 Calendrier</a>
+        <a href="{{ url_for('logout') }}" style="display:block;margin-top:20px;color:red;font-weight:bold;text-decoration:none;">🔒 Déconnexion </a>
+      
+    </div>
+    <div class="main">
+        {% block content %}{% endblock %}
+    </div>
+</body>
+</html>

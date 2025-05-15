@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>Bienvenue {{ first_name }} {{ last_name }} 👋</h1>
+
+<h3>💬 Générer un post</h3>
+<form method="post" style="display: flex; gap: 10px; align-items: center;">
+    <input type="text" name="prompt" placeholder="Ex: Écris un post sur l'actualité" style="flex: 1; padding:10px;" required>
+    <select name="tone" style="padding:10px;">
+        <option value="professionnel">Professionnel</option>
+        <option value="famillier">Familier</option>
+        <option value="inspirant">Inspirant</option>
+        <option value="humoristique">Humoristique</option>
+        <option value="factuel">Factuel</option>
+    </select>
+    <button type="submit" style="padding: 8px 12px;">✨</button>
+</form>
+
+<h3>📝 Éditer et publier</h3>
+<form method="post" action="{{ url_for('publish') }}" enctype="multipart/form-data">
+    <textarea name="post_content" rows="10" style="width:100%;padding:10px;" required>{{ draft }}</textarea>
+
+    <h4>📅 Choisir la date et l'heure de publication</h4>
+    <input type="datetime-local" name="publish_time" required style="padding: 8px;"><br><br>
+
+    <label>
+        <input type="checkbox" name="publish_now">
+        📤 Publier maintenant (ignore la date ci-dessus)
+    </label><br><br>
+
+    <h4>📎 Ajouter des images</h4>
+    <input type="file" name="images[]" id="images" accept="image/*" multiple style="margin-top:10px;"><br><br>
+
+    <div id="preview" style="display: flex; gap: 10px; flex-wrap: wrap;"></div>
+
+    <br><button type="submit">✅ Valider</button>
+</form>
+
+<script>
+document.getElementById("images").addEventListener("change", function(event) {
+    const preview = document.getElementById("preview");
+    preview.innerHTML = "";
+
+    for (let file of event.target.files) {
+        if (file.type.startsWith("image/")) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const img = document.createElement("img");
+                img.src = e.target.result;
+                img.style.maxWidth = "100px";
+                img.style.maxHeight = "100px";
+                img.style.border = "1px solid #ccc";
+                img.style.borderRadius = "6px";
+                img.style.padding = "4px";
+                preview.appendChild(img);
+            }
+            reader.readAsDataURL(file);
+        }
+    }
+});
+</script>
+{% endblock %}

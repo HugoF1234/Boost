@@ -1,0 +1,9 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>🕘 Historique des posts</h1>
+<ul>
+    {% for post in posts %}
+        <li style="margin-bottom:20px;">{{ post }}</li>
+    {% endfor %}
+</ul>
+{% endblock %}

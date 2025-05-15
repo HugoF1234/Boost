@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>📅 Calendrier des posts programmés</h1>
+
+{% if posts %}
+    <ul>
+    {% for post in posts %}
+        <li>
+            <strong>{{ post.published_at.strftime("%d/%m/%Y %H:%M") }}</strong> — {{ post.content[:100] }}...
+        </li>
+    {% endfor %}
+    </ul>
+{% else %}
+    <p>🚫 Aucun post planifié.</p>
+{% endif %}
+
+<a href="{{ url_for('dashboard') }}">← Retour</a>
+{% endblock %}

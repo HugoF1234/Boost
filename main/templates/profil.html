@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>👤 Profil</h1>
+
+{% if picture %}
+    <img src="{{ picture }}" alt="Photo de profil" style="width:120px;height:120px;border-radius:50%;margin-bottom:20px">
+{% else %}
+    <p><em>Aucune photo de profil disponible</em></p>
+{% endif %}
+
+<p><strong>Nom :</strong> {{ first_name }} {{ last_name }}</p>
+<p><strong>Email :</strong> {{ email }}</p>
+<p><strong>Pays :</strong> {{ country }}</p>
+<p><strong>Langue :</strong> {{ language }}</p>
+
+<hr>
+<h3>🛠️ Complète ton profil</h3>
+
+<form method="POST">
+    <label for="secteur"><strong>Secteur d'activité :</strong></label><br>
+    <select name="secteur" id="secteur" required>
+        <option value="">-- Sélectionner --</option>
+        <option value="tech" {% if secteur == 'tech' %}selected{% endif %}>Technologie</option>
+        <option value="marketing" {% if secteur == 'marketing' %}selected{% endif %}>Marketing</option>
+        <option value="finance" {% if secteur == 'finance' %}selected{% endif %}>Finance</option>
+        <option value="sante" {% if secteur == 'sante' %}selected{% endif %}>Santé</option>
+    </select>
+
+    <br><br>
+    <strong>Centres d’intérêt :</strong><br>
+    {% set options = ['IA', 'Développement', 'Design', 'Sport', 'Musique'] %}
+    {% for option in options %}
+        <input type="checkbox" name="interets" value="{{ option }}" 
+            {% if interets and option in interets %}checked{% endif %}>
+        {{ option }}<br>
+    {% endfor %}
+
+    <br>
+    <button type="submit">💾 Enregistrer</button>
+</form>
+
+{% if secteur or interets %}
+    <hr>
+    <h4>🧠 Profil enrichi</h4>
+    {% if secteur %}<p><strong>Secteur :</strong> {{ secteur }}</p>{% endif %}
+    {% if interets %}<p><strong>Intérêts :</strong> {{ interets|join(', ') }}</p>{% endif %}
+{% endif %}
+{% endblock %}
