@@ -1,14 +1,12 @@
 services:
   - type: web
-    name: boost
+    name: linkedin-boost
     env: python
     plan: free
-    buildCommand: "pip install -r requirements.txt"
-    startCommand: "gunicorn app:app"
+    buildCommand: pip install -r requirements.txt
+    startCommand: python app.py
     envVars:
-      - key: FLASK_ENV
-        value: production
-      - key: DATABASE_URL
+      - key: postgresql://boostdb_xv71_user:2EwmwbLwbmsvz5AL2BcYMK9AYNslg5oj@dpg-d0iv5oadbo4c738tk6eg-a/boostdb_xv71
         fromDatabase:
           name: Boostdb
           property: connectionString
