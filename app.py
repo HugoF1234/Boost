@@ -120,10 +120,395 @@ LINKEDIN_POSTS_URL = "https://api.linkedin.com/v2/ugcPosts"
 SCOPES = "openid email profile w_member_social"
 GEMINI_API_KEY = os.getenv("GEMINI_API_KEY", "AIzaSyB434P__wR_o_rr5Q3PjOULqyKhMANRtgk")
 genai.configure(api_key=GEMINI_API_KEY)
+import requests
+import re
+from datetime import datetime, timedelta
 
+# Ajouter cette configuration près de vos autres constantes
+NEWS_API_KEY = "2cc0499903c24433a7646123cb3a82e0"  # Remplacez par votre vraie clé
+NEWS_API_URL = "https://newsapi.org/v2/everything"
 # -----------------------
 # ROUTES FLASK
 # -----------------------
+
+import json
+import os
+from datetime import datetime, timedelta
+
+# Créer un dossier cache s'il n'existe pas
+cache_dir = os.path.join(os.path.dirname(__file__), 'cache')
+if not os.path.exists(cache_dir):
+    os.makedirs(cache_dir)
+
+def get_cached_news(query, language, days=3):
+    """
+    Récupère les résultats mis en cache ou effectue un nouvel appel API
+    
+    Args:
+        query (str): Requête de recherche
+        language (str): Langue des articles
+        days (int): Jours à considérer
+        
+    Returns:
+        list: Liste d'articles
+    """
+    # Générer un nom de fichier de cache basé sur la requête
+    cache_filename = f"{query.replace(' ', '_')}_{language}_{days}.json"
+    cache_path = os.path.join(cache_dir, cache_filename)
+    
+    # Vérifier si un cache valide existe (moins de 3 heures)
+    if os.path.exists(cache_path):
+        file_modified_time = os.path.getmtime(cache_path)
+        now = datetime.now().timestamp()
+        
+        # Si le cache a moins de 3 heures
+        if now - file_modified_time < 10800:  # 3 heures en secondes
+            try:
+                with open(cache_path, 'r', encoding='utf-8') as f:
+                    cached_data = json.load(f)
+                    print(f"Utilisation du cache pour: {query}")
+                    return cached_data
+            except Exception as e:
+                print(f"Erreur de lecture du cache: {str(e)}")
+    
+    # Si pas de cache valide, faire l'appel à l'API
+    articles = get_news_by_sector_actual(query, days=days, language=language)
+    
+    # Sauvegarder les résultats dans le cache
+    try:
+        with open(cache_path, 'w', encoding='utf-8') as f:
+            json.dump(articles, f, ensure_ascii=False)
+            print(f"Cache créé pour: {query}")
+    except Exception as e:
+        print(f"Erreur d'écriture du cache: {str(e)}")
+    
+    return articles
+
+# Renommer la fonction originale
+def get_news_by_sector_actual(sector, keywords=None, days=3, language="fr"):
+    """
+    Récupère les actualités récentes par secteur d'activité avec gestion d'erreurs améliorée
+    """
+    # Code existant (mapping des secteurs, etc.)
+    
+    # Ajoutez cette gestion d'erreurs plus robuste
+    try:
+        # Appel à l'API
+        response = requests.get(NEWS_API_URL, params=params, timeout=10)  # Ajouter un timeout
+        
+        # Vérifier les codes d'erreur spécifiques
+        if response.status_code == 200:
+            data = response.json()
+            articles = data.get('articles', [])
+            
+            # Formatter les dates pour l'affichage
+            for article in articles:
+                try:
+                    date_str = article.get('publishedAt', '')
+                    date_obj = datetime.strptime(date_str, '%Y-%m-%dT%H:%M:%SZ')
+                    article['formatted_date'] = date_obj.strftime('%d/%m/%Y')
+                except:
+                    article['formatted_date'] = 'Date inconnue'
+            
+            return articles
+        elif response.status_code == 401:
+            # Problème d'authentification (clé API invalide)
+            print("Erreur 401: Clé API invalide ou manquante")
+            # Notifier l'administrateur du problème
+            return []
+        elif response.status_code == 429:
+            # Limite d'API dépassée
+            print("Erreur 429: Limite de requêtes API dépassée")
+            # Essayer d'utiliser un cache plus ancien si disponible
+            return []
+        else:
+            print(f"Erreur API: {response.status_code} - {response.text}")
+            return []
+    except requests.exceptions.Timeout:
+        print("Erreur: Timeout lors de la connexion à NewsAPI")
+        return []
+    except requests.exceptions.ConnectionError:
+        print("Erreur: Problème de connexion réseau")
+        return []
+    except Exception as e:
+        print(f"Exception lors de l'appel à NewsAPI: {str(e)}")
+        return []
+    
+    # [Code existant]
+
+# Remplacer la fonction principale par celle qui utilise le cache
+def get_news_by_sector(sector, keywords=None, days=3, language="fr"):
+    """
+    Version avec cache de la fonction de récupération d'actualités
+    """
+    # Mapping des secteurs comme avant
+    sector_keywords = {
+        'tech': 'technologie informatique développement logiciel innovation internet',
+        'marketing': 'marketing numérique publicité stratégie marque réseaux sociaux',
+        'finance': 'finance banque investissement économie bourse',
+        'sante': 'santé médecine bien-être médical pharmacie',
+        'education': 'éducation enseignement formation apprentissage école',
+        'rh': 'ressources humaines recrutement emploi talent management',
+        'consulting': 'conseil consulting stratégie entreprise management',
+        'retail': 'commerce distribution retail vente consommation',
+    }
+    
+    # Construire la requête
+    search_query = sector_keywords.get(sector, sector)
+    if keywords:
+        search_query += f" {keywords}"
+    
+    # Utiliser la fonction de cache
+    return get_cached_news(search_query, language, days)
+
+def get_news_by_sector(sector, keywords=None, days=3, language="fr"):
+    """
+    Récupère les actualités récentes par secteur d'activité
+    
+    Args:
+        sector (str): Le secteur d'activité (tech, finance, etc.)
+        keywords (str, optional): Mots-clés supplémentaires
+        days (int, optional): Nombre de jours pour les actualités récentes
+        language (str, optional): Langue des articles (fr, en)
+        
+    Returns:
+        list: Liste d'articles d'actualité
+    """
+    # Mapping des secteurs vers des termes de recherche pertinents
+    sector_keywords = {
+        'tech': 'technologie informatique développement logiciel innovation internet',
+        'marketing': 'marketing numérique publicité stratégie marque réseaux sociaux',
+        'finance': 'finance banque investissement économie bourse',
+        'sante': 'santé médecine bien-être médical pharmacie',
+        'education': 'éducation enseignement formation apprentissage école',
+        'rh': 'ressources humaines recrutement emploi talent management',
+        'consulting': 'conseil consulting stratégie entreprise management',
+        'retail': 'commerce distribution retail vente consommation',
+        # Définir d'autres secteurs selon vos besoins
+    }
+    
+    # Construire la requête de recherche
+    search_query = sector_keywords.get(sector, sector)
+    if keywords:
+        search_query += f" {keywords}"
+    
+    # Calculer la date pour les actualités récentes
+    date_from = (datetime.utcnow() - timedelta(days=days)).strftime('%Y-%m-%d')
+    
+    # Préparer les paramètres de la requête
+    params = {
+        'q': search_query,
+        'from': date_from,
+        'sortBy': 'publishedAt',
+        'language': language,
+        'apiKey': NEWS_API_KEY
+    }
+    
+    try:
+        # Appel à l'API
+        response = requests.get(NEWS_API_URL, params=params)
+        
+        # Vérifier le statut de la réponse
+        if response.status_code == 200:
+            data = response.json()
+            articles = data.get('articles', [])
+            
+            # Formater les dates pour l'affichage
+            for article in articles:
+                try:
+                    date_str = article.get('publishedAt', '')
+                    date_obj = datetime.strptime(date_str, '%Y-%m-%dT%H:%M:%SZ')
+                    article['formatted_date'] = date_obj.strftime('%d/%m/%Y')
+                except:
+                    article['formatted_date'] = 'Date inconnue'
+            
+            return articles
+        else:
+            print(f"Erreur API: {response.status_code} - {response.text}")
+            return []
+    except Exception as e:
+        print(f"Exception lors de l'appel à NewsAPI: {str(e)}")
+        return []
+
+def get_news_by_sector_actual(sector, keywords=None, days=3, language="fr"):
+    """
+    Récupère les actualités récentes par secteur d'activité avec gestion d'erreurs améliorée
+    """
+    # Code existant (mapping des secteurs, etc.)
+    
+    # Ajoutez cette gestion d'erreurs plus robuste
+    try:
+        # Appel à l'API
+        response = requests.get(NEWS_API_URL, params=params, timeout=10)  # Ajouter un timeout
+        
+        # Vérifier les codes d'erreur spécifiques
+        if response.status_code == 200:
+            data = response.json()
+            articles = data.get('articles', [])
+            
+            # Formatter les dates pour l'affichage
+            for article in articles:
+                try:
+                    date_str = article.get('publishedAt', '')
+                    date_obj = datetime.strptime(date_str, '%Y-%m-%dT%H:%M:%SZ')
+                    article['formatted_date'] = date_obj.strftime('%d/%m/%Y')
+                except:
+                    article['formatted_date'] = 'Date inconnue'
+            
+            return articles
+        elif response.status_code == 401:
+            # Problème d'authentification (clé API invalide)
+            print("Erreur 401: Clé API invalide ou manquante")
+            # Notifier l'administrateur du problème
+            return []
+        elif response.status_code == 429:
+            # Limite d'API dépassée
+            print("Erreur 429: Limite de requêtes API dépassée")
+            # Essayer d'utiliser un cache plus ancien si disponible
+            return []
+        else:
+            print(f"Erreur API: {response.status_code} - {response.text}")
+            return []
+    except requests.exceptions.Timeout:
+        print("Erreur: Timeout lors de la connexion à NewsAPI")
+        return []
+    except requests.exceptions.ConnectionError:
+        print("Erreur: Problème de connexion réseau")
+        return []
+    except Exception as e:
+        print(f"Exception lors de l'appel à NewsAPI: {str(e)}")
+        return []
+
+
+@app.route("/news_assistant", methods=["GET", "POST"])
+def news_assistant():
+    if 'profile' not in session:
+        return redirect(url_for("index"))
+    
+    # Récupérer l'utilisateur
+    user = User.query.filter_by(sub=session['profile'].get("sub", "")).first()
+    if not user:
+        return redirect(url_for("dashboard"))
+    
+    # Récupérer le secteur de l'utilisateur ou utiliser une valeur par défaut
+    sector = user.secteur or "general"
+    news_articles = []
+    selected_article = None
+    error_message = None
+    success_message = None
+    
+    # Récupérer les paramètres de recherche
+    search_keyword = request.args.get('keyword', '')
+    language = request.args.get('language', 'fr')
+    
+    # Traitement des actions POST
+    if request.method == "POST":
+        if 'search' in request.form:
+            # Recherche d'actualités avec un mot-clé
+            search_keyword = request.form.get('keyword', '')
+            language = request.form.get('language', 'fr')
+            
+            # Rediriger vers GET avec les paramètres pour permettre le partage d'URL
+            return redirect(url_for('news_assistant', keyword=search_keyword, language=language))
+            
+        elif 'select_article' in request.form:
+            # L'utilisateur a sélectionné un article
+            article_index = request.form.get('article_index')
+            article_data = request.form.get('article_data')
+            
+            if article_data:
+                try:
+                    # Stocker l'article sélectionné dans la session
+                    import json
+                    selected_article = json.loads(article_data)
+                    session['selected_article'] = selected_article
+                except Exception as e:
+                    error_message = f"Erreur lors de la sélection de l'article: {str(e)}"
+            
+        elif 'generate_post' in request.form:
+            # Génération d'un post basé sur l'article sélectionné
+            article = session.get('selected_article')
+            if not article:
+                error_message = "Aucun article sélectionné. Veuillez d'abord choisir un article."
+            else:
+                # Récupérer les paramètres du formulaire
+                tone = request.form.get("tone", "professionnel")
+                perspective = request.form.get("perspective", "neutre")
+                
+                try:
+                    # Générer le contenu avec Gemini
+                    model = genai.GenerativeModel("gemini-1.5-pro")
+                    prompt = f"""
+                    Rédige un post LinkedIn professionnel sur l'actualité suivante:
+                    
+                    Titre: {article.get('title')}
+                    Description: {article.get('description')}
+                    Source: {article.get('source', {}).get('name')}
+                    
+                    Instructions:
+                    - Ton: {tone}
+                    - Perspective: {perspective}
+                    - Secteur d'expertise: {sector}
+                    - Inclus 2-3 hashtags pertinents
+                    - Le post doit être personnel, comme si la personne donnait son avis sur cette actualité
+                    - Maximum 280 caractères
+                    - Format adapté à LinkedIn
+                    """
+                    
+                    response = model.generate_content(prompt)
+                    generated_content = response.text.strip()
+                    
+                    # Stocker le contenu généré dans la session
+                    session['draft'] = generated_content
+                    
+                    # Créer un post programmé dans la base de données
+                    if user:
+                        now = datetime.utcnow()
+                        scheduled_time = now + timedelta(hours=1)  # Planification par défaut dans 1 heure
+                        
+                        new_post = Post(
+                            content=generated_content,
+                            user_id=user.id,
+                            published_at=scheduled_time,
+                            scheduled=True
+                        )
+                        
+                        db.session.add(new_post)
+                        db.session.commit()
+                        
+                        success_message = "Post généré avec succès et programmé pour publication dans 1 heure."
+                    
+                    # Rediriger vers le dashboard pour éditer
+                    return redirect(url_for("dashboard"))
+                    
+                except Exception as e:
+                    error_message = f"Erreur lors de la génération du post: {str(e)}"
+    
+    # Pour les requêtes GET ou si POST n'a pas redirigé
+    try:
+        # Récupérer les actualités
+        if search_keyword:
+            news_articles = get_news_by_sector(sector, search_keyword, language=language)
+        else:
+            news_articles = get_news_by_sector(sector, language=language)
+    except Exception as e:
+        error_message = f"Erreur lors de la récupération des actualités: {str(e)}"
+        news_articles = []
+    
+    # Récupérer l'article sélectionné depuis la session si disponible
+    if not selected_article and 'selected_article' in session:
+        selected_article = session.get('selected_article')
+    
+    return render_template(
+        "news_assistant.html",
+        news=news_articles,
+        selected=selected_article,
+        sector=sector,
+        keyword=search_keyword,
+        language=language,
+        error=error_message,
+        success=success_message
+    )
 
 @app.route("/")
 def index():
@@ -253,9 +638,17 @@ def dashboard():
     scheduled_posts = 0
     if user:
         # Nombre de posts programmés
-        from datetime import datetime
         now = datetime.utcnow()
         scheduled_posts = Post.query.filter_by(user_id=user.id, scheduled=True).filter(Post.published_at > now).count()
+    
+    # Récupérer les actualités tendance pour le secteur de l'utilisateur
+    trending_news = []
+    if user and user.secteur:
+        try:
+            # Récupérer 3 articles récents maximum
+            trending_news = get_news_by_sector(user.secteur, days=1)[:3]
+        except Exception as e:
+            print(f"Erreur lors de la récupération des actualités: {str(e)}")
     
     if request.method == "POST":
         prompt = request.form.get("prompt")
@@ -275,12 +668,30 @@ def dashboard():
         **session['profile'], 
         draft=draft,
         scheduled_posts=scheduled_posts,
-        posts=user.posts if user else []
+        posts=user.posts if user else [],
+        trending_news=trending_news
     )
-
     
 from datetime import datetime
+import html
+import re
 
+@app.template_filter('clean_html')
+def clean_html(text):
+    """Nettoie le texte des tags HTML et entités"""
+    if not text:
+        return ""
+    
+    # Décodage des entités HTML
+    text = html.unescape(text)
+    
+    # Suppression des balises HTML
+    text = re.sub(r'<[^>]+>', '', text)
+    
+    # Nettoyage des espaces multiples
+    text = re.sub(r'\s+', ' ', text).strip()
+    
+    return text
 
 @app.route("/publish", methods=["POST"])
 def publish():
