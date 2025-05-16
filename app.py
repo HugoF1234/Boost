@@ -334,17 +334,22 @@ def news_assistant():
             
         elif 'select_article' in request.form:
             # L'utilisateur a sélectionné un article
-            article_index = request.form.get('article_index')
-            article_data = request.form.get('article_data')
-            
-            if article_data:
-                try:
-                    # Stocker l'article sélectionné dans la session
-                    import json
-                    selected_article = json.loads(article_data)
+            try:
+                article_index = int(request.form.get('article_index', 0))
+                
+                # Récupérer à nouveau les articles et sélectionner celui avec l'index
+                if search_keyword:
+                    articles = get_news_by_sector(sector, search_keyword, language=language)
+                else:
+                    articles = get_news_by_sector(sector, language=language)
+                
+                if articles and 0 <= article_index < len(articles):
+                    selected_article = articles[article_index]
                     session['selected_article'] = selected_article
-                except Exception as e:
-                    error_message = f"Erreur lors de la sélection de l'article: {str(e)}"
+                else:
+                    error_message = "Article introuvable. Veuillez réessayer."
+            except Exception as e:
+                error_message = f"Erreur lors de la sélection de l'article: {str(e)}"
             
         elif 'generate_post' in request.form:
             # Génération d'un post basé sur l'article sélectionné
