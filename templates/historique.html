@@ -1,9 +1,48 @@
 {% extends "base.html" %}
 {% block content %}
-<h1>🕘 Historique des posts</h1>
-<ul>
-    {% for post in posts %}
-        <li style="margin-bottom:20px;">{{ post }}</li>
-    {% endfor %}
-</ul>
+<div class="d-flex align-center justify-between mb-4">
+    <h1>📚 Historique des publications</h1>
+    <div>
+        <a href="{{ url_for('dashboard') }}" class="btn btn-outline">
+            <i class="fa-solid fa-plus"></i>
+            Nouveau post
+        </a>
+    </div>
+</div>
+
+<div class="content-card">
+    {% if posts and posts|length > 0 %}
+        <div style="border-radius:8px; overflow:hidden; border:1px solid var(--border);">
+            {% for post in posts %}
+                <div style="padding:20px; {% if not loop.last %}border-bottom:1px solid var(--border);{% endif %} position:relative;">
+                    <div style="position:absolute; top:20px; right:20px; font-size:12px; color:var(--text-light);">
+                        <i class="fa-regular fa-clock"></i>
+                        {{ post.published_at.strftime("%d/%m/%Y à %H:%M") if post.published_at else "Date inconnue" }}
+                    </div>
+                    
+                    <div style="margin-bottom:12px; margin-right:100px;">{{ post.content }}</div>
+                    
+                    <div style="display:flex; gap:8px;">
+                        <span style="display:inline-flex; align-items:center; gap:4px; padding:4px 12px; border-radius:16px; background-color:{% if post.scheduled %}#fff8e1{% else %}#e6f7ee{% endif %}; font-size:12px; color:{% if post.scheduled %}#f59e0b{% else %}#16a34a{% endif %};">
+                            <i class="fa-solid {% if post.scheduled %}fa-calendar{% else %}fa-check-circle{% endif %}"></i>
+                            {% if post.scheduled %}Programmé{% else %}Publié{% endif %}
+                        </span>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div style="text-align:center; padding:40px 20px;">
+            <div style="font-size:48px; margin-bottom:16px; color:var(--text-light);">
+                <i class="fa-solid fa-file-circle-question"></i>
+            </div>
+            <h3>Aucun post publié</h3>
+            <p>Vous n'avez pas encore publié de contenu sur LinkedIn.</p>
+            <a href="{{ url_for('dashboard') }}" class="btn btn-primary mt-4">
+                <i class="fa-solid fa-pen-to-square"></i>
+                Créer mon premier post
+            </a>
+        </div>
+    {% endif %}
+</div>
 {% endblock %}
