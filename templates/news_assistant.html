@@ -101,7 +101,6 @@
                             <div style="margin-top: 16px;">
                                 <form method="post" action="{{ url_for('news_assistant') }}">
                                     <input type="hidden" name="article_index" value="{{ loop.index0 }}">
-                                    <input type="hidden" name="article_data" value="{{ article|tojson|forceescape }}">
                                     <button type="submit" name="select_article" class="btn btn-outline" style="width: 100%;">
                                         <i class="fa-solid fa-pen-to-square"></i>
                                         Utiliser cet article
@@ -109,15 +108,10 @@
                                 </form>
                             </div>
                             
-                            <div style="display: flex; gap: 8px; margin-top: 12px; border-top: 1px solid var(--border); padding-top: 12px;">
-                                <button onclick="shareArticle('{{ article.url }}', '{{ article.title|replace("'", "\\'") }}')" class="btn btn-outline" style="flex: 1; font-size: 12px; padding: 6px 10px;">
-                                    <i class="fa-solid fa-share-nodes"></i>
-                                    Partager
-                                </button>
-                                
-                                <a href="{{ article.url }}" target="_blank" class="btn btn-outline" style="flex: 1; font-size: 12px; padding: 6px 10px;">
+                            <div style="margin-top: 12px; border-top: 1px solid var(--border); padding-top: 12px;">
+                                <a href="{{ article.url }}" target="_blank" class="btn btn-outline" style="width: 100%; font-size: 12px; padding: 8px 12px;">
                                     <i class="fa-solid fa-external-link"></i>
-                                    Lire
+                                    Lire l'article complet
                                 </a>
                             </div>
                         </div>
@@ -254,25 +248,5 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 });
 
-function shareArticle(url, title) {
-    if (navigator.share) {
-        navigator.share({
-            title: title,
-            url: url
-        })
-        .then(() => console.log('Partage réussi'))
-        .catch((error) => console.log('Erreur de partage', error));
-    } else {
-        // Fallback pour les navigateurs qui ne supportent pas l'API Web Share
-        const textArea = document.createElement('textarea');
-        textArea.value = `${title} ${url}`;
-        document.body.appendChild(textArea);
-        textArea.select();
-        document.execCommand('copy');
-        document.body.removeChild(textArea);
-        
-        alert('Lien copié dans le presse-papier !');
-    }
-}
 </script>
 {% endblock %}
