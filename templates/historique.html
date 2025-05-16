@@ -22,11 +22,21 @@
                     
                     <div style="margin-bottom:12px; margin-right:100px;">{{ post.content }}</div>
                     
-                    <div style="display:flex; gap:8px;">
+                    <div class="d-flex align-center gap-3">
                         <span style="display:inline-flex; align-items:center; gap:4px; padding:4px 12px; border-radius:16px; background-color:{% if post.scheduled %}#fff8e1{% else %}#e6f7ee{% endif %}; font-size:12px; color:{% if post.scheduled %}#f59e0b{% else %}#16a34a{% endif %};">
                             <i class="fa-solid {% if post.scheduled %}fa-calendar{% else %}fa-check-circle{% endif %}"></i>
                             {% if post.scheduled %}Programmé{% else %}Publié{% endif %}
                         </span>
+                        
+                        {% if post.scheduled %}
+                            <a href="{{ url_for('edit_post', post_id=post.id) }}" class="btn btn-outline btn-icon" style="font-size:12px; height:auto; padding:2px 10px;">
+                                <i class="fa-solid fa-pen"></i> Éditer
+                            </a>
+                        {% endif %}
+                        
+                        <a href="{{ url_for('delete_post', post_id=post.id) }}" class="btn btn-outline btn-icon" style="font-size:12px; height:auto; padding:2px 10px; color:var(--danger); border-color:var(--danger);">
+                            <i class="fa-solid fa-trash"></i> Supprimer
+                        </a>
                     </div>
                 </div>
             {% endfor %}
