@@ -421,6 +421,7 @@ def logout():
     resp.headers["Pragma"] = "no-cache"
     resp.headers["Expires"] = "0"
     return resp
-
 if __name__ == "__main__":
-    app.run(debug=True)
+    # Utilisation du port fourni par Render ou 5000 par défaut
+    port = int(os.environ.get("PORT", 5000))
+    app.run(host='0.0.0.0', port=port)
