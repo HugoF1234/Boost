@@ -1,60 +1,149 @@
 {% extends "base.html" %}
 {% block content %}
-<h1>Bienvenue {{ first_name }} {{ last_name }} 👋</h1>
+<div class="d-flex align-center justify-between mb-4">
+    <h1>Bienvenue, {{ first_name }} 👋</h1>
+    <div>
+        <span class="text-light">{{ name }} | {{ email }}</span>
+    </div>
+</div>
 
-<h3>💬 Générer un post</h3>
-<form method="post" style="display: flex; gap: 10px; align-items: center;">
-    <input type="text" name="prompt" placeholder="Ex: Écris un post sur l'actualité" style="flex: 1; padding:10px;" required>
-    <select name="tone" style="padding:10px;">
-        <option value="professionnel">Professionnel</option>
-        <option value="famillier">Familier</option>
-        <option value="inspirant">Inspirant</option>
-        <option value="humoristique">Humoristique</option>
-        <option value="factuel">Factuel</option>
-    </select>
-    <button type="submit" style="padding: 8px 12px;">✨</button>
-</form>
+<div class="content-card">
+    <h2>💬 Générer un nouveau post</h2>
+    <p>Utilisez l'IA pour créer rapidement un contenu engageant pour votre audience LinkedIn.</p>
+    
+    <form method="post" class="mt-4">
+        <div class="form-row">
+            <div class="form-group" style="flex: 3;">
+                <input type="text" name="prompt" class="form-control" placeholder="Ex: Partagez des conseils sur le leadership, Annoncez votre nouvel article..." required>
+            </div>
+            <div class="form-group">
+                <select name="tone" class="form-control">
+                    <option value="professionnel">Professionnel</option>
+                    <option value="famillier">Familier</option>
+                    <option value="inspirant">Inspirant</option>
+                    <option value="humoristique">Humoristique</option>
+                    <option value="factuel">Factuel</option>
+                </select>
+            </div>
+            <div>
+                <button type="submit" class="btn btn-primary">
+                    <i class="fa-solid fa-wand-magic-sparkles"></i>
+                    Générer
+                </button>
+            </div>
+        </div>
+    </form>
+</div>
 
-<h3>📝 Éditer et publier</h3>
-<form method="post" action="{{ url_for('publish') }}" enctype="multipart/form-data">
-    <textarea name="post_content" rows="10" style="width:100%;padding:10px;" required>{{ draft }}</textarea>
+{% if draft %}
+<div class="content-card">
+    <div class="d-flex justify-between align-center mb-4">
+        <h2>📝 Éditer et publier votre post</h2>
+        <span class="text-success">
+            <i class="fa-solid fa-circle-check"></i> 
+            Post généré
+        </span>
+    </div>
+    
+    <form method="post" action="{{ url_for('publish') }}" enctype="multipart/form-data">
+        <div class="form-group">
+            <textarea name="post_content" class="form-control" rows="8" required>{{ draft }}</textarea>
+        </div>
+        
+        <div class="form-row">
+            <div class="form-group">
+                <label class="form-label">📅 Date et heure de publication</label>
+                <input type="datetime-local" name="publish_time" class="form-control" required>
+            </div>
+            <div class="form-group" style="flex: 0.5;">
+                <label class="form-label">&nbsp;</label>
+                <div style="display: flex; align-items: center; height: 43px;">
+                    <input type="checkbox" id="publish-now" name="publish_now" style="margin-right: 8px;">
+                    <label for="publish-now">Publier maintenant</label>
+                </div>
+            </div>
+        </div>
+        
+        <div class="form-group">
+            <label class="form-label">📎 Ajouter des images (optionnel)</label>
+            <input type="file" name="images[]" id="images" accept="image/*" multiple class="form-control">
+        </div>
+        
+        <div id="image-preview" class="d-flex gap-3 mt-4 mb-4" style="flex-wrap: wrap;"></div>
+        
+        <div class="d-flex gap-3">
+            <button type="submit" class="btn btn-primary">
+                <i class="fa-solid fa-paper-plane"></i>
+                Publier
+            </button>
+            <a href="{{ url_for('dashboard') }}" class="btn btn-outline">Annuler</a>
+        </div>
+    </form>
+</div>
+{% endif %}
 
-    <h4>📅 Choisir la date et l'heure de publication</h4>
-    <input type="datetime-local" name="publish_time" required style="padding: 8px;"><br><br>
-
-    <label>
-        <input type="checkbox" name="publish_now">
-        📤 Publier maintenant (ignore la date ci-dessus)
-    </label><br><br>
-
-    <h4>📎 Ajouter des images</h4>
-    <input type="file" name="images[]" id="images" accept="image/*" multiple style="margin-top:10px;"><br><br>
-
-    <div id="preview" style="display: flex; gap: 10px; flex-wrap: wrap;"></div>
-
-    <br><button type="submit">✅ Valider</button>
-</form>
+<div class="content-card">
+    <h2>📊 Statistiques</h2>
+    <div class="d-flex gap-3" style="flex-wrap: wrap;">
+        <div style="flex: 1; min-width: 200px; padding: 16px; background-color: var(--secondary); border-radius: 8px;">
+            <div style="font-size: 28px; font-weight: 700; color: var(--primary);">
+                {{ posts|default([])|length }}
+            </div>
+            <div class="text-light">Posts publiés</div>
+        </div>
+        
+        <div style="flex: 1; min-width: 200px; padding: 16px; background-color: var(--secondary); border-radius: 8px;">
+            <div style="font-size: 28px; font-weight: 700; color: var(--primary);">
+                {{ scheduled_posts|default(0) }}
+            </div>
+            <div class="text-light">Posts programmés</div>
+        </div>
+        
+        <div style="flex: 1; min-width: 200px; padding: 16px; background-color: var(--secondary); border-radius: 8px;">
+            <div style="font-size: 28px; font-weight: 700; color: var(--primary);">
+                {{ interets|default([])|length }}
+            </div>
+            <div class="text-light">Centres d'intérêt</div>
+        </div>
+    </div>
+</div>
 
 <script>
 document.getElementById("images").addEventListener("change", function(event) {
-    const preview = document.getElementById("preview");
+    const preview = document.getElementById("image-preview");
     preview.innerHTML = "";
 
     for (let file of event.target.files) {
         if (file.type.startsWith("image/")) {
             const reader = new FileReader();
             reader.onload = function(e) {
+                const imgContainer = document.createElement("div");
+                imgContainer.style.position = "relative";
+                
                 const img = document.createElement("img");
                 img.src = e.target.result;
-                img.style.maxWidth = "100px";
-                img.style.maxHeight = "100px";
-                img.style.border = "1px solid #ccc";
-                img.style.borderRadius = "6px";
-                img.style.padding = "4px";
-                preview.appendChild(img);
+                img.style.width = "100px";
+                img.style.height = "100px";
+                img.style.objectFit = "cover";
+                img.style.borderRadius = "8px";
+                img.style.border = "1px solid var(--grey)";
+                
+                imgContainer.appendChild(img);
+                preview.appendChild(imgContainer);
             }
             reader.readAsDataURL(file);
         }
+    }
+});
+
+// Auto-set current date and time for the datetime-local input
+window.addEventListener('load', function() {
+    const dateInput = document.querySelector('input[type="datetime-local"]');
+    if (dateInput) {
+        const now = new Date();
+        now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
+        now.setMinutes(now.getMinutes() + 30); // Add 30 minutes for default scheduling
+        dateInput.value = now.toISOString().slice(0, 16);
     }
 });
 </script>
