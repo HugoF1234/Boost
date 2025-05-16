@@ -184,86 +184,9 @@ def get_cached_news(query, language, days=3):
     
     return articles
 
-# Renommer la fonction originale
-def get_news_by_sector_actual(sector, keywords=None, days=3, language="fr"):
-    """
-    Récupère les actualités récentes par secteur d'activité avec gestion d'erreurs améliorée
-    """
-    # Code existant (mapping des secteurs, etc.)
-    
-    # Ajoutez cette gestion d'erreurs plus robuste
-    try:
-        # Appel à l'API
-        response = requests.get(NEWS_API_URL, params=params, timeout=10)  # Ajouter un timeout
-        
-        # Vérifier les codes d'erreur spécifiques
-        if response.status_code == 200:
-            data = response.json()
-            articles = data.get('articles', [])
-            
-            # Formatter les dates pour l'affichage
-            for article in articles:
-                try:
-                    date_str = article.get('publishedAt', '')
-                    date_obj = datetime.strptime(date_str, '%Y-%m-%dT%H:%M:%SZ')
-                    article['formatted_date'] = date_obj.strftime('%d/%m/%Y')
-                except:
-                    article['formatted_date'] = 'Date inconnue'
-            
-            return articles
-        elif response.status_code == 401:
-            # Problème d'authentification (clé API invalide)
-            print("Erreur 401: Clé API invalide ou manquante")
-            # Notifier l'administrateur du problème
-            return []
-        elif response.status_code == 429:
-            # Limite d'API dépassée
-            print("Erreur 429: Limite de requêtes API dépassée")
-            # Essayer d'utiliser un cache plus ancien si disponible
-            return []
-        else:
-            print(f"Erreur API: {response.status_code} - {response.text}")
-            return []
-    except requests.exceptions.Timeout:
-        print("Erreur: Timeout lors de la connexion à NewsAPI")
-        return []
-    except requests.exceptions.ConnectionError:
-        print("Erreur: Problème de connexion réseau")
-        return []
-    except Exception as e:
-        print(f"Exception lors de l'appel à NewsAPI: {str(e)}")
-        return []
-    
-    # [Code existant]
-
-# Remplacer la fonction principale par celle qui utilise le cache
 def get_news_by_sector(sector, keywords=None, days=3, language="fr"):
     """
     Version avec cache de la fonction de récupération d'actualités
-    """
-    # Mapping des secteurs comme avant
-    sector_keywords = {
-        'tech': 'technologie informatique développement logiciel innovation internet',
-        'marketing': 'marketing numérique publicité stratégie marque réseaux sociaux',
-        'finance': 'finance banque investissement économie bourse',
-        'sante': 'santé médecine bien-être médical pharmacie',
-        'education': 'éducation enseignement formation apprentissage école',
-        'rh': 'ressources humaines recrutement emploi talent management',
-        'consulting': 'conseil consulting stratégie entreprise management',
-        'retail': 'commerce distribution retail vente consommation',
-    }
-    
-    # Construire la requête
-    search_query = sector_keywords.get(sector, sector)
-    if keywords:
-        search_query += f" {keywords}"
-    
-    # Utiliser la fonction de cache
-    return get_cached_news(search_query, language, days)
-
-def get_news_by_sector(sector, keywords=None, days=3, language="fr"):
-    """
-    Récupère les actualités récentes par secteur d'activité
     
     Args:
         sector (str): Le secteur d'activité (tech, finance, etc.)
@@ -292,6 +215,40 @@ def get_news_by_sector(sector, keywords=None, days=3, language="fr"):
     if keywords:
         search_query += f" {keywords}"
     
+    # Utiliser la fonction de cache
+    return get_cached_news(search_query, language, days)
+
+
+def get_news_by_sector_actual(sector, keywords=None, days=3, language="fr"):
+    """
+    Récupère les actualités récentes par secteur d'activité avec gestion d'erreurs améliorée
+    
+    Args:
+        sector (str): Le secteur d'activité (tech, finance, etc.)
+        keywords (str, optional): Mots-clés supplémentaires
+        days (int, optional): Nombre de jours pour les actualités récentes
+        language (str, optional): Langue des articles (fr, en)
+        
+    Returns:
+        list: Liste d'articles d'actualité
+    """
+    # Mapping des secteurs vers des termes de recherche
+    sector_keywords = {
+        'tech': 'technologie informatique développement logiciel innovation internet',
+        'marketing': 'marketing numérique publicité stratégie marque réseaux sociaux',
+        'finance': 'finance banque investissement économie bourse',
+        'sante': 'santé médecine bien-être médical pharmacie',
+        'education': 'éducation enseignement formation apprentissage école',
+        'rh': 'ressources humaines recrutement emploi talent management',
+        'consulting': 'conseil consulting stratégie entreprise management',
+        'retail': 'commerce distribution retail vente consommation',
+    }
+    
+    # Construire la requête de recherche
+    search_query = sector_keywords.get(sector, sector)
+    if keywords:
+        search_query += f" {keywords}"
+    
     # Calculer la date pour les actualités récentes
     date_from = (datetime.utcnow() - timedelta(days=days)).strftime('%Y-%m-%d')
     
@@ -305,41 +262,8 @@ def get_news_by_sector(sector, keywords=None, days=3, language="fr"):
     }
     
     try:
-        # Appel à l'API
-        response = requests.get(NEWS_API_URL, params=params)
-        
-        # Vérifier le statut de la réponse
-        if response.status_code == 200:
-            data = response.json()
-            articles = data.get('articles', [])
-            
-            # Formater les dates pour l'affichage
-            for article in articles:
-                try:
-                    date_str = article.get('publishedAt', '')
-                    date_obj = datetime.strptime(date_str, '%Y-%m-%dT%H:%M:%SZ')
-                    article['formatted_date'] = date_obj.strftime('%d/%m/%Y')
-                except:
-                    article['formatted_date'] = 'Date inconnue'
-            
-            return articles
-        else:
-            print(f"Erreur API: {response.status_code} - {response.text}")
-            return []
-    except Exception as e:
-        print(f"Exception lors de l'appel à NewsAPI: {str(e)}")
-        return []
-
-def get_news_by_sector_actual(sector, keywords=None, days=3, language="fr"):
-    """
-    Récupère les actualités récentes par secteur d'activité avec gestion d'erreurs améliorée
-    """
-    # Code existant (mapping des secteurs, etc.)
-    
-    # Ajoutez cette gestion d'erreurs plus robuste
-    try:
-        # Appel à l'API
-        response = requests.get(NEWS_API_URL, params=params, timeout=10)  # Ajouter un timeout
+        # Appel à l'API avec un timeout pour éviter les blocages
+        response = requests.get(NEWS_API_URL, params=params, timeout=10)
         
         # Vérifier les codes d'erreur spécifiques
         if response.status_code == 200:
@@ -358,27 +282,24 @@ def get_news_by_sector_actual(sector, keywords=None, days=3, language="fr"):
             return articles
         elif response.status_code == 401:
             # Problème d'authentification (clé API invalide)
-            print("Erreur 401: Clé API invalide ou manquante")
-            # Notifier l'administrateur du problème
+            logger.error("Erreur 401: Clé API NewsAPI invalide ou manquante")
             return []
         elif response.status_code == 429:
             # Limite d'API dépassée
-            print("Erreur 429: Limite de requêtes API dépassée")
-            # Essayer d'utiliser un cache plus ancien si disponible
+            logger.error("Erreur 429: Limite de requêtes NewsAPI dépassée")
             return []
         else:
-            print(f"Erreur API: {response.status_code} - {response.text}")
+            logger.error(f"Erreur API NewsAPI: {response.status_code} - {response.text}")
             return []
     except requests.exceptions.Timeout:
-        print("Erreur: Timeout lors de la connexion à NewsAPI")
+        logger.error("Erreur: Timeout lors de la connexion à NewsAPI")
         return []
     except requests.exceptions.ConnectionError:
-        print("Erreur: Problème de connexion réseau")
+        logger.error("Erreur: Problème de connexion réseau pour NewsAPI")
         return []
     except Exception as e:
-        print(f"Exception lors de l'appel à NewsAPI: {str(e)}")
+        logger.error(f"Exception lors de l'appel à NewsAPI: {str(e)}")
         return []
-
 
 @app.route("/news_assistant", methods=["GET", "POST"])
 def news_assistant():
