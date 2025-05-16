@@ -404,21 +404,29 @@ def news_assistant():
                     
                 except Exception as e:
                     error_message = f"Erreur lors de la génération du post: {str(e)}"
-    
-    # Pour les requêtes GET ou si POST n'a pas redirigé
+
     try:
         # Récupérer les actualités
+        logger.info(f"Tentative de récupération d'actualités pour le secteur: {sector}, keyword: {search_keyword}, langue: {language}")
+        
         if search_keyword:
             news_articles = get_news_by_sector(sector, search_keyword, language=language)
         else:
             news_articles = get_news_by_sector(sector, language=language)
+            
+        logger.info(f"Nombre d'articles trouvés: {len(news_articles)}")
+        
+        # Si aucun article trouvé, essayer avec un secteur plus générique
+        if not news_articles and sector != "general":
+            logger.info(f"Aucun article trouvé pour {sector}, tentative avec 'general'")
+            news_articles = get_news_by_sector("general", search_keyword, language=language)
+            logger.info(f"Nombre d'articles trouvés avec 'general': {len(news_articles)}")
+    
     except Exception as e:
         error_message = f"Erreur lors de la récupération des actualités: {str(e)}"
+        logger.error(error_message)
+        logger.exception(e)  # Ceci va logger la stack trace complète
         news_articles = []
-    
-    # Récupérer l'article sélectionné depuis la session si disponible
-    if not selected_article and 'selected_article' in session:
-        selected_article = session.get('selected_article')
     
     return render_template(
         "news_assistant.html",
