@@ -89,14 +89,14 @@
                         {% endif %}
                         
                         <div style="padding: 20px; flex-grow: 1; display: flex; flex-direction: column;">
-                            <h4 style="margin-bottom: 12px; font-size: 16px; line-height: 1.4;">{{ article.title }}</h4>
+                            <h4 style="margin-bottom: 12px; font-size: 16px; line-height: 1.4;">{{ article.title|clean_html }}</h4>
                             
                             <div style="color: var(--text-light); font-size: 13px; margin-bottom: 12px; display: flex; align-items: center; gap: 6px;">
                                 <i class="fa-regular fa-calendar"></i>
                                 <span>{{ article.formatted_date }}</span>
                             </div>
                             
-                            <p style="font-size: 14px; flex-grow: 1; color: var(--text-light);">{{ article.description|truncate(120) }}</p>
+                            <p style="font-size: 14px; flex-grow: 1; color: var(--text-light);">{{ article.description|clean_html|truncate(120) }}</p>
                             
                             <div style="margin-top: 16px;">
                                 <form method="post" action="{{ url_for('news_assistant') }}">
@@ -107,6 +107,18 @@
                                         Utiliser cet article
                                     </button>
                                 </form>
+                            </div>
+                            
+                            <div style="display: flex; gap: 8px; margin-top: 12px; border-top: 1px solid var(--border); padding-top: 12px;">
+                                <button onclick="shareArticle('{{ article.url }}', '{{ article.title|replace("'", "\\'") }}')" class="btn btn-outline" style="flex: 1; font-size: 12px; padding: 6px 10px;">
+                                    <i class="fa-solid fa-share-nodes"></i>
+                                    Partager
+                                </button>
+                                
+                                <a href="{{ article.url }}" target="_blank" class="btn btn-outline" style="flex: 1; font-size: 12px; padding: 6px 10px;">
+                                    <i class="fa-solid fa-external-link"></i>
+                                    Lire
+                                </a>
                             </div>
                         </div>
                     </div>
@@ -128,8 +140,8 @@
     <h2>Créer un post à partir de cet article</h2>
     
     <div style="padding: 24px; background-color: var(--grey-light); border-radius: 8px; margin: 20px 0; box-shadow: inset 0 1px 3px rgba(0,0,0,0.1);">
-        <h3 style="margin-bottom: 12px; color: var(--primary);">{{ selected.title }}</h3>
-        <p style="margin-bottom: 16px;">{{ selected.description }}</p>
+        <h3 style="margin-bottom: 12px; color: var(--primary);">{{ selected.title|clean_html }}</h3>
+        <p style="margin-bottom: 16px;">{{ selected.description|clean_html }}</p>
         <div style="display: flex; justify-content: space-between; align-items: center;">
             <div style="font-size: 13px; color: var(--text-light); display: flex; align-items: center; gap: 8px;">
                 <i class="fa-solid fa-globe"></i>
@@ -241,5 +253,26 @@ document.addEventListener('DOMContentLoaded', function() {
         highlightSelectedFormat(checkedOption.closest('.format-option'));
     }
 });
+
+function shareArticle(url, title) {
+    if (navigator.share) {
+        navigator.share({
+            title: title,
+            url: url
+        })
+        .then(() => console.log('Partage réussi'))
+        .catch((error) => console.log('Erreur de partage', error));
+    } else {
+        // Fallback pour les navigateurs qui ne supportent pas l'API Web Share
+        const textArea = document.createElement('textarea');
+        textArea.value = `${title} ${url}`;
+        document.body.appendChild(textArea);
+        textArea.select();
+        document.execCommand('copy');
+        document.body.removeChild(textArea);
+        
+        alert('Lien copié dans le presse-papier !');
+    }
+}
 </script>
 {% endblock %}
