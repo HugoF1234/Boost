@@ -1,5 +1,125 @@
-{% extends "base.html" %}
-{% block content %}
-<h2 style="color:green">✅ Vous avez été déconnecté avec succès.</h2>
-<p><a href="/">Se reconnecter</a></p>
-{% endblock %}
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LinkedBoost - Déconnexion</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #0a66c2;
+            --primary-dark: #004182;
+            --secondary: #f3f2ef;
+            --text-dark: #191919;
+            --text-light: #666666;
+            --success: #057642;
+            --danger: #cc1016;
+            --grey-light: #f3f2ef;
+            --grey: #e0e0e0;
+            --white: #ffffff;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background-color: var(--secondary);
+            color: var(--text-dark);
+            line-height: 1.5;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .logout-card {
+            background-color: var(--white);
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+            width: 90%;
+            max-width: 500px;
+            text-align: center;
+            padding: 48px 32px;
+        }
+        
+        .success-icon {
+            width: 80px;
+            height: 80px;
+            background-color: #e6f7ee;
+            color: var(--success);
+            font-size: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            margin: 0 auto 24px;
+        }
+        
+        h1 {
+            font-size: 24px;
+            font-weight: 600;
+            margin-bottom: 16px;
+            color: var(--success);
+        }
+        
+        p {
+            color: var(--text-light);
+            margin-bottom: 32px;
+        }
+        
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 12px 24px;
+            border-radius: 24px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-decoration: none;
+            font-size: 14px;
+            gap: 8px;
+        }
+        
+        .btn-primary {
+            background-color: var(--primary);
+            color: white;
+            border: none;
+        }
+        
+        .btn-primary:hover {
+            background-color: var(--primary-dark);
+        }
+        
+        .credits {
+            margin-top: 32px;
+            font-size: 12px;
+            color: var(--text-light);
+        }
+    </style>
+</head>
+<body>
+    <div class="logout-card">
+        <div class="success-icon">
+            <i class="fa-solid fa-check"></i>
+        </div>
+        <h1>Déconnexion réussie</h1>
+        <p>Vous avez été déconnecté avec succès de votre compte LinkedBoost.</p>
+        
+        <a href="/" class="btn btn-primary">
+            <i class="fa-solid fa-right-to-bracket"></i>
+            Se reconnecter
+        </a>
+    </div>
+    
+    <div class="credits">
+        <p>&copy; 2025 LinkedBoost - Propulsez votre présence LinkedIn</p>
+    </div>
+</body>
+</html>
