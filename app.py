@@ -1,12 +1,18 @@
 from flask import Flask, redirect, request, session, url_for, render_template, make_response
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.exc import IntegrityError
+from sqlalchemy import inspect
 from urllib.parse import urlencode
 from datetime import datetime
 import requests
 import os
 import google.generativeai as genai
-from datetime import datetime
+import logging
+
+# Configuration du logging
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
+
 # -----------------------
 # CONFIGURATION APP
 # -----------------------
@@ -14,30 +20,32 @@ app = Flask(__name__)
 app.secret_key = os.urandom(24)
 app.config['SESSION_COOKIE_NAME'] = 'linkedin_session'
 
-import os
+# ✅ CONFIGURATION BASE DE DONNÉES
 from urllib.parse import quote_plus
 
-# Simplification de la configuration de la base de données
+# Utilisation de la chaîne de connexion fournie par Render
 db_url = os.getenv("DATABASE_URL")
 if not db_url:
-    # Configuration locale si DATABASE_URL n'est pas défini
+    # Fallback vers une connexion locale si la variable d'environnement n'est pas définie
     password = quote_plus("Lexia2025")
     db_url = f'postgresql://user3:{password}@localhost:5432/Boostdb'
-    print("Utilisation de la base de données locale")
+    logger.info("Utilisation de la base de données locale")
 else:
-    print("Utilisation de la base de données Render")
+    # Pour Render, vérifier et corriger l'URL si nécessaire
+    if db_url.startswith("postgres://"):
+        db_url = db_url.replace("postgres://", "postgresql://", 1)
+    logger.info("Utilisation de la base de données Render")
 
 app.config['SQLALCHEMY_DATABASE_URI'] = db_url
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 db = SQLAlchemy(app)
-with app.app_context():
-    db.create_all()
 
 # -----------------------
 # MODÈLES SQLALCHEMY
 # -----------------------
 class User(db.Model):
+    __tablename__ = 'users'  # Nom explicite pour éviter les conflits avec mot-clé SQL
     id = db.Column(db.Integer, primary_key=True)
     sub = db.Column(db.String(128), unique=True, nullable=False)
     email = db.Column(db.String(120))
@@ -47,25 +55,61 @@ class User(db.Model):
     picture = db.Column(db.String(250))
     language = db.Column(db.String(10))
     country = db.Column(db.String(10))
-    email_verified = db.Column(db.Boolean)
+    email_verified = db.Column(db.Boolean, default=False)
     secteur = db.Column(db.String(120))
-    interets = db.Column(db.ARRAY(db.String))
-    posts = db.relationship('Post', backref='user', lazy=True)
+    interets = db.Column(db.JSON, default=list)  # JSON au lieu de ARRAY
+    posts = db.relationship('Post', backref='author', lazy=True)
 
 class Post(db.Model):
+    __tablename__ = 'posts'  # Nom explicite de la table
     id = db.Column(db.Integer, primary_key=True)
     content = db.Column(db.Text)
     published_at = db.Column(db.DateTime, default=datetime.utcnow)
-    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
-    scheduled = db.Column(db.Boolean, default=False)  # ✅ Ajout requis
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)  # Référence à users.id
+    scheduled = db.Column(db.Boolean, default=False)
 
+# Fonction d'initialisation de la base de données
+def init_db():
+    """Initialiser la base de données avec les tables nécessaires"""
+    with app.app_context():
+        try:
+            # Vérifier les tables existantes avant la création
+            inspector = inspect(db.engine)
+            existing_tables = inspector.get_table_names()
+            logger.info(f"Tables existantes avant création: {existing_tables}")
+            
+            # Créer les tables si elles n'existent pas
+            db.create_all()
+            logger.info("Tables créées ou vérifiées avec succès")
+            
+            # Vérifier les tables après création
+            existing_tables = inspector.get_table_names()
+            logger.info(f"Tables existantes après création: {existing_tables}")
+            
+            # Vérifier spécifiquement les tables users et posts
+            if 'users' in existing_tables:
+                logger.info("Table 'users' existe")
+            else:
+                logger.warning("Table 'users' n'existe pas malgré la tentative de création")
+                
+            if 'posts' in existing_tables:
+                logger.info("Table 'posts' existe")
+            else:
+                logger.warning("Table 'posts' n'existe pas malgré la tentative de création")
+        
+        except Exception as e:
+            logger.error(f"Erreur lors de l'initialisation de la base de données: {str(e)}")
+            raise
+
+# Initialiser la base de données au démarrage
+init_db()
 
 # -----------------------
 # LINKEDIN + GEMINI
 # -----------------------
-CLIENT_ID = "86occjps58doir"
-CLIENT_SECRET = "WPL_AP1.C8C6uXjTbpJyQUx2.Y7COPg=="
-REDIRECT_URI = "https://linkedinboost.onrender.com/callback"
+CLIENT_ID = os.getenv("LINKEDIN_CLIENT_ID", "86occjps58doir")
+CLIENT_SECRET = os.getenv("LINKEDIN_CLIENT_SECRET", "WPL_AP1.C8C6uXjTbpJyQUx2.Y7COPg==")
+REDIRECT_URI = os.getenv("LINKEDIN_REDIRECT_URI", "https://linkedinboost.onrender.com/callback")
 
 LINKEDIN_AUTH_URL = "https://www.linkedin.com/oauth/v2/authorization"
 LINKEDIN_TOKEN_URL = "https://www.linkedin.com/oauth/v2/accessToken"
@@ -74,7 +118,8 @@ LINKEDIN_ASSET_REGISTRATION_URL = "https://api.linkedin.com/v2/assets?action=reg
 LINKEDIN_POSTS_URL = "https://api.linkedin.com/v2/ugcPosts"
 
 SCOPES = "openid email profile w_member_social"
-genai.configure(api_key="AIzaSyB434P__wR_o_rr5Q3PjOULqyKhMANRtgk")
+GEMINI_API_KEY = os.getenv("GEMINI_API_KEY", "AIzaSyB434P__wR_o_rr5Q3PjOULqyKhMANRtgk")
+genai.configure(api_key=GEMINI_API_KEY)
 
 # -----------------------
 # ROUTES FLASK
@@ -108,54 +153,77 @@ def callback():
         "client_secret": CLIENT_SECRET
     }
     headers = {"Content-Type": "application/x-www-form-urlencoded"}
-    token_resp = requests.post(LINKEDIN_TOKEN_URL, data=data, headers=headers)
-
-    if token_resp.status_code != 200:
-        return f"Erreur token: {token_resp.text}"
-
-    access_token = token_resp.json().get("access_token")
-    session['access_token'] = access_token
-    headers = {"Authorization": f"Bearer {access_token}"}
-
-    userinfo_resp = requests.get(LINKEDIN_USERINFO_URL, headers=headers)
-    if userinfo_resp.status_code != 200:
-        return f"Erreur lors de la récupération du profil : {userinfo_resp.text}"
-
-    userinfo = userinfo_resp.json()
-    session['profile'] = {
-        'email': userinfo.get("email", "inconnu"),
-        'name': userinfo.get("name", ""),
-        'first_name': userinfo.get("given_name", ""),
-        'last_name': userinfo.get("family_name", ""),
-        'picture': userinfo.get("picture", ""),
-        'language': userinfo.get("locale", {}).get("language", ""),
-        'country': userinfo.get("locale", {}).get("country", ""),
-        'email_verified': userinfo.get("email_verified", False),
-        'sub': userinfo.get("sub", "")
-    }
-
-    # 🔁 Création ou mise à jour de l'utilisateur en base
-    profile = session["profile"]
-    user = User.query.filter_by(sub=profile["sub"]).first()
-    if not user:
-        user = User(sub=profile["sub"])
-        db.session.add(user)
-
-    user.email = profile["email"]
-    user.name = profile["name"]
-    user.first_name = profile["first_name"]
-    user.last_name = profile["last_name"]
-    user.picture = profile["picture"]
-    user.language = profile["language"]
-    user.country = profile["country"]
-    user.email_verified = profile["email_verified"]
-
+    
     try:
-        db.session.commit()
-    except IntegrityError:
-        db.session.rollback()
+        token_resp = requests.post(LINKEDIN_TOKEN_URL, data=data, headers=headers)
 
-    return redirect(url_for("dashboard"))
+        if token_resp.status_code != 200:
+            return f"Erreur token: {token_resp.text}"
+
+        access_token = token_resp.json().get("access_token")
+        session['access_token'] = access_token
+        headers = {"Authorization": f"Bearer {access_token}"}
+
+        userinfo_resp = requests.get(LINKEDIN_USERINFO_URL, headers=headers)
+        if userinfo_resp.status_code != 200:
+            return f"Erreur lors de la récupération du profil : {userinfo_resp.text}"
+
+        userinfo = userinfo_resp.json()
+        session['profile'] = {
+            'email': userinfo.get("email", "inconnu"),
+            'name': userinfo.get("name", ""),
+            'first_name': userinfo.get("given_name", ""),
+            'last_name': userinfo.get("family_name", ""),
+            'picture': userinfo.get("picture", ""),
+            'language': userinfo.get("locale", {}).get("language", ""),
+            'country': userinfo.get("locale", {}).get("country", ""),
+            'email_verified': userinfo.get("email_verified", False),
+            'sub': userinfo.get("sub", "")
+        }
+
+        # 🔁 Création ou mise à jour de l'utilisateur en base
+        profile = session["profile"]
+        
+        # Debug pour voir le contenu du profile
+        logger.info(f"Profile reçu: {profile}")
+        
+        try:
+            # Vérifier si l'utilisateur existe déjà
+            user = User.query.filter_by(sub=profile["sub"]).first()
+            if not user:
+                # Créer un nouvel utilisateur
+                user = User(sub=profile["sub"])
+                db.session.add(user)
+                logger.info(f"Nouvel utilisateur créé avec sub: {profile['sub']}")
+
+            # Mettre à jour les informations de l'utilisateur
+            user.email = profile["email"]
+            user.name = profile["name"]
+            user.first_name = profile["first_name"]
+            user.last_name = profile["last_name"]
+            user.picture = profile["picture"]
+            user.language = profile["language"]
+            user.country = profile["country"]
+            user.email_verified = profile["email_verified"]
+
+            # Sauvegarder en base de données
+            db.session.commit()
+            logger.info(f"Utilisateur {user.id} mis à jour avec succès")
+            
+        except IntegrityError as e:
+            db.session.rollback()
+            logger.error(f"Erreur d'intégrité lors de la création/mise à jour de l'utilisateur: {str(e)}")
+            return f"Erreur de base de données (IntegrityError): {str(e)}"
+        except Exception as e:
+            db.session.rollback()
+            logger.error(f"Exception lors de la création/mise à jour de l'utilisateur: {str(e)}")
+            return f"Erreur inattendue: {str(e)}"
+
+        return redirect(url_for("dashboard"))
+        
+    except Exception as e:
+        logger.error(f"Exception dans la route /callback: {str(e)}")
+        return f"Erreur inattendue: {str(e)}"
 
 @app.route("/dashboard", methods=["GET", "POST"])
 def dashboard():
@@ -176,7 +244,7 @@ def dashboard():
 
     session['draft'] = draft
     return render_template("dashboard.html", **session['profile'], draft=draft)
-
+    
 from datetime import datetime
 
 
@@ -421,7 +489,58 @@ def logout():
     resp.headers["Pragma"] = "no-cache"
     resp.headers["Expires"] = "0"
     return resp
+@app.errorhandler(500)
+def handle_500(e):
+    logger.error(f"Erreur 500: {str(e)}")
+    
+    # En mode développement, afficher des détails
+    if app.debug:
+        return f"""
+        <h1>Erreur 500</h1>
+        <p>Une erreur est survenue sur le serveur.</p>
+        <h2>Détails</h2>
+        <pre>{str(e)}</pre>
+        <p><a href="/">Retour à l'accueil</a></p>
+        """, 500
+    
+    # En production, message générique
+    return """
+    <h1>Erreur 500</h1>
+    <p>Une erreur est survenue sur le serveur. L'équipe technique a été informée.</p>
+    <p><a href="/">Retour à l'accueil</a></p>
+    """, 500
+
+# Ajout d'une route de test pour vérifier la connexion à la base de données
+@app.route("/test-db")
+def test_db():
+    try:
+        # Vérifier les tables existantes
+        inspector = inspect(db.engine)
+        tables = inspector.get_table_names()
+        
+        # Compter les utilisateurs
+        user_count = User.query.count()
+        
+        # Compter les posts
+        post_count = Post.query.count()
+        
+        return f"""
+        <h1>Test de la base de données</h1>
+        <p>✅ Connexion à la base de données réussie</p>
+        <h2>Tables existantes:</h2>
+        <ul>{''.join([f'<li>{table}</li>' for table in tables])}</ul>
+        <p>Nombre d'utilisateurs: {user_count}</p>
+        <p>Nombre de posts: {post_count}</p>
+        <p><a href="/">Retour à l'accueil</a></p>
+        """
+    except Exception as e:
+        return f"""
+        <h1>Erreur de test de la base de données</h1>
+        <p>❌ La connexion à la base de données a échoué:</p>
+        <pre>{str(e)}</pre>
+        <p><a href="/">Retour à l'accueil</a></p>
+        """, 500
+
 if __name__ == "__main__":
-    # Utilisation du port fourni par Render ou 5000 par défaut
     port = int(os.environ.get("PORT", 5000))
     app.run(host='0.0.0.0', port=port)
