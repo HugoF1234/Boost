@@ -1,5 +1,140 @@
 {% extends "base.html" %}
 {% block content %}
 <h1>⚙️ Paramètres</h1>
-<p>Cette section vous permettra bientôt de modifier vos préférences et intégrations.</p>
+
+<div class="content-card">
+    <h2>Préférences de publication</h2>
+    <p>Personnalisez vos options de publication et définissez les paramètres par défaut.</p>
+    
+    <form>
+        <div class="form-group">
+            <label class="form-label">Ton par défaut</label>
+            <select class="form-control">
+                <option value="professionnel">Professionnel</option>
+                <option value="famillier">Familier</option>
+                <option value="inspirant">Inspirant</option>
+                <option value="humoristique">Humoristique</option>
+                <option value="factuel">Factuel</option>
+            </select>
+        </div>
+        
+        <div class="form-group">
+            <label class="form-label">Longueur de contenu</label>
+            <select class="form-control">
+                <option>Court (moins de 100 mots)</option>
+                <option selected>Moyen (100-200 mots)</option>
+                <option>Long (plus de 200 mots)</option>
+            </select>
+        </div>
+        
+        <div class="form-group">
+            <label class="form-label">Hashtags</label>
+            <div class="d-flex gap-2 align-center">
+                <div style="flex:1;">
+                    <input type="number" class="form-control" min="0" max="10" value="3">
+                </div>
+                <span>hashtags à ajouter automatiquement</span>
+            </div>
+        </div>
+        
+        <div class="form-group d-flex align-center gap-2">
+            <input type="checkbox" id="publish-confirm" checked>
+            <label for="publish-confirm">Demander confirmation avant publication</label>
+        </div>
+        
+        <div class="form-group d-flex align-center gap-2">
+            <input type="checkbox" id="save-history">
+            <label for="save-history">Conserver l'historique des brouillons</label>
+        </div>
+        
+        <div class="mt-4">
+            <button type="submit" class="btn btn-primary" disabled>
+                <i class="fa-solid fa-floppy-disk"></i>
+                Enregistrer
+            </button>
+            <span class="text-light" style="margin-left:12px;">
+                <i class="fa-solid fa-circle-info"></i>
+                Fonctionnalité bientôt disponible
+            </span>
+        </div>
+    </form>
+</div>
+
+<div class="content-card">
+    <h2>Intégrations</h2>
+    <p>Connectez votre compte à d'autres plateformes pour étendre les fonctionnalités.</p>
+    
+    <div style="margin:20px 0; border-radius:8px; overflow:hidden; border:1px solid var(--border);">
+        <div style="padding:20px; border-bottom:1px solid var(--border); display:flex; align-items:center; justify-content:space-between;">
+            <div class="d-flex align-center gap-3">
+                <div style="width:40px; height:40px; border-radius:8px; background-color:#0a66c2; color:white; display:flex; align-items:center; justify-content:center;">
+                    <i class="fa-brands fa-linkedin-in" style="font-size:20px;"></i>
+                </div>
+                <div>
+                    <div style="font-weight:600;">LinkedIn</div>
+                    <div class="text-light">Connecté en tant que {{ first_name }} {{ last_name }}</div>
+                </div>
+            </div>
+            <div>
+                <span class="text-success" style="display:flex; align-items:center; gap:8px;">
+                    <i class="fa-solid fa-circle-check"></i>
+                    Connecté
+                </span>
+            </div>
+        </div>
+        
+        <div style="padding:20px; border-bottom:1px solid var(--border); display:flex; align-items:center; justify-content:space-between;">
+            <div class="d-flex align-center gap-3">
+                <div style="width:40px; height:40px; border-radius:8px; background-color:#1da1f2; color:white; display:flex; align-items:center; justify-content:center;">
+                    <i class="fa-brands fa-twitter" style="font-size:20px;"></i>
+                </div>
+                <div>
+                    <div style="font-weight:600;">Twitter</div>
+                    <div class="text-light">Publiez également sur Twitter</div>
+                </div>
+            </div>
+            <div>
+                <button class="btn btn-outline" disabled>
+                    <i class="fa-solid fa-plug"></i>
+                    Connecter
+                </button>
+            </div>
+        </div>
+        
+        <div style="padding:20px; display:flex; align-items:center; justify-content:space-between;">
+            <div class="d-flex align-center gap-3">
+                <div style="width:40px; height:40px; border-radius:8px; background-color:#ff5722; color:white; display:flex; align-items:center; justify-content:center;">
+                    <i class="fa-brands fa-slack" style="font-size:20px;"></i>
+                </div>
+                <div>
+                    <div style="font-weight:600;">Slack</div>
+                    <div class="text-light">Recevez des notifications dans Slack</div>
+                </div>
+            </div>
+            <div>
+                <button class="btn btn-outline" disabled>
+                    <i class="fa-solid fa-plug"></i>
+                    Connecter
+                </button>
+            </div>
+        </div>
+    </div>
+    
+    <div class="text-light" style="text-align:center; font-size:13px;">
+        <i class="fa-solid fa-circle-info"></i>
+        Ces intégrations seront disponibles dans une version future
+    </div>
+</div>
+
+<div class="content-card">
+    <h2>Compte</h2>
+    <p>Gérez les paramètres de votre compte et vos préférences de confidentialité.</p>
+    
+    <div class="mt-4">
+        <a href="{{ url_for('logout') }}" class="btn btn-danger">
+            <i class="fa-solid fa-right-from-bracket"></i>
+            Déconnexion
+        </a>
+    </div>
+</div>
 {% endblock %}
