@@ -2,47 +2,127 @@
 {% block content %}
 <h1>👤 Profil</h1>
 
-{% if picture %}
-    <img src="{{ picture }}" alt="Photo de profil" style="width:120px;height:120px;border-radius:50%;margin-bottom:20px">
-{% else %}
-    <p><em>Aucune photo de profil disponible</em></p>
-{% endif %}
+<div class="content-card">
+    <div class="d-flex align-center gap-3" style="margin-bottom: 24px;">
+        {% if picture %}
+            <img src="{{ picture }}" alt="Photo de profil" style="width:80px; height:80px; border-radius:50%; object-fit:cover; border:1px solid var(--grey);">
+        {% else %}
+            <div style="width:80px; height:80px; border-radius:50%; background-color:var(--grey-light); display:flex; align-items:center; justify-content:center;">
+                <i class="fa-solid fa-user" style="font-size:32px; color:var(--text-light);"></i>
+            </div>
+        {% endif %}
+        
+        <div>
+            <h2 style="margin-bottom:4px;">{{ first_name }} {{ last_name }}</h2>
+            <p style="margin-bottom:0; display:flex; align-items:center; gap:8px;">
+                <i class="fa-solid fa-envelope text-light"></i> {{ email }}
+                {% if email_verified %}
+                    <span class="text-success" style="display:inline-flex; align-items:center; gap:4px; font-size:12px;">
+                        <i class="fa-solid fa-circle-check"></i> Vérifié
+                    </span>
+                {% endif %}
+            </p>
+        </div>
+    </div>
+    
+    <div class="d-flex gap-3" style="flex-wrap: wrap;">
+        <div style="flex:1; min-width:200px;">
+            <div class="form-group">
+                <label class="form-label text-light">Pays</label>
+                <div class="d-flex align-center gap-2">
+                    <i class="fa-solid fa-globe text-primary"></i>
+                    <strong>{{ country }}</strong>
+                </div>
+            </div>
+        </div>
+        
+        <div style="flex:1; min-width:200px;">
+            <div class="form-group">
+                <label class="form-label text-light">Langue</label>
+                <div class="d-flex align-center gap-2">
+                    <i class="fa-solid fa-language text-primary"></i>
+                    <strong>{{ language }}</strong>
+                </div>
+            </div>
+        </div>
+        
+        <div style="flex:1; min-width:200px;">
+            <div class="form-group">
+                <label class="form-label text-light">Identifiant LinkedIn</label>
+                <div class="d-flex align-center gap-2">
+                    <i class="fa-brands fa-linkedin text-primary"></i>
+                    <strong>{{ sub }}</strong>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 
-<p><strong>Nom :</strong> {{ first_name }} {{ last_name }}</p>
-<p><strong>Email :</strong> {{ email }}</p>
-<p><strong>Pays :</strong> {{ country }}</p>
-<p><strong>Langue :</strong> {{ language }}</p>
+<div class="content-card">
+    <h2>🛠️ Préférences de contenu</h2>
+    <p>Personnalisez votre expérience en définissant votre secteur d'activité et vos centres d'intérêt pour des suggestions de contenu plus pertinentes.</p>
+    
+    <form method="POST">
+        <div class="form-row">
+            <div class="form-group">
+                <label for="secteur" class="form-label">Secteur d'activité</label>
+                <select name="secteur" id="secteur" class="form-control" required>
+                    <option value="">-- Sélectionner --</option>
+                    <option value="tech" {% if secteur == 'tech' %}selected{% endif %}>Technologie</option>
+                    <option value="marketing" {% if secteur == 'marketing' %}selected{% endif %}>Marketing</option>
+                    <option value="finance" {% if secteur == 'finance' %}selected{% endif %}>Finance</option>
+                    <option value="sante" {% if secteur == 'sante' %}selected{% endif %}>Santé</option>
+                    <option value="education" {% if secteur == 'education' %}selected{% endif %}>Éducation</option>
+                    <option value="rh" {% if secteur == 'rh' %}selected{% endif %}>Ressources Humaines</option>
+                    <option value="consulting" {% if secteur == 'consulting' %}selected{% endif %}>Conseil</option>
+                    <option value="retail" {% if secteur == 'retail' %}selected{% endif %}>Commerce de détail</option>
+                </select>
+            </div>
+        </div>
+        
+        <div class="form-group">
+            <label class="form-label">Centres d'intérêt</label>
+            <div style="display:grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap:12px; margin-top:8px;">
+                {% set options = ['IA', 'Développement', 'Design', 'Sport', 'Musique', 'Entreprenariat', 'Leadership', 'Marketing Digital', 'Innovation', 'E-commerce'] %}
+                {% for option in options %}
+                    <div style="display:flex; align-items:center; gap:8px;">
+                        <input type="checkbox" id="interet-{{ loop.index }}" name="interets" value="{{ option }}" 
+                            {% if interets and option in interets %}checked{% endif %}>
+                        <label for="interet-{{ loop.index }}" style="user-select:none; cursor:pointer;">{{ option }}</label>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+        
+        <div>
+            <button type="submit" class="btn btn-primary">
+                <i class="fa-solid fa-floppy-disk"></i>
+                Enregistrer
+            </button>
+        </div>
+    </form>
 
-<hr>
-<h3>🛠️ Complète ton profil</h3>
-
-<form method="POST">
-    <label for="secteur"><strong>Secteur d'activité :</strong></label><br>
-    <select name="secteur" id="secteur" required>
-        <option value="">-- Sélectionner --</option>
-        <option value="tech" {% if secteur == 'tech' %}selected{% endif %}>Technologie</option>
-        <option value="marketing" {% if secteur == 'marketing' %}selected{% endif %}>Marketing</option>
-        <option value="finance" {% if secteur == 'finance' %}selected{% endif %}>Finance</option>
-        <option value="sante" {% if secteur == 'sante' %}selected{% endif %}>Santé</option>
-    </select>
-
-    <br><br>
-    <strong>Centres d’intérêt :</strong><br>
-    {% set options = ['IA', 'Développement', 'Design', 'Sport', 'Musique'] %}
-    {% for option in options %}
-        <input type="checkbox" name="interets" value="{{ option }}" 
-            {% if interets and option in interets %}checked{% endif %}>
-        {{ option }}<br>
-    {% endfor %}
-
-    <br>
-    <button type="submit">💾 Enregistrer</button>
-</form>
-
-{% if secteur or interets %}
-    <hr>
-    <h4>🧠 Profil enrichi</h4>
-    {% if secteur %}<p><strong>Secteur :</strong> {{ secteur }}</p>{% endif %}
-    {% if interets %}<p><strong>Intérêts :</strong> {{ interets|join(', ') }}</p>{% endif %}
-{% endif %}
+    {% if secteur or interets %}
+        <div style="margin-top:24px; padding-top:24px; border-top:1px solid var(--border);">
+            <h3>🧠 Profil enrichi</h3>
+            <div class="d-flex gap-3" style="flex-wrap:wrap;">
+                {% if secteur %}
+                    <div style="background-color:var(--secondary); padding:8px 16px; border-radius:20px; display:inline-flex; align-items:center; gap:8px;">
+                        <i class="fa-solid fa-briefcase text-primary"></i>
+                        <span>{{ secteur }}</span>
+                    </div>
+                {% endif %}
+                
+                {% if interets %}
+                    {% for interet in interets %}
+                        <div style="background-color:var(--secondary); padding:8px 16px; border-radius:20px; display:inline-flex; align-items:center; gap:8px;">
+                            <i class="fa-solid fa-hashtag text-primary"></i>
+                            <span>{{ interet }}</span>
+                        </div>
+                    {% endfor %}
+                {% endif %}
+            </div>
+        </div>
+    {% endif %}
+</div>
 {% endblock %}
