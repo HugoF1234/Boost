@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="d-flex align-center justify-between mb-4">
+    <h1>🗑️ Supprimer le post</h1>
+    <div>
+        <a href="{{ url_for('calendar') if post.scheduled else url_for('historique') }}" class="btn btn-outline">
+            <i class="fa-solid fa-arrow-left"></i>
+            Retour
+        </a>
+    </div>
+</div>
+
+<div class="content-card">
+    <div style="text-align: center; padding: 20px 0;">
+        <div style="font-size: 64px; color: var(--danger); margin-bottom: 24px;">
+            <i class="fa-solid fa-triangle-exclamation"></i>
+        </div>
+        <h2>Êtes-vous sûr de vouloir supprimer ce post ?</h2>
+        <p>Cette action est irréversible et le post sera définitivement supprimé.</p>
+    </div>
+    
+    <div style="background-color: var(--grey-light); border-radius: 8px; padding: 20px; margin: 20px 0;">
+        <div style="font-weight: 500; margin-bottom: 8px;">
+            Contenu du post :
+        </div>
+        <div style="border-left: 4px solid var(--primary); padding-left: 16px; color: var(--text-light);">
+            {{ post.content }}
+        </div>
+        
+        <div style="margin-top: 16px; font-size: 14px; color: var(--text-light);">
+            {% if post.scheduled %}
+                <i class="fa-regular fa-calendar"></i> Programmé pour le {{ post.published_at.strftime("%d/%m/%Y à %H:%M") }}
+            {% else %}
+                <i class="fa-regular fa-calendar-check"></i> Publié le {{ post.published_at.strftime("%d/%m/%Y à %H:%M") }}
+            {% endif %}
+        </div>
+    </div>
+    
+    <div class="d-flex gap-3 mt-4" style="justify-content: center;">
+        <form method="post" action="{{ url_for('delete_post', post_id=post.id) }}">
+            <button type="submit" class="btn btn-danger">
+                <i class="fa-solid fa-trash"></i>
+                Confirmer la suppression
+            </button>
+        </form>
+        <a href="{{ url_for('calendar') if post.scheduled else url_for('historique') }}" class="btn btn-outline">
+            Annuler
+        </a>
+    </div>
+</div>
+{% endblock %}
