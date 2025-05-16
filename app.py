@@ -443,11 +443,12 @@ def calendar():
     if not user:
         return "Utilisateur introuvable"
 
+    # Ajout de la date actuelle pour le calcul de la différence de temps
+    from datetime import datetime
     now = datetime.utcnow()
     upcoming_posts = Post.query.filter_by(user_id=user.id, scheduled=True).filter(Post.published_at > now).order_by(Post.published_at).all()
 
-    return render_template("calendar.html", posts=upcoming_posts)
-
+    return render_template("calendar.html", posts=upcoming_posts, now=now)
 #http://localhost:5000/publish_scheduled
 
 @app.route("/publish_scheduled")
