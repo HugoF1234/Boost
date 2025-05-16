@@ -225,12 +225,25 @@ def callback():
         logger.error(f"Exception dans la route /callback: {str(e)}")
         return f"Erreur inattendue: {str(e)}"
 
+# Modification à apporter à la route dashboard dans app.py
+
 @app.route("/dashboard", methods=["GET", "POST"])
 def dashboard():
     if 'profile' not in session:
         return redirect(url_for("index"))
 
     draft = ""
+    # Récupérer l'utilisateur
+    user = User.query.filter_by(sub=session['profile'].get("sub", "")).first()
+    
+    # Statistiques pour le tableau de bord
+    scheduled_posts = 0
+    if user:
+        # Nombre de posts programmés
+        from datetime import datetime
+        now = datetime.utcnow()
+        scheduled_posts = Post.query.filter_by(user_id=user.id, scheduled=True).filter(Post.published_at > now).count()
+    
     if request.method == "POST":
         prompt = request.form.get("prompt")
         tone = request.form.get("tone", "professionnel")
@@ -243,7 +256,15 @@ def dashboard():
             draft = f"Erreur Gemini : {str(e)}"
 
     session['draft'] = draft
-    return render_template("dashboard.html", **session['profile'], draft=draft)
+    # Passer les variables supplémentaires au template
+    return render_template(
+        "dashboard.html", 
+        **session['profile'], 
+        draft=draft,
+        scheduled_posts=scheduled_posts,
+        posts=user.posts if user else []
+    )
+
     
 from datetime import datetime
 
