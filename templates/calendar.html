@@ -1,18 +1,111 @@
 {% extends "base.html" %}
 {% block content %}
-<h1>📅 Calendrier des posts programmés</h1>
+<div class="d-flex align-center justify-between mb-4">
+    <h1>📅 Calendrier des publications</h1>
+    <div>
+        <a href="{{ url_for('dashboard') }}" class="btn btn-outline">
+            <i class="fa-solid fa-plus"></i>
+            Programmer un post
+        </a>
+    </div>
+</div>
 
-{% if posts %}
-    <ul>
-    {% for post in posts %}
-        <li>
-            <strong>{{ post.published_at.strftime("%d/%m/%Y %H:%M") }}</strong> — {{ post.content[:100] }}...
-        </li>
-    {% endfor %}
-    </ul>
-{% else %}
-    <p>🚫 Aucun post planifié.</p>
-{% endif %}
+<div class="content-card">
+    {% if posts and posts|length > 0 %}
+        <div class="mb-4">
+            <h3>Posts à venir</h3>
+            <p>Vos publications programmées apparaîtront automatiquement sur votre profil LinkedIn aux dates indiquées.</p>
+        </div>
+        
+        <div style="border-radius:8px; overflow:hidden; border:1px solid var(--border);">
+            {% for post in posts %}
+                <div style="padding:20px; {% if not loop.last %}border-bottom:1px solid var(--border);{% endif %} position:relative;">
+                    <div class="d-flex align-center gap-3" style="margin-bottom:16px;">
+                        <div style="width:60px; height:60px; border-radius:8px; background-color:var(--primary); color:white; display:flex; flex-direction:column; align-items:center; justify-content:center; font-weight:600;">
+                            <div style="font-size:18px;">{{ post.published_at.strftime("%d") }}</div>
+                            <div style="font-size:12px; text-transform:uppercase;">{{ post.published_at.strftime("%b") }}</div>
+                        </div>
+                        
+                        <div>
+                            <div style="font-weight:600; margin-bottom:4px;">
+                                {{ post.published_at.strftime("%A %d %B %Y") }}
+                            </div>
+                            <div style="color:var(--text-light); display:flex; align-items:center; gap:8px;">
+                                <i class="fa-regular fa-clock"></i>
+                                <span>{{ post.published_at.strftime("%H:%M") }}</span>
+                                
+                                {% set time_diff = (post.published_at - now).total_seconds() if now is defined else 0 %}
+                                {% if time_diff > 0 %}
+                                    <span style="background-color:#e6f7ee; color:#16a34a; padding:2px 8px; border-radius:12px; font-size:12px;">
+                                        {% if time_diff < 3600 %}
+                                            Dans {{ (time_diff / 60)|int }} minutes
+                                        {% elif time_diff < 86400 %}
+                                            Dans {{ (time_diff / 3600)|int }} heures
+                                        {% else %}
+                                            Dans {{ (time_diff / 86400)|int }} jours
+                                        {% endif %}
+                                    </span>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div style="padding:16px; background-color:var(--grey-light); border-radius:8px; margin-bottom:16px;">
+                        {{ post.content|truncate(280) }}
+                    </div>
+                    
+                    <div class="d-flex gap-2">
+                        <a href="#" class="btn btn-outline btn-icon" title="Éditer">
+                            <i class="fa-solid fa-pen"></i>
+                        </a>
+                        <a href="#" class="btn btn-outline btn-icon" title="Supprimer" style="color:var(--danger); border-color:var(--danger);">
+                            <i class="fa-solid fa-trash"></i>
+                        </a>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div style="text-align:center; padding:40px 20px;">
+            <div style="font-size:48px; margin-bottom:16px; color:var(--text-light);">
+                <i class="fa-regular fa-calendar"></i>
+            </div>
+            <h3>Aucun post programmé</h3>
+            <p>Vous n'avez pas encore programmé de publications pour les jours à venir.</p>
+            <a href="{{ url_for('dashboard') }}" class="btn btn-primary mt-4">
+                <i class="fa-solid fa-calendar-plus"></i>
+                Programmer un post
+            </a>
+        </div>
+    {% endif %}
+</div>
 
-<a href="{{ url_for('dashboard') }}">← Retour</a>
+<div class="content-card">
+    <h2>Conseils de programmation</h2>
+    <div class="d-flex gap-3" style="flex-wrap:wrap;">
+        <div style="flex:1; min-width:200px; padding:20px; background-color:var(--grey-light); border-radius:8px;">
+            <div style="margin-bottom:12px; font-size:20px; color:var(--primary);">
+                <i class="fa-solid fa-lightbulb"></i>
+            </div>
+            <h3 style="font-size:16px; margin-bottom:8px;">Meilleurs moments</h3>
+            <p style="margin-bottom:0;">Publiez en semaine entre 8h et 10h du matin pour un engagement optimal.</p>
+        </div>
+        
+        <div style="flex:1; min-width:200px; padding:20px; background-color:var(--grey-light); border-radius:8px;">
+            <div style="margin-bottom:12px; font-size:20px; color:var(--primary);">
+                <i class="fa-solid fa-chart-line"></i>
+            </div>
+            <h3 style="font-size:16px; margin-bottom:8px;">Régularité</h3>
+            <p style="margin-bottom:0;">Maintenez un calendrier régulier de 2-3 posts par semaine pour une présence constante.</p>
+        </div>
+        
+        <div style="flex:1; min-width:200px; padding:20px; background-color:var(--grey-light); border-radius:8px;">
+            <div style="margin-bottom:12px; font-size:20px; color:var(--primary);">
+                <i class="fa-solid fa-bullhorn"></i>
+            </div>
+            <h3 style="font-size:16px; margin-bottom:8px;">Événements</h3>
+            <p style="margin-bottom:0;">Planifiez vos publications autour des événements importants de votre secteur.</p>
+        </div>
+    </div>
+</div>
 {% endblock %}
