@@ -5,7 +5,7 @@ services:
     region: frankfurt
     plan: free
     buildCommand: "pip install -r requirements.txt"
-    startCommand: "gunicorn app_minimal:app"  # Utilisez d'abord l'application minimale
+    startCommand: "gunicorn appmin:app"  # Utilisez d'abord l'application minimale
     envVars:
       - key: DATABASE_URL
         fromDatabase:
