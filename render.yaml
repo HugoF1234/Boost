@@ -5,12 +5,18 @@ services:
     region: frankfurt
     plan: free
     buildCommand: "pip install -r requirements.txt"
-    startCommand: "gunicorn app:app"
+    startCommand: "gunicorn app_minimal:app"  # Utilisez d'abord l'application minimale
     envVars:
       - key: DATABASE_URL
         fromDatabase:
           name: boostdb_xv71
           property: connectionString
+      - key: RENDER
+        value: "true"  # Pour identifier l'environnement Render
+      - key: FLASK_ENV
+        value: "production"
+      - key: FLASK_DEBUG
+        value: "1"  # Activez le débogage temporairement
       - key: LINKEDIN_CLIENT_ID
         value: 86occjps58doir
       - key: LINKEDIN_CLIENT_SECRET
