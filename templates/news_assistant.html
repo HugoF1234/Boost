@@ -101,7 +101,7 @@
                             <div style="margin-top: 16px;">
                                 <form method="post" action="{{ url_for('news_assistant') }}">
                                     <input type="hidden" name="article_index" value="{{ loop.index0 }}">
-                                    <input type="hidden" name="article_data" value="{{ article|tojson }}">
+                                    <input type="hidden" name="article_data" value="{{ article|tojson|forceescape }}">
                                     <button type="submit" name="select_article" class="btn btn-outline" style="width: 100%;">
                                         <i class="fa-solid fa-pen-to-square"></i>
                                         Utiliser cet article
