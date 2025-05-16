@@ -14,17 +14,19 @@ app = Flask(__name__)
 app.secret_key = os.urandom(24)
 app.config['SESSION_COOKIE_NAME'] = 'linkedin_session'
 
-# ✅ CONFIGURATION BASE DE DONNÉES
 import os
 from urllib.parse import quote_plus
 
-password = quote_plus("Lexia2025")
-
-# ✅ On utilise la variable d'environnement de Render si elle existe
-db_url = os.getenv("DATABASE_URL", f'postgresql://user3:{password}@localhost:5432/Boostdb')
+# Simplification de la configuration de la base de données
 db_url = os.getenv("DATABASE_URL")
 if not db_url:
-    raise RuntimeError("DATABASE_URL is not set. Assure-toi que la base de données Render est bien attachée au service.")
+    # Configuration locale si DATABASE_URL n'est pas défini
+    password = quote_plus("Lexia2025")
+    db_url = f'postgresql://user3:{password}@localhost:5432/Boostdb'
+    print("Utilisation de la base de données locale")
+else:
+    print("Utilisation de la base de données Render")
+
 app.config['SQLALCHEMY_DATABASE_URI'] = db_url
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
