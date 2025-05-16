@@ -8,7 +8,7 @@ import requests
 import os
 import google.generativeai as genai
 import logging
-
+from datetime import datetime, timedelta
 # Configuration du logging
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -383,6 +383,127 @@ def publish():
         return redirect(url_for("dashboard"))
     else:
         return f"<h2>❌ Erreur lors de la publication :</h2><pre>{post_resp.text}</pre><p><a href='/dashboard'>Retour</a></p>"
+
+@app.route("/edit_post/<int:post_id>", methods=["GET", "POST"])
+def edit_post(post_id):
+    if 'profile' not in session:
+        return redirect(url_for("index"))
+    
+    # Récupérer l'utilisateur et vérifier qu'il existe
+    user = User.query.filter_by(sub=session['profile'].get("sub", "")).first()
+    if not user:
+        return "Utilisateur introuvable"
+    
+    # Récupérer le post et vérifier qu'il appartient à l'utilisateur
+    post = Post.query.filter_by(id=post_id, user_id=user.id).first()
+    if not post:
+        return "Post introuvable ou vous n'avez pas les droits pour le modifier"
+    
+    # Si le post n'est pas programmé, rediriger vers l'historique
+    if not post.scheduled:
+        return redirect(url_for("historique"))
+    
+    if request.method == "POST":
+        # Mettre à jour le contenu du post
+        post.content = request.form.get("post_content", "")
+        
+        # Mettre à jour la date de publication si fournie
+        publish_time = request.form.get("publish_time")
+        if publish_time:
+            try:
+                post.published_at = datetime.strptime(publish_time, "%Y-%m-%dT%H:%M")
+            except (ValueError, TypeError):
+                pass  # Conserver la date actuelle en cas d'erreur
+        
+        # Publier maintenant si demandé
+        if request.form.get("publish_now"):
+            # Logique pour publier immédiatement sur LinkedIn
+            try:
+                # Récupérer le token d'accès
+                access_token = session.get("access_token")
+                if not access_token:
+                    return "Token d'accès LinkedIn non disponible, veuillez vous reconnecter"
+                
+                # Préparer les données pour l'API LinkedIn
+                sub = user.sub
+                user_id = sub.split("_")[-1]
+                urn = f"urn:li:person:{user_id}"
+                
+                headers = {
+                    "Authorization": f"Bearer {access_token}",
+                    "Content-Type": "application/json",
+                    "X-Restli-Protocol-Version": "2.0.0"
+                }
+                
+                post_data = {
+                    "author": urn,
+                    "lifecycleState": "PUBLISHED",
+                    "specificContent": {
+                        "com.linkedin.ugc.ShareContent": {
+                            "shareCommentary": {"text": post.content},
+                            "shareMediaCategory": "NONE",
+                            "media": []
+                        }
+                    },
+                    "visibility": {
+                        "com.linkedin.ugc.MemberNetworkVisibility": "PUBLIC"
+                    }
+                }
+                
+                post_resp = requests.post(LINKEDIN_POSTS_URL, headers=headers, json=post_data)
+                
+                if post_resp.status_code == 201:
+                    # Marquer comme publié et non programmé
+                    post.scheduled = False
+                    post.published_at = datetime.utcnow()
+                    db.session.commit()
+                    
+                    return redirect(url_for("historique"))
+                else:
+                    return f"<h2>❌ Erreur lors de la publication :</h2><pre>{post_resp.text}</pre><p><a href='/calendar'>Retour</a></p>"
+                
+            except Exception as e:
+                return f"<h2>❌ Erreur lors de la publication :</h2><pre>{str(e)}</pre><p><a href='/calendar'>Retour</a></p>"
+        
+        # Sauvegarder les modifications
+        db.session.commit()
+        
+        return redirect(url_for("calendar"))
+    
+    # Formater la date pour l'input datetime-local
+    formatted_date = post.published_at.strftime("%Y-%m-%dT%H:%M") if post.published_at else ""
+    
+    return render_template("edit_post.html", post=post, formatted_date=formatted_date)
+
+@app.route("/delete_post/<int:post_id>", methods=["GET", "POST"])
+def delete_post(post_id):
+    if 'profile' not in session:
+        return redirect(url_for("index"))
+    
+    # Récupérer l'utilisateur et vérifier qu'il existe
+    user = User.query.filter_by(sub=session['profile'].get("sub", "")).first()
+    if not user:
+        return "Utilisateur introuvable"
+    
+    # Récupérer le post et vérifier qu'il appartient à l'utilisateur
+    post = Post.query.filter_by(id=post_id, user_id=user.id).first()
+    if not post:
+        return "Post introuvable ou vous n'avez pas les droits pour le supprimer"
+    
+    if request.method == "POST":
+        # Confirmer la suppression
+        db.session.delete(post)
+        db.session.commit()
+        
+        # Rediriger vers le calendrier ou l'historique selon le type de post
+        if post.scheduled:
+            return redirect(url_for("calendar"))
+        else:
+            return redirect(url_for("historique"))
+    
+    # Afficher la page de confirmation
+    return render_template("delete_post.html", post=post)
+
 
 @app.route("/profil", methods=["GET", "POST"])
 def profil():
