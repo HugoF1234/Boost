@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="d-flex align-center justify-between mb-4">
+    <h1>✏️ Modifier le post</h1>
+    <div>
+        <a href="{{ url_for('calendar') }}" class="btn btn-outline">
+            <i class="fa-solid fa-arrow-left"></i>
+            Retour au calendrier
+        </a>
+    </div>
+</div>
+
+<div class="content-card">
+    <form method="post" action="{{ url_for('edit_post', post_id=post.id) }}">
+        <div class="form-group">
+            <label class="form-label">Contenu du post</label>
+            <textarea name="post_content" class="form-control" rows="8" required>{{ post.content }}</textarea>
+        </div>
+        
+        <div class="form-row">
+            <div class="form-group">
+                <label class="form-label">📅 Date et heure de publication</label>
+                <input type="datetime-local" name="publish_time" class="form-control" value="{{ formatted_date }}" required>
+            </div>
+            <div class="form-group" style="flex: 0.5;">
+                <label class="form-label">&nbsp;</label>
+                <div style="display: flex; align-items: center; height: 43px;">
+                    <input type="checkbox" id="publish-now" name="publish_now" style="margin-right: 8px;">
+                    <label for="publish-now">Publier maintenant</label>
+                </div>
+            </div>
+        </div>
+        
+        <div class="d-flex gap-3 mt-4">
+            <button type="submit" class="btn btn-primary">
+                <i class="fa-solid fa-floppy-disk"></i>
+                Enregistrer les modifications
+            </button>
+            <a href="{{ url_for('calendar') }}" class="btn btn-outline">Annuler</a>
+            <a href="{{ url_for('delete_post', post_id=post.id) }}" class="btn btn-danger" style="margin-left: auto;">
+                <i class="fa-solid fa-trash"></i>
+                Supprimer
+            </a>
+        </div>
+    </form>
+</div>
+
+<script>
+// Auto-set current date and time for the datetime-local input if value is not set
+window.addEventListener('load', function() {
+    const dateInput = document.querySelector('input[type="datetime-local"]');
+    if (dateInput && !dateInput.value) {
+        const now = new Date();
+        now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
+        now.setMinutes(now.getMinutes() + 30); // Add 30 minutes for default scheduling
+        dateInput.value = now.toISOString().slice(0, 16);
+    }
+});
+</script>
+{% endblock %}
