@@ -413,7 +413,6 @@ def profil():
 
     return render_template("profil.html", **session['profile'])
 
-
 @app.route("/historique")
 def historique():
     if 'profile' not in session:
@@ -425,8 +424,9 @@ def historique():
     if not user:
         return "<p>Utilisateur introuvable en base.</p>"
 
+    # Récupérer les objets Post complets au lieu de juste le contenu
     posts = Post.query.filter_by(user_id=user.id).order_by(Post.published_at.desc()).all()
-    return render_template("historique.html", posts=[p.content for p in posts])
+    return render_template("historique.html", posts=posts)
 
 @app.route("/parametres")
 def parametres():
