@@ -226,7 +226,20 @@ def callback():
         return f"Erreur inattendue: {str(e)}"
 
 # Modification à apporter à la route dashboard dans app.py
+# Ajouter ce code à votre app.py pour créer un filtre personnalisé qui extrait les hashtags
 
+import re
+
+@app.template_filter('findhashtags')
+def find_hashtags(text):
+    """Extraire les hashtags d'un texte"""
+    if not text:
+        return []
+    # Pattern pour trouver les hashtags
+    hashtag_pattern = r'#(\w+)'
+    hashtags = re.findall(hashtag_pattern, text)
+    return ['#' + tag for tag in hashtags]
+    
 @app.route("/dashboard", methods=["GET", "POST"])
 def dashboard():
     if 'profile' not in session:
