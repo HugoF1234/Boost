@@ -7,6 +7,115 @@
     </div>
 </div>
 
+<!-- Section pour l'article sélectionné (s'affiche en priorité) -->
+{% if selected_article %}
+<div class="content-card">
+    <h2>📝 Générer un post à partir de l'article sélectionné</h2>
+    
+    {% if article_success %}
+    <div style="background-color: #dcfce7; border: 1px solid #86efac; color: #166534; padding: 12px; border-radius: 8px; margin-bottom: 16px; display: flex; align-items: center; gap: 10px;">
+        <i class="fa-solid fa-check-circle" style="font-size: 18px;"></i>
+        <div>
+            <strong>Article sélectionné avec succès!</strong>
+            <div>Vous pouvez maintenant personnaliser votre post basé sur cet article.</div>
+        </div>
+    </div>
+    {% endif %}
+    
+    <div style="padding: 24px; background-color: var(--grey-light); border-radius: 8px; margin: 20px 0; box-shadow: inset 0 1px 3px rgba(0,0,0,0.1);">
+        <h3 style="margin-bottom: 12px; color: var(--primary);">{{ selected_article.title|clean_html }}</h3>
+        <p style="margin-bottom: 16px;">{{ selected_article.description|clean_html }}</p>
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+            <div style="font-size: 13px; color: var(--text-light); display: flex; align-items: center; gap: 8px;">
+                <i class="fa-solid fa-globe"></i>
+                <a href="{{ selected_article.url }}" target="_blank" style="color: var(--primary); text-decoration: none;">
+                    {{ selected_article.source.name }}
+                </a>
+            </div>
+            <div style="font-size: 13px; color: var(--text-light); display: flex; align-items: center; gap: 8px;">
+                <i class="fa-regular fa-calendar"></i>
+                <span>{{ selected_article.formatted_date }}</span>
+            </div>
+        </div>
+    </div>
+    
+    <form method="post" class="mt-4">
+        <div class="form-row">
+            <div class="form-group">
+                <label class="form-label">Ton du post</label>
+                <select name="tone" class="form-control">
+                    <option value="professionnel">Professionnel</option>
+                    <option value="familier">Familier</option>
+                    <option value="inspirant">Inspirant</option>
+                    <option value="humoristique">Humoristique</option>
+                    <option value="factuel">Factuel</option>
+                    <option value="critique">Critique</option>
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label class="form-label">Perspective</label>
+                <select name="perspective" class="form-control">
+                    <option value="neutre">Neutre</option>
+                    <option value="enthousiaste">Enthousiaste</option>
+                    <option value="analytique">Analytique</option>
+                    <option value="innovant">Innovateur</option>
+                    <option value="expert">Expert du domaine</option>
+                </select>
+            </div>
+        </div>
+        
+        <div class="form-group mt-4">
+            <label class="form-label">Format du post</label>
+            <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 16px; margin-top: 8px;">
+                <div style="border: 1px solid var(--border); border-radius: 8px; padding: 16px; cursor: pointer; transition: all 0.2s;" 
+                     onclick="this.querySelector('input').checked = true; highlightSelectedFormat(this);" 
+                     class="format-option">
+                    <input type="radio" name="format" value="standard" checked style="margin-right: 8px;">
+                    <strong>Standard</strong>
+                    <p style="margin-top: 8px; font-size: 13px; color: var(--text-light);">Post classique avec votre analyse</p>
+                </div>
+                
+                <div style="border: 1px solid var(--border); border-radius: 8px; padding: 16px; cursor: pointer; transition: all 0.2s;" 
+                     onclick="this.querySelector('input').checked = true; highlightSelectedFormat(this);" 
+                     class="format-option">
+                    <input type="radio" name="format" value="question" style="margin-right: 8px;">
+                    <strong>Question</strong>
+                    <p style="margin-top: 8px; font-size: 13px; color: var(--text-light);">Poser une question pour engager</p>
+                </div>
+                
+                <div style="border: 1px solid var(--border); border-radius: 8px; padding: 16px; cursor: pointer; transition: all 0.2s;" 
+                     onclick="this.querySelector('input').checked = true; highlightSelectedFormat(this);" 
+                     class="format-option">
+                    <input type="radio" name="format" value="listpoints" style="margin-right: 8px;">
+                    <strong>Points clés</strong>
+                    <p style="margin-top: 8px; font-size: 13px; color: var(--text-light);">Liste de points importants</p>
+                </div>
+                
+                <div style="border: 1px solid var(--border); border-radius: 8px; padding: 16px; cursor: pointer; transition: all 0.2s;" 
+                     onclick="this.querySelector('input').checked = true; highlightSelectedFormat(this);" 
+                     class="format-option">
+                    <input type="radio" name="format" value="story" style="margin-right: 8px;">
+                    <strong>Histoire</strong>
+                    <p style="margin-top: 8px; font-size: 13px; color: var(--text-light);">Format narratif engageant</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="d-flex gap-3 mt-4">
+            <button type="submit" name="generate_from_article" class="btn btn-primary">
+                <i class="fa-solid fa-wand-magic-sparkles"></i>
+                Générer mon post
+            </button>
+            
+            <a href="{{ url_for('dashboard') }}" class="btn btn-outline">
+                Annuler
+            </a>
+        </div>
+    </form>
+</div>
+{% else %}
+<!-- Section de génération de post standard (s'affiche si aucun article n'est sélectionné) -->
 <div class="content-card">
     <h2>💬 Générer un nouveau post</h2>
     <p>Utilisez l'IA pour créer rapidement un contenu engageant pour votre audience LinkedIn.</p>
@@ -54,6 +163,7 @@
         </a>
     </div>
 </div>
+{% endif %}
 
 {% if draft %}
 <div class="content-card">
@@ -175,7 +285,7 @@
 </div>
 
 <script>
-document.getElementById("images").addEventListener("change", function(event) {
+document.getElementById("images")?.addEventListener("change", function(event) {
     const preview = document.getElementById("image-preview");
     preview.innerHTML = "";
 
@@ -210,6 +320,26 @@ window.addEventListener('load', function() {
         now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
         now.setMinutes(now.getMinutes() + 30); // Add 30 minutes for default scheduling
         dateInput.value = now.toISOString().slice(0, 16);
+    }
+});
+
+function highlightSelectedFormat(element) {
+    // Réinitialiser tous les éléments
+    document.querySelectorAll('.format-option').forEach(el => {
+        el.style.borderColor = 'var(--border)';
+        el.style.backgroundColor = 'transparent';
+    });
+    
+    // Mettre en évidence l'élément sélectionné
+    element.style.borderColor = 'var(--primary)';
+    element.style.backgroundColor = 'rgba(10, 102, 194, 0.05)';
+}
+
+// Initialiser le format sélectionné
+document.addEventListener('DOMContentLoaded', function() {
+    const checkedOption = document.querySelector('.format-option input:checked');
+    if (checkedOption) {
+        highlightSelectedFormat(checkedOption.closest('.format-option'));
     }
 });
 </script>
