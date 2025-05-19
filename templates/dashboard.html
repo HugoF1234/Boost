@@ -150,22 +150,15 @@
         </div>
     </form>
     
-    <div class="form-group" style="margin-top: 16px;">
-        <a href="{{ url_for('news_assistant') }}" style="display: block; padding: 16px; background-color: var(--grey-light); border-radius: 8px; text-decoration: none; color: var(--text-dark); transition: all 0.2s ease;">
-            <div class="d-flex align-center gap-3">
-                <div style="font-size: 24px; color: var(--primary);">
-                    <i class="fa-solid fa-newspaper"></i>
+    <!-- Design minimaliste pour la section actualité -->
+    <div style="margin-top: 20px; border-top: 1px solid var(--grey); padding-top: 20px;">
+        <a href="{{ url_for('news_assistant') }}" style="text-decoration: none; color: inherit;">
+            <div class="d-flex align-center justify-between">
+                <div class="d-flex align-center gap-2">
+                    <i class="fa-solid fa-newspaper text-primary" style="font-size: 18px;"></i>
+                    <span style="font-weight: 500;">Créer un post basé sur l'actualité</span>
                 </div>
-                <div>
-                    <div style="font-weight: 600; margin-bottom: 4px;">Créer un post basé sur l'actualité</div>
-                    <div style="color: var(--text-light); font-size: 13px;">Trouvez les dernières actualités de votre secteur et générez des posts percutants.</div>
-                </div>
-                <div style="margin-left: auto;">
-                    <span class="btn btn-outline" style="padding: 6px 12px; font-size: 13px;">
-                        <i class="fa-solid fa-arrow-right"></i>
-                        Explorer
-                    </span>
-                </div>
+                <i class="fa-solid fa-chevron-right text-light"></i>
             </div>
         </a>
     </div>
