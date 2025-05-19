@@ -150,7 +150,7 @@
 
 {% if selected %}
 <div class="content-card">
-    <h2>Créer un post à partir de cet article</h2>
+    <h2>Article sélectionné</h2>
     
     <!-- Notification de succès de sélection -->
     <div style="background-color: #dcfce7; border: 1px solid #86efac; color: #166534; padding: 12px; border-radius: 8px; margin-bottom: 16px; display: flex; align-items: center; gap: 10px;">
@@ -178,80 +178,17 @@
         </div>
     </div>
     
-    <form method="post" action="{{ url_for('news_assistant') }}" class="mt-4">
-        <div class="form-row">
-            <div class="form-group">
-                <label class="form-label">Ton du post</label>
-                <select name="tone" class="form-control">
-                    <option value="professionnel">Professionnel</option>
-                    <option value="familier">Familier</option>
-                    <option value="inspirant">Inspirant</option>
-                    <option value="humoristique">Humoristique</option>
-                    <option value="factuel">Factuel</option>
-                    <option value="critique">Critique</option>
-                </select>
-            </div>
-            
-            <div class="form-group">
-                <label class="form-label">Perspective</label>
-                <select name="perspective" class="form-control">
-                    <option value="neutre">Neutre</option>
-                    <option value="enthousiaste">Enthousiaste</option>
-                    <option value="analytique">Analytique</option>
-                    <option value="innovant">Innovateur</option>
-                    <option value="expert">Expert du domaine</option>
-                </select>
-            </div>
-        </div>
+    <div class="d-flex gap-3 mt-4">
+        <a href="{{ url_for('dashboard') }}" class="btn btn-primary">
+            <i class="fa-solid fa-pen-to-square"></i>
+            Créer mon post sur le dashboard
+        </a>
         
-        <div class="form-group mt-4">
-            <label class="form-label">Format du post</label>
-            <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 16px; margin-top: 8px;">
-                <div style="border: 1px solid var(--border); border-radius: 8px; padding: 16px; cursor: pointer; transition: all 0.2s;" 
-                     onclick="this.querySelector('input').checked = true; highlightSelectedFormat(this);" 
-                     class="format-option">
-                    <input type="radio" name="format" value="standard" checked style="margin-right: 8px;">
-                    <strong>Standard</strong>
-                    <p style="margin-top: 8px; font-size: 13px; color: var(--text-light);">Post classique avec votre analyse</p>
-                </div>
-                
-                <div style="border: 1px solid var(--border); border-radius: 8px; padding: 16px; cursor: pointer; transition: all 0.2s;" 
-                     onclick="this.querySelector('input').checked = true; highlightSelectedFormat(this);" 
-                     class="format-option">
-                    <input type="radio" name="format" value="question" style="margin-right: 8px;">
-                    <strong>Question</strong>
-                    <p style="margin-top: 8px; font-size: 13px; color: var(--text-light);">Poser une question pour engager</p>
-                </div>
-                
-                <div style="border: 1px solid var(--border); border-radius: 8px; padding: 16px; cursor: pointer; transition: all 0.2s;" 
-                     onclick="this.querySelector('input').checked = true; highlightSelectedFormat(this);" 
-                     class="format-option">
-                    <input type="radio" name="format" value="listpoints" style="margin-right: 8px;">
-                    <strong>Points clés</strong>
-                    <p style="margin-top: 8px; font-size: 13px; color: var(--text-light);">Liste de points importants</p>
-                </div>
-                
-                <div style="border: 1px solid var(--border); border-radius: 8px; padding: 16px; cursor: pointer; transition: all 0.2s;" 
-                     onclick="this.querySelector('input').checked = true; highlightSelectedFormat(this);" 
-                     class="format-option">
-                    <input type="radio" name="format" value="story" style="margin-right: 8px;">
-                    <strong>Histoire</strong>
-                    <p style="margin-top: 8px; font-size: 13px; color: var(--text-light);">Format narratif engageant</p>
-                </div>
-            </div>
-        </div>
-        
-        <div class="d-flex gap-3 mt-4">
-            <button type="submit" name="generate_post" class="btn btn-primary">
-                <i class="fa-solid fa-wand-magic-sparkles"></i>
-                Générer mon post
-            </button>
-            
-            <a href="{{ url_for('news_assistant') }}" class="btn btn-outline">
-                Annuler
-            </a>
-        </div>
-    </form>
+        <a href="{{ url_for('news_assistant') }}" class="btn btn-outline">
+            <i class="fa-solid fa-arrow-rotate-left"></i>
+            Choisir un autre article
+        </a>
+    </div>
 </div>
 {% endif %}
 
