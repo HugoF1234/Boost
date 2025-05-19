@@ -14,10 +14,22 @@
 </div>
 
 {% if error %}
-<div style="margin-bottom: 20px; padding: 16px; background-color: #fee2e2; border-radius: 8px; border: 1px solid #fca5a5; color: #b91c1c;">
+<div style="margin-bottom: 20px; padding: 16px 20px; background-color: #fee2e2; border-radius: 8px; border: 1px solid #fca5a5; color: #b91c1c;">
     <div class="d-flex align-center gap-2">
         <i class="fa-solid fa-circle-exclamation"></i>
-        <span>{{ error }}</span>
+        <div>
+            <strong>Une erreur s'est produite</strong>
+            <div>{{ error }}</div>
+            
+            <!-- Ajouter des suggestions d'action -->
+            <div style="margin-top: 8px;">
+                <ul style="padding-left: 20px; margin: 0;">
+                    <li>Essayez avec des mots-clés différents</li>
+                    <li>Vérifiez que votre connexion internet est stable</li>
+                    <li>Si le problème persiste, contactez l'administrateur</li>
+                </ul>
+            </div>
+        </div>
     </div>
 </div>
 {% endif %}
@@ -100,7 +112,14 @@
                             
                             <div style="margin-top: 16px;">
                                 <form method="post" action="{{ url_for('news_assistant') }}">
-                                    <input type="hidden" name="article_index" value="{{ loop.index0 }}">
+                                    <!-- Utiliser des champs séparés au lieu d'un JSON complet -->
+                                    <input type="hidden" name="article_title" value="{{ article.title }}">
+                                    <input type="hidden" name="article_description" value="{{ article.description }}">
+                                    <input type="hidden" name="article_source" value="{{ article.source.name }}">
+                                    <input type="hidden" name="article_url" value="{{ article.url }}">
+                                    <input type="hidden" name="article_date" value="{{ article.formatted_date }}">
+                                    <input type="hidden" name="article_image" value="{{ article.urlToImage }}">
+                                    
                                     <button type="submit" name="select_article" class="btn btn-outline" style="width: 100%;">
                                         <i class="fa-solid fa-pen-to-square"></i>
                                         Utiliser cet article
@@ -132,6 +151,15 @@
 {% if selected %}
 <div class="content-card">
     <h2>Créer un post à partir de cet article</h2>
+    
+    <!-- Notification de succès de sélection -->
+    <div style="background-color: #dcfce7; border: 1px solid #86efac; color: #166534; padding: 12px; border-radius: 8px; margin-bottom: 16px; display: flex; align-items: center; gap: 10px;">
+        <i class="fa-solid fa-check-circle" style="font-size: 18px;"></i>
+        <div>
+            <strong>Article sélectionné avec succès!</strong>
+            <div>Vous pouvez maintenant personnaliser votre post basé sur cet article.</div>
+        </div>
+    </div>
     
     <div style="padding: 24px; background-color: var(--grey-light); border-radius: 8px; margin: 20px 0; box-shadow: inset 0 1px 3px rgba(0,0,0,0.1);">
         <h3 style="margin-bottom: 12px; color: var(--primary);">{{ selected.title|clean_html }}</h3>
@@ -247,6 +275,5 @@ document.addEventListener('DOMContentLoaded', function() {
         highlightSelectedFormat(checkedOption.closest('.format-option'));
     }
 });
-
 </script>
 {% endblock %}
