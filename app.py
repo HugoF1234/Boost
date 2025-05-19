@@ -349,23 +349,28 @@ def news_assistant():
             return redirect(url_for('news_assistant', keyword=search_keyword, language=language))
             
         elif 'select_article' in request.form:
-            # L'utilisateur a sélectionné un article
+            # L'utilisateur a sélectionné un article - utilisation des champs séparés
             try:
-                article_index = int(request.form.get('article_index', 0))
+                # Reconstruire l'article à partir des champs individuels
+                selected_article = {
+                    'title': request.form.get('article_title', ''),
+                    'description': request.form.get('article_description', ''),
+                    'source': {'name': request.form.get('article_source', '')},
+                    'url': request.form.get('article_url', ''),
+                    'formatted_date': request.form.get('article_date', ''),
+                    'urlToImage': request.form.get('article_image', '')
+                }
                 
-                # Récupérer à nouveau les articles et sélectionner celui avec l'index
-                if search_keyword:
-                    articles = get_news_by_sector(sector, search_keyword, language=language)
+                # Vérifier que l'article a un titre et une description
+                if not selected_article['title'] or not selected_article['description']:
+                    error_message = "L'article sélectionné est incomplet. Veuillez réessayer."
                 else:
-                    articles = get_news_by_sector(sector, language=language)
-                
-                if articles and 0 <= article_index < len(articles):
-                    selected_article = articles[article_index]
+                    # Stocker l'article dans la session
                     session['selected_article'] = selected_article
-                else:
-                    error_message = "Article introuvable. Veuillez réessayer."
+                    success_message = "Article sélectionné avec succès! Vous pouvez maintenant générer un post."
             except Exception as e:
                 error_message = f"Erreur lors de la sélection de l'article: {str(e)}"
+                logger.error(f"Erreur de sélection d'article: {str(e)}")
             
         elif 'generate_post' in request.form:
             # Génération d'un post basé sur l'article sélectionné
@@ -376,10 +381,22 @@ def news_assistant():
                 # Récupérer les paramètres du formulaire
                 tone = request.form.get("tone", "professionnel")
                 perspective = request.form.get("perspective", "neutre")
+                format_type = request.form.get("format", "standard")
                 
                 try:
                     # Générer le contenu avec Gemini
                     model = genai.GenerativeModel("gemini-1.5-pro")
+                    
+                    # Adapter le prompt selon le format choisi
+                    format_instructions = {
+                        "standard": "Rédige un post classique donnant ton analyse sur ce sujet",
+                        "question": "Rédige un post sous forme de question engageante pour susciter des réactions",
+                        "listpoints": "Rédige un post présentant les points clés ou enseignements principaux",
+                        "story": "Rédige un post sous forme d'histoire ou de narration engageante"
+                    }
+                    
+                    format_text = format_instructions.get(format_type, format_instructions["standard"])
+                    
                     prompt = f"""
                     Rédige un post LinkedIn professionnel sur l'actualité suivante:
                     
@@ -390,6 +407,7 @@ def news_assistant():
                     Instructions:
                     - Ton: {tone}
                     - Perspective: {perspective}
+                    - Format: {format_text}
                     - Secteur d'expertise: {sector}
                     - Inclus 2-3 hashtags pertinents
                     - Le post doit être personnel, comme si la personne donnait son avis sur cette actualité
@@ -418,36 +436,46 @@ def news_assistant():
                         db.session.add(new_post)
                         db.session.commit()
                         
-                        success_message = "Post généré avec succès et programmé pour publication dans 1 heure."
+                        success_message = "Post généré avec succès et planifié pour dans 1 heure."
                     
                     # Rediriger vers le dashboard pour éditer
                     return redirect(url_for("dashboard"))
                     
                 except Exception as e:
                     error_message = f"Erreur lors de la génération du post: {str(e)}"
-
+                    logger.error(f"Erreur génération post: {str(e)}")
+    
+    # Pour les requêtes GET ou si POST n'a pas redirigé
     try:
-        # Récupérer les actualités
-        logger.info(f"Tentative de récupération d'actualités pour le secteur: {sector}, keyword: {search_keyword}, langue: {language}")
+        # Récupérer les actualités avec gestion d'erreurs améliorée
+        logger.info(f"Recherche d'actualités: secteur={sector}, keyword={search_keyword}, langue={language}")
         
         if search_keyword:
-            news_articles = get_news_by_sector(sector, search_keyword, language=language)
+            news_articles = get_news_by_sector(sector, search_keyword, language=language, days=30)
         else:
-            news_articles = get_news_by_sector(sector, language=language)
-            
+            news_articles = get_news_by_sector(sector, language=language, days=30)
+        
+        # Log du nombre d'articles trouvés
         logger.info(f"Nombre d'articles trouvés: {len(news_articles)}")
         
-        # Si aucun article trouvé, essayer avec un secteur plus générique
-        if not news_articles and sector != "general":
-            logger.info(f"Aucun article trouvé pour {sector}, tentative avec 'general'")
-            news_articles = get_news_by_sector("general", search_keyword, language=language)
-            logger.info(f"Nombre d'articles trouvés avec 'general': {len(news_articles)}")
-    
+        # Si aucun article n'est trouvé et qu'un mot-clé a été fourni, essayer sans le mot-clé
+        if not news_articles and search_keyword:
+            logger.info(f"Aucun article trouvé avec mot-clé, tentative sans mot-clé")
+            news_articles = get_news_by_sector(sector, language=language, days=30)
+            
+            # Si toujours rien, essayer avec un secteur général
+            if not news_articles and sector != "general":
+                logger.info(f"Tentative avec le secteur 'general'")
+                news_articles = get_news_by_sector("general", search_keyword, language=language, days=30)
+        
     except Exception as e:
         error_message = f"Erreur lors de la récupération des actualités: {str(e)}"
-        logger.error(error_message)
-        logger.exception(e)  # Ceci va logger la stack trace complète
+        logger.error(f"Exception lors de la récupération des actualités: {str(e)}")
         news_articles = []
+    
+    # Récupérer l'article sélectionné depuis la session si disponible
+    if not selected_article and 'selected_article' in session:
+        selected_article = session.get('selected_article')
     
     return render_template(
         "news_assistant.html",
@@ -459,7 +487,7 @@ def news_assistant():
         error=error_message,
         success=success_message
     )
-
+    
 @app.route("/")
 def index():
     session.clear()
