@@ -115,7 +115,7 @@
                 Générer mon post
             </button>
             
-            <a href="{{ url_for('dashboard') }}" class="btn btn-outline">
+            <a href="{{ url_for('dashboard', clear='true') }}" class="btn btn-outline">
                 Annuler
             </a>
         </div>
@@ -213,7 +213,7 @@
                 <i class="fa-solid fa-paper-plane"></i>
                 Publier
             </button>
-            <a href="{{ url_for('dashboard') }}" class="btn btn-outline">Annuler</a>
+            <a href="{{ url_for('dashboard', clear='true') }}" class="btn btn-outline">Annuler</a>
         </div>
     </form>
 </div>
