@@ -221,46 +221,51 @@ def get_news_by_sector(sector, keywords=None, days=3, language="fr"):
 
 def get_news_by_sector_actual(sector, keywords=None, days=30, language="fr"):
     """
-    Récupère les actualités récentes par secteur d'activité avec recherche optimisée
+    Récupère les actualités récentes par secteur d'activité avec une recherche optimisée pour la pertinence
     """
-    # Mapping des secteurs avec des termes plus efficaces pour l'API
+    # Mapping des secteurs avec des termes plus efficaces et ciblés
     sector_keywords = {
-        'tech': 'technologie OR informatique OR numérique',
-        'marketing': 'marketing OR publicité OR communication',
-        'finance': 'finance OR économie OR banque',
-        'sante': 'santé OR médecine OR hôpital',
-        'education': 'éducation OR école OR université',
-        'rh': 'ressources humaines OR emploi OR recrutement',
-        'consulting': 'conseil OR consulting OR entreprise',
-        'retail': 'commerce OR distribution OR consommation',
+        'tech': '(technologie OR tech OR informatique OR numérique OR innovation OR intelligence artificielle OR IA OR AI)',
+        'marketing': '(marketing OR publicité OR communication OR marque OR branding OR digital)',
+        'finance': '(finance OR économie OR banque OR investissement OR bourse OR marché)',
+        'sante': '(santé OR médecine OR hôpital OR médical OR healthcare)',
+        'education': '(éducation OR école OR université OR formation OR enseignement OR apprentissage)',
+        'rh': '(ressources humaines OR RH OR emploi OR recrutement OR talents OR carrière)',
+        'consulting': '(conseil OR consulting OR stratégie OR entreprise OR management)',
+        'retail': '(commerce OR distribution OR consommation OR retail OR magasin)',
     }
     
-    # Construire une requête plus efficace
+    # Construire une requête plus précise
     base_query = sector_keywords.get(sector, sector)
     
-    # Ajouter les mots-clés si présents, sinon ajouter "actualité" pour garantir des résultats
+    # Configuration des paramètres de recherche avancés
     if keywords:
-        search_query = f"{base_query} AND {keywords}"
+        # Entourer les mots-clés avec des guillemets pour améliorer la précision
+        formatted_keywords = f'"{keywords}"' if ' ' not in keywords else keywords
+        search_query = f"{base_query} AND {formatted_keywords}"
     else:
-        search_query = f"{base_query} AND (actualité OR news OR information)"
+        # Ajouter des termes liés à l'actualité mais avec une priorité plus faible
+        search_query = f"{base_query} AND (actualité OR news OR information OR tendance OR innovation)"
     
-    # Augmenter la période pour avoir plus d'articles (30 jours au lieu de 3)
-    # NewsAPI gratuit permet d'aller jusqu'à un mois en arrière
-    date_from = (datetime.utcnow() - timedelta(days=days)).strftime('%Y-%m-%d')
+    # Calculer les dates pour la période de recherche
+    current_date = datetime.utcnow()
+    date_to = current_date.strftime('%Y-%m-%d')
+    date_from = (current_date - timedelta(days=days)).strftime('%Y-%m-%d')
     
-    # Préparer les paramètres de la requête
+    # Paramètres optimisés de la requête
     params = {
         'q': search_query,
         'from': date_from,
-        'sortBy': 'relevancy',  # Trier par pertinence plutôt que date pour avoir des résultats de qualité
+        'to': date_to,                  # Ajout d'une date de fin pour plus de précision
+        'sortBy': 'relevancy',          # Trier par pertinence
         'language': language,
         'apiKey': NEWS_API_KEY,
-        'pageSize': 100  # Demander le maximum d'articles (100 est la limite)
+        'pageSize': 100                 # Maximum d'articles
     }
     
     # Log détaillé pour le débogage
     logger.info(f"Requête NewsAPI: {NEWS_API_URL}")
-    logger.info(f"Paramètres: q={search_query}, lang={language}, from={date_from}")
+    logger.info(f"Paramètres: q={search_query}, lang={language}, from={date_from}, to={date_to}")
     
     try:
         # Appel à l'API avec un timeout étendu
@@ -276,43 +281,77 @@ def get_news_by_sector_actual(sector, keywords=None, days=30, language="fr"):
             
             logger.info(f"Résultats totaux: {total_results}, Articles retournés: {len(articles)}")
             
-            # Filtrer les articles sans contenu
+            # Amélioration du filtrage des articles
             valid_articles = []
             for article in articles:
-                # Vérifier que l'article a du contenu
-                if article.get('title') and article.get('description'):
+                # Vérification avancée de la qualité du contenu
+                if (article.get('title') and article.get('description') and 
+                    len(article.get('title', '')) > 15 and  # Ignorer les titres trop courts
+                    len(article.get('description', '')) > 50 and  # Ignorer les descriptions trop courtes
+                    not article.get('title', '').startswith('Advertising') and  # Éliminer la publicité
+                    'publicité' not in article.get('title', '').lower()):  # Éliminer la publicité
+                    
                     try:
                         # Formater la date
                         date_str = article.get('publishedAt', '')
                         date_obj = datetime.strptime(date_str, '%Y-%m-%dT%H:%M:%SZ')
                         article['formatted_date'] = date_obj.strftime('%d/%m/%Y')
-                    except:
-                        article['formatted_date'] = 'Date inconnue'
-                    
-                    valid_articles.append(article)
+                        
+                        # Nettoyage du contenu (enlever les balises HTML, etc.)
+                        if article.get('description'):
+                            article['description'] = clean_html(article.get('description', ''))
+                        if article.get('title'):
+                            article['title'] = clean_html(article.get('title', ''))
+                            
+                        # Ajouter un score de pertinence pour le tri
+                        score = 0
+                        # Articles avec image sont plus visuellement attractifs
+                        if article.get('urlToImage'):
+                            score += 10
+                        # Articles récents sont plus pertinents
+                        days_old = (current_date - date_obj).days
+                        score -= days_old * 2
+                        # Articles avec source reconnue sont plus fiables
+                        if article.get('source', {}).get('name') in ['Le Monde', 'Reuters', 'Bloomberg', 'Les Echos', 'Financial Times']:
+                            score += 15
+                            
+                        article['_relevance_score'] = score
+                        valid_articles.append(article)
+                    except Exception as e:
+                        logger.warning(f"Erreur lors du traitement de l'article: {e}")
+                        continue
+            
+            # Trier les articles par score de pertinence
+            valid_articles.sort(key=lambda x: x.get('_relevance_score', 0), reverse=True)
             
             # Log des articles valides
-            logger.info(f"Articles valides après filtrage: {len(valid_articles)}")
+            logger.info(f"Articles valides après filtrage et tri: {len(valid_articles)}")
             
             return valid_articles
+        
         elif response.status_code == 401:
             error_text = response.json().get('message', 'Erreur d\'authentification')
             logger.error(f"Erreur 401: {error_text}")
             raise Exception(f"Erreur d'API: {error_text}")
+        
         elif response.status_code == 429:
             error_text = response.json().get('message', 'Limite de requêtes dépassée')
             logger.error(f"Erreur 429: {error_text}")
             raise Exception(f"Limite d'API atteinte: {error_text}")
+        
         else:
             error_text = response.text
             logger.error(f"Erreur API {response.status_code}: {error_text}")
             raise Exception(f"Erreur de l'API NewsAPI ({response.status_code})")
+    
     except requests.exceptions.Timeout:
         logger.error("Timeout lors de la connexion à NewsAPI")
         raise Exception("L'API ne répond pas - délai d'attente dépassé")
+    
     except requests.exceptions.ConnectionError:
         logger.error("Problème de connexion réseau pour NewsAPI")
         raise Exception("Impossible de se connecter à l'API - vérifiez votre connexion")
+    
     except Exception as e:
         logger.error(f"Exception: {str(e)}")
         raise
@@ -658,8 +697,9 @@ def dashboard():
 from datetime import datetime
 import html
 import re
+import re
+import html
 
-@app.template_filter('clean_html')
 def clean_html(text):
     """Nettoie le texte des tags HTML et entités"""
     if not text:
@@ -673,6 +713,12 @@ def clean_html(text):
     
     # Nettoyage des espaces multiples
     text = re.sub(r'\s+', ' ', text).strip()
+    
+    # Enlever les séquences répétitives souvent présentes dans les flux d'actualités
+    text = re.sub(r'(Read More|Lire la suite|En savoir plus)\.?$', '', text, flags=re.IGNORECASE)
+    
+    # Enlever les préfixes couramment ajoutés par les agrégateurs
+    text = re.sub(r'^(WATCH|VIDEO|EXCLUSIVE|BREAKING):', '', text)
     
     return text
 
