@@ -349,7 +349,7 @@ def news_assistant():
             return redirect(url_for('news_assistant', keyword=search_keyword, language=language))
             
         elif 'select_article' in request.form:
-            # L'utilisateur a sélectionné un article - utilisation des champs séparés
+            # L'utilisateur a sélectionné un article
             try:
                 # Reconstruire l'article à partir des champs individuels
                 selected_article = {
@@ -367,83 +367,19 @@ def news_assistant():
                 else:
                     # Stocker l'article dans la session
                     session['selected_article'] = selected_article
-                    success_message = "Article sélectionné avec succès! Vous pouvez maintenant générer un post."
+                    # Stocker un message flash pour afficher sur le dashboard
+                    session['article_success'] = "Article sélectionné avec succès! Vous pouvez maintenant générer un post."
+                    
+                    # Rediriger directement vers le dashboard
+                    return redirect(url_for("dashboard"))
             except Exception as e:
                 error_message = f"Erreur lors de la sélection de l'article: {str(e)}"
                 logger.error(f"Erreur de sélection d'article: {str(e)}")
             
         elif 'generate_post' in request.form:
-            # Génération d'un post basé sur l'article sélectionné
-            article = session.get('selected_article')
-            if not article:
-                error_message = "Aucun article sélectionné. Veuillez d'abord choisir un article."
-            else:
-                # Récupérer les paramètres du formulaire
-                tone = request.form.get("tone", "professionnel")
-                perspective = request.form.get("perspective", "neutre")
-                format_type = request.form.get("format", "standard")
-                
-                try:
-                    # Générer le contenu avec Gemini
-                    model = genai.GenerativeModel("gemini-1.5-pro")
-                    
-                    # Adapter le prompt selon le format choisi
-                    format_instructions = {
-                        "standard": "Rédige un post classique donnant ton analyse sur ce sujet",
-                        "question": "Rédige un post sous forme de question engageante pour susciter des réactions",
-                        "listpoints": "Rédige un post présentant les points clés ou enseignements principaux",
-                        "story": "Rédige un post sous forme d'histoire ou de narration engageante"
-                    }
-                    
-                    format_text = format_instructions.get(format_type, format_instructions["standard"])
-                    
-                    prompt = f"""
-                    Rédige un post LinkedIn professionnel sur l'actualité suivante:
-                    
-                    Titre: {article.get('title')}
-                    Description: {article.get('description')}
-                    Source: {article.get('source', {}).get('name')}
-                    
-                    Instructions:
-                    - Ton: {tone}
-                    - Perspective: {perspective}
-                    - Format: {format_text}
-                    - Secteur d'expertise: {sector}
-                    - Inclus 2-3 hashtags pertinents
-                    - Le post doit être personnel, comme si la personne donnait son avis sur cette actualité
-                    - Maximum 280 caractères
-                    - Format adapté à LinkedIn
-                    """
-                    
-                    response = model.generate_content(prompt)
-                    generated_content = response.text.strip()
-                    
-                    # Stocker le contenu généré dans la session
-                    session['draft'] = generated_content
-                    
-                    # Créer un post programmé dans la base de données
-                    if user:
-                        now = datetime.utcnow()
-                        scheduled_time = now + timedelta(hours=1)  # Planification par défaut dans 1 heure
-                        
-                        new_post = Post(
-                            content=generated_content,
-                            user_id=user.id,
-                            published_at=scheduled_time,
-                            scheduled=True
-                        )
-                        
-                        db.session.add(new_post)
-                        db.session.commit()
-                        
-                        success_message = "Post généré avec succès et planifié pour dans 1 heure."
-                    
-                    # Rediriger vers le dashboard pour éditer
-                    return redirect(url_for("dashboard"))
-                    
-                except Exception as e:
-                    error_message = f"Erreur lors de la génération du post: {str(e)}"
-                    logger.error(f"Erreur génération post: {str(e)}")
+            # Nous n'utiliserons plus cette partie directement
+            # Elle sera remplacée par le flux sur le dashboard
+            return redirect(url_for("dashboard"))
     
     # Pour les requêtes GET ou si POST n'a pas redirigé
     try:
