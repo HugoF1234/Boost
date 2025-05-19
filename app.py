@@ -163,7 +163,99 @@ def clean_html(text):
     
     return text
 
-
+def get_news_by_keyword(keyword, days=30, language="fr"):
+    """
+    Récupère les actualités en fonction d'un mot-clé, sans filtrage par secteur
+    
+    Args:
+        keyword (str): Mot-clé de recherche
+        days (int, optional): Nombre de jours pour les actualités récentes
+        language (str, optional): Langue des articles (fr, en)
+        
+    Returns:
+        list: Liste d'articles d'actualité
+    """
+    # Vérifier si nous avons un cache pour cette requête
+    cache_key = f"{keyword}_{language}_{days}.json"
+    cache_path = os.path.join(cache_dir, cache_key)
+    
+    # Vérifier si un cache valide existe (moins de 3 heures)
+    if os.path.exists(cache_path):
+        file_modified_time = os.path.getmtime(cache_path)
+        now = datetime.now().timestamp()
+        
+        # Si le cache a moins de 3 heures
+        if now - file_modified_time < 10800:  # 3 heures en secondes
+            try:
+                with open(cache_path, 'r', encoding='utf-8') as f:
+                    cached_data = json.load(f)
+                    logger.info(f"Utilisation du cache pour: {keyword}")
+                    return cached_data
+            except Exception as e:
+                logger.error(f"Erreur de lecture du cache: {str(e)}")
+    
+    # Si pas de cache valide, construire une requête directe à NewsAPI
+    date_from = (datetime.utcnow() - timedelta(days=days)).strftime('%Y-%m-%d')
+    
+    # Optimiser la requête avec des opérateurs de recherche
+    formatted_keyword = keyword
+    if ' ' in keyword and not (keyword.startswith('"') and keyword.endswith('"')):
+        # Ajouter des guillemets pour une recherche exacte de phrases
+        formatted_keyword = f'"{keyword}"'
+    
+    # Préparer les paramètres de la requête
+    params = {
+        'q': formatted_keyword,
+        'from': date_from,
+        'sortBy': 'relevancy',
+        'language': language,
+        'apiKey': NEWS_API_KEY,
+        'pageSize': 100
+    }
+    
+    logger.info(f"Requête NewsAPI par mot-clé: {NEWS_API_URL}")
+    logger.info(f"Paramètres: q={formatted_keyword}, lang={language}, from={date_from}")
+    
+    try:
+        # Appel à l'API
+        response = requests.get(NEWS_API_URL, params=params, timeout=15)
+        
+        if response.status_code == 200:
+            data = response.json()
+            articles = data.get('articles', [])
+            
+            # Filtrer les articles sans contenu
+            valid_articles = []
+            for article in articles:
+                if article.get('title') and article.get('description'):
+                    try:
+                        # Formater la date
+                        date_str = article.get('publishedAt', '')
+                        date_obj = datetime.strptime(date_str, '%Y-%m-%dT%H:%M:%SZ')
+                        article['formatted_date'] = date_obj.strftime('%d/%m/%Y')
+                    except:
+                        article['formatted_date'] = 'Date inconnue'
+                    
+                    valid_articles.append(article)
+            
+            # Sauvegarder les résultats dans le cache
+            try:
+                with open(cache_path, 'w', encoding='utf-8') as f:
+                    json.dump(valid_articles, f, ensure_ascii=False)
+                    logger.info(f"Cache créé pour: {keyword}")
+            except Exception as e:
+                logger.error(f"Erreur d'écriture du cache: {str(e)}")
+            
+            return valid_articles
+            
+        else:
+            error_text = response.text
+            logger.error(f"Erreur API {response.status_code}: {error_text}")
+            raise Exception(f"Erreur de l'API NewsAPI ({response.status_code})")
+            
+    except Exception as e:
+        logger.error(f"Exception lors de la recherche par mot-clé: {str(e)}")
+        raise
 
 def get_cached_news(query, language, days=3):
     """
@@ -412,22 +504,24 @@ def news_assistant():
         logger.info(f"Recherche d'actualités: secteur={sector}, keyword={search_keyword}, langue={language}")
         
         if search_keyword:
-            news_articles = get_news_by_sector(sector, search_keyword, language=language, days=30)
+            # Si l'utilisateur a entré un mot-clé, effectuer une recherche générale
+            # sans filtrer par secteur pour obtenir plus de résultats
+            news_articles = get_news_by_keyword(search_keyword, language=language, days=30)
         else:
+            # Sinon, afficher les actualités du secteur de l'utilisateur
             news_articles = get_news_by_sector(sector, language=language, days=30)
         
         # Log du nombre d'articles trouvés
         logger.info(f"Nombre d'articles trouvés: {len(news_articles)}")
         
-        # Si aucun article n'est trouvé et qu'un mot-clé a été fourni, essayer sans le mot-clé
-        if not news_articles and search_keyword:
-            logger.info(f"Aucun article trouvé avec mot-clé, tentative sans mot-clé")
-            news_articles = get_news_by_sector(sector, language=language, days=30)
-            
-            # Si toujours rien, essayer avec un secteur général
-            if not news_articles and sector != "general":
-                logger.info(f"Tentative avec le secteur 'general'")
+        # Si aucun article n'est trouvé, faire une recherche de secours
+        if not news_articles:
+            if search_keyword:
+                logger.info(f"Aucun article trouvé avec mot-clé, tentative avec secteur général")
                 news_articles = get_news_by_sector("general", search_keyword, language=language, days=30)
+            else:
+                logger.info(f"Aucun article trouvé pour le secteur, tentative avec le secteur 'general'")
+                news_articles = get_news_by_sector("general", language=language, days=30)
         
     except Exception as e:
         error_message = f"Erreur lors de la récupération des actualités: {str(e)}"
