@@ -140,6 +140,36 @@ cache_dir = os.path.join(os.path.dirname(__file__), 'cache')
 if not os.path.exists(cache_dir):
     os.makedirs(cache_dir)
 
+from datetime import datetime
+import html
+import re
+import re
+import html
+
+def clean_html(text):
+    """Nettoie le texte des tags HTML et entités"""
+    if not text:
+        return ""
+    
+    # Décodage des entités HTML
+    text = html.unescape(text)
+    
+    # Suppression des balises HTML
+    text = re.sub(r'<[^>]+>', '', text)
+    
+    # Nettoyage des espaces multiples
+    text = re.sub(r'\s+', ' ', text).strip()
+    
+    # Enlever les séquences répétitives souvent présentes dans les flux d'actualités
+    text = re.sub(r'(Read More|Lire la suite|En savoir plus)\.?$', '', text, flags=re.IGNORECASE)
+    
+    # Enlever les préfixes couramment ajoutés par les agrégateurs
+    text = re.sub(r'^(WATCH|VIDEO|EXCLUSIVE|BREAKING):', '', text)
+    
+    return text
+
+
+
 def get_cached_news(query, language, days=3):
     """
     Récupère les résultats mis en cache ou effectue un nouvel appel API
@@ -694,33 +724,6 @@ def dashboard():
         article_success=article_success
     )
 
-from datetime import datetime
-import html
-import re
-import re
-import html
-
-def clean_html(text):
-    """Nettoie le texte des tags HTML et entités"""
-    if not text:
-        return ""
-    
-    # Décodage des entités HTML
-    text = html.unescape(text)
-    
-    # Suppression des balises HTML
-    text = re.sub(r'<[^>]+>', '', text)
-    
-    # Nettoyage des espaces multiples
-    text = re.sub(r'\s+', ' ', text).strip()
-    
-    # Enlever les séquences répétitives souvent présentes dans les flux d'actualités
-    text = re.sub(r'(Read More|Lire la suite|En savoir plus)\.?$', '', text, flags=re.IGNORECASE)
-    
-    # Enlever les préfixes couramment ajoutés par les agrégateurs
-    text = re.sub(r'^(WATCH|VIDEO|EXCLUSIVE|BREAKING):', '', text)
-    
-    return text
 
 @app.route("/publish", methods=["POST"])
 def publish():
