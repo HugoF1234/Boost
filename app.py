@@ -546,6 +546,14 @@ def dashboard():
 
     draft = ""
     article_success = session.pop('article_success', None)  # Récupérer et supprimer le message
+    
+    # Ajouter cette ligne pour gérer le bouton Annuler
+    if request.args.get('clear') == 'true':
+        # Supprimer l'article sélectionné de la session
+        if 'selected_article' in session:
+            session.pop('selected_article', None)
+        return redirect(url_for('dashboard'))
+    
     selected_article = session.get('selected_article')  # Récupérer l'article sélectionné
     
     # Récupérer l'utilisateur
@@ -557,7 +565,7 @@ def dashboard():
         # Nombre de posts programmés
         now = datetime.utcnow()
         scheduled_posts = Post.query.filter_by(user_id=user.id, scheduled=True).filter(Post.published_at > now).count()
-    
+  
     # Récupérer les actualités tendance pour le secteur de l'utilisateur
     trending_news = []
     if user and user.secteur:
@@ -643,9 +651,8 @@ def dashboard():
         draft=draft,
         scheduled_posts=scheduled_posts,
         posts=user.posts if user else [],
-        trending_news=trending_news,
-        selected_article=selected_article,  # Passer l'article sélectionné au template
-        article_success=article_success     # Passer le message de succès
+        selected_article=selected_article,
+        article_success=article_success
     )
 
 from datetime import datetime
