@@ -577,6 +577,9 @@ def dashboard():
                 perspective = request.form.get("perspective", "neutre")
                 format_type = request.form.get("format", "standard")
                 
+                # Récupérer les instructions personnalisées
+                custom_instructions = request.form.get("custom_instructions", "").strip()
+                
                 # Adapter le prompt selon le format choisi
                 format_instructions = {
                     "standard": "Rédige un post classique donnant ton analyse sur ce sujet",
@@ -589,6 +592,8 @@ def dashboard():
                 
                 # Générer le contenu avec Gemini
                 model = genai.GenerativeModel("gemini-1.5-pro")
+                
+                # Construire le prompt avec les instructions personnalisées si présentes
                 article_prompt = f"""
                 Rédige un post LinkedIn sur l'actualité suivante:
                 
@@ -606,6 +611,10 @@ def dashboard():
                 - Maximum 280 caractères
                 - Format adapté à LinkedIn
                 """
+                
+                # Ajouter les instructions personnalisées si elles existent
+                if custom_instructions:
+                    article_prompt += f"\nInstructions supplémentaires: {custom_instructions}"
                 
                 response = model.generate_content(article_prompt)
                 draft = response.text.strip()
