@@ -219,7 +219,52 @@
 </div>
 {% endif %}
 
-<!-- Section des statistiques -->
+<!-- Widget d'actualités -->
+<div class="content-card">
+    <div class="d-flex align-center justify-between mb-4">
+        <h2>📰 Actualités de votre secteur</h2>
+        <a href="{{ url_for('news_assistant') }}" class="btn btn-outline" style="font-size: 13px;">
+            <i class="fa-solid fa-newspaper"></i>
+            Voir toutes les actualités
+        </a>
+    </div>
+    
+    {% if trending_news %}
+        <div class="d-flex gap-3" style="flex-wrap: wrap;">
+            {% for article in trending_news %}
+                <div style="flex: 1; min-width: 280px; border: 1px solid var(--border); border-radius: 8px; overflow: hidden;">
+                    {% if article.urlToImage %}
+                        <div style="height: 120px; overflow: hidden;">
+                            <img src="{{ article.urlToImage }}" alt="{{ article.title }}" style="width: 100%; height: 100%; object-fit: cover;">
+                        </div>
+                    {% endif %}
+                    
+                    <div style="padding: 16px;">
+                        <h3 style="font-size: 15px; line-height: 1.4; margin-bottom: 8px;">{{ article.title|clean_html }}</h3>
+                        <div style="font-size: 13px; color: var(--text-light); margin-bottom: 12px; display: flex; justify-content: space-between;">
+                            <span>{{ article.source.name }}</span>
+                            <span>{{ article.formatted_date }}</span>
+                        </div>
+                        
+                        <a href="{{ url_for('news_assistant') }}?article_id={{ loop.index0 }}" class="btn btn-outline" style="width: 100%; font-size: 13px;">
+                            <i class="fa-solid fa-wand-magic-sparkles"></i>
+                            Créer un post
+                        </a>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div style="text-align: center; padding: 20px 0; color: var(--text-light);">
+            <p>Aucune actualité récente disponible pour votre secteur.</p>
+            <a href="{{ url_for('news_assistant') }}" class="btn btn-primary mt-4" style="font-size: 13px;">
+                <i class="fa-solid fa-search"></i>
+                Rechercher des actualités
+            </a>
+        </div>
+    {% endif %}
+</div>
+
 <div class="content-card">
     <h2>📊 Statistiques</h2>
     <div class="d-flex gap-3" style="flex-wrap: wrap;">
