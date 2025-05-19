@@ -609,6 +609,9 @@ def dashboard():
         return redirect(url_for("index"))
 
     draft = ""
+    article_success = session.pop('article_success', None)  # Récupérer et supprimer le message
+    selected_article = session.get('selected_article')  # Récupérer l'article sélectionné
+    
     # Récupérer l'utilisateur
     user = User.query.filter_by(sub=session['profile'].get("sub", "")).first()
     
@@ -631,15 +634,63 @@ def dashboard():
     if request.method == "POST":
         prompt = request.form.get("prompt")
         tone = request.form.get("tone", "professionnel")
-        try:
-            model = genai.GenerativeModel("gemini-1.5-pro")
-            extended_prompt = f"Écris un post LinkedIn sur : {prompt}. Le ton doit être {tone}. Tu redigeras le post de la maniere la plus humaine possible"
-            response = model.generate_content(extended_prompt)
-            draft = response.text.strip()
-        except Exception as e:
-            draft = f"Erreur Gemini : {str(e)}"
+        
+        # Vérifier si l'utilisateur veut générer un post basé sur un article sélectionné
+        if 'generate_from_article' in request.form and selected_article:
+            try:
+                perspective = request.form.get("perspective", "neutre")
+                format_type = request.form.get("format", "standard")
+                
+                # Adapter le prompt selon le format choisi
+                format_instructions = {
+                    "standard": "Rédige un post classique donnant ton analyse sur ce sujet",
+                    "question": "Rédige un post sous forme de question engageante pour susciter des réactions",
+                    "listpoints": "Rédige un post présentant les points clés ou enseignements principaux",
+                    "story": "Rédige un post sous forme d'histoire ou de narration engageante"
+                }
+                
+                format_text = format_instructions.get(format_type, format_instructions["standard"])
+                
+                # Générer le contenu avec Gemini
+                model = genai.GenerativeModel("gemini-1.5-pro")
+                article_prompt = f"""
+                Rédige un post LinkedIn sur l'actualité suivante:
+                
+                Titre: {selected_article.get('title')}
+                Description: {selected_article.get('description')}
+                Source: {selected_article.get('source', {}).get('name')}
+                
+                Instructions:
+                - Ton: {tone}
+                - Perspective: {perspective}
+                - Format: {format_text}
+                - Secteur d'expertise: {user.secteur if user and user.secteur else "general"}
+                - Inclus 2-3 hashtags pertinents
+                - Le post doit être personnel, comme si la personne donnait son avis sur cette actualité
+                - Maximum 280 caractères
+                - Format adapté à LinkedIn
+                """
+                
+                response = model.generate_content(article_prompt)
+                draft = response.text.strip()
+                
+                # Effacer l'article sélectionné après avoir généré le post
+                session.pop('selected_article', None)
+                
+            except Exception as e:
+                draft = f"Erreur Gemini : {str(e)}"
+        else:
+            # Génération standard basée sur un prompt
+            try:
+                model = genai.GenerativeModel("gemini-1.5-pro")
+                extended_prompt = f"Écris un post LinkedIn sur : {prompt}. Le ton doit être {tone}. Tu redigeras le post de la maniere la plus humaine possible"
+                response = model.generate_content(extended_prompt)
+                draft = response.text.strip()
+            except Exception as e:
+                draft = f"Erreur Gemini : {str(e)}"
 
     session['draft'] = draft
+    
     # Passer les variables supplémentaires au template
     return render_template(
         "dashboard.html", 
@@ -647,9 +698,11 @@ def dashboard():
         draft=draft,
         scheduled_posts=scheduled_posts,
         posts=user.posts if user else [],
-        trending_news=trending_news
+        trending_news=trending_news,
+        selected_article=selected_article,  # Passer l'article sélectionné au template
+        article_success=article_success     # Passer le message de succès
     )
-    
+
 from datetime import datetime
 import html
 import re
