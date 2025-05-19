@@ -219,87 +219,103 @@ def get_news_by_sector(sector, keywords=None, days=3, language="fr"):
     return get_cached_news(search_query, language, days)
 
 
-def get_news_by_sector_actual(sector, keywords=None, days=3, language="fr"):
+def get_news_by_sector_actual(sector, keywords=None, days=30, language="fr"):
     """
-    Récupère les actualités récentes par secteur d'activité avec gestion d'erreurs améliorée
-    
-    Args:
-        sector (str): Le secteur d'activité (tech, finance, etc.)
-        keywords (str, optional): Mots-clés supplémentaires
-        days (int, optional): Nombre de jours pour les actualités récentes
-        language (str, optional): Langue des articles (fr, en)
-        
-    Returns:
-        list: Liste d'articles d'actualité
+    Récupère les actualités récentes par secteur d'activité avec recherche optimisée
     """
-    # Mapping des secteurs vers des termes de recherche
+    # Mapping des secteurs avec des termes plus efficaces pour l'API
     sector_keywords = {
-        'tech': 'technologie informatique développement logiciel innovation internet',
-        'marketing': 'marketing numérique publicité stratégie marque réseaux sociaux',
-        'finance': 'finance banque investissement économie bourse',
-        'sante': 'santé médecine bien-être médical pharmacie',
-        'education': 'éducation enseignement formation apprentissage école',
-        'rh': 'ressources humaines recrutement emploi talent management',
-        'consulting': 'conseil consulting stratégie entreprise management',
-        'retail': 'commerce distribution retail vente consommation',
+        'tech': 'technologie OR informatique OR numérique',
+        'marketing': 'marketing OR publicité OR communication',
+        'finance': 'finance OR économie OR banque',
+        'sante': 'santé OR médecine OR hôpital',
+        'education': 'éducation OR école OR université',
+        'rh': 'ressources humaines OR emploi OR recrutement',
+        'consulting': 'conseil OR consulting OR entreprise',
+        'retail': 'commerce OR distribution OR consommation',
     }
     
-    # Construire la requête de recherche
-    search_query = sector_keywords.get(sector, sector)
-    if keywords:
-        search_query += f" {keywords}"
+    # Construire une requête plus efficace
+    base_query = sector_keywords.get(sector, sector)
     
-    # Calculer la date pour les actualités récentes
+    # Ajouter les mots-clés si présents, sinon ajouter "actualité" pour garantir des résultats
+    if keywords:
+        search_query = f"{base_query} AND {keywords}"
+    else:
+        search_query = f"{base_query} AND (actualité OR news OR information)"
+    
+    # Augmenter la période pour avoir plus d'articles (30 jours au lieu de 3)
+    # NewsAPI gratuit permet d'aller jusqu'à un mois en arrière
     date_from = (datetime.utcnow() - timedelta(days=days)).strftime('%Y-%m-%d')
     
     # Préparer les paramètres de la requête
     params = {
         'q': search_query,
         'from': date_from,
-        'sortBy': 'publishedAt',
+        'sortBy': 'relevancy',  # Trier par pertinence plutôt que date pour avoir des résultats de qualité
         'language': language,
-        'apiKey': NEWS_API_KEY
+        'apiKey': NEWS_API_KEY,
+        'pageSize': 100  # Demander le maximum d'articles (100 est la limite)
     }
     
+    # Log détaillé pour le débogage
+    logger.info(f"Requête NewsAPI: {NEWS_API_URL}")
+    logger.info(f"Paramètres: q={search_query}, lang={language}, from={date_from}")
+    
     try:
-        # Appel à l'API avec un timeout pour éviter les blocages
-        response = requests.get(NEWS_API_URL, params=params, timeout=10)
+        # Appel à l'API avec un timeout étendu
+        response = requests.get(NEWS_API_URL, params=params, timeout=15)
         
-        # Vérifier les codes d'erreur spécifiques
+        # Log de la réponse pour débogage
+        logger.info(f"Code de statut: {response.status_code}")
+        
         if response.status_code == 200:
             data = response.json()
+            total_results = data.get('totalResults', 0)
             articles = data.get('articles', [])
             
-            # Formatter les dates pour l'affichage
-            for article in articles:
-                try:
-                    date_str = article.get('publishedAt', '')
-                    date_obj = datetime.strptime(date_str, '%Y-%m-%dT%H:%M:%SZ')
-                    article['formatted_date'] = date_obj.strftime('%d/%m/%Y')
-                except:
-                    article['formatted_date'] = 'Date inconnue'
+            logger.info(f"Résultats totaux: {total_results}, Articles retournés: {len(articles)}")
             
-            return articles
+            # Filtrer les articles sans contenu
+            valid_articles = []
+            for article in articles:
+                # Vérifier que l'article a du contenu
+                if article.get('title') and article.get('description'):
+                    try:
+                        # Formater la date
+                        date_str = article.get('publishedAt', '')
+                        date_obj = datetime.strptime(date_str, '%Y-%m-%dT%H:%M:%SZ')
+                        article['formatted_date'] = date_obj.strftime('%d/%m/%Y')
+                    except:
+                        article['formatted_date'] = 'Date inconnue'
+                    
+                    valid_articles.append(article)
+            
+            # Log des articles valides
+            logger.info(f"Articles valides après filtrage: {len(valid_articles)}")
+            
+            return valid_articles
         elif response.status_code == 401:
-            # Problème d'authentification (clé API invalide)
-            logger.error("Erreur 401: Clé API NewsAPI invalide ou manquante")
-            return []
+            error_text = response.json().get('message', 'Erreur d\'authentification')
+            logger.error(f"Erreur 401: {error_text}")
+            raise Exception(f"Erreur d'API: {error_text}")
         elif response.status_code == 429:
-            # Limite d'API dépassée
-            logger.error("Erreur 429: Limite de requêtes NewsAPI dépassée")
-            return []
+            error_text = response.json().get('message', 'Limite de requêtes dépassée')
+            logger.error(f"Erreur 429: {error_text}")
+            raise Exception(f"Limite d'API atteinte: {error_text}")
         else:
-            logger.error(f"Erreur API NewsAPI: {response.status_code} - {response.text}")
-            return []
+            error_text = response.text
+            logger.error(f"Erreur API {response.status_code}: {error_text}")
+            raise Exception(f"Erreur de l'API NewsAPI ({response.status_code})")
     except requests.exceptions.Timeout:
-        logger.error("Erreur: Timeout lors de la connexion à NewsAPI")
-        return []
+        logger.error("Timeout lors de la connexion à NewsAPI")
+        raise Exception("L'API ne répond pas - délai d'attente dépassé")
     except requests.exceptions.ConnectionError:
-        logger.error("Erreur: Problème de connexion réseau pour NewsAPI")
-        return []
+        logger.error("Problème de connexion réseau pour NewsAPI")
+        raise Exception("Impossible de se connecter à l'API - vérifiez votre connexion")
     except Exception as e:
-        logger.error(f"Exception lors de l'appel à NewsAPI: {str(e)}")
-        return []
+        logger.error(f"Exception: {str(e)}")
+        raise
 
 @app.route("/news_assistant", methods=["GET", "POST"])
 def news_assistant():
