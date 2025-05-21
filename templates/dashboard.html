@@ -150,7 +150,6 @@
         </div>
     </form>
     
-    <!-- Design minimaliste pour la section actualité -->
     <div style="margin-top: 20px; border-top: 1px solid var(--grey); padding-top: 20px;">
         <a href="{{ url_for('news_assistant') }}" style="text-decoration: none; color: inherit;">
             <div class="d-flex align-center justify-between">
@@ -177,7 +176,14 @@
     
     <form method="post" action="{{ url_for('publish') }}" enctype="multipart/form-data">
         <div class="form-group">
-            <textarea name="post_content" class="form-control" rows="8" required>{{ draft }}</textarea>
+            <!-- Ajout de la classe mention-editor à la zone de texte -->
+            <textarea name="post_content" class="form-control mention-editor" rows="8" required>{{ draft }}</textarea>
+            
+            <!-- Ajout du texte d'aide pour les mentions -->
+            <div style="margin-top: 8px; font-size: 13px; color: var(--text-light);">
+                <i class="fa-solid fa-at"></i>
+                Tapez @ pour mentionner une personne ou une entreprise
+            </div>
         </div>
         
         <div class="form-row">
