@@ -885,6 +885,67 @@ def dashboard():
         article_success=article_success
     )
 
+def process_mentions_for_linkedin(content):
+    """
+    Convertit les mentions du format @[Nom](URL) au format LinkedIn
+    pour l'API de publication LinkedIn
+    
+    Args:
+        content (str): Contenu du post avec mentions
+        
+    Returns:
+        tuple: (Texte formaté pour LinkedIn, Entités de mention pour l'API)
+    """
+    import re
+    
+    # Regex pour détecter les mentions
+    mention_pattern = r'@\[(.*?)\]\((.*?)\)'
+    mentions = re.findall(mention_pattern, content)
+    
+    # Si pas de mentions, retourner le contenu tel quel
+    if not mentions:
+        return content, []
+    
+    # Préparer les entités LinkedIn
+    mention_entities = []
+    
+    # Pour chaque mention, créer une entité LinkedIn
+    for i, (name, url) in enumerate(mentions):
+        # Extraire l'ID LinkedIn de l'URL
+        linkedin_id = url.rstrip('/').split('/')[-1]
+        
+        # Créer une entité de mention pour l'API LinkedIn
+        mention_entity = {
+            "entity": f"urn:li:person:{linkedin_id}",
+            "textRange": {
+                "start": 0,  # Sera mis à jour plus tard
+                "length": len(f"@{name}")
+            }
+        }
+        
+        mention_entities.append(mention_entity)
+    
+    # Remplacer les mentions par leur format textuel simple (@Nom)
+    processed_content = content
+    start_offset = 0
+    
+    for i, (name, url) in enumerate(mentions):
+        mention_format = f"@[{name}]({url})"
+        simple_format = f"@{name}"
+        
+        # Trouver la position actuelle dans le texte traité
+        pos = processed_content.find(mention_format)
+        if pos != -1:
+            # Mettre à jour la position de début pour l'API LinkedIn
+            mention_entities[i]["textRange"]["start"] = pos + start_offset
+            
+            # Remplacer la mention par sa version simple
+            processed_content = processed_content.replace(mention_format, simple_format, 1)
+            
+            # Mettre à jour le décalage pour les prochaines mentions
+            start_offset += len(simple_format) - len(mention_format)
+    
+    return processed_content, mention_entities
 
 @app.route("/publish", methods=["POST"])
 def publish():
@@ -894,7 +955,7 @@ def publish():
 
     content = request.form.get("post_content")
     date_str = request.form.get("publish_time")
-    publish_now = request.form.get("publish_now")  # <- case à cocher
+    publish_now = request.form.get("publish_now")
 
     if not content:
         return "Aucun contenu reçu."
@@ -926,6 +987,9 @@ def publish():
         "Content-Type": "application/json",
         "X-Restli-Protocol-Version": "2.0.0"
     }
+
+    # Traiter les mentions pour LinkedIn
+    processed_content, mention_entities = process_mentions_for_linkedin(content)
 
     media_assets = []
     uploaded_files = request.files.getlist("images[]")
@@ -973,12 +1037,13 @@ def publish():
 
     share_media_category = "IMAGE" if media_assets else "NONE"
 
+    # Construire le payload de post avec les mentions si présentes
     post_data = {
         "author": urn,
         "lifecycleState": "PUBLISHED",
         "specificContent": {
             "com.linkedin.ugc.ShareContent": {
-                "shareCommentary": {"text": content},
+                "shareCommentary": {"text": processed_content},
                 "shareMediaCategory": share_media_category,
                 "media": media_assets
             }
@@ -987,6 +1052,10 @@ def publish():
             "com.linkedin.ugc.MemberNetworkVisibility": "PUBLIC"
         }
     }
+    
+    # Ajouter les entités de mention si présentes
+    if mention_entities:
+        post_data["specificContent"]["com.linkedin.ugc.ShareContent"]["mentions"] = mention_entities
 
     post_resp = requests.post(LINKEDIN_POSTS_URL, headers=headers, json=post_data)
 
@@ -1000,6 +1069,7 @@ def publish():
         return redirect(url_for("dashboard"))
     else:
         return f"<h2>❌ Erreur lors de la publication :</h2><pre>{post_resp.text}</pre><p><a href='/dashboard'>Retour</a></p>"
+
 
 @app.route("/edit_post/<int:post_id>", methods=["GET", "POST"])
 def edit_post(post_id):
