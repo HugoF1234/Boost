@@ -445,7 +445,106 @@ def get_news_by_sector_actual(sector, keywords=None, days=30, language="fr"):
     except Exception as e:
         logger.error(f"Exception: {str(e)}")
         raise
+
+@app.route("/search_linkedin_users", methods=["POST"])
+def search_linkedin_users():
+    """
+    API endpoint pour rechercher des utilisateurs LinkedIn
+    """
+    if 'profile' not in session or 'access_token' not in session:
+        return jsonify({"error": "Non authentifié"}), 401
+    
+    access_token = session['access_token']
+    query = request.json.get('query', '')
+    
+    if not query or len(query) < 2:
+        return jsonify({"error": "La requête doit contenir au moins 2 caractères"}), 400
+    
+    # URL de l'API LinkedIn pour la recherche de personnes
+    # Note: Cette API nécessite une autorisation spéciale de LinkedIn
+    search_url = "https://api.linkedin.com/v2/search/blended"
+    
+    params = {
+        "q": "keywork",
+        "keywords": query,
+        "filters": "List(resultType->PEOPLE)",
+        "limit": 5
+    }
+    
+    headers = {
+        "Authorization": f"Bearer {access_token}",
+        "X-Restli-Protocol-Version": "2.0.0"
+    }
+    
+    try:
+        response = requests.get(search_url, params=params, headers=headers)
         
+        if response.status_code != 200:
+            # L'API de recherche LinkedIn est très restrictive
+            # Si elle échoue, nous utilisons une méthode alternative
+            return search_linkedin_users_alternative(query)
+        
+        data = response.json()
+        results = []
+        
+        for element in data.get('elements', []):
+            if element.get('type') == 'PEOPLE':
+                for person in element.get('elements', []):
+                    person_id = person.get('entityUrn', '').split(':')[-1]
+                    results.append({
+                        'id': person_id,
+                        'name': person.get('title', {}).get('text', ''),
+                        'headline': person.get('headline', {}).get('text', ''),
+                        'profile_url': f"https://www.linkedin.com/in/{person_id}/",
+                        'image_url': person.get('image', {}).get('attributes', [{}])[0].get('sourceImage', {}).get('accessibilityText', '')
+                    })
+        
+        return jsonify({"results": results})
+    
+    except Exception as e:
+        logger.error(f"Erreur lors de la recherche LinkedIn: {str(e)}")
+        return search_linkedin_users_alternative(query)
+
+def search_linkedin_users_alternative(query):
+    """
+    Méthode alternative pour suggérer des utilisateurs LinkedIn
+    Cette fonction ne fait pas appel à l'API LinkedIn (qui est restrictive)
+    mais simule la recherche en se basant sur les utilisateurs déjà connus
+    """
+    # Chercher dans la base de données des utilisateurs qui correspondent à la requête
+    users = User.query.filter(
+        (User.name.ilike(f"%{query}%")) | 
+        (User.first_name.ilike(f"%{query}%")) | 
+        (User.last_name.ilike(f"%{query}%"))
+    ).limit(5).all()
+    
+    results = []
+    for user in users:
+        # Extraire l'ID LinkedIn à partir du sub
+        linkedin_id = user.sub.split('_')[-1] if user.sub else None
+        
+        if linkedin_id:
+            results.append({
+                'id': linkedin_id,
+                'name': f"{user.first_name} {user.last_name}",
+                'headline': "",  # Nous n'avons pas cette information
+                'profile_url': f"https://www.linkedin.com/in/{linkedin_id}/",
+                'image_url': user.picture or ""
+            })
+    
+    # Si nous n'avons pas assez de résultats, ajouter une suggestion générique
+    if len(results) == 0:
+        results.append({
+            'id': None,
+            'name': query,
+            'headline': "Utilisateur LinkedIn",
+            'profile_url': f"https://www.linkedin.com/search/results/people/?keywords={query}",
+            'image_url': ""
+        })
+    
+    return jsonify({"results": results})
+
+
 @app.route("/news_assistant", methods=["GET", "POST"])
 def news_assistant():
     if 'profile' not in session:
