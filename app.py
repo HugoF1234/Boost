@@ -16,7 +16,7 @@ logger = logging.getLogger(__name__)
 # -----------------------
 # CONFIGURATION APP
 # -----------------------
-app = Flask(__name__)
+app = Flask(__name__, static_folder='static')
 app.secret_key = os.urandom(24)
 app.config['SESSION_COOKIE_NAME'] = 'linkedin_session'
 
@@ -146,6 +146,18 @@ import re
 import re
 import html
 
+
+# Si vous avez besoin d'une route personnalisée pour les fichiers statiques, 
+# vous pouvez ajouter ceci (mais normalement ce n'est pas nécessaire):
+@app.route('/static/<path:path>')
+def send_static(path):
+    return send_from_directory('static', path)
+
+# Vous pouvez utiliser cette route pour déboguer
+@app.route('/debug-static')
+def debug_static():
+    static_files = os.listdir('static')
+    return f"Fichiers dans le dossier static: {static_files}"
 @app.template_filter('clean_html')
 def clean_html(text):
     """Nettoie le texte des tags HTML et entités"""
