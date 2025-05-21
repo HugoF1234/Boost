@@ -508,39 +508,65 @@ def search_linkedin_users():
 def search_linkedin_users_alternative(query):
     """
     Méthode alternative pour suggérer des utilisateurs LinkedIn
-    Cette fonction ne fait pas appel à l'API LinkedIn (qui est restrictive)
-    mais simule la recherche en se basant sur les utilisateurs déjà connus
+    Cette fonction génère toujours au moins une suggestion
     """
-    # Chercher dans la base de données des utilisateurs qui correspondent à la requête
-    users = User.query.filter(
-        (User.name.ilike(f"%{query}%")) | 
-        (User.first_name.ilike(f"%{query}%")) | 
-        (User.last_name.ilike(f"%{query}%"))
-    ).limit(5).all()
-    
     results = []
-    for user in users:
-        # Extraire l'ID LinkedIn à partir du sub
-        linkedin_id = user.sub.split('_')[-1] if user.sub else None
-        
-        if linkedin_id:
-            results.append({
-                'id': linkedin_id,
-                'name': f"{user.first_name} {user.last_name}",
-                'headline': "",  # Nous n'avons pas cette information
-                'profile_url': f"https://www.linkedin.com/in/{linkedin_id}/",
-                'image_url': user.picture or ""
-            })
     
-    # Si nous n'avons pas assez de résultats, ajouter une suggestion générique
+    try:
+        # Chercher dans la base de données des utilisateurs qui correspondent à la requête
+        users = User.query.filter(
+            (User.name.ilike(f"%{query}%")) | 
+            (User.first_name.ilike(f"%{query}%")) | 
+            (User.last_name.ilike(f"%{query}%"))
+        ).limit(5).all()
+        
+        for user in users:
+            # Extraire l'ID LinkedIn à partir du sub
+            linkedin_id = user.sub.split('_')[-1] if user.sub else None
+            
+            if linkedin_id:
+                results.append({
+                    'id': linkedin_id,
+                    'name': f"{user.first_name} {user.last_name}",
+                    'headline': "Utilisateur LinkedBoost",
+                    'profile_url': f"https://www.linkedin.com/in/{linkedin_id}/",
+                    'image_url': user.picture or ""
+                })
+    except Exception as e:
+        logger.error(f"Erreur lors de la recherche d'utilisateurs: {str(e)}")
+    
+    # Si aucun résultat, ajouter des suggestions génériques
+    # TOUJOURS ajouter au moins une suggestion pour tester
     if len(results) == 0:
+        # Ajouter quelques suggestions génériques
         results.append({
-            'id': None,
-            'name': query,
-            'headline': "Utilisateur LinkedIn",
+            'id': 'test-user',
+            'name': query if query else 'Utilisateur test',
+            'headline': "Test de mention LinkedIn",
             'profile_url': f"https://www.linkedin.com/search/results/people/?keywords={query}",
             'image_url': ""
         })
+        
+        # Ajouter quelques célébrités LinkedIn comme suggestions
+        celebrities = [
+            {
+                'id': 'billgates',
+                'name': 'Bill Gates',
+                'headline': 'Co-fondateur de Microsoft',
+                'profile_url': 'https://www.linkedin.com/in/williamhgates/',
+                'image_url': ''
+            },
+            {
+                'id': 'melindagates',
+                'name': 'Melinda French Gates',
+                'headline': 'Philanthrope',
+                'profile_url': 'https://www.linkedin.com/in/melindagates/',
+                'image_url': ''
+            }
+        ]
+        
+        # Ajouter ces célébrités aux résultats
+        results.extend(celebrities)
     
     return jsonify({"results": results})
 
