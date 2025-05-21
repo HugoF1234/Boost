@@ -698,5 +698,64 @@
           renderMentions(document);
         });
     </script>
+    
+    <!-- Script de débogage pour les mentions -->
+    <script>
+        // Script de débogage pour les mentions
+        document.addEventListener('DOMContentLoaded', function() {
+            // Vérifier si les éditeurs de mentions sont présents
+            const editors = document.querySelectorAll('.mention-editor');
+            console.log('Éditeurs de mentions trouvés:', editors.length);
+            
+            // Ajouter un événement pour tester manuellement la recherche
+            const testSearchButton = document.createElement('button');
+            testSearchButton.textContent = 'Tester la recherche';
+            testSearchButton.style.position = 'fixed';
+            testSearchButton.style.bottom = '10px';
+            testSearchButton.style.right = '10px';
+            testSearchButton.style.zIndex = '9999';
+            testSearchButton.style.padding = '10px';
+            testSearchButton.style.backgroundColor = '#0a66c2';
+            testSearchButton.style.color = 'white';
+            testSearchButton.style.border = 'none';
+            testSearchButton.style.borderRadius = '4px';
+            testSearchButton.style.cursor = 'pointer';
+            
+            testSearchButton.addEventListener('click', function() {
+                console.log('Test de recherche LinkedIn...');
+                
+                // Tester la recherche avec une requête simple
+                fetch('/search_linkedin_users', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ query: 'test' }),
+                })
+                .then(response => {
+                    console.log('Statut de la réponse:', response.status);
+                    return response.json();
+                })
+                .then(data => {
+                    console.log('Résultats de la recherche:', data);
+                    alert('Résultats de recherche reçus! Vérifiez la console pour les détails.');
+                })
+                .catch(error => {
+                    console.error('Erreur lors du test de recherche:', error);
+                    alert('Erreur lors du test de recherche: ' + error.message);
+                });
+            });
+            
+            document.body.appendChild(testSearchButton);
+            
+            // Surveiller les événements @ pour le débogage
+            document.addEventListener('keyup', function(e) {
+                const activeElement = document.activeElement;
+                if (activeElement && activeElement.classList.contains('mention-editor') && e.key === '@') {
+                    console.log('@ détecté dans un éditeur de mentions');
+                }
+            });
+        });
+    </script>
 </body>
 </html>
