@@ -287,6 +287,8 @@
                 gap: 10px;
             }
         }
+        
+        /* Styles pour les mentions LinkedIn */
         .mention {
             color: #0a66c2;
             font-weight: 500;
@@ -296,12 +298,12 @@
             border-radius: 3px;
             transition: background-color 0.2s;
         }
-    
+
         .mention:hover {
             background-color: rgba(10, 102, 194, 0.15);
             text-decoration: underline;
         }
-    
+
         .mention-dropdown {
             background-color: white;
             border-radius: 8px;
@@ -312,7 +314,7 @@
             width: 320px;
             border: 1px solid #e0e0e0;
         }
-    
+
         .mention-suggestion {
             padding: 10px 16px;
             cursor: pointer;
@@ -321,11 +323,11 @@
             border-bottom: 1px solid #f3f2ef;
             transition: background-color 0.2s;
         }
-    
+
         .mention-suggestion:last-child {
             border-bottom: none;
         }
-    
+
         .mention-suggestion:hover, 
         .mention-suggestion.active {
             background-color: #f3f2ef;
@@ -338,7 +340,7 @@
     <div class="app-container">
         <div class="sidebar">
             <div class="sidebar-header">
-                <img src="{{ url_for('static', filename='logo1') }}" alt="LinkedBoost Logo" style="height: 40px; width: auto;">
+                <img src="{{ url_for('static', filename='logo1') }}" alt="LinkedBoost Logo" style="height: 30px;">
                 <h1>LinkedBoost</h1>
             </div>
             <div class="sidebar-menu">
@@ -373,326 +375,328 @@
             {% block content %}{% endblock %}
         </div>
     </div>
-</body>
-<script>
-    // Fonction pour initialiser l'éditeur de mentions
-    function initMentionEditor(editorElement) {
-      const editor = editorElement;
-      let mentionDropdown = null;
-      let currentMentionSearch = "";
-      let mentionSearchActive = false;
-      let mentionStartPosition = 0;
-      let debounceTimeout = null;
-      
-      // Créer le menu déroulant des mentions
-      function createMentionDropdown() {
-        mentionDropdown = document.createElement('div');
-        mentionDropdown.className = 'mention-dropdown';
-        mentionDropdown.style.display = 'none';
-        mentionDropdown.style.position = 'absolute';
-        mentionDropdown.style.zIndex = '1000';
-        document.body.appendChild(mentionDropdown);
-        return mentionDropdown;
-      }
-      
-      // Positionner le menu déroulant
-      function positionMentionDropdown(textarea) {
-        if (!mentionDropdown) return;
-        
-        // Calculer la position du curseur
-        const text = textarea.value;
-        const subtext = text.substring(0, textarea.selectionStart);
-        const lines = subtext.split('\n');
-        const lineHeight = parseInt(window.getComputedStyle(textarea).lineHeight);
-        const lineCount = lines.length;
-        const charPos = lines[lineCount - 1].length;
-        
-        // Position approximative du caractère @ dans la zone de texte
-        const rect = textarea.getBoundingClientRect();
-        const scrollTop = textarea.scrollTop;
-        
-        const top = rect.top + (lineCount * lineHeight) - scrollTop;
-        const left = rect.left + (charPos * 8); // approximation de la largeur d'un caractère
-        
-        mentionDropdown.style.top = `${top + 20}px`; // 20px en dessous du curseur
-        mentionDropdown.style.left = `${left}px`;
-      }
-      
-      // Rechercher des utilisateurs LinkedIn
-      function searchLinkedInUsers(query) {
-        fetch('/search_linkedin_users', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({ query }),
-        })
-        .then(response => response.json())
-        .then(data => {
-          if (data.results && data.results.length > 0) {
-            displayMentionSuggestions(data.results);
-          } else {
-            hideMentionDropdown();
-          }
-        })
-        .catch(error => {
-          console.error('Erreur de recherche:', error);
-          hideMentionDropdown();
-        });
-      }
-      
-      // Afficher les suggestions de mentions
-      function displayMentionSuggestions(users) {
-        if (!mentionDropdown) {
-          mentionDropdown = createMentionDropdown();
-        }
-        
-        mentionDropdown.innerHTML = '';
-        
-        users.forEach(user => {
-          const suggestionItem = document.createElement('div');
-          suggestionItem.className = 'mention-suggestion';
+    
+    <!-- Script de gestion des mentions -->
+    <script>
+        // Fonction pour initialiser l'éditeur de mentions
+        function initMentionEditor(editorElement) {
+          const editor = editorElement;
+          let mentionDropdown = null;
+          let currentMentionSearch = "";
+          let mentionSearchActive = false;
+          let mentionStartPosition = 0;
+          let debounceTimeout = null;
           
-          // Ajouter une image de profil si disponible
-          if (user.image_url) {
-            const img = document.createElement('img');
-            img.src = user.image_url;
-            img.style.width = '32px';
-            img.style.height = '32px';
-            img.style.borderRadius = '50%';
-            img.style.marginRight = '10px';
-            suggestionItem.appendChild(img);
-          } else {
-            // Fallback pour les utilisateurs sans image
-            const placeholder = document.createElement('div');
-            placeholder.style.width = '32px';
-            placeholder.style.height = '32px';
-            placeholder.style.borderRadius = '50%';
-            placeholder.style.backgroundColor = '#0a66c2';
-            placeholder.style.color = 'white';
-            placeholder.style.display = 'flex';
-            placeholder.style.alignItems = 'center';
-            placeholder.style.justifyContent = 'center';
-            placeholder.style.marginRight = '10px';
-            placeholder.textContent = user.name.charAt(0).toUpperCase();
-            suggestionItem.appendChild(placeholder);
+          // Créer le menu déroulant des mentions
+          function createMentionDropdown() {
+            mentionDropdown = document.createElement('div');
+            mentionDropdown.className = 'mention-dropdown';
+            mentionDropdown.style.display = 'none';
+            mentionDropdown.style.position = 'absolute';
+            mentionDropdown.style.zIndex = '1000';
+            document.body.appendChild(mentionDropdown);
+            return mentionDropdown;
           }
           
-          // Informations de l'utilisateur
-          const userInfo = document.createElement('div');
-          userInfo.innerHTML = `
-            <div style="font-weight: 500;">${user.name}</div>
-            <div style="font-size: 12px; color: #666;">${user.headline || ''}</div>
-          `;
-          suggestionItem.appendChild(userInfo);
-          
-          // Gérer le clic sur une suggestion
-          suggestionItem.addEventListener('click', () => {
-            insertMention(user);
-            hideMentionDropdown();
-          });
-          
-          // Gérer le survol
-          suggestionItem.addEventListener('mouseenter', () => {
-            suggestionItem.style.backgroundColor = '#f3f2ef';
-          });
-          
-          suggestionItem.addEventListener('mouseleave', () => {
-            suggestionItem.style.backgroundColor = 'transparent';
-          });
-          
-          mentionDropdown.appendChild(suggestionItem);
-        });
-        
-        mentionDropdown.style.display = 'block';
-        positionMentionDropdown(editor);
-      }
-      
-      // Cacher le menu déroulant des mentions
-      function hideMentionDropdown() {
-        if (mentionDropdown) {
-          mentionDropdown.style.display = 'none';
-        }
-        mentionSearchActive = false;
-      }
-      
-      // Insérer une mention dans l'éditeur
-      function insertMention(user) {
-        const cursorPos = editor.selectionStart;
-        const text = editor.value;
-        
-        // Supprimer la recherche partielle (le @...)
-        const textBefore = text.substring(0, mentionStartPosition);
-        const textAfter = text.substring(cursorPos);
-        
-        // Créer la mention au format @[Nom](URL)
-        const mention = `@[${user.name}](${user.profile_url}) `;
-        
-        // Mettre à jour le texte
-        editor.value = textBefore + mention + textAfter;
-        
-        // Repositionner le curseur après la mention
-        editor.selectionStart = editor.selectionEnd = textBefore.length + mention.length;
-        
-        // Focus sur l'éditeur
-        editor.focus();
-        
-        // Déclencher l'événement de changement
-        const event = new Event('input', { bubbles: true });
-        editor.dispatchEvent(event);
-      }
-      
-      // Gérer les entrées clavier
-      editor.addEventListener('keyup', function(e) {
-        // Ignorer les touches spéciales
-        if (['ArrowUp', 'ArrowDown', 'Enter', 'Escape'].includes(e.key)) {
-          return;
-        }
-        
-        const cursorPos = this.selectionStart;
-        const text = this.value;
-        
-        // Chercher le dernier @
-        if (!mentionSearchActive) {
-          const lastAtPos = text.lastIndexOf('@', cursorPos - 1);
-          
-          // Vérifier si le @ est au début ou précédé d'un espace
-          if (lastAtPos >= 0 && (lastAtPos === 0 || text[lastAtPos - 1] === ' ' || text[lastAtPos - 1] === '\n')) {
-            // Vérifier qu'il n'y a pas d'espace entre @ et la position actuelle
-            const textBetween = text.substring(lastAtPos + 1, cursorPos);
-            if (!textBetween.includes(' ') && !textBetween.includes('\n')) {
-              mentionStartPosition = lastAtPos;
-              currentMentionSearch = textBetween;
-              mentionSearchActive = true;
-            }
+          // Positionner le menu déroulant
+          function positionMentionDropdown(textarea) {
+            if (!mentionDropdown) return;
+            
+            // Calculer la position du curseur
+            const text = textarea.value;
+            const subtext = text.substring(0, textarea.selectionStart);
+            const lines = subtext.split('\n');
+            const lineHeight = parseInt(window.getComputedStyle(textarea).lineHeight);
+            const lineCount = lines.length;
+            const charPos = lines[lineCount - 1].length;
+            
+            // Position approximative du caractère @ dans la zone de texte
+            const rect = textarea.getBoundingClientRect();
+            const scrollTop = textarea.scrollTop;
+            
+            const top = rect.top + (lineCount * lineHeight) - scrollTop;
+            const left = rect.left + (charPos * 8); // approximation de la largeur d'un caractère
+            
+            mentionDropdown.style.top = `${top + 20}px`; // 20px en dessous du curseur
+            mentionDropdown.style.left = `${left}px`;
           }
-        } else {
-          // Mise à jour de la recherche en cours
-          if (cursorPos <= mentionStartPosition) {
-            // Le curseur est avant le @, désactiver la recherche
-            mentionSearchActive = false;
-            hideMentionDropdown();
-          } else {
-            // Vérifier si le curseur est toujours dans la même recherche
-            const textBetween = text.substring(mentionStartPosition + 1, cursorPos);
-            if (textBetween.includes(' ') || textBetween.includes('\n')) {
-              // Un espace a été ajouté, désactiver la recherche
-              mentionSearchActive = false;
+          
+          // Rechercher des utilisateurs LinkedIn
+          function searchLinkedInUsers(query) {
+            fetch('/search_linkedin_users', {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+              },
+              body: JSON.stringify({ query }),
+            })
+            .then(response => response.json())
+            .then(data => {
+              if (data.results && data.results.length > 0) {
+                displayMentionSuggestions(data.results);
+              } else {
+                hideMentionDropdown();
+              }
+            })
+            .catch(error => {
+              console.error('Erreur de recherche:', error);
               hideMentionDropdown();
-            } else {
-              // Mettre à jour la recherche
-              currentMentionSearch = textBetween;
-            }
+            });
           }
-        }
-        
-        // Lancer la recherche si nécessaire
-        if (mentionSearchActive && currentMentionSearch.length >= 2) {
-          // Utiliser un debounce pour éviter trop d'appels API
-          clearTimeout(debounceTimeout);
-          debounceTimeout = setTimeout(() => {
-            searchLinkedInUsers(currentMentionSearch);
-          }, 300);
-        } else if (mentionSearchActive && currentMentionSearch.length < 2) {
-          hideMentionDropdown();
-        }
-      });
-      
-      // Gérer les touches spéciales
-      editor.addEventListener('keydown', function(e) {
-        if (!mentionSearchActive || !mentionDropdown || mentionDropdown.style.display === 'none') {
-          return;
-        }
-        
-        const items = mentionDropdown.querySelectorAll('.mention-suggestion');
-        const activeItem = mentionDropdown.querySelector('.mention-suggestion.active');
-        let activeIndex = Array.from(items).indexOf(activeItem);
-        
-        switch (e.key) {
-          case 'ArrowDown':
-            e.preventDefault();
-            if (activeIndex < 0 || activeIndex >= items.length - 1) {
-              activeIndex = 0;
-            } else {
-              activeIndex++;
+          
+          // Afficher les suggestions de mentions
+          function displayMentionSuggestions(users) {
+            if (!mentionDropdown) {
+              mentionDropdown = createMentionDropdown();
             }
-            break;
             
-          case 'ArrowUp':
-            e.preventDefault();
-            if (activeIndex <= 0) {
-              activeIndex = items.length - 1;
-            } else {
-              activeIndex--;
-            }
-            break;
+            mentionDropdown.innerHTML = '';
             
-          case 'Enter':
-            e.preventDefault();
-            if (activeItem) {
-              activeItem.click();
-            } else if (items.length > 0) {
-              items[0].click();
-            }
-            return;
+            users.forEach(user => {
+              const suggestionItem = document.createElement('div');
+              suggestionItem.className = 'mention-suggestion';
+              
+              // Ajouter une image de profil si disponible
+              if (user.image_url) {
+                const img = document.createElement('img');
+                img.src = user.image_url;
+                img.style.width = '32px';
+                img.style.height = '32px';
+                img.style.borderRadius = '50%';
+                img.style.marginRight = '10px';
+                suggestionItem.appendChild(img);
+              } else {
+                // Fallback pour les utilisateurs sans image
+                const placeholder = document.createElement('div');
+                placeholder.style.width = '32px';
+                placeholder.style.height = '32px';
+                placeholder.style.borderRadius = '50%';
+                placeholder.style.backgroundColor = '#0a66c2';
+                placeholder.style.color = 'white';
+                placeholder.style.display = 'flex';
+                placeholder.style.alignItems = 'center';
+                placeholder.style.justifyContent = 'center';
+                placeholder.style.marginRight = '10px';
+                placeholder.textContent = user.name.charAt(0).toUpperCase();
+                suggestionItem.appendChild(placeholder);
+              }
+              
+              // Informations de l'utilisateur
+              const userInfo = document.createElement('div');
+              userInfo.innerHTML = `
+                <div style="font-weight: 500;">${user.name}</div>
+                <div style="font-size: 12px; color: #666;">${user.headline || ''}</div>
+              `;
+              suggestionItem.appendChild(userInfo);
+              
+              // Gérer le clic sur une suggestion
+              suggestionItem.addEventListener('click', () => {
+                insertMention(user);
+                hideMentionDropdown();
+              });
+              
+              // Gérer le survol
+              suggestionItem.addEventListener('mouseenter', () => {
+                suggestionItem.style.backgroundColor = '#f3f2ef';
+              });
+              
+              suggestionItem.addEventListener('mouseleave', () => {
+                suggestionItem.style.backgroundColor = 'transparent';
+              });
+              
+              mentionDropdown.appendChild(suggestionItem);
+            });
             
-          case 'Escape':
-            e.preventDefault();
-            hideMentionDropdown();
-            return;
-            
-          default:
-            return;
-        }
-        
-        // Mettre à jour l'élément actif
-        items.forEach(item => item.classList.remove('active'));
-        if (items[activeIndex]) {
-          items[activeIndex].classList.add('active');
-          items[activeIndex].scrollIntoView({ block: 'nearest' });
-        }
-      });
-      
-      // Cacher le menu déroulant si on clique ailleurs
-      document.addEventListener('click', function(e) {
-        if (mentionDropdown && !mentionDropdown.contains(e.target) && e.target !== editor) {
-          hideMentionDropdown();
-        }
-      });
-      
-      // Nettoyer au démontage
-      return {
-        cleanup: function() {
-          if (mentionDropdown && mentionDropdown.parentNode) {
-            mentionDropdown.parentNode.removeChild(mentionDropdown);
+            mentionDropdown.style.display = 'block';
+            positionMentionDropdown(editor);
           }
+          
+          // Cacher le menu déroulant des mentions
+          function hideMentionDropdown() {
+            if (mentionDropdown) {
+              mentionDropdown.style.display = 'none';
+            }
+            mentionSearchActive = false;
+          }
+          
+          // Insérer une mention dans l'éditeur
+          function insertMention(user) {
+            const cursorPos = editor.selectionStart;
+            const text = editor.value;
+            
+            // Supprimer la recherche partielle (le @...)
+            const textBefore = text.substring(0, mentionStartPosition);
+            const textAfter = text.substring(cursorPos);
+            
+            // Créer la mention au format @[Nom](URL)
+            const mention = `@[${user.name}](${user.profile_url}) `;
+            
+            // Mettre à jour le texte
+            editor.value = textBefore + mention + textAfter;
+            
+            // Repositionner le curseur après la mention
+            editor.selectionStart = editor.selectionEnd = textBefore.length + mention.length;
+            
+            // Focus sur l'éditeur
+            editor.focus();
+            
+            // Déclencher l'événement de changement
+            const event = new Event('input', { bubbles: true });
+            editor.dispatchEvent(event);
+          }
+          
+          // Gérer les entrées clavier
+          editor.addEventListener('keyup', function(e) {
+            // Ignorer les touches spéciales
+            if (['ArrowUp', 'ArrowDown', 'Enter', 'Escape'].includes(e.key)) {
+              return;
+            }
+            
+            const cursorPos = this.selectionStart;
+            const text = this.value;
+            
+            // Chercher le dernier @
+            if (!mentionSearchActive) {
+              const lastAtPos = text.lastIndexOf('@', cursorPos - 1);
+              
+              // Vérifier si le @ est au début ou précédé d'un espace
+              if (lastAtPos >= 0 && (lastAtPos === 0 || text[lastAtPos - 1] === ' ' || text[lastAtPos - 1] === '\n')) {
+                // Vérifier qu'il n'y a pas d'espace entre @ et la position actuelle
+                const textBetween = text.substring(lastAtPos + 1, cursorPos);
+                if (!textBetween.includes(' ') && !textBetween.includes('\n')) {
+                  mentionStartPosition = lastAtPos;
+                  currentMentionSearch = textBetween;
+                  mentionSearchActive = true;
+                }
+              }
+            } else {
+              // Mise à jour de la recherche en cours
+              if (cursorPos <= mentionStartPosition) {
+                // Le curseur est avant le @, désactiver la recherche
+                mentionSearchActive = false;
+                hideMentionDropdown();
+              } else {
+                // Vérifier si le curseur est toujours dans la même recherche
+                const textBetween = text.substring(mentionStartPosition + 1, cursorPos);
+                if (textBetween.includes(' ') || textBetween.includes('\n')) {
+                  // Un espace a été ajouté, désactiver la recherche
+                  mentionSearchActive = false;
+                  hideMentionDropdown();
+                } else {
+                  // Mettre à jour la recherche
+                  currentMentionSearch = textBetween;
+                }
+              }
+            }
+            
+            // Lancer la recherche si nécessaire
+            if (mentionSearchActive && currentMentionSearch.length >= 2) {
+              // Utiliser un debounce pour éviter trop d'appels API
+              clearTimeout(debounceTimeout);
+              debounceTimeout = setTimeout(() => {
+                searchLinkedInUsers(currentMentionSearch);
+              }, 300);
+            } else if (mentionSearchActive && currentMentionSearch.length < 2) {
+              hideMentionDropdown();
+            }
+          });
+          
+          // Gérer les touches spéciales
+          editor.addEventListener('keydown', function(e) {
+            if (!mentionSearchActive || !mentionDropdown || mentionDropdown.style.display === 'none') {
+              return;
+            }
+            
+            const items = mentionDropdown.querySelectorAll('.mention-suggestion');
+            const activeItem = mentionDropdown.querySelector('.mention-suggestion.active');
+            let activeIndex = Array.from(items).indexOf(activeItem);
+            
+            switch (e.key) {
+              case 'ArrowDown':
+                e.preventDefault();
+                if (activeIndex < 0 || activeIndex >= items.length - 1) {
+                  activeIndex = 0;
+                } else {
+                  activeIndex++;
+                }
+                break;
+                
+              case 'ArrowUp':
+                e.preventDefault();
+                if (activeIndex <= 0) {
+                  activeIndex = items.length - 1;
+                } else {
+                  activeIndex--;
+                }
+                break;
+                
+              case 'Enter':
+                e.preventDefault();
+                if (activeItem) {
+                  activeItem.click();
+                } else if (items.length > 0) {
+                  items[0].click();
+                }
+                return;
+                
+              case 'Escape':
+                e.preventDefault();
+                hideMentionDropdown();
+                return;
+                
+              default:
+                return;
+            }
+            
+            // Mettre à jour l'élément actif
+            items.forEach(item => item.classList.remove('active'));
+            if (items[activeIndex]) {
+              items[activeIndex].classList.add('active');
+              items[activeIndex].scrollIntoView({ block: 'nearest' });
+            }
+          });
+          
+          // Cacher le menu déroulant si on clique ailleurs
+          document.addEventListener('click', function(e) {
+            if (mentionDropdown && !mentionDropdown.contains(e.target) && e.target !== editor) {
+              hideMentionDropdown();
+            }
+          });
+          
+          // Nettoyer au démontage
+          return {
+            cleanup: function() {
+              if (mentionDropdown && mentionDropdown.parentNode) {
+                mentionDropdown.parentNode.removeChild(mentionDropdown);
+              }
+            }
+          };
         }
-      };
-    }
 
-    // Initialiser tous les éditeurs de la page
-    document.addEventListener('DOMContentLoaded', function() {
-      const editors = document.querySelectorAll('.mention-editor');
-      editors.forEach(editor => {
-        const mentionEditor = initMentionEditor(editor);
-        
-        // Stocker l'instance pour nettoyage ultérieur si nécessaire
-        editor.mentionEditor = mentionEditor;
-      });
-      
-      // Convertir les mentions pour l'affichage
-      function renderMentions(container) {
-        const mentionRegex = /@\[(.*?)\]\((.*?)\)/g;
-        const elements = container.querySelectorAll('.convert-mentions');
-        
-        elements.forEach(element => {
-          const html = element.innerHTML.replace(mentionRegex, '<a href="$2" class="mention" target="_blank">@$1</a>');
-          element.innerHTML = html;
+        // Initialiser tous les éditeurs de la page
+        document.addEventListener('DOMContentLoaded', function() {
+          const editors = document.querySelectorAll('.mention-editor');
+          editors.forEach(editor => {
+            const mentionEditor = initMentionEditor(editor);
+            
+            // Stocker l'instance pour nettoyage ultérieur si nécessaire
+            editor.mentionEditor = mentionEditor;
+          });
+          
+          // Convertir les mentions pour l'affichage
+          function renderMentions(container) {
+            const mentionRegex = /@\[(.*?)\]\((.*?)\)/g;
+            const elements = container.querySelectorAll('.convert-mentions');
+            
+            elements.forEach(element => {
+              const html = element.innerHTML.replace(mentionRegex, '<a href="$2" class="mention" target="_blank">@$1</a>');
+              element.innerHTML = html;
+            });
+          }
+          
+          // Convertir les mentions dans les posts existants
+          renderMentions(document);
         });
-      }
-      
-      // Convertir les mentions dans les posts existants
-      renderMentions(document);
-    });
-</script>
+    </script>
+</body>
 </html>
