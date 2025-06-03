@@ -854,7 +854,7 @@ def dashboard():
                 
                 format_text = format_instructions.get(format_type, format_instructions["standard"])
                 
-                # Générer le contenu avec Gemini en utilisant le nouveau prompt optimisé
+                # Générer le contenu avec Gemini
                 model = genai.GenerativeModel("gemini-2.0-flash")
                 
                 # Construire le prompt avec les instructions personnalisées si présentes
@@ -889,42 +889,80 @@ def dashboard():
             except Exception as e:
                 draft = f"Erreur Gemini : {str(e)}"
         else:
-            # Génération standard basée sur un prompt avec le nouveau format optimisé
+            # Génération standard basée sur un prompt optimisé LinkedIn
             try:
                 model = genai.GenerativeModel("gemini-2.0-flash")
                 
-                # Récupérer les intérêts et secteur de l'utilisateur
+                # Récupérer les intérêts et secteur de l'utilisateur (uniquement pour ton personnel)
                 interets = user.interets if user and user.interets else []
                 secteur = user.secteur if user and user.secteur else "général"
                 
-                # Nouveau prompt optimisé
+                # Construction du prompt selon le ton choisi
+                if tone == "personnel":
+                    # Ton personnel : utilise secteur et intérêts
+                    tone_instruction = f"""
+- **Ton personnel** : Partage une expérience vécue ou une réflexion personnelle
+- Base-toi sur ton secteur d'activité : {secteur}
+- Intègre naturellement tes centres d'intérêt : {', '.join(interets) if interets else 'développement professionnel'}
+- Utilise "je", "mon expérience", "j'ai appris"
+- Raconte une anecdote ou un apprentissage personnel"""
+                
+                elif tone == "professionnel":
+                    # Ton professionnel : expertise et autorité
+                    tone_instruction = """
+- **Ton professionnel** : Démontre ton expertise et ta crédibilité
+- Utilise un vocabulaire technique et précis
+- Adopte une approche analytique et factuelle
+- Partage des insights métier et des bonnes pratiques
+- Position d'expert qui apporte de la valeur"""
+                
+                elif tone == "inspirant":
+                    # Ton inspirant : motivation et vision
+                    tone_instruction = """
+- **Ton inspirant** : Motive et encourage ton audience
+- Utilise des mots positifs et énergiques
+- Partage une vision d'avenir ou des possibilités
+- Encourage l'action et le dépassement de soi
+- Ton optimiste qui donne envie d'agir"""
+                
+                else:  # conversationnel
+                    # Ton conversationnel : accessible et amical
+                    tone_instruction = """
+- **Ton conversationnel** : Crée une discussion détendue
+- Utilise un langage courant et accessible
+- Pose des questions directes à ton audience
+- Adopte un style familier mais professionnel
+- Comme si tu parlais à un collègue"""
+                
+                # Prompt principal optimisé LinkedIn
                 optimized_prompt = f"""
-Tu es un expert de LinkedIn, spécialisé dans les posts viraux qui performent avec l'algorithme 2025.
-Rédige un post LinkedIn optimisé sur : "{prompt}"
+Tu es un créateur de contenu LinkedIn expert. Rédige un post viral sur : "{prompt}"
 
-Respecte strictement ces consignes :
-1. Accroche percutante dans les **2 premières lignes** (positive, négative ou personnelle)
-2. Rédige en **paragraphes courts**, avec **sauts de ligne** fréquents
-3. Longueur : entre **900 et 1200 caractères** (pas plus)
-4. Ton : {tone}, authentique, humain. 
-   - Pour le ton professionnel, utilise un vocabulaire technique et adapté au domaine.
-   - Pour le ton inspirant, vise à motiver et à inspirer ton audience.
-   - Pour le ton personnel, base-toi sur les centres d'intérêt suivants : {interets}, et sur le secteur suivant : {secteur}. 
-   - Pour le ton conversationnel, adopte un langage courant, accessible et amical.
-5. **Aucune mention de lien externe**
-6. Termine par une **question engageante** simple qui pousse à commenter
-7. Le contenu doit être **éducatif**, **inspirant**, **personnel**, ou **utile**
-8. Index de lisibilité entre 0 et 4 (accessible à tous)
-9. Tu peux utiliser **puces ou émojis**, mais avec modération
-10. Tu te serviras des {interets} et du {secteur} uniquement dans le ton personnel.
-11. Tu conclueras par 3/4 hashtags en rapport
+🎯 **STRUCTURE OBLIGATOIRE** :
+1. **Hook** (1-2 lignes) : Accroche qui arrête le scroll
+2. **Corps** (3-5 paragraphes courts) : Développement avec sauts de ligne
+3. **CTA** (1 ligne) : Question qui pousse à commenter
+4. **Hashtags** (3-4) : Pertinents et populaires
 
-Objectif : générer du **temps de lecture élevé**, **des commentaires** et **des sauvegardes**.
-Rédige un post complet, sans aucun titre, ni signature, ni lien. Commence directement par l'accroche.
+📝 **CONSIGNES DE RÉDACTION** :
+{tone_instruction}
+
+✅ **RÈGLES LINKEDIN** :
+- Longueur : 800-1300 caractères maximum
+- Paragraphes de 1-2 lignes avec espaces
+- Émojis stratégiques (2-3 max)
+- Aucun lien externe
+- Style authentique et humain
+- Évite le jargon marketing
+
+🚀 **OBJECTIF** : Maximiser engagement (likes, commentaires, partages)
+
+Commence directement par l'accroche, sans titre ni introduction.
 """
                 
                 response = model.generate_content(optimized_prompt)
                 draft = response.text.strip()
+                
             except Exception as e:
                 draft = f"Erreur Gemini : {str(e)}"
 
