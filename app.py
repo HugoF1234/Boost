@@ -118,7 +118,7 @@ LINKEDIN_ASSET_REGISTRATION_URL = "https://api.linkedin.com/v2/assets?action=reg
 LINKEDIN_POSTS_URL = "https://api.linkedin.com/v2/ugcPosts"
 
 SCOPES = "openid email profile w_member_social"
-GEMINI_API_KEY = os.getenv("GEMINI_API_KEY", "AIzaSyB434P__wR_o_rr5Q3PjOULqyKhMANRtgk")
+GEMINI_API_KEY = os.getenv("GEMINI_API_KEY", "AIzaSyD76qCZzbr9P74etHmr8qWb1qoe7eapDbc")
 genai.configure(api_key=GEMINI_API_KEY)
 import requests
 import re
@@ -855,7 +855,7 @@ def dashboard():
                 format_text = format_instructions.get(format_type, format_instructions["standard"])
                 
                 # Générer le contenu avec Gemini
-                model = genai.GenerativeModel("gemini-1.5-pro")
+                model = genai.GenerativeModel("gemini-2.0-flash")
                 
                 # Construire le prompt avec les instructions personnalisées si présentes
                 article_prompt = f"""
