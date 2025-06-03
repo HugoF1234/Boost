@@ -854,7 +854,7 @@ def dashboard():
                 
                 format_text = format_instructions.get(format_type, format_instructions["standard"])
                 
-                # Générer le contenu avec Gemini
+                # Générer le contenu avec Gemini en utilisant le nouveau prompt optimisé
                 model = genai.GenerativeModel("gemini-2.0-flash")
                 
                 # Construire le prompt avec les instructions personnalisées si présentes
@@ -889,11 +889,41 @@ def dashboard():
             except Exception as e:
                 draft = f"Erreur Gemini : {str(e)}"
         else:
-            # Génération standard basée sur un prompt
+            # Génération standard basée sur un prompt avec le nouveau format optimisé
             try:
-                model = genai.GenerativeModel("gemini-1.5-pro")
-                extended_prompt = f"Écris un post LinkedIn sur : {prompt}. Le ton doit être {tone}. Tu redigeras le post de la maniere la plus humaine possible"
-                response = model.generate_content(extended_prompt)
+                model = genai.GenerativeModel("gemini-2.0-flash")
+                
+                # Récupérer les intérêts et secteur de l'utilisateur
+                interets = user.interets if user and user.interets else []
+                secteur = user.secteur if user and user.secteur else "général"
+                
+                # Nouveau prompt optimisé
+                optimized_prompt = f"""
+Tu es un expert de LinkedIn, spécialisé dans les posts viraux qui performent avec l'algorithme 2025.
+Rédige un post LinkedIn optimisé sur : "{prompt}"
+
+Respecte strictement ces consignes :
+1. Accroche percutante dans les **2 premières lignes** (positive, négative ou personnelle)
+2. Rédige en **paragraphes courts**, avec **sauts de ligne** fréquents
+3. Longueur : entre **900 et 1200 caractères** (pas plus)
+4. Ton : {tone}, authentique, humain. 
+   - Pour le ton professionnel, utilise un vocabulaire technique et adapté au domaine.
+   - Pour le ton inspirant, vise à motiver et à inspirer ton audience.
+   - Pour le ton personnel, base-toi sur les centres d'intérêt suivants : {interets}, et sur le secteur suivant : {secteur}. 
+   - Pour le ton conversationnel, adopte un langage courant, accessible et amical.
+5. **Aucune mention de lien externe**
+6. Termine par une **question engageante** simple qui pousse à commenter
+7. Le contenu doit être **éducatif**, **inspirant**, **personnel**, ou **utile**
+8. Index de lisibilité entre 0 et 4 (accessible à tous)
+9. Tu peux utiliser **puces ou émojis**, mais avec modération
+10. Tu te serviras des {interets} et du {secteur} uniquement dans le ton personnel.
+11. Tu conclueras par 3/4 hashtags en rapport
+
+Objectif : générer du **temps de lecture élevé**, **des commentaires** et **des sauvegardes**.
+Rédige un post complet, sans aucun titre, ni signature, ni lien. Commence directement par l'accroche.
+"""
+                
+                response = model.generate_content(optimized_prompt)
                 draft = response.text.strip()
             except Exception as e:
                 draft = f"Erreur Gemini : {str(e)}"
