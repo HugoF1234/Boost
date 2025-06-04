@@ -633,29 +633,6 @@
     </div>
     
     <div class="card-body-modern">
-        <form method="post">
-            <div class="form-grid">
-                <div>
-                    <input type="text" name="prompt" class="input-modern" placeholder="Ex: Partagez des conseils sur le leadership, Annoncez votre nouvel article..." required>
-                </div>
-                <div>
-                    <select name="tone" class="input-modern">
-                        <option value="professionnel">Professionnel</option>
-                        <option value="familier">Familier</option>
-                        <option value="inspirant">Inspirant</option>
-                        <option value="humoristique">Humoristique</option>
-                        <option value="factuel">Factuel</option>
-                    </select>
-                </div>
-                <div>
-                    <button type="submit" class="btn-modern btn-primary-modern">
-                        <i class="fa-solid fa-wand-magic-sparkles"></i>
-                        Générer
-                    </button>
-                </div>
-            </div>
-        </form>
-        
         <a href="{{ url_for('news_assistant') }}" class="news-link-modern">
             <div style="display: flex; align-items: center; gap: 1rem;">
                 <div style="width: 50px; height: 50px; background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%); border-radius: 15px; display: flex; align-items: center; justify-content: center; color: white; font-size: 1.25rem;">
