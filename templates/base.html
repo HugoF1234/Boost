@@ -113,13 +113,45 @@
             justify-content: center;
             gap: 4px;
             cursor: pointer;
-            transition: all 0.3s ease;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
             box-shadow: var(--shadow-soft);
         }
 
-        /* Position du bouton quand sidebar est rétractée */
-        .sidebar.collapsed ~ .sidebar-toggle {
+        /* Position du bouton selon l'état de la sidebar */
+        .sidebar.collapsed ~ button.sidebar-toggle {
             left: 100px;
+        }
+
+        /* États du bouton */
+        .sidebar-toggle:hover {
+            background: var(--primary);
+            border-color: var(--primary);
+            transform: scale(1.05);
+            box-shadow: var(--shadow-medium);
+        }
+
+        .sidebar-toggle:hover .toggle-line {
+            background: white;
+        }
+
+        .toggle-line {
+            width: 20px;
+            height: 2px;
+            background: var(--primary);
+            border-radius: 2px;
+            transition: all 0.3s ease;
+        }
+
+        .sidebar-toggle.active .toggle-line:nth-child(1) {
+            transform: rotate(45deg) translate(6px, 6px);
+        }
+
+        .sidebar-toggle.active .toggle-line:nth-child(2) {
+            opacity: 0;
+        }
+
+        .sidebar-toggle.active .toggle-line:nth-child(3) {
+            transform: rotate(-45deg) translate(6px, -6px);
         }
 
         .sidebar-toggle:hover {
@@ -619,6 +651,13 @@
         <div class="toggle-line"></div>
     </button>
 
+    <!-- Bouton toggle pour la sidebar - POSITIONNÉ APRÈS LA SIDEBAR -->
+    <button class="sidebar-toggle" id="sidebar-toggle" onclick="toggleSidebar()">
+        <div class="toggle-line"></div>
+        <div class="toggle-line"></div>
+        <div class="toggle-line"></div>
+    </button>
+
     <div class="app-container">
         <!-- Sidebar moderne -->
         <aside class="sidebar" id="sidebar">
@@ -734,6 +773,8 @@
             const sidebarToggle = document.getElementById('sidebar-toggle');
             const overlay = document.getElementById('sidebar-overlay');
             
+            console.log('Toggle sidebar - Current state:', sidebarCollapsed); // Debug
+            
             if (window.innerWidth <= 768) {
                 // Mode mobile - sidebar overlay
                 sidebar.classList.toggle('open');
@@ -743,15 +784,17 @@
                 // Mode desktop - sidebar rétractable
                 sidebarCollapsed = !sidebarCollapsed;
                 
+                console.log('New state:', sidebarCollapsed); // Debug
+                
                 if (sidebarCollapsed) {
                     sidebar.classList.add('collapsed');
                     mainContent.classList.add('expanded');
+                    sidebarToggle.classList.add('active');
                 } else {
                     sidebar.classList.remove('collapsed');
                     mainContent.classList.remove('expanded');
+                    sidebarToggle.classList.remove('active');
                 }
-                
-                sidebarToggle.classList.toggle('active');
             }
         }
 
@@ -787,13 +830,31 @@
                 if (sidebarCollapsed) {
                     sidebar.classList.add('collapsed');
                     mainContent.classList.add('expanded');
+                } else {
+                    sidebar.classList.remove('collapsed');
+                    mainContent.classList.remove('expanded');
                 }
             } else {
                 // Mode mobile - réinitialiser les classes desktop
                 sidebar.classList.remove('collapsed');
                 mainContent.classList.remove('expanded');
-                sidebarToggle.classList.remove('active');
                 sidebarCollapsed = false;
+                sidebarToggle.classList.remove('active');
+            }
+        });
+
+        // Initialiser l'état au chargement
+        document.addEventListener('DOMContentLoaded', function() {
+            const sidebar = document.getElementById('sidebar');
+            const mainContent = document.getElementById('main-content');
+            
+            // S'assurer que la sidebar est dans le bon état initial
+            if (window.innerWidth > 768) {
+                sidebar.classList.remove('open');
+                if (sidebarCollapsed) {
+                    sidebar.classList.add('collapsed');
+                    mainContent.classList.add('expanded');
+                }
             }
         });
 
