@@ -74,11 +74,33 @@
             flex-direction: column;
         }
 
+        /* Sidebar rétractée */
+        .sidebar.collapsed {
+            width: 80px;
+        }
+
+        .sidebar.collapsed .nav-text {
+            opacity: 0;
+            transform: translateX(-20px);
+            pointer-events: none;
+        }
+
+        .sidebar.collapsed .logo-text {
+            opacity: 0;
+            transform: scale(0);
+        }
+
+        .sidebar.collapsed .user-name,
+        .sidebar.collapsed .user-role {
+            opacity: 0;
+            transform: translateX(-20px);
+        }
+
         /* Bouton toggle pour la sidebar */
         .sidebar-toggle {
             position: fixed;
             top: 1.5rem;
-            left: 1.5rem;
+            left: 300px; /* Positionné à droite de la sidebar */
             z-index: 1001;
             background: var(--white);
             border: 2px solid var(--primary-light);
@@ -93,6 +115,11 @@
             cursor: pointer;
             transition: all 0.3s ease;
             box-shadow: var(--shadow-soft);
+        }
+
+        /* Position du bouton quand sidebar est rétractée */
+        .sidebar.collapsed ~ .sidebar-toggle {
+            left: 100px;
         }
 
         .sidebar-toggle:hover {
@@ -225,6 +252,7 @@
             font-weight: 600;
             font-size: 0.95rem;
             opacity: 0.95;
+            transition: all 0.3s ease;
         }
 
         .user-role {
@@ -232,6 +260,7 @@
             font-size: 0.8rem;
             opacity: 0.8;
             margin-top: 0.25rem;
+            transition: all 0.3s ease;
         }
 
         /* Navigation moderne */
@@ -260,7 +289,6 @@
         .nav-link {
             display: flex;
             align-items: center;
-            justify-content: center;
             gap: 1rem;
             padding: 1rem 1.5rem;
             color: var(--text-secondary);
@@ -270,6 +298,17 @@
             transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             position: relative;
             overflow: hidden;
+        }
+
+        .nav-text {
+            transition: all 0.3s ease;
+            white-space: nowrap;
+        }
+
+        /* Sidebar rétractée - centrer les icônes */
+        .sidebar.collapsed .nav-link {
+            justify-content: center;
+            padding: 1rem;
         }
 
         .nav-link::before {
@@ -347,8 +386,8 @@
         }
 
         .main-content.expanded {
-            margin-left: 0;
-            width: 100%;
+            margin-left: 80px;
+            width: calc(100% - 80px);
         }
 
         /* Conteneur centré pour le contenu */
@@ -375,6 +414,7 @@
             }
 
             .sidebar-toggle {
+                left: 1.5rem !important;
                 display: flex;
             }
         }
@@ -622,36 +662,42 @@
                         <a href="{{ url_for('dashboard') }}" 
                            class="nav-link {% if request.endpoint == 'dashboard' %}active{% endif %}">
                             <i class="fas fa-tachometer-alt nav-icon"></i>
+                            <span class="nav-text">Dashboard</span>
                         </a>
                     </div>
                     <div class="nav-item">
                         <a href="{{ url_for('news_assistant') }}" 
                            class="nav-link {% if request.endpoint == 'news_assistant' %}active{% endif %}">
                             <i class="fas fa-newspaper nav-icon"></i>
+                            <span class="nav-text">Actualités</span>
                         </a>
                     </div>
                     <div class="nav-item">
                         <a href="{{ url_for('calendar') }}" 
                            class="nav-link {% if request.endpoint == 'calendar' %}active{% endif %}">
                             <i class="fas fa-calendar-alt nav-icon"></i>
+                            <span class="nav-text">Calendrier</span>
                         </a>
                     </div>
                     <div class="nav-item">
                         <a href="{{ url_for('historique') }}" 
                            class="nav-link {% if request.endpoint == 'historique' %}active{% endif %}">
                             <i class="fas fa-history nav-icon"></i>
+                            <span class="nav-text">Historique</span>
                         </a>
                     </div>
                     <div class="nav-item">
                         <a href="{{ url_for('profil') }}" 
                            class="nav-link {% if request.endpoint == 'profil' %}active{% endif %}">
                             <i class="fas fa-user-cog nav-icon"></i>
+                            <span class="nav-text">Profil</span>
                         </a>
                     </div>
                     <div class="nav-item">
                         <a href="{{ url_for('parametres') }}" 
                            class="nav-link {% if request.endpoint == 'parametres' %}active{% endif %}">
                             <i class="fas fa-cog nav-icon"></i>
+                            <span class="nav-text">Paramètres</span>
                         </a>
                     </div>
                 </div>
@@ -661,6 +707,7 @@
                     <div class="nav-item">
                         <a href="{{ url_for('logout') }}" class="nav-link danger">
                             <i class="fas fa-sign-out-alt nav-icon"></i>
+                            <span class="nav-text">Déconnexion</span>
                         </a>
                     </div>
                 </div>
