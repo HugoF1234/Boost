@@ -1,251 +1,536 @@
 {% extends "base.html" %}
 {% block content %}
-<div class="d-flex align-center justify-between mb-4">
-    <h1>Bienvenue, {{ first_name }} 👋</h1>
-    <div>
-        <span class="text-light">{{ name }} | {{ email }}</span>
+<style>
+    /* Styles supplémentaires pour améliorer l'esthétique */
+    .welcome-header {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 2rem;
+        border-radius: 16px;
+        margin-bottom: 2rem;
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .welcome-header::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="dots" width="20" height="20" patternUnits="userSpaceOnUse"><circle cx="10" cy="10" r="1" fill="%23ffffff" opacity="0.1"/></pattern></defs><rect width="100" height="100" fill="url(%23dots)"/></svg>') repeat;
+    }
+    
+    .welcome-content {
+        position: relative;
+        z-index: 1;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 1rem;
+    }
+    
+    .welcome-title {
+        font-size: 2rem;
+        font-weight: 700;
+        margin-bottom: 0.5rem;
+        text-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+    
+    .welcome-subtitle {
+        opacity: 0.9;
+        font-size: 1rem;
+    }
+    
+    .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 1.5rem;
+        margin-bottom: 2rem;
+    }
+    
+    .stat-card {
+        background: white;
+        border-radius: 16px;
+        padding: 2rem;
+        text-align: center;
+        border: 1px solid rgba(0,0,0,0.05);
+        transition: all 0.3s ease;
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .stat-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 3px;
+        background: var(--gradient-primary, linear-gradient(135deg, #0a66c2 0%, #1e40af 100%));
+        transition: all 0.5s ease;
+    }
+    
+    .stat-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+    }
+    
+    .stat-card:hover::before {
+        left: 0;
+    }
+    
+    .stat-number {
+        font-size: 2.5rem;
+        font-weight: 700;
+        color: var(--primary);
+        margin-bottom: 0.5rem;
+        display: block;
+    }
+    
+    .stat-label {
+        color: var(--text-light);
+        font-weight: 500;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        font-size: 0.875rem;
+    }
+    
+    .main-content-grid {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 2rem;
+    }
+    
+    .post-creator {
+        background: white;
+        border-radius: 16px;
+        overflow: hidden;
+        border: 1px solid rgba(0,0,0,0.05);
+        transition: all 0.3s ease;
+    }
+    
+    .post-creator:hover {
+        box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+    }
+    
+    .card-header-modern {
+        background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+        padding: 1.5rem 2rem;
+        border-bottom: 1px solid rgba(0,0,0,0.05);
+    }
+    
+    .card-title-modern {
+        font-size: 1.25rem;
+        font-weight: 600;
+        color: var(--text-dark);
+        margin-bottom: 0.25rem;
+    }
+    
+    .card-subtitle-modern {
+        color: var(--text-light);
+        font-size: 0.875rem;
+    }
+    
+    .card-body-modern {
+        padding: 2rem;
+    }
+    
+    .form-row-modern {
+        display: grid;
+        grid-template-columns: 2fr 1fr auto;
+        gap: 1rem;
+        align-items: end;
+    }
+    
+    .input-modern {
+        width: 100%;
+        padding: 0.875rem 1rem;
+        border: 2px solid rgba(0,0,0,0.1);
+        border-radius: 12px;
+        font-size: 1rem;
+        transition: all 0.3s ease;
+        background: rgba(0,0,0,0.01);
+    }
+    
+    .input-modern:focus {
+        outline: none;
+        border-color: var(--primary);
+        box-shadow: 0 0 0 3px rgba(10, 102, 194, 0.1);
+        transform: translateY(-1px);
+    }
+    
+    .btn-modern {
+        padding: 0.875rem 1.5rem;
+        border-radius: 12px;
+        font-weight: 600;
+        font-size: 0.875rem;
+        border: none;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        text-decoration: none;
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .btn-modern::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+        transition: all 0.5s ease;
+    }
+    
+    .btn-modern:hover::before {
+        left: 100%;
+    }
+    
+    .btn-primary-modern {
+        background: linear-gradient(135deg, #0a66c2 0%, #1e40af 100%);
+        color: white;
+        box-shadow: 0 4px 15px rgba(10, 102, 194, 0.3);
+    }
+    
+    .btn-primary-modern:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 25px rgba(10, 102, 194, 0.4);
+    }
+    
+    .news-link-modern {
+        background: white;
+        border: 2px solid var(--primary);
+        color: var(--primary);
+        padding: 1rem 1.5rem;
+        border-radius: 12px;
+        text-decoration: none;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-top: 1.5rem;
+        transition: all 0.3s ease;
+    }
+    
+    .news-link-modern:hover {
+        background: var(--primary);
+        color: white;
+        transform: translateY(-2px);
+        box-shadow: 0 8px 15px rgba(10, 102, 194, 0.3);
+    }
+    
+    .post-editor {
+        display: none;
+        background: white;
+        border-radius: 16px;
+        overflow: hidden;
+        border: 1px solid rgba(0,0,0,0.05);
+        margin-top: 2rem;
+        animation: slideIn 0.3s ease-out;
+    }
+    
+    @keyframes slideIn {
+        from {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+    
+    .textarea-modern {
+        width: 100%;
+        min-height: 150px;
+        padding: 1rem;
+        border: 2px solid rgba(0,0,0,0.1);
+        border-radius: 12px;
+        font-family: inherit;
+        font-size: 1rem;
+        line-height: 1.6;
+        resize: vertical;
+        transition: all 0.3s ease;
+    }
+    
+    .textarea-modern:focus {
+        outline: none;
+        border-color: var(--primary);
+        box-shadow: 0 0 0 3px rgba(10, 102, 194, 0.1);
+    }
+    
+    .publish-section {
+        display: grid;
+        grid-template-columns: 1fr auto auto;
+        gap: 1rem;
+        align-items: end;
+        margin-top: 1.5rem;
+    }
+    
+    .checkbox-modern {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.875rem 0;
+    }
+    
+    .checkbox-modern input[type="checkbox"] {
+        width: 18px;
+        height: 18px;
+        accent-color: var(--primary);
+    }
+    
+    .success-badge {
+        background: #e6f7ee;
+        color: #16a34a;
+        padding: 0.5rem 1rem;
+        border-radius: 50px;
+        font-size: 0.875rem;
+        font-weight: 500;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+    
+    /* Responsive */
+    @media (max-width: 768px) {
+        .welcome-content {
+            text-align: center;
+        }
+        
+        .stats-grid {
+            grid-template-columns: 1fr;
+            gap: 1rem;
+        }
+        
+        .form-row-modern {
+            grid-template-columns: 1fr;
+            gap: 1rem;
+        }
+        
+        .publish-section {
+            grid-template-columns: 1fr;
+            gap: 1rem;
+        }
+    }
+</style>
+
+<!-- Header de bienvenue -->
+<div class="welcome-header">
+    <div class="welcome-content">
+        <div>
+            <h1 class="welcome-title">Bienvenue, {{ first_name }} 👋</h1>
+            <p class="welcome-subtitle">{{ name }} | {{ email }}</p>
+        </div>
+        {% if article_success %}
+        <div class="success-badge">
+            <i class="fa-solid fa-check-circle"></i>
+            Article sélectionné !
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+<!-- Statistiques -->
+<div class="stats-grid">
+    <div class="stat-card">
+        <span class="stat-number">{{ posts|default([])|length }}</span>
+        <div class="stat-label">Posts publiés</div>
+    </div>
+    
+    <div class="stat-card">
+        <span class="stat-number">{{ scheduled_posts|default(0) }}</span>
+        <div class="stat-label">Posts programmés</div>
+    </div>
+    
+    <div class="stat-card">
+        <span class="stat-number">{{ interets|default([])|length }}</span>
+        <div class="stat-label">Centres d'intérêt</div>
     </div>
 </div>
 
 <!-- Section pour l'article sélectionné (s'affiche en priorité) -->
 {% if selected_article %}
-<div class="content-card">
-    <h2>📝 Générer un post à partir de l'article sélectionné</h2>
-    
-    {% if article_success %}
-    <div style="background-color: #dcfce7; border: 1px solid #86efac; color: #166534; padding: 12px; border-radius: 8px; margin-bottom: 16px; display: flex; align-items: center; gap: 10px;">
-        <i class="fa-solid fa-check-circle" style="font-size: 18px;"></i>
-        <div>
-            <strong>Article sélectionné avec succès!</strong>
-            <div>Vous pouvez maintenant personnaliser votre post basé sur cet article.</div>
-        </div>
-    </div>
-    {% endif %}
-    
-    <div style="padding: 24px; background-color: var(--grey-light); border-radius: 8px; margin: 20px 0; box-shadow: inset 0 1px 3px rgba(0,0,0,0.1);">
-        <h3 style="margin-bottom: 12px; color: var(--primary);">{{ selected_article.title|clean_html }}</h3>
-        <p style="margin-bottom: 16px;">{{ selected_article.description|clean_html }}</p>
-        <div style="display: flex; justify-content: space-between; align-items: center;">
-            <div style="font-size: 13px; color: var(--text-light); display: flex; align-items: center; gap: 8px;">
-                <i class="fa-solid fa-globe"></i>
-                <a href="{{ selected_article.url }}" target="_blank" style="color: var(--primary); text-decoration: none;">
-                    {{ selected_article.source.name }}
-                </a>
-            </div>
-            <div style="font-size: 13px; color: var(--text-light); display: flex; align-items: center; gap: 8px;">
-                <i class="fa-regular fa-calendar"></i>
-                <span>{{ selected_article.formatted_date }}</span>
-            </div>
-        </div>
+<div class="post-creator">
+    <div class="card-header-modern">
+        <h2 class="card-title-modern">📝 Générer un post à partir de l'article sélectionné</h2>
+        <p class="card-subtitle-modern">Créez un contenu personnalisé basé sur cette actualité</p>
     </div>
     
-    <form method="post" class="mt-4">
-        <div class="form-row">
-            <div class="form-group">
-                <label class="form-label">Ton du post</label>
-                <select name="tone" class="form-control">
-                    <option value="professionnel">Professionnel</option>
-                    <option value="familier">Familier</option>
-                    <option value="inspirant">Inspirant</option>
-                    <option value="humoristique">Humoristique</option>
-                    <option value="factuel">Factuel</option>
-                    <option value="critique">Critique</option>
-                </select>
-            </div>
-            
-            <div class="form-group">
-                <label class="form-label">Perspective</label>
-                <select name="perspective" class="form-control">
-                    <option value="neutre">Neutre</option>
-                    <option value="enthousiaste">Enthousiaste</option>
-                    <option value="analytique">Analytique</option>
-                    <option value="innovant">Innovateur</option>
-                    <option value="expert">Expert du domaine</option>
-                </select>
-            </div>
-        </div>
-        <div class="form-group mt-4">
-            <label class="form-label">Instructions personnalisées (facultatif)</label>
-            <textarea name="custom_instructions" class="form-control" rows="3" placeholder="Ex: Parle de cet article mais insiste sur les dangers de l'IA au quotidien. Ajoute ton point de vue sur la régulation..."></textarea>
-            <div style="margin-top: 6px; font-size: 13px; color: var(--text-light);">
-                <i class="fa-solid fa-lightbulb"></i>
-                Ajoutez des instructions spécifiques pour personnaliser le contenu généré.
-            </div>
-        </div>
-        <div class="form-group mt-4">
-            <label class="form-label">Format du post</label>
-            <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 16px; margin-top: 8px;">
-                <div style="border: 1px solid var(--border); border-radius: 8px; padding: 16px; cursor: pointer; transition: all 0.2s;" 
-                     onclick="this.querySelector('input').checked = true; highlightSelectedFormat(this);" 
-                     class="format-option">
-                    <input type="radio" name="format" value="standard" checked style="margin-right: 8px;">
-                    <strong>Standard</strong>
-                    <p style="margin-top: 8px; font-size: 13px; color: var(--text-light);">Post classique avec votre analyse</p>
+    <div class="card-body-modern">
+        <div style="padding: 1.5rem; background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%); border-radius: 12px; margin-bottom: 1.5rem; border-left: 4px solid var(--primary);">
+            <h3 style="margin-bottom: 0.75rem; color: var(--primary); font-weight: 600;">{{ selected_article.title|clean_html }}</h3>
+            <p style="margin-bottom: 1rem; line-height: 1.6;">{{ selected_article.description|clean_html }}</p>
+            <div style="display: flex; justify-content: space-between; align-items: center; font-size: 0.875rem; color: var(--text-light);">
+                <div style="display: flex; align-items: center; gap: 0.5rem;">
+                    <i class="fa-solid fa-globe"></i>
+                    <a href="{{ selected_article.url }}" target="_blank" style="color: var(--primary); text-decoration: none;">
+                        {{ selected_article.source.name }}
+                    </a>
                 </div>
-                
-                <div style="border: 1px solid var(--border); border-radius: 8px; padding: 16px; cursor: pointer; transition: all 0.2s;" 
-                     onclick="this.querySelector('input').checked = true; highlightSelectedFormat(this);" 
-                     class="format-option">
-                    <input type="radio" name="format" value="question" style="margin-right: 8px;">
-                    <strong>Question</strong>
-                    <p style="margin-top: 8px; font-size: 13px; color: var(--text-light);">Poser une question pour engager</p>
-                </div>
-                
-                <div style="border: 1px solid var(--border); border-radius: 8px; padding: 16px; cursor: pointer; transition: all 0.2s;" 
-                     onclick="this.querySelector('input').checked = true; highlightSelectedFormat(this);" 
-                     class="format-option">
-                    <input type="radio" name="format" value="listpoints" style="margin-right: 8px;">
-                    <strong>Points clés</strong>
-                    <p style="margin-top: 8px; font-size: 13px; color: var(--text-light);">Liste de points importants</p>
-                </div>
-                
-                <div style="border: 1px solid var(--border); border-radius: 8px; padding: 16px; cursor: pointer; transition: all 0.2s;" 
-                     onclick="this.querySelector('input').checked = true; highlightSelectedFormat(this);" 
-                     class="format-option">
-                    <input type="radio" name="format" value="story" style="margin-right: 8px;">
-                    <strong>Histoire</strong>
-                    <p style="margin-top: 8px; font-size: 13px; color: var(--text-light);">Format narratif engageant</p>
+                <div style="display: flex; align-items: center; gap: 0.5rem;">
+                    <i class="fa-regular fa-calendar"></i>
+                    <span>{{ selected_article.formatted_date }}</span>
                 </div>
             </div>
         </div>
         
-        <div class="d-flex gap-3 mt-4">
-            <button type="submit" name="generate_from_article" class="btn btn-primary">
-                <i class="fa-solid fa-wand-magic-sparkles"></i>
-                Générer mon post
-            </button>
+        <form method="post">
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1.5rem;">
+                <div>
+                    <label style="display: block; margin-bottom: 0.5rem; font-weight: 500; color: var(--text-dark);">Ton du post</label>
+                    <select name="tone" class="input-modern">
+                        <option value="professionnel">Professionnel</option>
+                        <option value="familier">Familier</option>
+                        <option value="inspirant">Inspirant</option>
+                        <option value="humoristique">Humoristique</option>
+                        <option value="factuel">Factuel</option>
+                        <option value="critique">Critique</option>
+                    </select>
+                </div>
+                
+                <div>
+                    <label style="display: block; margin-bottom: 0.5rem; font-weight: 500; color: var(--text-dark);">Perspective</label>
+                    <select name="perspective" class="input-modern">
+                        <option value="neutre">Neutre</option>
+                        <option value="enthousiaste">Enthousiaste</option>
+                        <option value="analytique">Analytique</option>
+                        <option value="innovant">Innovateur</option>
+                        <option value="expert">Expert du domaine</option>
+                    </select>
+                </div>
+            </div>
             
-            <a href="{{ url_for('dashboard', clear='true') }}" class="btn btn-outline">
-                Annuler
-            </a>
-        </div>
-    </form>
+            <div style="margin-bottom: 1.5rem;">
+                <label style="display: block; margin-bottom: 0.5rem; font-weight: 500; color: var(--text-dark);">Instructions personnalisées (facultatif)</label>
+                <textarea name="custom_instructions" class="textarea-modern" rows="3" placeholder="Ex: Parle de cet article mais insiste sur les dangers de l'IA au quotidien. Ajoute ton point de vue sur la régulation..."></textarea>
+                <div style="margin-top: 0.5rem; font-size: 0.875rem; color: var(--text-light); display: flex; align-items: center; gap: 0.5rem;">
+                    <i class="fa-solid fa-lightbulb"></i>
+                    Ajoutez des instructions spécifiques pour personnaliser le contenu généré.
+                </div>
+            </div>
+            
+            <div style="display: flex; gap: 1rem; justify-content: flex-end;">
+                <button type="submit" name="generate_from_article" class="btn-modern btn-primary-modern">
+                    <i class="fa-solid fa-wand-magic-sparkles"></i>
+                    Générer mon post
+                </button>
+                
+                <a href="{{ url_for('dashboard', clear='true') }}" class="btn-modern" style="background: transparent; border: 2px solid var(--text-light); color: var(--text-light);">
+                    Annuler
+                </a>
+            </div>
+        </form>
+    </div>
 </div>
 {% else %}
-<!-- Section de génération de post standard (s'affiche si aucun article n'est sélectionné) -->
-<div class="content-card">
-    <h2>💬 Générer un nouveau post</h2>
-    <p>Utilisez l'IA pour créer rapidement un contenu engageant pour votre audience LinkedIn.</p>
+<!-- Section de génération de post standard -->
+<div class="post-creator">
+    <div class="card-header-modern">
+        <h2 class="card-title-modern">💬 Générer un nouveau post</h2>
+        <p class="card-subtitle-modern">Utilisez l'IA pour créer rapidement un contenu engageant pour votre audience LinkedIn</p>
+    </div>
     
-    <form method="post" class="mt-4">
-        <div class="form-row">
-            <div class="form-group" style="flex: 3;">
-                <input type="text" name="prompt" class="form-control" placeholder="Ex: Partagez des conseils sur le leadership, Annoncez votre nouvel article..." required>
-            </div>
-            <div class="form-group">
-                <select name="tone" class="form-control">
-                    <option value="professionnel">Professionnel</option>
-                    <option value="famillier">Familier</option>
-                    <option value="inspirant">Inspirant</option>
-                    <option value="humoristique">Humoristique</option>
-                    <option value="factuel">Factuel</option>
-                </select>
-            </div>
-            <div>
-                <button type="submit" class="btn btn-primary">
-                    <i class="fa-solid fa-wand-magic-sparkles"></i>
-                    Générer
-                </button>
-            </div>
-        </div>
-    </form>
-    
-    <div style="margin-top: 20px; border-top: 1px solid var(--grey); padding-top: 20px;">
-        <a href="{{ url_for('news_assistant') }}" style="text-decoration: none; color: inherit;">
-            <div class="d-flex align-center justify-between">
-                <div class="d-flex align-center gap-2">
-                    <i class="fa-solid fa-newspaper text-primary" style="font-size: 18px;"></i>
-                    <span style="font-weight: 500;">Créer un post basé sur l'actualité</span>
+    <div class="card-body-modern">
+        <form method="post">
+            <div class="form-row-modern">
+                <div>
+                    <input type="text" name="prompt" class="input-modern" placeholder="Ex: Partagez des conseils sur le leadership, Annoncez votre nouvel article..." required>
                 </div>
-                <i class="fa-solid fa-chevron-right text-light"></i>
+                <div>
+                    <select name="tone" class="input-modern">
+                        <option value="professionnel">Professionnel</option>
+                        <option value="familier">Familier</option>
+                        <option value="inspirant">Inspirant</option>
+                        <option value="humoristique">Humoristique</option>
+                        <option value="factuel">Factuel</option>
+                    </select>
+                </div>
+                <div>
+                    <button type="submit" class="btn-modern btn-primary-modern">
+                        <i class="fa-solid fa-wand-magic-sparkles"></i>
+                        Générer
+                    </button>
+                </div>
             </div>
+        </form>
+        
+        <a href="{{ url_for('news_assistant') }}" class="news-link-modern">
+            <div style="display: flex; align-items: center; gap: 0.75rem;">
+                <i class="fa-solid fa-newspaper" style="font-size: 1.25rem;"></i>
+                <div>
+                    <div style="font-weight: 600;">Créer un post basé sur l'actualité</div>
+                    <div style="font-size: 0.875rem; opacity: 0.8;">Inspirez-vous des sujets tendances</div>
+                </div>
+            </div>
+            <i class="fa-solid fa-chevron-right"></i>
         </a>
     </div>
 </div>
 {% endif %}
 
 {% if draft %}
-<div class="content-card">
-    <div class="d-flex justify-between align-center mb-4">
-        <h2>📝 Éditer et publier votre post</h2>
-        <span class="text-success">
-            <i class="fa-solid fa-circle-check"></i> 
-            Post généré
-        </span>
+<div class="post-editor" style="display: block;">
+    <div class="card-header-modern">
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+            <div>
+                <h2 class="card-title-modern">📝 Éditer et publier votre post</h2>
+                <p class="card-subtitle-modern">Personnalisez votre contenu avant publication</p>
+            </div>
+            <div class="success-badge">
+                <i class="fa-solid fa-circle-check"></i> 
+                Post généré
+            </div>
+        </div>
     </div>
     
-    <form method="post" action="{{ url_for('publish') }}" enctype="multipart/form-data">
-        <div class="form-group">
-            <!-- Ajout de la classe mention-editor à la zone de texte -->
-            <textarea name="post_content" class="form-control mention-editor" rows="8" required>{{ draft }}</textarea>
-            
-            <!-- Ajout du texte d'aide pour les mentions -->
-            <div style="margin-top: 8px; font-size: 13px; color: var(--text-light);">
-                <i class="fa-solid fa-at"></i>
-                Tapez @ pour mentionner une personne ou une entreprise
-            </div>
-        </div>
-        
-        <div class="form-row">
-            <div class="form-group">
-                <label class="form-label">📅 Date et heure de publication</label>
-                <input type="datetime-local" name="publish_time" class="form-control" required>
-            </div>
-            <div class="form-group" style="flex: 0.5;">
-                <label class="form-label">&nbsp;</label>
-                <div style="display: flex; align-items: center; height: 43px;">
-                    <input type="checkbox" id="publish-now" name="publish_now" style="margin-right: 8px;">
-                    <label for="publish-now">Publier maintenant</label>
+    <div class="card-body-modern">
+        <form method="post" action="{{ url_for('publish') }}" enctype="multipart/form-data">
+            <div style="margin-bottom: 1.5rem;">
+                <label style="display: block; margin-bottom: 0.5rem; font-weight: 500; color: var(--text-dark);">Contenu du post</label>
+                <textarea name="post_content" class="textarea-modern mention-editor" rows="8" required>{{ draft }}</textarea>
+                <div style="margin-top: 0.5rem; font-size: 0.875rem; color: var(--text-light); display: flex; align-items: center; gap: 0.5rem;">
+                    <i class="fa-solid fa-at"></i>
+                    Tapez @ pour mentionner une personne ou une entreprise
                 </div>
             </div>
-        </div>
-        
-        <div class="form-group">
-            <label class="form-label">📎 Ajouter des images (optionnel)</label>
-            <input type="file" name="images[]" id="images" accept="image/*" multiple class="form-control">
-        </div>
-        
-        <div id="image-preview" class="d-flex gap-3 mt-4 mb-4" style="flex-wrap: wrap;"></div>
-        
-        <div class="d-flex gap-3">
-            <button type="submit" class="btn btn-primary">
-                <i class="fa-solid fa-paper-plane"></i>
-                Publier
-            </button>
-            <a href="{{ url_for('dashboard', clear='true') }}" class="btn btn-outline">Annuler</a>
-        </div>
-    </form>
+            
+            <div class="publish-section">
+                <div>
+                    <label style="display: block; margin-bottom: 0.5rem; font-weight: 500; color: var(--text-dark);">📅 Date et heure de publication</label>
+                    <input type="datetime-local" name="publish_time" class="input-modern" required>
+                </div>
+                <div class="checkbox-modern">
+                    <input type="checkbox" id="publish-now" name="publish_now">
+                    <label for="publish-now" style="font-weight: 500;">Publier maintenant</label>
+                </div>
+                <div>
+                    <button type="submit" class="btn-modern btn-primary-modern">
+                        <i class="fa-solid fa-paper-plane"></i>
+                        Publier
+                    </button>
+                </div>
+            </div>
+            
+            <div style="margin-top: 1.5rem;">
+                <label style="display: block; margin-bottom: 0.5rem; font-weight: 500; color: var(--text-dark);">📎 Ajouter des images (optionnel)</label>
+                <input type="file" name="images[]" id="images" accept="image/*" multiple class="input-modern">
+            </div>
+            
+            <div id="image-preview" style="display: flex; gap: 1rem; margin-top: 1rem; flex-wrap: wrap;"></div>
+        </form>
+    </div>
 </div>
 {% endif %}
 
-<!-- Section des statistiques -->
-<div class="content-card">
-    <h2>📊 Statistiques</h2>
-    <div class="d-flex gap-3" style="flex-wrap: wrap;">
-        <div style="flex: 1; min-width: 200px; padding: 16px; background-color: var(--secondary); border-radius: 8px;">
-            <div style="font-size: 28px; font-weight: 700; color: var(--primary);">
-                {{ posts|default([])|length }}
-            </div>
-            <div class="text-light">Posts publiés</div>
-        </div>
-        
-        <div style="flex: 1; min-width: 200px; padding: 16px; background-color: var(--secondary); border-radius: 8px;">
-            <div style="font-size: 28px; font-weight: 700; color: var(--primary);">
-                {{ scheduled_posts|default(0) }}
-            </div>
-            <div class="text-light">Posts programmés</div>
-        </div>
-        
-        <div style="flex: 1; min-width: 200px; padding: 16px; background-color: var(--secondary); border-radius: 8px;">
-            <div style="font-size: 28px; font-weight: 700; color: var(--primary);">
-                {{ interets|default([])|length }}
-            </div>
-            <div class="text-light">Centres d'intérêt</div>
-        </div>
-    </div>
-</div>
-
 <script>
+// Preview des images
 document.getElementById("images")?.addEventListener("change", function(event) {
     const preview = document.getElementById("image-preview");
     preview.innerHTML = "";
@@ -256,14 +541,16 @@ document.getElementById("images")?.addEventListener("change", function(event) {
             reader.onload = function(e) {
                 const imgContainer = document.createElement("div");
                 imgContainer.style.position = "relative";
+                imgContainer.style.borderRadius = "12px";
+                imgContainer.style.overflow = "hidden";
+                imgContainer.style.border = "2px solid var(--border)";
                 
                 const img = document.createElement("img");
                 img.src = e.target.result;
-                img.style.width = "100px";
-                img.style.height = "100px";
+                img.style.width = "120px";
+                img.style.height = "120px";
                 img.style.objectFit = "cover";
-                img.style.borderRadius = "8px";
-                img.style.border = "1px solid var(--grey)";
+                img.style.display = "block";
                 
                 imgContainer.appendChild(img);
                 preview.appendChild(imgContainer);
@@ -273,35 +560,37 @@ document.getElementById("images")?.addEventListener("change", function(event) {
     }
 });
 
-// Auto-set current date and time for the datetime-local input
+// Auto-set date/time
 window.addEventListener('load', function() {
     const dateInput = document.querySelector('input[type="datetime-local"]');
     if (dateInput) {
         const now = new Date();
         now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
-        now.setMinutes(now.getMinutes() + 30); // Add 30 minutes for default scheduling
+        now.setMinutes(now.getMinutes() + 30);
         dateInput.value = now.toISOString().slice(0, 16);
     }
 });
 
-function highlightSelectedFormat(element) {
-    // Réinitialiser tous les éléments
-    document.querySelectorAll('.format-option').forEach(el => {
-        el.style.borderColor = 'var(--border)';
-        el.style.backgroundColor = 'transparent';
+// Animation des statistiques
+window.addEventListener('load', function() {
+    const statNumbers = document.querySelectorAll('.stat-number');
+    statNumbers.forEach((stat, index) => {
+        const target = parseInt(stat.textContent);
+        let current = 0;
+        const increment = target / 50;
+        
+        setTimeout(() => {
+            const timer = setInterval(() => {
+                current += increment;
+                stat.textContent = Math.floor(current);
+                
+                if (current >= target) {
+                    stat.textContent = target;
+                    clearInterval(timer);
+                }
+            }, 30);
+        }, index * 200);
     });
-    
-    // Mettre en évidence l'élément sélectionné
-    element.style.borderColor = 'var(--primary)';
-    element.style.backgroundColor = 'rgba(10, 102, 194, 0.05)';
-}
-
-// Initialiser le format sélectionné
-document.addEventListener('DOMContentLoaded', function() {
-    const checkedOption = document.querySelector('.format-option input:checked');
-    if (checkedOption) {
-        highlightSelectedFormat(checkedOption.closest('.format-option'));
-    }
 });
 </script>
 {% endblock %}
