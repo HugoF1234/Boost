@@ -17,6 +17,47 @@ logger = logging.getLogger(__name__)
 # CONFIGURATION APP
 # -----------------------
 app = Flask(__name__, static_folder='static')
+
+# Ajoute ce code dans ton fichier app.py, après la création de l'app Flask
+
+@app.context_processor
+def inject_user_profile():
+    """Injecte les informations du profil utilisateur dans tous les templates"""
+    if 'profile' in session:
+        profile = session['profile']
+        
+        # Récupérer les informations de l'utilisateur depuis la base de données
+        user = None
+        if profile.get('sub'):
+            user = User.query.filter_by(sub=profile['sub']).first()
+        
+        return dict(
+            picture=profile.get('picture', ''),
+            name=profile.get('name', ''),
+            first_name=profile.get('first_name', ''),
+            last_name=profile.get('last_name', ''),
+            email=profile.get('email', ''),
+            language=profile.get('language', ''),
+            country=profile.get('country', ''),
+            email_verified=profile.get('email_verified', False),
+            sub=profile.get('sub', ''),
+            secteur=user.secteur if user and user.secteur else '',
+            interets=user.interets if user and user.interets else []
+        )
+    
+    return dict(
+        picture='',
+        name='',
+        first_name='',
+        last_name='',
+        email='',
+        language='',
+        country='',
+        email_verified=False,
+        sub='',
+        secteur='',
+        interets=[]
+    )
 app.secret_key = os.urandom(24)
 app.config['SESSION_COOKIE_NAME'] = 'linkedin_session'
 
