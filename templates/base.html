@@ -118,7 +118,12 @@
         }
 
         /* Position du bouton selon l'état de la sidebar */
-        .sidebar.collapsed ~ button.sidebar-toggle {
+        body:has(.sidebar.collapsed) .sidebar-toggle {
+            left: 100px;
+        }
+
+        /* Fallback pour navigateurs sans :has() */
+        .sidebar.collapsed ~ .app-container .sidebar-toggle {
             left: 100px;
         }
 
@@ -773,27 +778,31 @@
             const sidebarToggle = document.getElementById('sidebar-toggle');
             const overlay = document.getElementById('sidebar-overlay');
             
-            console.log('Toggle sidebar - Current state:', sidebarCollapsed); // Debug
+            console.log('Toggle sidebar called - Current state:', sidebarCollapsed);
             
             if (window.innerWidth <= 768) {
                 // Mode mobile - sidebar overlay
                 sidebar.classList.toggle('open');
                 overlay.classList.toggle('active');
                 sidebarToggle.classList.toggle('active');
+                console.log('Mobile mode toggled');
             } else {
                 // Mode desktop - sidebar rétractable
                 sidebarCollapsed = !sidebarCollapsed;
-                
-                console.log('New state:', sidebarCollapsed); // Debug
+                console.log('Desktop mode - New state:', sidebarCollapsed);
                 
                 if (sidebarCollapsed) {
                     sidebar.classList.add('collapsed');
                     mainContent.classList.add('expanded');
                     sidebarToggle.classList.add('active');
+                    sidebarToggle.style.left = '100px';
+                    console.log('Sidebar collapsed');
                 } else {
                     sidebar.classList.remove('collapsed');
                     mainContent.classList.remove('expanded');
                     sidebarToggle.classList.remove('active');
+                    sidebarToggle.style.left = '300px';
+                    console.log('Sidebar expanded');
                 }
             }
         }
