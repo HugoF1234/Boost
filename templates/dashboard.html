@@ -1,307 +1,1288 @@
-{% extends "base.html" %}
-{% block content %}
-<div class="d-flex align-center justify-between mb-4">
-    <h1>Bienvenue, {{ first_name }} 👋</h1>
-    <div>
-        <span class="text-light">{{ name }} | {{ email }}</span>
-    </div>
-</div>
-
-<!-- Section pour l'article sélectionné (s'affiche en priorité) -->
-{% if selected_article %}
-<div class="content-card">
-    <h2>📝 Générer un post à partir de l'article sélectionné</h2>
-    
-    {% if article_success %}
-    <div style="background-color: #dcfce7; border: 1px solid #86efac; color: #166534; padding: 12px; border-radius: 8px; margin-bottom: 16px; display: flex; align-items: center; gap: 10px;">
-        <i class="fa-solid fa-check-circle" style="font-size: 18px;"></i>
-        <div>
-            <strong>Article sélectionné avec succès!</strong>
-            <div>Vous pouvez maintenant personnaliser votre post basé sur cet article.</div>
-        </div>
-    </div>
-    {% endif %}
-    
-    <div style="padding: 24px; background-color: var(--grey-light); border-radius: 8px; margin: 20px 0; box-shadow: inset 0 1px 3px rgba(0,0,0,0.1);">
-        <h3 style="margin-bottom: 12px; color: var(--primary);">{{ selected_article.title|clean_html }}</h3>
-        <p style="margin-bottom: 16px;">{{ selected_article.description|clean_html }}</p>
-        <div style="display: flex; justify-content: space-between; align-items: center;">
-            <div style="font-size: 13px; color: var(--text-light); display: flex; align-items: center; gap: 8px;">
-                <i class="fa-solid fa-globe"></i>
-                <a href="{{ selected_article.url }}" target="_blank" style="color: var(--primary); text-decoration: none;">
-                    {{ selected_article.source.name }}
-                </a>
-            </div>
-            <div style="font-size: 13px; color: var(--text-light); display: flex; align-items: center; gap: 8px;">
-                <i class="fa-regular fa-calendar"></i>
-                <span>{{ selected_article.formatted_date }}</span>
-            </div>
-        </div>
-    </div>
-    
-    <form method="post" class="mt-4">
-        <div class="form-row">
-            <div class="form-group">
-                <label class="form-label">Ton du post</label>
-                <select name="tone" class="form-control">
-                    <option value="professionnel">Professionnel</option>
-                    <option value="familier">Familier</option>
-                    <option value="inspirant">Inspirant</option>
-                    <option value="humoristique">Humoristique</option>
-                    <option value="factuel">Factuel</option>
-                    <option value="critique">Critique</option>
-                </select>
-            </div>
-            
-            <div class="form-group">
-                <label class="form-label">Perspective</label>
-                <select name="perspective" class="form-control">
-                    <option value="neutre">Neutre</option>
-                    <option value="enthousiaste">Enthousiaste</option>
-                    <option value="analytique">Analytique</option>
-                    <option value="innovant">Innovateur</option>
-                    <option value="expert">Expert du domaine</option>
-                </select>
-            </div>
-        </div>
-        <div class="form-group mt-4">
-            <label class="form-label">Instructions personnalisées (facultatif)</label>
-            <textarea name="custom_instructions" class="form-control" rows="3" placeholder="Ex: Parle de cet article mais insiste sur les dangers de l'IA au quotidien. Ajoute ton point de vue sur la régulation..."></textarea>
-            <div style="margin-top: 6px; font-size: 13px; color: var(--text-light);">
-                <i class="fa-solid fa-lightbulb"></i>
-                Ajoutez des instructions spécifiques pour personnaliser le contenu généré.
-            </div>
-        </div>
-        <div class="form-group mt-4">
-            <label class="form-label">Format du post</label>
-            <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 16px; margin-top: 8px;">
-                <div style="border: 1px solid var(--border); border-radius: 8px; padding: 16px; cursor: pointer; transition: all 0.2s;" 
-                     onclick="this.querySelector('input').checked = true; highlightSelectedFormat(this);" 
-                     class="format-option">
-                    <input type="radio" name="format" value="standard" checked style="margin-right: 8px;">
-                    <strong>Standard</strong>
-                    <p style="margin-top: 8px; font-size: 13px; color: var(--text-light);">Post classique avec votre analyse</p>
-                </div>
-                
-                <div style="border: 1px solid var(--border); border-radius: 8px; padding: 16px; cursor: pointer; transition: all 0.2s;" 
-                     onclick="this.querySelector('input').checked = true; highlightSelectedFormat(this);" 
-                     class="format-option">
-                    <input type="radio" name="format" value="question" style="margin-right: 8px;">
-                    <strong>Question</strong>
-                    <p style="margin-top: 8px; font-size: 13px; color: var(--text-light);">Poser une question pour engager</p>
-                </div>
-                
-                <div style="border: 1px solid var(--border); border-radius: 8px; padding: 16px; cursor: pointer; transition: all 0.2s;" 
-                     onclick="this.querySelector('input').checked = true; highlightSelectedFormat(this);" 
-                     class="format-option">
-                    <input type="radio" name="format" value="listpoints" style="margin-right: 8px;">
-                    <strong>Points clés</strong>
-                    <p style="margin-top: 8px; font-size: 13px; color: var(--text-light);">Liste de points importants</p>
-                </div>
-                
-                <div style="border: 1px solid var(--border); border-radius: 8px; padding: 16px; cursor: pointer; transition: all 0.2s;" 
-                     onclick="this.querySelector('input').checked = true; highlightSelectedFormat(this);" 
-                     class="format-option">
-                    <input type="radio" name="format" value="story" style="margin-right: 8px;">
-                    <strong>Histoire</strong>
-                    <p style="margin-top: 8px; font-size: 13px; color: var(--text-light);">Format narratif engageant</p>
-                </div>
-            </div>
-        </div>
-        
-        <div class="d-flex gap-3 mt-4">
-            <button type="submit" name="generate_from_article" class="btn btn-primary">
-                <i class="fa-solid fa-wand-magic-sparkles"></i>
-                Générer mon post
-            </button>
-            
-            <a href="{{ url_for('dashboard', clear='true') }}" class="btn btn-outline">
-                Annuler
-            </a>
-        </div>
-    </form>
-</div>
-{% else %}
-<!-- Section de génération de post standard (s'affiche si aucun article n'est sélectionné) -->
-<div class="content-card">
-    <h2>💬 Générer un nouveau post</h2>
-    <p>Utilisez l'IA pour créer rapidement un contenu engageant pour votre audience LinkedIn.</p>
-    
-    <form method="post" class="mt-4">
-        <div class="form-row">
-            <div class="form-group" style="flex: 3;">
-                <input type="text" name="prompt" class="form-control" placeholder="Ex: Partagez des conseils sur le leadership, Annoncez votre nouvel article..." required>
-            </div>
-            <div class="form-group">
-                <select name="tone" class="form-control">
-                    <option value="professionnel">Professionnel</option>
-                    <option value="famillier">Familier</option>
-                    <option value="inspirant">Inspirant</option>
-                    <option value="humoristique">Humoristique</option>
-                    <option value="factuel">Factuel</option>
-                </select>
-            </div>
-            <div>
-                <button type="submit" class="btn btn-primary">
-                    <i class="fa-solid fa-wand-magic-sparkles"></i>
-                    Générer
-                </button>
-            </div>
-        </div>
-    </form>
-    
-    <div style="margin-top: 20px; border-top: 1px solid var(--grey); padding-top: 20px;">
-        <a href="{{ url_for('news_assistant') }}" style="text-decoration: none; color: inherit;">
-            <div class="d-flex align-center justify-between">
-                <div class="d-flex align-center gap-2">
-                    <i class="fa-solid fa-newspaper text-primary" style="font-size: 18px;"></i>
-                    <span style="font-weight: 500;">Créer un post basé sur l'actualité</span>
-                </div>
-                <i class="fa-solid fa-chevron-right text-light"></i>
-            </div>
-        </a>
-    </div>
-</div>
-{% endif %}
-
-{% if draft %}
-<div class="content-card">
-    <div class="d-flex justify-between align-center mb-4">
-        <h2>📝 Éditer et publier votre post</h2>
-        <span class="text-success">
-            <i class="fa-solid fa-circle-check"></i> 
-            Post généré
-        </span>
-    </div>
-    
-    <form method="post" action="{{ url_for('publish') }}" enctype="multipart/form-data">
-        <div class="form-group">
-            <!-- Ajout de la classe mention-editor à la zone de texte -->
-            <textarea name="post_content" class="form-control mention-editor" rows="8" required>{{ draft }}</textarea>
-            
-            <!-- Ajout du texte d'aide pour les mentions -->
-            <div style="margin-top: 8px; font-size: 13px; color: var(--text-light);">
-                <i class="fa-solid fa-at"></i>
-                Tapez @ pour mentionner une personne ou une entreprise
-            </div>
-        </div>
-        
-        <div class="form-row">
-            <div class="form-group">
-                <label class="form-label">📅 Date et heure de publication</label>
-                <input type="datetime-local" name="publish_time" class="form-control" required>
-            </div>
-            <div class="form-group" style="flex: 0.5;">
-                <label class="form-label">&nbsp;</label>
-                <div style="display: flex; align-items: center; height: 43px;">
-                    <input type="checkbox" id="publish-now" name="publish_now" style="margin-right: 8px;">
-                    <label for="publish-now">Publier maintenant</label>
-                </div>
-            </div>
-        </div>
-        
-        <div class="form-group">
-            <label class="form-label">📎 Ajouter des images (optionnel)</label>
-            <input type="file" name="images[]" id="images" accept="image/*" multiple class="form-control">
-        </div>
-        
-        <div id="image-preview" class="d-flex gap-3 mt-4 mb-4" style="flex-wrap: wrap;"></div>
-        
-        <div class="d-flex gap-3">
-            <button type="submit" class="btn btn-primary">
-                <i class="fa-solid fa-paper-plane"></i>
-                Publier
-            </button>
-            <a href="{{ url_for('dashboard', clear='true') }}" class="btn btn-outline">Annuler</a>
-        </div>
-    </form>
-</div>
-{% endif %}
-
-<!-- Section des statistiques -->
-<div class="content-card">
-    <h2>📊 Statistiques</h2>
-    <div class="d-flex gap-3" style="flex-wrap: wrap;">
-        <div style="flex: 1; min-width: 200px; padding: 16px; background-color: var(--secondary); border-radius: 8px;">
-            <div style="font-size: 28px; font-weight: 700; color: var(--primary);">
-                {{ posts|default([])|length }}
-            </div>
-            <div class="text-light">Posts publiés</div>
-        </div>
-        
-        <div style="flex: 1; min-width: 200px; padding: 16px; background-color: var(--secondary); border-radius: 8px;">
-            <div style="font-size: 28px; font-weight: 700; color: var(--primary);">
-                {{ scheduled_posts|default(0) }}
-            </div>
-            <div class="text-light">Posts programmés</div>
-        </div>
-        
-        <div style="flex: 1; min-width: 200px; padding: 16px; background-color: var(--secondary); border-radius: 8px;">
-            <div style="font-size: 28px; font-weight: 700; color: var(--primary);">
-                {{ interets|default([])|length }}
-            </div>
-            <div class="text-light">Centres d'intérêt</div>
-        </div>
-    </div>
-</div>
-
-<script>
-document.getElementById("images")?.addEventListener("change", function(event) {
-    const preview = document.getElementById("image-preview");
-    preview.innerHTML = "";
-
-    for (let file of event.target.files) {
-        if (file.type.startsWith("image/")) {
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                const imgContainer = document.createElement("div");
-                imgContainer.style.position = "relative";
-                
-                const img = document.createElement("img");
-                img.src = e.target.result;
-                img.style.width = "100px";
-                img.style.height = "100px";
-                img.style.objectFit = "cover";
-                img.style.borderRadius = "8px";
-                img.style.border = "1px solid var(--grey)";
-                
-                imgContainer.appendChild(img);
-                preview.appendChild(imgContainer);
-            }
-            reader.readAsDataURL(file);
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LinkedBoost - Dashboard Interactif</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #0a66c2;
+            --primary-light: rgba(10, 102, 194, 0.1);
+            --secondary: #f8fafc;
+            --dark: #0f172a;
+            --dark-light: #1e293b;
+            --text: #334155;
+            --text-light: #64748b;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --error: #ef4444;
+            --white: #ffffff;
+            --gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --gradient-primary: linear-gradient(135deg, #0a66c2 0%, #1e40af 100%);
+            --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            --shadow-lg: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+            --border-radius: 12px;
         }
-    }
-});
 
-// Auto-set current date and time for the datetime-local input
-window.addEventListener('load', function() {
-    const dateInput = document.querySelector('input[type="datetime-local"]');
-    if (dateInput) {
-        const now = new Date();
-        now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
-        now.setMinutes(now.getMinutes() + 30); // Add 30 minutes for default scheduling
-        dateInput.value = now.toISOString().slice(0, 16);
-    }
-});
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
-function highlightSelectedFormat(element) {
-    // Réinitialiser tous les éléments
-    document.querySelectorAll('.format-option').forEach(el => {
-        el.style.borderColor = 'var(--border)';
-        el.style.backgroundColor = 'transparent';
-    });
-    
-    // Mettre en évidence l'élément sélectionné
-    element.style.borderColor = 'var(--primary)';
-    element.style.backgroundColor = 'rgba(10, 102, 194, 0.05)';
-}
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--secondary);
+            color: var(--text);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
 
-// Initialiser le format sélectionné
-document.addEventListener('DOMContentLoaded', function() {
-    const checkedOption = document.querySelector('.format-option input:checked');
-    if (checkedOption) {
-        highlightSelectedFormat(checkedOption.closest('.format-option'));
-    }
-});
-</script>
-{% endblock %}
+        /* Layout principal */
+        .app-container {
+            display: flex;
+            min-height: 100vh;
+            position: relative;
+        }
+
+        /* Sidebar moderne avec glassmorphism */
+        .sidebar {
+            width: 280px;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border-right: 1px solid rgba(0, 0, 0, 0.05);
+            position: fixed;
+            height: 100vh;
+            z-index: 100;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            overflow-y: auto;
+        }
+
+        .sidebar-header {
+            padding: 2rem;
+            background: var(--gradient-primary);
+            color: white;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .sidebar-header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grain" width="100" height="100" patternUnits="userSpaceOnUse"><circle cx="20" cy="20" r="1" fill="%23ffffff" opacity="0.1"/><circle cx="80" cy="40" r="1" fill="%23ffffff" opacity="0.1"/><circle cx="40" cy="80" r="1" fill="%23ffffff" opacity="0.1"/></pattern></defs><rect width="100" height="100" fill="url(%23grain)"/></svg>') repeat;
+            opacity: 0.1;
+        }
+
+        .logo-container {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        .logo {
+            width: 40px;
+            height: 40px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            backdrop-filter: blur(10px);
+        }
+
+        .logo-text {
+            font-size: 1.5rem;
+            font-weight: 700;
+            letter-spacing: -0.025em;
+        }
+
+        .user-info {
+            margin-top: 1rem;
+            padding-top: 1rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.2);
+            position: relative;
+            z-index: 1;
+        }
+
+        .user-avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 0.5rem;
+        }
+
+        .nav-menu {
+            padding: 1rem 0;
+        }
+
+        .nav-item {
+            margin: 0.25rem 1rem;
+            border-radius: var(--border-radius);
+            overflow: hidden;
+            transition: all 0.2s ease;
+        }
+
+        .nav-link {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 1rem 1.5rem;
+            color: var(--text);
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.2s ease;
+            position: relative;
+        }
+
+        .nav-link:hover {
+            background: var(--primary-light);
+            color: var(--primary);
+            transform: translateX(5px);
+        }
+
+        .nav-link.active {
+            background: var(--primary-light);
+            color: var(--primary);
+        }
+
+        .nav-link.active::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 4px;
+            background: var(--primary);
+        }
+
+        .nav-icon {
+            font-size: 1.25rem;
+            width: 24px;
+            text-align: center;
+        }
+
+        /* Main content */
+        .main-content {
+            flex: 1;
+            margin-left: 280px;
+            padding: 2rem;
+            background: var(--secondary);
+            min-height: 100vh;
+        }
+
+        /* Header moderne */
+        .page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            padding: 1.5rem 2rem;
+            background: white;
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow-sm);
+            border: 1px solid rgba(0, 0, 0, 0.05);
+        }
+
+        .page-title {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--dark);
+            background: var(--gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+
+        /* Cartes modernes avec animations */
+        .card {
+            background: white;
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow-sm);
+            border: 1px solid rgba(0, 0, 0, 0.05);
+            overflow: hidden;
+            transition: all 0.3s ease;
+            position: relative;
+            margin-bottom: 2rem;
+        }
+
+        .card:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .card-header {
+            padding: 1.5rem 2rem;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+            background: rgba(0, 0, 0, 0.01);
+        }
+
+        .card-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--dark);
+            margin-bottom: 0.5rem;
+        }
+
+        .card-subtitle {
+            color: var(--text-light);
+            font-size: 0.875rem;
+        }
+
+        .card-body {
+            padding: 2rem;
+        }
+
+        /* Grille responsive */
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        /* Statistiques animées */
+        .stat-card {
+            background: white;
+            border-radius: var(--border-radius);
+            padding: 2rem;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+            border: 1px solid rgba(0, 0, 0, 0.05);
+            transition: all 0.3s ease;
+        }
+
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 2px;
+            background: var(--gradient-primary);
+            transition: all 0.5s ease;
+        }
+
+        .stat-card:hover::before {
+            left: 0;
+        }
+
+        .stat-number {
+            font-size: 3rem;
+            font-weight: 700;
+            background: var(--gradient-primary);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 0.5rem;
+            display: block;
+            animation: countUp 2s ease-out;
+        }
+
+        @keyframes countUp {
+            from { transform: scale(0.5); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+        }
+
+        .stat-label {
+            color: var(--text-light);
+            font-weight: 500;
+            font-size: 0.875rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        /* Boutons modernes */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            padding: 0.75rem 1.5rem;
+            border-radius: 50px;
+            font-weight: 600;
+            font-size: 0.875rem;
+            transition: all 0.2s ease;
+            border: none;
+            cursor: pointer;
+            text-decoration: none;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: all 0.5s ease;
+        }
+
+        .btn:hover::before {
+            left: 100%;
+        }
+
+        .btn-primary {
+            background: var(--gradient-primary);
+            color: white;
+            box-shadow: 0 4px 15px rgba(10, 102, 194, 0.3);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(10, 102, 194, 0.4);
+        }
+
+        .btn-outline {
+            background: transparent;
+            color: var(--primary);
+            border: 2px solid var(--primary);
+        }
+
+        .btn-outline:hover {
+            background: var(--primary);
+            color: white;
+            transform: translateY(-2px);
+        }
+
+        .btn-success {
+            background: linear-gradient(135deg, var(--success) 0%, #059669 100%);
+            color: white;
+        }
+
+        /* Générateur de post interactif */
+        .post-generator {
+            background: white;
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+            border: 1px solid rgba(0, 0, 0, 0.05);
+            margin-bottom: 2rem;
+            overflow: hidden;
+        }
+
+        .input-group {
+            position: relative;
+            margin-bottom: 1.5rem;
+        }
+
+        .input-field {
+            width: 100%;
+            padding: 1rem 1.5rem;
+            border: 2px solid rgba(0, 0, 0, 0.1);
+            border-radius: var(--border-radius);
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            background: rgba(0, 0, 0, 0.01);
+        }
+
+        .input-field:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(10, 102, 194, 0.1);
+            transform: scale(1.02);
+        }
+
+        .input-label {
+            position: absolute;
+            top: 50%;
+            left: 1.5rem;
+            transform: translateY(-50%);
+            color: var(--text-light);
+            pointer-events: none;
+            transition: all 0.3s ease;
+            background: white;
+            padding: 0 0.5rem;
+        }
+
+        .input-field:focus + .input-label,
+        .input-field:not(:placeholder-shown) + .input-label {
+            top: -0.5rem;
+            left: 1rem;
+            font-size: 0.75rem;
+            color: var(--primary);
+            font-weight: 600;
+        }
+
+        /* Textarea spécial pour le post */
+        .post-textarea {
+            min-height: 150px;
+            resize: vertical;
+            font-family: inherit;
+            line-height: 1.6;
+        }
+
+        /* Suggestions d'actualités */
+        .news-suggestions {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 1.5rem;
+            padding: 2rem;
+        }
+
+        .news-card {
+            background: white;
+            border-radius: var(--border-radius);
+            overflow: hidden;
+            border: 1px solid rgba(0, 0, 0, 0.05);
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .news-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .news-card.selected {
+            border-color: var(--primary);
+            background: var(--primary-light);
+        }
+
+        .news-image {
+            width: 100%;
+            height: 160px;
+            background: var(--gradient);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 2rem;
+        }
+
+        .news-content {
+            padding: 1.5rem;
+        }
+
+        .news-title {
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: var(--dark);
+            line-height: 1.4;
+        }
+
+        .news-excerpt {
+            color: var(--text-light);
+            font-size: 0.875rem;
+            line-height: 1.5;
+            margin-bottom: 1rem;
+        }
+
+        .news-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.75rem;
+            color: var(--text-light);
+        }
+
+        /* Calendrier moderne */
+        .calendar-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .calendar-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 1px;
+            background: rgba(0, 0, 0, 0.1);
+            border-radius: var(--border-radius);
+            overflow: hidden;
+        }
+
+        .calendar-day {
+            aspect-ratio: 1;
+            background: white;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            min-height: 60px;
+        }
+
+        .calendar-day:hover {
+            background: var(--primary-light);
+        }
+
+        .calendar-day.has-post {
+            background: var(--primary);
+            color: white;
+        }
+
+        .calendar-day.has-post::after {
+            content: '';
+            position: absolute;
+            bottom: 4px;
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.8);
+        }
+
+        .calendar-day-header {
+            background: var(--primary-light);
+            color: var(--primary);
+            font-weight: 600;
+            font-size: 0.75rem;
+        }
+
+        /* Notifications toast */
+        .toast {
+            position: fixed;
+            top: 2rem;
+            right: 2rem;
+            background: white;
+            border-radius: var(--border-radius);
+            padding: 1rem 1.5rem;
+            box-shadow: var(--shadow-lg);
+            border-left: 4px solid var(--success);
+            z-index: 1000;
+            transform: translateX(100%);
+            transition: all 0.3s ease;
+            min-width: 300px;
+        }
+
+        .toast.show {
+            transform: translateX(0);
+        }
+
+        .toast.error {
+            border-left-color: var(--error);
+        }
+
+        .toast.warning {
+            border-left-color: var(--warning);
+        }
+
+        /* Animations d'entrée */
+        .fade-in {
+            animation: fadeIn 0.6s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .slide-in-right {
+            animation: slideInRight 0.5s ease-out;
+        }
+
+        @keyframes slideInRight {
+            from {
+                opacity: 0;
+                transform: translateX(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        /* Mode sombre */
+        .dark-mode {
+            --secondary: #0f172a;
+            --white: #1e293b;
+            --text: #e2e8f0;
+            --text-light: #94a3b8;
+            --dark: #f1f5f9;
+        }
+
+        .dark-mode .sidebar {
+            background: rgba(30, 41, 59, 0.95);
+        }
+
+        /* Particules de fond */
+        .particles {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        .particle {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            background: var(--primary);
+            border-radius: 50%;
+            opacity: 0.1;
+            animation: float 20s infinite linear;
+        }
+
+        @keyframes float {
+            0% {
+                transform: translateY(100vh) translateX(0);
+                opacity: 0;
+            }
+            10% {
+                opacity: 0.1;
+            }
+            90% {
+                opacity: 0.1;
+            }
+            100% {
+                transform: translateY(-100px) translateX(100px);
+                opacity: 0;
+            }
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .sidebar {
+                transform: translateX(-100%);
+                width: 100%;
+            }
+
+            .sidebar.open {
+                transform: translateX(0);
+            }
+
+            .main-content {
+                margin-left: 0;
+                padding: 1rem;
+            }
+
+            .dashboard-grid {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+            }
+
+            .page-header {
+                flex-direction: column;
+                gap: 1rem;
+                text-align: center;
+            }
+
+            .news-suggestions {
+                grid-template-columns: 1fr;
+                padding: 1rem;
+            }
+        }
+
+        /* Loading states */
+        .loading {
+            position: relative;
+            overflow: hidden;
+        }
+
+        .loading::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+            animation: shimmer 1.5s infinite;
+        }
+
+        @keyframes shimmer {
+            0% { left: -100%; }
+            100% { left: 100%; }
+        }
+    </style>
+</head>
+<body>
+    <!-- Particules de fond -->
+    <div class="particles" id="particles"></div>
+
+    <div class="app-container">
+        <!-- Sidebar moderne -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <div class="logo-container">
+                    <div class="logo">
+                        <i class="fab fa-linkedin-in"></i>
+                    </div>
+                    <div class="logo-text">LinkedBoost</div>
+                </div>
+                <div class="user-info">
+                    <div class="user-avatar">
+                        <i class="fas fa-user"></i>
+                    </div>
+                    <div style="font-size: 0.875rem; opacity: 0.9;">Hugo Dupont</div>
+                    <div style="font-size: 0.75rem; opacity: 0.7;">Développeur Full-Stack</div>
+                </div>
+            </div>
+
+            <nav class="nav-menu">
+                <div class="nav-item">
+                    <a href="#" class="nav-link active" onclick="showSection('dashboard')">
+                        <i class="fas fa-chart-line nav-icon"></i>
+                        <span>Dashboard</span>
+                    </a>
+                </div>
+                <div class="nav-item">
+                    <a href="#" class="nav-link" onclick="showSection('create')">
+                        <i class="fas fa-pen-fancy nav-icon"></i>
+                        <span>Créer un post</span>
+                    </a>
+                </div>
+                <div class="nav-item">
+                    <a href="#" class="nav-link" onclick="showSection('news')">
+                        <i class="fas fa-newspaper nav-icon"></i>
+                        <span>Actualités</span>
+                    </a>
+                </div>
+                <div class="nav-item">
+                    <a href="#" class="nav-link" onclick="showSection('calendar')">
+                        <i class="fas fa-calendar-alt nav-icon"></i>
+                        <span>Calendrier</span>
+                    </a>
+                </div>
+                <div class="nav-item">
+                    <a href="#" class="nav-link" onclick="showSection('analytics')">
+                        <i class="fas fa-chart-bar nav-icon"></i>
+                        <span>Analytics</span>
+                    </a>
+                </div>
+                <div class="nav-item">
+                    <a href="#" class="nav-link" onclick="showSection('profile')">
+                        <i class="fas fa-user-cog nav-icon"></i>
+                        <span>Profil</span>
+                    </a>
+                </div>
+            </nav>
+        </aside>
+
+        <!-- Contenu principal -->
+        <main class="main-content">
+            <!-- Header -->
+            <header class="page-header fade-in">
+                <div>
+                    <h1 class="page-title">Tableau de bord</h1>
+                    <p style="color: var(--text-light); margin-top: 0.5rem;">
+                        <i class="fas fa-calendar-day" style="margin-right: 0.5rem;"></i>
+                        Mercredi 4 juin 2025
+                    </p>
+                </div>
+                <div class="header-actions">
+                    <button class="btn btn-outline" onclick="toggleTheme()">
+                        <i class="fas fa-moon" id="themeIcon"></i>
+                        <span id="themeText">Mode sombre</span>
+                    </button>
+                    <button class="btn btn-primary" onclick="showPostGenerator()">
+                        <i class="fas fa-plus"></i>
+                        Nouveau post
+                    </button>
+                </div>
+            </header>
+
+            <!-- Section Dashboard -->
+            <div id="dashboardSection">
+                <!-- Statistiques -->
+                <div class="dashboard-grid fade-in">
+                    <div class="stat-card">
+                        <span class="stat-number" data-target="42">0</span>
+                        <div class="stat-label">Posts publiés</div>
+                    </div>
+                    <div class="stat-card">
+                        <span class="stat-number" data-target="8">0</span>
+                        <div class="stat-label">Posts programmés</div>
+                    </div>
+                    <div class="stat-card">
+                        <span class="stat-number" data-target="1247">0</span>
+                        <div class="stat-label">Vues ce mois</div>
+                    </div>
+                    <div class="stat-card">
+                        <span class="stat-number" data-target="94">0</span>
+                        <div class="stat-label">Engagement %</div>
+                    </div>
+                </div>
+
+                <!-- Générateur de post interactif -->
+                <div class="post-generator slide-in-right" id="postGenerator" style="display: none;">
+                    <div class="card-header">
+                        <h2 class="card-title">✨ Créer un post viral</h2>
+                        <p class="card-subtitle">L'IA va générer un contenu optimisé pour votre audience</p>
+                    </div>
+                    
+                    <div style="padding: 2rem;">
+                        <div class="input-group">
+                            <input type="text" class="input-field" placeholder=" " id="postTopic">
+                            <label class="input-label">Sujet de votre post</label>
+                        </div>
+
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1.5rem;">
+                            <div class="input-group">
+                                <select class="input-field" id="postTone">
+                                    <option value="professionnel">Professionnel</option>
+                                    <option value="inspirant">Inspirant</option>
+                                    <option value="conversationnel">Conversationnel</option>
+                                    <option value="expert">Expert</option>
+                                </select>
+                                <label class="input-label">Ton</label>
+                            </div>
+                            <div class="input-group">
+                                <select class="input-field" id="postLength">
+                                    <option value="court">Court (< 100 mots)</option>
+                                    <option value="moyen">Moyen (100-200 mots)</option>
+                                    <option value="long">Long (> 200 mots)</option>
+                                </select>
+                                <label class="input-label">Longueur</label>
+                            </div>
+                        </div>
+
+                        <div class="input-group">
+                            <textarea class="input-field post-textarea" placeholder=" " id="postPreview"></textarea>
+                            <label class="input-label">Aperçu du post (généré automatiquement)</label>
+                        </div>
+
+                        <div style="display: flex; gap: 1rem; justify-content: flex-end;">
+                            <button class="btn btn-outline" onclick="hidePostGenerator()">
+                                <i class="fas fa-times"></i>
+                                Annuler
+                            </button>
+                            <button class="btn btn-primary" onclick="generatePost()">
+                                <i class="fas fa-magic"></i>
+                                Générer avec l'IA
+                            </button>
+                            <button class="btn btn-success" onclick="schedulePost()">
+                                <i class="fas fa-clock"></i>
+                                Programmer
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Actualités suggérées -->
+                <div class="card fade-in">
+                    <div class="card-header">
+                        <h2 class="card-title">📰 Actualités tendances</h2>
+                        <p class="card-subtitle">Inspirez-vous des sujets du moment pour vos posts</p>
+                    </div>
+                    <div class="news-suggestions">
+                        <div class="news-card" onclick="selectNews(this)">
+                            <div class="news-image">
+                                <i class="fas fa-robot"></i>
+                            </div>
+                            <div class="news-content">
+                                <h3 class="news-title">Le télétravail hybride devient la norme</h3>
+                                <p class="news-excerpt">Selon une étude récente, 78% des entreprises adoptent définitivement le modèle hybride...</p>
+                                <div class="news-meta">
+                                    <span><i class="fas fa-calendar"></i> Hier</span>
+                                    <span><i class="fas fa-eye"></i> 890 vues</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="news-card" onclick="selectNews(this)">
+                            <div class="news-image">
+                                <i class="fas fa-coins"></i>
+                            </div>
+                            <div class="news-content">
+                                <h3 class="news-title">Les cryptomonnaies reviennent en force</h3>
+                                <p class="news-excerpt">Bitcoin atteint de nouveaux sommets tandis que les entreprises intègrent la blockchain...</p>
+                                <div class="news-meta">
+                                    <span><i class="fas fa-calendar"></i> Il y a 2h</span>
+                                    <span><i class="fas fa-eye"></i> 2.1k vues</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Calendrier interactif -->
+                <div class="card fade-in">
+                    <div class="card-header">
+                        <h2 class="card-title">📅 Planning de publication</h2>
+                        <p class="card-subtitle">Gérez vos posts programmés en un coup d'œil</p>
+                    </div>
+                    <div class="card-body">
+                        <div class="calendar-header">
+                            <h3 style="margin: 0;">Juin 2025</h3>
+                            <div style="display: flex; gap: 0.5rem;">
+                                <button class="btn btn-outline" style="padding: 0.5rem;">
+                                    <i class="fas fa-chevron-left"></i>
+                                </button>
+                                <button class="btn btn-outline" style="padding: 0.5rem;">
+                                    <i class="fas fa-chevron-right"></i>
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <!-- En-têtes des jours -->
+                        <div style="display: grid; grid-template-columns: repeat(7, 1fr); gap: 1px; margin-bottom: 1px;">
+                            <div class="calendar-day calendar-day-header">Lun</div>
+                            <div class="calendar-day calendar-day-header">Mar</div>
+                            <div class="calendar-day calendar-day-header">Mer</div>
+                            <div class="calendar-day calendar-day-header">Jeu</div>
+                            <div class="calendar-day calendar-day-header">Ven</div>
+                            <div class="calendar-day calendar-day-header">Sam</div>
+                            <div class="calendar-day calendar-day-header">Dim</div>
+                        </div>
+                        
+                        <!-- Calendrier -->
+                        <div class="calendar-grid">
+                            <div class="calendar-day">1</div>
+                            <div class="calendar-day">2</div>
+                            <div class="calendar-day">3</div>
+                            <div class="calendar-day has-post">4</div>
+                            <div class="calendar-day">5</div>
+                            <div class="calendar-day has-post">6</div>
+                            <div class="calendar-day">7</div>
+                            <div class="calendar-day">8</div>
+                            <div class="calendar-day">9</div>
+                            <div class="calendar-day has-post">10</div>
+                            <div class="calendar-day">11</div>
+                            <div class="calendar-day">12</div>
+                            <div class="calendar-day">13</div>
+                            <div class="calendar-day">14</div>
+                            <div class="calendar-day">15</div>
+                            <div class="calendar-day">16</div>
+                            <div class="calendar-day">17</div>
+                            <div class="calendar-day">18</div>
+                            <div class="calendar-day">19</div>
+                            <div class="calendar-day">20</div>
+                            <div class="calendar-day">21</div>
+                            <div class="calendar-day">22</div>
+                            <div class="calendar-day">23</div>
+                            <div class="calendar-day">24</div>
+                            <div class="calendar-day">25</div>
+                            <div class="calendar-day">26</div>
+                            <div class="calendar-day">27</div>
+                            <div class="calendar-day">28</div>
+                            <div class="calendar-day">29</div>
+                            <div class="calendar-day">30</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Toast notification -->
+    <div class="toast" id="toast">
+        <div style="display: flex; align-items: center; gap: 0.5rem;">
+            <i class="fas fa-check-circle" style="color: var(--success);"></i>
+            <span id="toastMessage">Message par défaut</span>
+        </div>
+    </div>
+
+    <script>
+        // Initialisation des particules
+        function createParticles() {
+            const particlesContainer = document.getElementById('particles');
+            const particleCount = 50;
+            
+            for (let i = 0; i < particleCount; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'particle';
+                particle.style.left = Math.random() * 100 + '%';
+                particle.style.animationDelay = Math.random() * 20 + 's';
+                particle.style.animationDuration = (15 + Math.random() * 10) + 's';
+                particlesContainer.appendChild(particle);
+            }
+        }
+
+        // Animation des compteurs
+        function animateCounters() {
+            const counters = document.querySelectorAll('.stat-number');
+            counters.forEach(counter => {
+                const target = parseInt(counter.getAttribute('data-target'));
+                const increment = target / 100;
+                let current = 0;
+                
+                const timer = setInterval(() => {
+                    current += increment;
+                    counter.textContent = Math.floor(current);
+                    
+                    if (current >= target) {
+                        counter.textContent = target;
+                        clearInterval(timer);
+                    }
+                }, 20);
+            });
+        }
+
+        // Toggle theme
+        function toggleTheme() {
+            const body = document.body;
+            const themeIcon = document.getElementById('themeIcon');
+            const themeText = document.getElementById('themeText');
+            
+            body.classList.toggle('dark-mode');
+            
+            if (body.classList.contains('dark-mode')) {
+                themeIcon.className = 'fas fa-sun';
+                themeText.textContent = 'Mode clair';
+                showToast('Mode sombre activé', 'success');
+            } else {
+                themeIcon.className = 'fas fa-moon';
+                themeText.textContent = 'Mode sombre';
+                showToast('Mode clair activé', 'success');
+            }
+        }
+
+        // Afficher le générateur de post
+        function showPostGenerator() {
+            const generator = document.getElementById('postGenerator');
+            generator.style.display = 'block';
+            generator.scrollIntoView({ behavior: 'smooth' });
+            document.getElementById('postTopic').focus();
+        }
+
+        // Masquer le générateur de post
+        function hidePostGenerator() {
+            const generator = document.getElementById('postGenerator');
+            generator.style.display = 'none';
+        }
+
+        // Générer un post avec l'IA (simulation)
+        function generatePost() {
+            const topic = document.getElementById('postTopic').value;
+            const tone = document.getElementById('postTone').value;
+            const length = document.getElementById('postLength').value;
+            const preview = document.getElementById('postPreview');
+            
+            if (!topic) {
+                showToast('Veuillez entrer un sujet pour votre post', 'error');
+                return;
+            }
+            
+            // Simulation de génération IA
+            showToast('Génération en cours...', 'warning');
+            
+            // Ajouter un effet de chargement
+            preview.classList.add('loading');
+            
+            setTimeout(() => {
+                preview.classList.remove('loading');
+                
+                const samplePost = `🚀 ${topic}
+
+Je viens de découvrir quelque chose de fascinant sur ${topic.toLowerCase()}. 
+
+En tant que professionnel du secteur, je pense que c'est un tournant majeur qui va transformer notre façon de travailler.
+
+💡 Voici les 3 points clés à retenir :
+• Innovation constante
+• Adaptation rapide
+• Collaboration renforcée
+
+Qu'en pensez-vous ? Avez-vous déjà expérimenté cela dans votre domaine ?
+
+#Innovation #${topic.replace(/\s+/g, '')} #LinkedIn #Professionnel`;
+                
+                preview.value = samplePost;
+                showToast('Post généré avec succès !', 'success');
+            }, 2000);
+        }
+
+        // Programmer un post
+        function schedulePost() {
+            const preview = document.getElementById('postPreview').value;
+            
+            if (!preview) {
+                showToast('Veuillez d\'abord générer un post', 'error');
+                return;
+            }
+            
+            showToast('Post programmé pour demain à 9h00', 'success');
+            
+            // Mettre à jour le compteur
+            const scheduledCounter = document.querySelectorAll('.stat-number')[1];
+            const currentValue = parseInt(scheduledCounter.textContent);
+            scheduledCounter.textContent = currentValue + 1;
+            scheduledCounter.setAttribute('data-target', currentValue + 1);
+            
+            hidePostGenerator();
+        }
+
+        // Sélectionner une actualité
+        function selectNews(newsCard) {
+            // Retirer la sélection précédente
+            document.querySelectorAll('.news-card').forEach(card => {
+                card.classList.remove('selected');
+            });
+            
+            // Ajouter la sélection à la carte cliquée
+            newsCard.classList.add('selected');
+            
+            const title = newsCard.querySelector('.news-title').textContent;
+            showToast(`Article sélectionné : "${title}"`, 'success');
+            
+            // Pré-remplir le générateur de post
+            document.getElementById('postTopic').value = title;
+            showPostGenerator();
+        }
+
+        // Afficher une notification toast
+        function showToast(message, type = 'success') {
+            const toast = document.getElementById('toast');
+            const toastMessage = document.getElementById('toastMessage');
+            
+            toastMessage.textContent = message;
+            
+            // Réinitialiser les classes
+            toast.className = 'toast';
+            
+            // Ajouter le type
+            if (type === 'error') {
+                toast.classList.add('error');
+            } else if (type === 'warning') {
+                toast.classList.add('warning');
+            }
+            
+            // Afficher le toast
+            toast.classList.add('show');
+            
+            // Masquer après 3 secondes
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 3000);
+        }
+
+        // Navigation entre sections
+        function showSection(sectionName) {
+            // Mettre à jour la navigation active
+            document.querySelectorAll('.nav-link').forEach(link => {
+                link.classList.remove('active');
+            });
+            
+            event.target.closest('.nav-link').classList.add('active');
+            
+            // Ici vous pourriez ajouter la logique pour changer de section
+            showToast(`Navigation vers ${sectionName}`, 'success');
+        }
+
+        // Gestion responsive du menu
+        function toggleSidebar() {
+            const sidebar = document.querySelector('.sidebar');
+            sidebar.classList.toggle('open');
+        }
+
+        // Initialisation au chargement de la page
+        document.addEventListener('DOMContentLoaded', function() {
+            createParticles();
+            
+            // Animation des compteurs avec un délai
+            setTimeout(() => {
+                animateCounters();
+            }, 500);
+            
+            // Ajouter des gestionnaires d'événements pour les inputs
+            const postTopic = document.getElementById('postTopic');
+            postTopic.addEventListener('input', function() {
+                if (this.value.length > 0) {
+                    this.classList.add('has-value');
+                } else {
+                    this.classList.remove('has-value');
+                }
+            });
+            
+            // Gestionnaire pour les raccourcis clavier
+            document.addEventListener('keydown', function(e) {
+                // Ctrl + N pour nouveau post
+                if (e.ctrlKey && e.key === 'n') {
+                    e.preventDefault();
+                    showPostGenerator();
+                }
+                
+                // Escape pour fermer le générateur
+                if (e.key === 'Escape') {
+                    hidePostGenerator();
+                }
+            });
+            
+            // Animation d'entrée retardée pour les éléments
+            const animatedElements = document.querySelectorAll('.fade-in, .slide-in-right');
+            animatedElements.forEach((element, index) => {
+                element.style.animationDelay = (index * 0.1) + 's';
+            });
+            
+            // Message de bienvenue
+            setTimeout(() => {
+                showToast('Bienvenue sur LinkedBoost ! 🚀', 'success');
+            }, 1000);
+        });
+
+        // Fonction pour simuler le chargement des données
+        function refreshData() {
+            showToast('Actualisation des données...', 'warning');
+            
+            // Simuler un délai de chargement
+            setTimeout(() => {
+                // Mettre à jour les statistiques avec de nouvelles valeurs
+                const counters = document.querySelectorAll('.stat-number');
+                const newValues = [45, 12, 1567, 97];
+                
+                counters.forEach((counter, index) => {
+                    counter.setAttribute('data-target', newValues[index]);
+                    counter.textContent = '0';
+                });
+                
+                animateCounters();
+                showToast('Données actualisées !', 'success');
+            }, 1500);
+        }
+
+        // Auto-refresh des données toutes les 5 minutes
+        setInterval(refreshData, 300000);
+
+        // Gestion du responsive
+        window.addEventListener('resize', function() {
+            if (window.innerWidth <= 768) {
+                // Mode mobile
+                document.body.classList.add('mobile');
+            } else {
+                // Mode desktop
+                document.body.classList.remove('mobile');
+                document.querySelector('.sidebar').classList.remove('open');
+            }
+        });
+    </script>
+</body>
+</html>
+                                <h3 class="news-title">L'IA générative transforme le recrutement</h3>
+                                <p class="news-excerpt">Les entreprises adoptent massivement l'intelligence artificielle pour optimiser leurs processus de recrutement...</p>
+                                <div class="news-meta">
+                                    <span><i class="fas fa-calendar"></i> Aujourd'hui</span>
+                                    <span><i class="fas fa-eye"></i> 1.2k vues</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="news-card" onclick="selectNews(this)">
+                            <div class="news-image">
+                                <i class="fas fa-chart-line"></i>
+                            </div>
+                            <div class="news-content">
