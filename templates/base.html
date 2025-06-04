@@ -260,6 +260,7 @@
         .nav-link {
             display: flex;
             align-items: center;
+            justify-content: center;
             gap: 1rem;
             padding: 1rem 1.5rem;
             color: var(--text-secondary);
@@ -333,18 +334,28 @@
             transform: translateX(8px);
         }
 
-        /* Main content */
+        /* Main content - CONTENU CENTRÉ */
         .main-content {
             flex: 1;
             margin-left: 280px;
             min-height: 100vh;
             width: calc(100% - 280px);
             transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            display: flex;
+            justify-content: center;
+            padding: 2rem;
         }
 
         .main-content.expanded {
             margin-left: 0;
             width: 100%;
+        }
+
+        /* Conteneur centré pour le contenu */
+        .content-wrapper {
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
         }
 
         /* Responsive */
@@ -360,6 +371,7 @@
             .main-content {
                 margin-left: 0;
                 width: 100%;
+                padding: 1rem;
             }
 
             .sidebar-toggle {
@@ -607,40 +619,39 @@
             <nav class="nav-menu">
                 <div class="nav-main">
                     <div class="nav-item">
+                        <a href="{{ url_for('dashboard') }}" 
+                           class="nav-link {% if request.endpoint == 'dashboard' %}active{% endif %}">
+                            <i class="fas fa-tachometer-alt nav-icon"></i>
+                        </a>
                     </div>
                     <div class="nav-item">
                         <a href="{{ url_for('news_assistant') }}" 
                            class="nav-link {% if request.endpoint == 'news_assistant' %}active{% endif %}">
                             <i class="fas fa-newspaper nav-icon"></i>
-                            <span>Actualités</span>
                         </a>
                     </div>
                     <div class="nav-item">
                         <a href="{{ url_for('calendar') }}" 
                            class="nav-link {% if request.endpoint == 'calendar' %}active{% endif %}">
                             <i class="fas fa-calendar-alt nav-icon"></i>
-                            <span>Calendrier</span>
                         </a>
                     </div>
                     <div class="nav-item">
                         <a href="{{ url_for('historique') }}" 
                            class="nav-link {% if request.endpoint == 'historique' %}active{% endif %}">
                             <i class="fas fa-history nav-icon"></i>
-                            <span>Historique</span>
                         </a>
                     </div>
                     <div class="nav-item">
                         <a href="{{ url_for('profil') }}" 
                            class="nav-link {% if request.endpoint == 'profil' %}active{% endif %}">
                             <i class="fas fa-user-cog nav-icon"></i>
-                            <span>Profil</span>
                         </a>
                     </div>
                     <div class="nav-item">
                         <a href="{{ url_for('parametres') }}" 
                            class="nav-link {% if request.endpoint == 'parametres' %}active{% endif %}">
                             <i class="fas fa-cog nav-icon"></i>
-                            <span>Paramètres</span>
                         </a>
                     </div>
                 </div>
@@ -650,7 +661,6 @@
                     <div class="nav-item">
                         <a href="{{ url_for('logout') }}" class="nav-link danger">
                             <i class="fas fa-sign-out-alt nav-icon"></i>
-                            <span>Déconnexion</span>
                         </a>
                     </div>
                 </div>
@@ -659,7 +669,9 @@
 
         <!-- Contenu principal -->
         <main class="main-content" id="main-content">
-            {% block content %}{% endblock %}
+            <div class="content-wrapper">
+                {% block content %}{% endblock %}
+            </div>
         </main>
     </div>
 
