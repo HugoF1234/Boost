@@ -1,17 +1,265 @@
 {% extends "base.html" %}
 {% block content %}
 <style>
-    /* Styles supplémentaires pour améliorer l'esthétique */
-    .welcome-header {
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        color: white;
+    /* Variables pour couleurs douces */
+    :root {
+        --primary: #6366f1;
+        --primary-light: #a5b4fc;
+        --primary-ultra-light: #e0e7ff;
+        --secondary: #f8fafc;
+        --accent: #10b981;
+        --accent-light: #6ee7b7;
+        --warm: #fbbf24;
+        --warm-light: #fde68a;
+        --soft-gray: #f1f5f9;
+        --text-primary: #1e293b;
+        --text-secondary: #64748b;
+        --text-light: #94a3b8;
+        --white: #ffffff;
+        --glass: rgba(255, 255, 255, 0.25);
+        --glass-border: rgba(255, 255, 255, 0.3);
+        --shadow-soft: 0 4px 20px rgba(99, 102, 241, 0.1);
+        --shadow-medium: 0 8px 30px rgba(99, 102, 241, 0.15);
+        --shadow-strong: 0 20px 40px rgba(0, 0, 0, 0.1);
+    }
+
+    /* Reset et base */
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+
+    body {
+        background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+        font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+        color: var(--text-primary);
+        overflow-x: hidden;
+    }
+
+    /* Sidebar ultra moderne */
+    .sidebar {
+        width: 280px;
+        height: 100vh;
+        position: fixed;
+        left: 0;
+        top: 0;
+        background: linear-gradient(145deg, var(--white) 0%, #fafbff 100%);
+        backdrop-filter: blur(20px);
+        border-right: 1px solid var(--glass-border);
+        z-index: 100;
+        transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        box-shadow: var(--shadow-medium);
+    }
+
+    .sidebar-header {
         padding: 2rem;
-        border-radius: 16px;
-        margin-bottom: 2rem;
+        background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
         position: relative;
         overflow: hidden;
     }
-    
+
+    .sidebar-header::before {
+        content: '';
+        position: absolute;
+        top: -50%;
+        right: -50%;
+        width: 200%;
+        height: 200%;
+        background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+        animation: float 6s ease-in-out infinite;
+    }
+
+    @keyframes float {
+        0%, 100% { transform: translateY(0px) rotate(0deg); }
+        50% { transform: translateY(-20px) rotate(180deg); }
+    }
+
+    .logo-container {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        position: relative;
+        z-index: 2;
+    }
+
+    .logo-icon {
+        width: 45px;
+        height: 45px;
+        background: var(--glass);
+        backdrop-filter: blur(10px);
+        border-radius: 15px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.5rem;
+        color: white;
+        border: 1px solid var(--glass-border);
+        transition: all 0.3s ease;
+    }
+
+    .logo-icon:hover {
+        transform: scale(1.1) rotate(5deg);
+        box-shadow: 0 8px 25px rgba(255,255,255,0.2);
+    }
+
+    .logo-text {
+        color: white;
+        font-size: 1.5rem;
+        font-weight: 700;
+        letter-spacing: -0.025em;
+    }
+
+    .user-info {
+        margin-top: 1.5rem;
+        padding-top: 1.5rem;
+        border-top: 1px solid var(--glass-border);
+        position: relative;
+        z-index: 2;
+    }
+
+    .user-avatar {
+        width: 55px;
+        height: 55px;
+        background: var(--glass);
+        backdrop-filter: blur(10px);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-bottom: 0.75rem;
+        border: 2px solid var(--glass-border);
+        transition: all 0.3s ease;
+        cursor: pointer;
+    }
+
+    .user-avatar:hover {
+        transform: scale(1.05);
+        box-shadow: 0 8px 20px rgba(255,255,255,0.3);
+    }
+
+    .user-name {
+        color: white;
+        font-weight: 600;
+        font-size: 0.95rem;
+        opacity: 0.95;
+    }
+
+    .user-role {
+        color: white;
+        font-size: 0.8rem;
+        opacity: 0.8;
+        margin-top: 0.25rem;
+    }
+
+    /* Navigation moderne */
+    .nav-menu {
+        padding: 2rem 0;
+    }
+
+    .nav-item {
+        margin: 0.5rem 1.5rem;
+        position: relative;
+    }
+
+    .nav-link {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        padding: 1rem 1.5rem;
+        color: var(--text-secondary);
+        text-decoration: none;
+        font-weight: 500;
+        border-radius: 15px;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        position: relative;
+        overflow: hidden;
+    }
+
+    .nav-link::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(99, 102, 241, 0.1), transparent);
+        transition: all 0.5s ease;
+    }
+
+    .nav-link:hover::before {
+        left: 100%;
+    }
+
+    .nav-link:hover {
+        background: var(--primary-ultra-light);
+        color: var(--primary);
+        transform: translateX(8px);
+        box-shadow: var(--shadow-soft);
+    }
+
+    .nav-link.active {
+        background: linear-gradient(135deg, var(--primary-ultra-light) 0%, rgba(99, 102, 241, 0.15) 100%);
+        color: var(--primary);
+        transform: translateX(5px);
+        box-shadow: var(--shadow-soft);
+    }
+
+    .nav-link.active::after {
+        content: '';
+        position: absolute;
+        left: 0;
+        top: 50%;
+        transform: translateY(-50%);
+        width: 4px;
+        height: 60%;
+        background: var(--primary);
+        border-radius: 0 4px 4px 0;
+    }
+
+    .nav-icon {
+        font-size: 1.25rem;
+        width: 24px;
+        text-align: center;
+        transition: all 0.3s ease;
+    }
+
+    .nav-link:hover .nav-icon {
+        transform: scale(1.1);
+    }
+
+    .nav-link.danger {
+        color: #ef4444;
+        margin-top: 2rem;
+        border-top: 1px solid var(--soft-gray);
+        padding-top: 1.5rem;
+    }
+
+    .nav-link.danger:hover {
+        background: #fef2f2;
+        color: #dc2626;
+    }
+
+    /* Main content */
+    .main-content {
+        margin-left: 280px;
+        padding: 2rem;
+        min-height: 100vh;
+        transition: all 0.3s ease;
+    }
+
+    /* Header avec glassmorphism */
+    .welcome-header {
+        background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 50%, var(--accent-light) 100%);
+        color: white;
+        padding: 2.5rem;
+        border-radius: 24px;
+        margin-bottom: 2rem;
+        position: relative;
+        overflow: hidden;
+        box-shadow: var(--shadow-strong);
+    }
+
     .welcome-header::before {
         content: '';
         position: absolute;
@@ -19,9 +267,9 @@
         left: 0;
         right: 0;
         bottom: 0;
-        background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="dots" width="20" height="20" patternUnits="userSpaceOnUse"><circle cx="10" cy="10" r="1" fill="%23ffffff" opacity="0.1"/></pattern></defs><rect width="100" height="100" fill="url(%23dots)"/></svg>') repeat;
+        background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="sparkles" width="20" height="20" patternUnits="userSpaceOnUse"><circle cx="5" cy="5" r="1" fill="%23ffffff" opacity="0.3"><animate attributeName="opacity" values="0.3;0.8;0.3" dur="3s" repeatCount="indefinite"/></circle><circle cx="15" cy="15" r="0.5" fill="%23ffffff" opacity="0.5"><animate attributeName="opacity" values="0.5;1;0.5" dur="2s" repeatCount="indefinite" begin="1s"/></circle></pattern></defs><rect width="100" height="100" fill="url(%23sparkles)"/></svg>') repeat;
     }
-    
+
     .welcome-content {
         position: relative;
         z-index: 1;
@@ -29,39 +277,63 @@
         justify-content: space-between;
         align-items: center;
         flex-wrap: wrap;
-        gap: 1rem;
+        gap: 1.5rem;
     }
-    
+
     .welcome-title {
-        font-size: 2rem;
+        font-size: 2.5rem;
         font-weight: 700;
         margin-bottom: 0.5rem;
         text-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        letter-spacing: -0.025em;
     }
-    
+
     .welcome-subtitle {
         opacity: 0.9;
-        font-size: 1rem;
+        font-size: 1.1rem;
+        font-weight: 400;
     }
-    
+
+    .success-badge {
+        background: var(--glass);
+        backdrop-filter: blur(10px);
+        padding: 0.75rem 1.5rem;
+        border-radius: 50px;
+        font-size: 0.9rem;
+        font-weight: 600;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        border: 1px solid var(--glass-border);
+        animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+        0%, 100% { transform: scale(1); }
+        50% { transform: scale(1.05); }
+    }
+
+    /* Statistiques interactives */
     .stats-grid {
         display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
         gap: 1.5rem;
         margin-bottom: 2rem;
     }
-    
+
     .stat-card {
-        background: white;
-        border-radius: 16px;
+        background: var(--white);
+        border-radius: 20px;
         padding: 2rem;
         text-align: center;
-        border: 1px solid rgba(0,0,0,0.05);
-        transition: all 0.3s ease;
+        border: 1px solid rgba(99, 102, 241, 0.1);
+        transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
         position: relative;
         overflow: hidden;
+        cursor: pointer;
+        group: hover;
     }
-    
+
     .stat-card::before {
         content: '';
         position: absolute;
@@ -69,115 +341,158 @@
         left: -100%;
         width: 100%;
         height: 3px;
-        background: var(--gradient-primary, linear-gradient(135deg, #0a66c2 0%, #1e40af 100%));
-        transition: all 0.5s ease;
+        background: linear-gradient(90deg, var(--primary), var(--accent));
+        transition: all 0.6s ease;
     }
-    
-    .stat-card:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
-    }
-    
+
     .stat-card:hover::before {
         left: 0;
     }
-    
+
+    .stat-card:hover {
+        transform: translateY(-8px) scale(1.02);
+        box-shadow: var(--shadow-strong);
+        border-color: var(--primary-light);
+    }
+
+    .stat-card:nth-child(1):hover { border-color: var(--primary); }
+    .stat-card:nth-child(2):hover { border-color: var(--accent); }
+    .stat-card:nth-child(3):hover { border-color: var(--warm); }
+
     .stat-number {
-        font-size: 2.5rem;
+        font-size: 3rem;
         font-weight: 700;
-        color: var(--primary);
         margin-bottom: 0.5rem;
         display: block;
-    }
-    
-    .stat-label {
-        color: var(--text-light);
-        font-weight: 500;
-        text-transform: uppercase;
-        letter-spacing: 0.05em;
-        font-size: 0.875rem;
-    }
-    
-    .main-content-grid {
-        display: grid;
-        grid-template-columns: 1fr;
-        gap: 2rem;
-    }
-    
-    .post-creator {
-        background: white;
-        border-radius: 16px;
-        overflow: hidden;
-        border: 1px solid rgba(0,0,0,0.05);
+        background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
         transition: all 0.3s ease;
     }
-    
-    .post-creator:hover {
-        box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+
+    .stat-card:hover .stat-number {
+        transform: scale(1.1);
     }
-    
+
+    .stat-label {
+        color: var(--text-secondary);
+        font-weight: 500;
+        text-transform: uppercase;
+        letter-spacing: 0.1em;
+        font-size: 0.85rem;
+    }
+
+    /* Cartes de contenu */
+    .content-card {
+        background: var(--white);
+        border-radius: 24px;
+        border: 1px solid rgba(99, 102, 241, 0.1);
+        overflow: hidden;
+        transition: all 0.3s ease;
+        margin-bottom: 2rem;
+        box-shadow: var(--shadow-soft);
+    }
+
+    .content-card:hover {
+        transform: translateY(-4px);
+        box-shadow: var(--shadow-medium);
+        border-color: var(--primary-light);
+    }
+
     .card-header-modern {
-        background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
-        padding: 1.5rem 2rem;
-        border-bottom: 1px solid rgba(0,0,0,0.05);
+        background: linear-gradient(135deg, var(--soft-gray) 0%, #f8fafc 100%);
+        padding: 2rem;
+        border-bottom: 1px solid rgba(99, 102, 241, 0.1);
+        position: relative;
     }
-    
+
+    .card-header-modern::after {
+        content: '';
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        height: 1px;
+        background: linear-gradient(90deg, transparent, var(--primary-light), transparent);
+    }
+
     .card-title-modern {
-        font-size: 1.25rem;
+        font-size: 1.4rem;
         font-weight: 600;
-        color: var(--text-dark);
-        margin-bottom: 0.25rem;
+        color: var(--text-primary);
+        margin-bottom: 0.5rem;
     }
-    
+
     .card-subtitle-modern {
-        color: var(--text-light);
-        font-size: 0.875rem;
+        color: var(--text-secondary);
+        font-size: 0.95rem;
+        line-height: 1.5;
     }
-    
+
     .card-body-modern {
         padding: 2rem;
     }
-    
-    .form-row-modern {
-        display: grid;
-        grid-template-columns: 2fr 1fr auto;
-        gap: 1rem;
-        align-items: end;
-    }
-    
+
+    /* Inputs modernes */
     .input-modern {
         width: 100%;
-        padding: 0.875rem 1rem;
-        border: 2px solid rgba(0,0,0,0.1);
-        border-radius: 12px;
+        padding: 1rem 1.5rem;
+        border: 2px solid rgba(99, 102, 241, 0.1);
+        border-radius: 16px;
         font-size: 1rem;
-        transition: all 0.3s ease;
-        background: rgba(0,0,0,0.01);
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        background: rgba(248, 250, 252, 0.5);
+        backdrop-filter: blur(10px);
     }
-    
+
     .input-modern:focus {
         outline: none;
         border-color: var(--primary);
-        box-shadow: 0 0 0 3px rgba(10, 102, 194, 0.1);
-        transform: translateY(-1px);
+        box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.1);
+        transform: translateY(-2px);
+        background: var(--white);
     }
-    
+
+    .textarea-modern {
+        width: 100%;
+        min-height: 150px;
+        padding: 1.5rem;
+        border: 2px solid rgba(99, 102, 241, 0.1);
+        border-radius: 16px;
+        font-family: inherit;
+        font-size: 1rem;
+        line-height: 1.7;
+        resize: vertical;
+        transition: all 0.3s ease;
+        background: rgba(248, 250, 252, 0.5);
+        backdrop-filter: blur(10px);
+    }
+
+    .textarea-modern:focus {
+        outline: none;
+        border-color: var(--primary);
+        box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.1);
+        background: var(--white);
+    }
+
+    /* Boutons interactifs */
     .btn-modern {
-        padding: 0.875rem 1.5rem;
-        border-radius: 12px;
+        padding: 1rem 2rem;
+        border-radius: 16px;
         font-weight: 600;
-        font-size: 0.875rem;
+        font-size: 0.95rem;
         border: none;
         cursor: pointer;
-        transition: all 0.2s ease;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         display: inline-flex;
         align-items: center;
-        gap: 0.5rem;
+        gap: 0.75rem;
         text-decoration: none;
         position: relative;
         overflow: hidden;
     }
-    
+
     .btn-modern::before {
         content: '';
         position: absolute;
@@ -185,399 +500,493 @@
         left: -100%;
         width: 100%;
         height: 100%;
-        background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
-        transition: all 0.5s ease;
+        background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+        transition: all 0.6s ease;
     }
-    
+
     .btn-modern:hover::before {
         left: 100%;
     }
-    
+
     .btn-primary-modern {
-        background: linear-gradient(135deg, #0a66c2 0%, #1e40af 100%);
+        background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
         color: white;
-        box-shadow: 0 4px 15px rgba(10, 102, 194, 0.3);
+        box-shadow: 0 4px 20px rgba(99, 102, 241, 0.3);
     }
-    
+
     .btn-primary-modern:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 8px 25px rgba(10, 102, 194, 0.4);
+        transform: translateY(-3px) scale(1.02);
+        box-shadow: 0 8px 30px rgba(99, 102, 241, 0.4);
     }
-    
-    .news-link-modern {
-        background: white;
-        border: 2px solid var(--primary);
+
+    .btn-secondary-modern {
+        background: var(--white);
         color: var(--primary);
-        padding: 1rem 1.5rem;
-        border-radius: 12px;
+        border: 2px solid var(--primary);
+        box-shadow: var(--shadow-soft);
+    }
+
+    .btn-secondary-modern:hover {
+        background: var(--primary);
+        color: white;
+        transform: translateY(-3px);
+        box-shadow: var(--shadow-medium);
+    }
+
+    /* Formulaire en grille */
+    .form-grid {
+        display: grid;
+        grid-template-columns: 2fr 1fr auto;
+        gap: 1rem;
+        align-items: end;
+        margin-bottom: 1.5rem;
+    }
+
+    .form-grid-2 {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 1.5rem;
+        margin-bottom: 1.5rem;
+    }
+
+    /* Liens d'actualité */
+    .news-link-modern {
+        background: linear-gradient(135deg, var(--primary-ultra-light) 0%, rgba(16, 185, 129, 0.1) 100%);
+        border: 2px solid var(--primary-light);
+        color: var(--primary);
+        padding: 1.5rem;
+        border-radius: 20px;
         text-decoration: none;
         display: flex;
         align-items: center;
         justify-content: space-between;
         margin-top: 1.5rem;
-        transition: all 0.3s ease;
+        transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        position: relative;
+        overflow: hidden;
     }
-    
+
+    .news-link-modern::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(99, 102, 241, 0.1), transparent);
+        transition: all 0.8s ease;
+    }
+
+    .news-link-modern:hover::before {
+        left: 100%;
+    }
+
     .news-link-modern:hover {
         background: var(--primary);
         color: white;
-        transform: translateY(-2px);
-        box-shadow: 0 8px 15px rgba(10, 102, 194, 0.3);
+        transform: translateY(-4px) scale(1.02);
+        box-shadow: var(--shadow-strong);
+        border-color: var(--primary);
     }
-    
-    .post-editor {
-        display: none;
-        background: white;
-        border-radius: 16px;
+
+    /* Article sélectionné */
+    .article-preview {
+        padding: 2rem;
+        background: linear-gradient(135deg, var(--primary-ultra-light) 0%, rgba(16, 185, 129, 0.05) 100%);
+        border-radius: 20px;
+        margin-bottom: 1.5rem;
+        border-left: 5px solid var(--primary);
+        transition: all 0.3s ease;
+        position: relative;
         overflow: hidden;
-        border: 1px solid rgba(0,0,0,0.05);
-        margin-top: 2rem;
-        animation: slideIn 0.3s ease-out;
     }
-    
-    @keyframes slideIn {
+
+    .article-preview::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        right: 0;
+        width: 100px;
+        height: 100px;
+        background: radial-gradient(circle, rgba(99, 102, 241, 0.1) 0%, transparent 70%);
+        border-radius: 50%;
+        transform: translate(30%, -30%);
+    }
+
+    .article-preview:hover {
+        transform: scale(1.01);
+        box-shadow: var(--shadow-medium);
+    }
+
+    /* Responsive design */
+    @media (max-width: 768px) {
+        .sidebar {
+            transform: translateX(-100%);
+            width: 100%;
+        }
+
+        .sidebar.open {
+            transform: translateX(0);
+        }
+
+        .main-content {
+            margin-left: 0;
+            padding: 1rem;
+        }
+
+        .welcome-content {
+            flex-direction: column;
+            text-align: center;
+        }
+
+        .stats-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .form-grid {
+            grid-template-columns: 1fr;
+            gap: 1rem;
+        }
+
+        .form-grid-2 {
+            grid-template-columns: 1fr;
+        }
+    }
+
+    /* Animations d'entrée */
+    .fade-in {
+        animation: fadeInUp 0.6s ease-out;
+    }
+
+    @keyframes fadeInUp {
         from {
             opacity: 0;
-            transform: translateY(20px);
+            transform: translateY(30px);
         }
         to {
             opacity: 1;
             transform: translateY(0);
         }
     }
-    
-    .textarea-modern {
+
+    .slide-in {
+        animation: slideInRight 0.5s ease-out;
+    }
+
+    @keyframes slideInRight {
+        from {
+            opacity: 0;
+            transform: translateX(30px);
+        }
+        to {
+            opacity: 1;
+            transform: translateX(0);
+        }
+    }
+
+    /* Loading states */
+    .loading {
+        position: relative;
+        overflow: hidden;
+    }
+
+    .loading::after {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
         width: 100%;
-        min-height: 150px;
-        padding: 1rem;
-        border: 2px solid rgba(0,0,0,0.1);
-        border-radius: 12px;
-        font-family: inherit;
-        font-size: 1rem;
-        line-height: 1.6;
-        resize: vertical;
-        transition: all 0.3s ease;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(255,255,255,0.6), transparent);
+        animation: shimmer 2s infinite;
     }
-    
-    .textarea-modern:focus {
-        outline: none;
-        border-color: var(--primary);
-        box-shadow: 0 0 0 3px rgba(10, 102, 194, 0.1);
+
+    @keyframes shimmer {
+        0% { left: -100%; }
+        100% { left: 100%; }
     }
-    
-    .publish-section {
-        display: grid;
-        grid-template-columns: 1fr auto auto;
-        gap: 1rem;
-        align-items: end;
-        margin-top: 1.5rem;
-    }
-    
+
+    /* Checkbox moderne */
     .checkbox-modern {
         display: flex;
         align-items: center;
-        gap: 0.5rem;
-        padding: 0.875rem 0;
+        gap: 0.75rem;
+        padding: 1rem 0;
+        cursor: pointer;
+        transition: all 0.3s ease;
     }
-    
+
+    .checkbox-modern:hover {
+        color: var(--primary);
+    }
+
     .checkbox-modern input[type="checkbox"] {
-        width: 18px;
-        height: 18px;
+        width: 20px;
+        height: 20px;
         accent-color: var(--primary);
+        cursor: pointer;
     }
-    
-    .success-badge {
-        background: #e6f7ee;
-        color: #16a34a;
-        padding: 0.5rem 1rem;
-        border-radius: 50px;
-        font-size: 0.875rem;
-        font-weight: 500;
-        display: inline-flex;
-        align-items: center;
-        gap: 0.5rem;
+
+    /* Preview d'images */
+    .image-preview {
+        display: flex;
+        gap: 1rem;
+        margin-top: 1rem;
+        flex-wrap: wrap;
     }
-    
-    /* Responsive */
-    @media (max-width: 768px) {
-        .welcome-content {
-            text-align: center;
-        }
-        
-        .stats-grid {
-            grid-template-columns: 1fr;
-            gap: 1rem;
-        }
-        
-        .form-row-modern {
-            grid-template-columns: 1fr;
-            gap: 1rem;
-        }
-        
-        .publish-section {
-            grid-template-columns: 1fr;
-            gap: 1rem;
-        }
+
+    .image-preview img {
+        width: 120px;
+        height: 120px;
+        object-fit: cover;
+        border-radius: 16px;
+        border: 2px solid var(--primary-light);
+        transition: all 0.3s ease;
+    }
+
+    .image-preview img:hover {
+        transform: scale(1.05);
+        box-shadow: var(--shadow-medium);
     }
 </style>
 
-<!-- Header de bienvenue -->
-<div class="welcome-header">
-    <div class="welcome-content">
-        <div>
-            <h1 class="welcome-title">Bienvenue, {{ first_name }} 👋</h1>
-            <p class="welcome-subtitle">{{ name }} | {{ email }}</p>
+<!-- Contenu principal -->
+<div class="main-content">
+    <!-- Header de bienvenue -->
+    <div class="welcome-header fade-in">
+        <div class="welcome-content">
+            <div>
+                <h1 class="welcome-title">Bienvenue, {{ first_name }} 👋</h1>
+                <p class="welcome-subtitle">{{ name }} | {{ email }}</p>
+            </div>
+            {% if article_success %}
+            <div class="success-badge">
+                <i class="fa-solid fa-check-circle"></i>
+                Article sélectionné avec succès !
+            </div>
+            {% endif %}
         </div>
-        {% if article_success %}
-        <div class="success-badge">
-            <i class="fa-solid fa-check-circle"></i>
-            Article sélectionné !
+    </div>
+
+    <!-- Statistiques interactives -->
+    <div class="stats-grid fade-in">
+        <div class="stat-card" onclick="animateCard(this)">
+            <span class="stat-number" data-target="{{ posts|default([])|length }}">0</span>
+            <div class="stat-label">Posts publiés</div>
         </div>
-        {% endif %}
+        
+        <div class="stat-card" onclick="animateCard(this)">
+            <span class="stat-number" data-target="{{ scheduled_posts|default(0) }}">0</span>
+            <div class="stat-label">Posts programmés</div>
+        </div>
+        
+        <div class="stat-card" onclick="animateCard(this)">
+            <span class="stat-number" data-target="{{ interets|default([])|length }}">0</span>
+            <div class="stat-label">Centres d'intérêt</div>
+        </div>
     </div>
-</div>
 
-<!-- Statistiques -->
-<div class="stats-grid">
-    <div class="stat-card">
-        <span class="stat-number">{{ posts|default([])|length }}</span>
-        <div class="stat-label">Posts publiés</div>
-    </div>
-    
-    <div class="stat-card">
-        <span class="stat-number">{{ scheduled_posts|default(0) }}</span>
-        <div class="stat-label">Posts programmés</div>
-    </div>
-    
-    <div class="stat-card">
-        <span class="stat-number">{{ interets|default([])|length }}</span>
-        <div class="stat-label">Centres d'intérêt</div>
-    </div>
-</div>
-
-<!-- Section pour l'article sélectionné (s'affiche en priorité) -->
-{% if selected_article %}
-<div class="post-creator">
-    <div class="card-header-modern">
-        <h2 class="card-title-modern">📝 Générer un post à partir de l'article sélectionné</h2>
-        <p class="card-subtitle-modern">Créez un contenu personnalisé basé sur cette actualité</p>
-    </div>
-    
-    <div class="card-body-modern">
-        <div style="padding: 1.5rem; background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%); border-radius: 12px; margin-bottom: 1.5rem; border-left: 4px solid var(--primary);">
-            <h3 style="margin-bottom: 0.75rem; color: var(--primary); font-weight: 600;">{{ selected_article.title|clean_html }}</h3>
-            <p style="margin-bottom: 1rem; line-height: 1.6;">{{ selected_article.description|clean_html }}</p>
-            <div style="display: flex; justify-content: space-between; align-items: center; font-size: 0.875rem; color: var(--text-light);">
-                <div style="display: flex; align-items: center; gap: 0.5rem;">
-                    <i class="fa-solid fa-globe"></i>
-                    <a href="{{ selected_article.url }}" target="_blank" style="color: var(--primary); text-decoration: none;">
-                        {{ selected_article.source.name }}
+    <!-- Section pour l'article sélectionné -->
+    {% if selected_article %}
+    <div class="content-card slide-in">
+        <div class="card-header-modern">
+            <h2 class="card-title-modern">📝 Générer un post à partir de l'article sélectionné</h2>
+            <p class="card-subtitle-modern">Créez un contenu personnalisé et engageant basé sur cette actualité</p>
+        </div>
+        
+        <div class="card-body-modern">
+            <div class="article-preview">
+                <h3 style="margin-bottom: 0.75rem; color: var(--primary); font-weight: 600; font-size: 1.2rem;">{{ selected_article.title|clean_html }}</h3>
+                <p style="margin-bottom: 1rem; line-height: 1.7; color: var(--text-secondary);">{{ selected_article.description|clean_html }}</p>
+                <div style="display: flex; justify-content: space-between; align-items: center; font-size: 0.9rem; color: var(--text-light);">
+                    <div style="display: flex; align-items: center; gap: 0.5rem;">
+                        <i class="fa-solid fa-globe"></i>
+                        <a href="{{ selected_article.url }}" target="_blank" style="color: var(--primary); text-decoration: none; font-weight: 500;">
+                            {{ selected_article.source.name }}
+                        </a>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 0.5rem;">
+                        <i class="fa-regular fa-calendar"></i>
+                        <span>{{ selected_article.formatted_date }}</span>
+                    </div>
+                </div>
+            </div>
+            
+            <form method="post">
+                <div class="form-grid-2">
+                    <div>
+                        <label style="display: block; margin-bottom: 0.5rem; font-weight: 600; color: var(--text-primary);">Ton du post</label>
+                        <select name="tone" class="input-modern">
+                            <option value="professionnel">Professionnel</option>
+                            <option value="familier">Familier</option>
+                            <option value="inspirant">Inspirant</option>
+                            <option value="humoristique">Humoristique</option>
+                            <option value="factuel">Factuel</option>
+                            <option value="critique">Critique</option>
+                        </select>
+                    </div>
+                    
+                    <div>
+                        <label style="display: block; margin-bottom: 0.5rem; font-weight: 600; color: var(--text-primary);">Perspective</label>
+                        <select name="perspective" class="input-modern">
+                            <option value="neutre">Neutre</option>
+                            <option value="enthousiaste">Enthousiaste</option>
+                            <option value="analytique">Analytique</option>
+                            <option value="innovant">Innovateur</option>
+                            <option value="expert">Expert du domaine</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div style="margin-bottom: 1.5rem;">
+                    <label style="display: block; margin-bottom: 0.5rem; font-weight: 600; color: var(--text-primary);">Instructions personnalisées (facultatif)</label>
+                    <textarea name="custom_instructions" class="textarea-modern" rows="3" placeholder="Ex: Parle de cet article mais insiste sur les dangers de l'IA au quotidien. Ajoute ton point de vue sur la régulation..."></textarea>
+                    <div style="margin-top: 0.75rem; font-size: 0.9rem; color: var(--text-light); display: flex; align-items: center; gap: 0.5rem;">
+                        <i class="fa-solid fa-lightbulb"></i>
+                        Ajoutez des instructions spécifiques pour personnaliser le contenu généré.
+                    </div>
+                </div>
+                
+                <div style="display: flex; gap: 1rem; justify-content: flex-end;">
+                    <button type="submit" name="generate_from_article" class="btn-modern btn-primary-modern">
+                        <i class="fa-solid fa-wand-magic-sparkles"></i>
+                        Générer mon post
+                    </button>
+                    
+                    <a href="{{ url_for('dashboard', clear='true') }}" class="btn-modern btn-secondary-modern">
+                        <i class="fa-solid fa-times"></i>
+                        Annuler
                     </a>
                 </div>
-                <div style="display: flex; align-items: center; gap: 0.5rem;">
-                    <i class="fa-regular fa-calendar"></i>
-                    <span>{{ selected_article.formatted_date }}</span>
-                </div>
-            </div>
+            </form>
+        </div>
+    </div>
+    {% else %}
+    <!-- Section de génération de post standard -->
+    <div class="content-card slide-in">
+        <div class="card-header-modern">
+            <h2 class="card-title-modern">💬 Générer un nouveau post</h2>
+            <p class="card-subtitle-modern">Utilisez l'IA pour créer rapidement un contenu engageant et viral pour votre audience LinkedIn</p>
         </div>
         
-        <form method="post">
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1.5rem;">
-                <div>
-                    <label style="display: block; margin-bottom: 0.5rem; font-weight: 500; color: var(--text-dark);">Ton du post</label>
-                    <select name="tone" class="input-modern">
-                        <option value="professionnel">Professionnel</option>
-                        <option value="familier">Familier</option>
-                        <option value="inspirant">Inspirant</option>
-                        <option value="humoristique">Humoristique</option>
-                        <option value="factuel">Factuel</option>
-                        <option value="critique">Critique</option>
-                    </select>
+        <div class="card-body-modern">
+            <form method="post">
+                <div class="form-grid">
+                    <div>
+                        <input type="text" name="prompt" class="input-modern" placeholder="Ex: Partagez des conseils sur le leadership, Annoncez votre nouvel article..." required>
+                    </div>
+                    <div>
+                        <select name="tone" class="input-modern">
+                            <option value="professionnel">Professionnel</option>
+                            <option value="familier">Familier</option>
+                            <option value="inspirant">Inspirant</option>
+                            <option value="humoristique">Humoristique</option>
+                            <option value="factuel">Factuel</option>
+                        </select>
+                    </div>
+                    <div>
+                        <button type="submit" class="btn-modern btn-primary-modern">
+                            <i class="fa-solid fa-wand-magic-sparkles"></i>
+                            Générer
+                        </button>
+                    </div>
                 </div>
-                
-                <div>
-                    <label style="display: block; margin-bottom: 0.5rem; font-weight: 500; color: var(--text-dark);">Perspective</label>
-                    <select name="perspective" class="input-modern">
-                        <option value="neutre">Neutre</option>
-                        <option value="enthousiaste">Enthousiaste</option>
-                        <option value="analytique">Analytique</option>
-                        <option value="innovant">Innovateur</option>
-                        <option value="expert">Expert du domaine</option>
-                    </select>
-                </div>
-            </div>
+            </form>
             
-            <div style="margin-bottom: 1.5rem;">
-                <label style="display: block; margin-bottom: 0.5rem; font-weight: 500; color: var(--text-dark);">Instructions personnalisées (facultatif)</label>
-                <textarea name="custom_instructions" class="textarea-modern" rows="3" placeholder="Ex: Parle de cet article mais insiste sur les dangers de l'IA au quotidien. Ajoute ton point de vue sur la régulation..."></textarea>
-                <div style="margin-top: 0.5rem; font-size: 0.875rem; color: var(--text-light); display: flex; align-items: center; gap: 0.5rem;">
-                    <i class="fa-solid fa-lightbulb"></i>
-                    Ajoutez des instructions spécifiques pour personnaliser le contenu généré.
+            <a href="{{ url_for('news_assistant') }}" class="news-link-modern">
+                <div style="display: flex; align-items: center; gap: 1rem;">
+                    <div style="width: 50px; height: 50px; background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%); border-radius: 15px; display: flex; align-items: center; justify-content: center; color: white; font-size: 1.25rem;">
+                        <i class="fa-solid fa-newspaper"></i>
+                    </div>
+                    <div>
+                        <div style="font-weight: 600; font-size: 1.1rem;">Créer un post basé sur l'actualité</div>
+                        <div style="font-size: 0.9rem; opacity: 0.8; margin-top: 0.25rem;">Inspirez-vous des sujets tendances du moment</div>
+                    </div>
                 </div>
-            </div>
-            
-            <div style="display: flex; gap: 1rem; justify-content: flex-end;">
-                <button type="submit" name="generate_from_article" class="btn-modern btn-primary-modern">
-                    <i class="fa-solid fa-wand-magic-sparkles"></i>
-                    Générer mon post
-                </button>
-                
-                <a href="{{ url_for('dashboard', clear='true') }}" class="btn-modern" style="background: transparent; border: 2px solid var(--text-light); color: var(--text-light);">
-                    Annuler
-                </a>
-            </div>
-        </form>
+                <div style="display: flex; align-items: center; gap: 0.5rem; font-size: 1.2rem;">
+                    <i class="fa-solid fa-chevron-right"></i>
+                </div>
+            </a>
+        </div>
     </div>
-</div>
-{% else %}
-<!-- Section de génération de post standard -->
-<div class="post-creator">
-    <div class="card-header-modern">
-        <h2 class="card-title-modern">💬 Générer un nouveau post</h2>
-        <p class="card-subtitle-modern">Utilisez l'IA pour créer rapidement un contenu engageant pour votre audience LinkedIn</p>
-    </div>
-    
-    <div class="card-body-modern">
-        <form method="post">
-            <div class="form-row-modern">
-                <div>
-                    <input type="text" name="prompt" class="input-modern" placeholder="Ex: Partagez des conseils sur le leadership, Annoncez votre nouvel article..." required>
-                </div>
-                <div>
-                    <select name="tone" class="input-modern">
-                        <option value="professionnel">Professionnel</option>
-                        <option value="familier">Familier</option>
-                        <option value="inspirant">Inspirant</option>
-                        <option value="humoristique">Humoristique</option>
-                        <option value="factuel">Factuel</option>
-                    </select>
-                </div>
-                <div>
-                    <button type="submit" class="btn-modern btn-primary-modern">
-                        <i class="fa-solid fa-wand-magic-sparkles"></i>
-                        Générer
-                    </button>
-                </div>
-            </div>
-        </form>
-        
-        <a href="{{ url_for('news_assistant') }}" class="news-link-modern">
-            <div style="display: flex; align-items: center; gap: 0.75rem;">
-                <i class="fa-solid fa-newspaper" style="font-size: 1.25rem;"></i>
-                <div>
-                    <div style="font-weight: 600;">Créer un post basé sur l'actualité</div>
-                    <div style="font-size: 0.875rem; opacity: 0.8;">Inspirez-vous des sujets tendances</div>
-                </div>
-            </div>
-            <i class="fa-solid fa-chevron-right"></i>
-        </a>
-    </div>
-</div>
-{% endif %}
+    {% endif %}
 
-{% if draft %}
-<div class="post-editor" style="display: block;">
-    <div class="card-header-modern">
-        <div style="display: flex; justify-content: space-between; align-items: center;">
-            <div>
-                <h2 class="card-title-modern">📝 Éditer et publier votre post</h2>
-                <p class="card-subtitle-modern">Personnalisez votre contenu avant publication</p>
-            </div>
-            <div class="success-badge">
-                <i class="fa-solid fa-circle-check"></i> 
-                Post généré
+    {% if draft %}
+    <div class="content-card slide-in" style="border: 2px solid var(--accent-light);">
+        <div class="card-header-modern" style="background: linear-gradient(135deg, rgba(16, 185, 129, 0.1) 0%, rgba(251, 191, 36, 0.05) 100%);">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+                <div>
+                    <h2 class="card-title-modern">📝 Éditer et publier votre post</h2>
+                    <p class="card-subtitle-modern">Personnalisez votre contenu et programmez sa publication</p>
+                </div>
+                <div class="success-badge" style="background: var(--accent); color: white;">
+                    <i class="fa-solid fa-circle-check"></i> 
+                    Post généré avec succès
+                </div>
             </div>
         </div>
+        
+        <div class="card-body-modern">
+            <form method="post" action="{{ url_for('publish') }}" enctype="multipart/form-data">
+                <div style="margin-bottom: 1.5rem;">
+                    <label style="display: block; margin-bottom: 0.75rem; font-weight: 600; color: var(--text-primary); font-size: 1.1rem;">Contenu du post</label>
+                    <textarea name="post_content" class="textarea-modern mention-editor" rows="8" required>{{ draft }}</textarea>
+                    <div style="margin-top: 0.75rem; font-size: 0.9rem; color: var(--text-light); display: flex; align-items: center; gap: 0.5rem; padding: 0.75rem; background: var(--primary-ultra-light); border-radius: 12px; border-left: 4px solid var(--primary);">
+                        <i class="fa-solid fa-at"></i>
+                        <span>Tapez @ pour mentionner une personne ou une entreprise</span>
+                    </div>
+                </div>
+                
+                <div style="display: grid; grid-template-columns: 1fr auto auto; gap: 1.5rem; align-items: end; margin-bottom: 1.5rem;">
+                    <div>
+                        <label style="display: block; margin-bottom: 0.5rem; font-weight: 600; color: var(--text-primary);">📅 Date et heure de publication</label>
+                        <input type="datetime-local" name="publish_time" class="input-modern" required>
+                    </div>
+                    <div class="checkbox-modern">
+                        <input type="checkbox" id="publish-now" name="publish_now">
+                        <label for="publish-now" style="font-weight: 500; color: var(--text-primary);">Publier maintenant</label>
+                    </div>
+                    <div>
+                        <button type="submit" class="btn-modern btn-primary-modern">
+                            <i class="fa-solid fa-paper-plane"></i>
+                            Publier
+                        </button>
+                    </div>
+                </div>
+                
+                <div style="margin-bottom: 1.5rem;">
+                    <label style="display: block; margin-bottom: 0.75rem; font-weight: 600; color: var(--text-primary);">📎 Ajouter des images (optionnel)</label>
+                    <input type="file" name="images[]" id="images" accept="image/*" multiple class="input-modern" style="padding: 1.25rem; border-style: dashed;">
+                </div>
+                
+                <div id="image-preview" class="image-preview"></div>
+                
+                <div style="display: flex; gap: 1rem; justify-content: flex-end; margin-top: 2rem; padding-top: 1.5rem; border-top: 1px solid rgba(99, 102, 241, 0.1);">
+                    <a href="{{ url_for('dashboard', clear='true') }}" class="btn-modern btn-secondary-modern">
+                        <i class="fa-solid fa-times"></i>
+                        Annuler
+                    </a>
+                </div>
+            </form>
+        </div>
     </div>
-    
-    <div class="card-body-modern">
-        <form method="post" action="{{ url_for('publish') }}" enctype="multipart/form-data">
-            <div style="margin-bottom: 1.5rem;">
-                <label style="display: block; margin-bottom: 0.5rem; font-weight: 500; color: var(--text-dark);">Contenu du post</label>
-                <textarea name="post_content" class="textarea-modern mention-editor" rows="8" required>{{ draft }}</textarea>
-                <div style="margin-top: 0.5rem; font-size: 0.875rem; color: var(--text-light); display: flex; align-items: center; gap: 0.5rem;">
-                    <i class="fa-solid fa-at"></i>
-                    Tapez @ pour mentionner une personne ou une entreprise
-                </div>
-            </div>
-            
-            <div class="publish-section">
-                <div>
-                    <label style="display: block; margin-bottom: 0.5rem; font-weight: 500; color: var(--text-dark);">📅 Date et heure de publication</label>
-                    <input type="datetime-local" name="publish_time" class="input-modern" required>
-                </div>
-                <div class="checkbox-modern">
-                    <input type="checkbox" id="publish-now" name="publish_now">
-                    <label for="publish-now" style="font-weight: 500;">Publier maintenant</label>
-                </div>
-                <div>
-                    <button type="submit" class="btn-modern btn-primary-modern">
-                        <i class="fa-solid fa-paper-plane"></i>
-                        Publier
-                    </button>
-                </div>
-            </div>
-            
-            <div style="margin-top: 1.5rem;">
-                <label style="display: block; margin-bottom: 0.5rem; font-weight: 500; color: var(--text-dark);">📎 Ajouter des images (optionnel)</label>
-                <input type="file" name="images[]" id="images" accept="image/*" multiple class="input-modern">
-            </div>
-            
-            <div id="image-preview" style="display: flex; gap: 1rem; margin-top: 1rem; flex-wrap: wrap;"></div>
-        </form>
-    </div>
+    {% endif %}
 </div>
-{% endif %}
 
 <script>
-// Preview des images
-document.getElementById("images")?.addEventListener("change", function(event) {
-    const preview = document.getElementById("image-preview");
-    preview.innerHTML = "";
-
-    for (let file of event.target.files) {
-        if (file.type.startsWith("image/")) {
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                const imgContainer = document.createElement("div");
-                imgContainer.style.position = "relative";
-                imgContainer.style.borderRadius = "12px";
-                imgContainer.style.overflow = "hidden";
-                imgContainer.style.border = "2px solid var(--border)";
-                
-                const img = document.createElement("img");
-                img.src = e.target.result;
-                img.style.width = "120px";
-                img.style.height = "120px";
-                img.style.objectFit = "cover";
-                img.style.display = "block";
-                
-                imgContainer.appendChild(img);
-                preview.appendChild(imgContainer);
-            }
-            reader.readAsDataURL(file);
-        }
-    }
+// Animation des statistiques au chargement
+window.addEventListener('load', function() {
+    setTimeout(() => {
+        animateStatNumbers();
+    }, 500);
 });
 
-// Auto-set date/time
-window.addEventListener('load', function() {
-    const dateInput = document.querySelector('input[type="datetime-local"]');
-    if (dateInput) {
-        const now = new Date();
-        now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
-        now.setMinutes(now.getMinutes() + 30);
-        dateInput.value = now.toISOString().slice(0, 16);
-    }
-});
-
-// Animation des statistiques
-window.addEventListener('load', function() {
+function animateStatNumbers() {
     const statNumbers = document.querySelectorAll('.stat-number');
     statNumbers.forEach((stat, index) => {
-        const target = parseInt(stat.textContent);
+        const target = parseInt(stat.getAttribute('data-target'));
         let current = 0;
-        const increment = target / 50;
+        const increment = target / 60;
         
         setTimeout(() => {
             const timer = setInterval(() => {
@@ -587,10 +996,314 @@ window.addEventListener('load', function() {
                 if (current >= target) {
                     stat.textContent = target;
                     clearInterval(timer);
+                    
+                    // Animation de rebond à la fin
+                    stat.style.transform = 'scale(1.1)';
+                    setTimeout(() => {
+                        stat.style.transform = 'scale(1)';
+                    }, 200);
                 }
-            }, 30);
-        }, index * 200);
+            }, 16);
+        }, index * 300);
+    });
+}
+
+// Animation des cartes statistiques au clic
+function animateCard(card) {
+    card.style.transform = 'scale(0.95)';
+    setTimeout(() => {
+        card.style.transform = 'translateY(-8px) scale(1.02)';
+    }, 100);
+    
+    // Effet de particules
+    createParticles(card);
+}
+
+function createParticles(element) {
+    for (let i = 0; i < 6; i++) {
+        const particle = document.createElement('div');
+        particle.style.position = 'absolute';
+        particle.style.width = '6px';
+        particle.style.height = '6px';
+        particle.style.background = 'var(--primary)';
+        particle.style.borderRadius = '50%';
+        particle.style.pointerEvents = 'none';
+        particle.style.zIndex = '1000';
+        
+        const rect = element.getBoundingClientRect();
+        particle.style.left = (rect.left + rect.width/2) + 'px';
+        particle.style.top = (rect.top + rect.height/2) + 'px';
+        
+        document.body.appendChild(particle);
+        
+        // Animation des particules
+        const angle = (i / 6) * Math.PI * 2;
+        const distance = 50 + Math.random() * 30;
+        const x = Math.cos(angle) * distance;
+        const y = Math.sin(angle) * distance;
+        
+        particle.animate([
+            { 
+                transform: 'translate(0, 0) scale(1)', 
+                opacity: 1 
+            },
+            { 
+                transform: `translate(${x}px, ${y}px) scale(0)`, 
+                opacity: 0 
+            }
+        ], {
+            duration: 800,
+            easing: 'cubic-bezier(0.4, 0, 0.2, 1)'
+        }).onfinish = () => {
+            particle.remove();
+        };
+    }
+}
+
+// Preview des images avec animation
+document.getElementById("images")?.addEventListener("change", function(event) {
+    const preview = document.getElementById("image-preview");
+    preview.innerHTML = "";
+
+    Array.from(event.target.files).forEach((file, index) => {
+        if (file.type.startsWith("image/")) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const imgContainer = document.createElement("div");
+                imgContainer.style.position = "relative";
+                imgContainer.style.borderRadius = "16px";
+                imgContainer.style.overflow = "hidden";
+                imgContainer.style.border = "2px solid var(--primary-light)";
+                imgContainer.style.opacity = "0";
+                imgContainer.style.transform = "scale(0.8)";
+                imgContainer.style.transition = "all 0.3s ease";
+                
+                const img = document.createElement("img");
+                img.src = e.target.result;
+                img.style.width = "120px";
+                img.style.height = "120px";
+                img.style.objectFit = "cover";
+                img.style.display = "block";
+                img.style.transition = "all 0.3s ease";
+                
+                // Bouton de suppression
+                const deleteBtn = document.createElement("button");
+                deleteBtn.innerHTML = '<i class="fa-solid fa-times"></i>';
+                deleteBtn.style.position = "absolute";
+                deleteBtn.style.top = "5px";
+                deleteBtn.style.right = "5px";
+                deleteBtn.style.width = "25px";
+                deleteBtn.style.height = "25px";
+                deleteBtn.style.border = "none";
+                deleteBtn.style.borderRadius = "50%";
+                deleteBtn.style.background = "rgba(239, 68, 68, 0.9)";
+                deleteBtn.style.color = "white";
+                deleteBtn.style.cursor = "pointer";
+                deleteBtn.style.display = "flex";
+                deleteBtn.style.alignItems = "center";
+                deleteBtn.style.justifyContent = "center";
+                deleteBtn.style.fontSize = "12px";
+                deleteBtn.style.opacity = "0";
+                deleteBtn.style.transition = "all 0.3s ease";
+                
+                deleteBtn.onclick = () => {
+                    imgContainer.style.opacity = "0";
+                    imgContainer.style.transform = "scale(0)";
+                    setTimeout(() => imgContainer.remove(), 300);
+                };
+                
+                imgContainer.onmouseenter = () => {
+                    deleteBtn.style.opacity = "1";
+                    img.style.transform = "scale(1.05)";
+                };
+                
+                imgContainer.onmouseleave = () => {
+                    deleteBtn.style.opacity = "0";
+                    img.style.transform = "scale(1)";
+                };
+                
+                imgContainer.appendChild(img);
+                imgContainer.appendChild(deleteBtn);
+                preview.appendChild(imgContainer);
+                
+                // Animation d'entrée
+                setTimeout(() => {
+                    imgContainer.style.opacity = "1";
+                    imgContainer.style.transform = "scale(1)";
+                }, index * 100);
+            }
+            reader.readAsDataURL(file);
+        }
     });
 });
+
+// Auto-set date/time avec animation
+window.addEventListener('load', function() {
+    const dateInput = document.querySelector('input[type="datetime-local"]');
+    if (dateInput) {
+        const now = new Date();
+        now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
+        now.setMinutes(now.getMinutes() + 30);
+        dateInput.value = now.toISOString().slice(0, 16);
+        
+        // Animation de focus
+        dateInput.addEventListener('focus', function() {
+            this.style.transform = 'translateY(-2px)';
+            this.style.boxShadow = '0 8px 25px rgba(99, 102, 241, 0.2)';
+        });
+        
+        dateInput.addEventListener('blur', function() {
+            this.style.transform = 'translateY(0)';
+        });
+    }
+});
+
+// Amélioration des interactions des boutons
+document.querySelectorAll('.btn-modern').forEach(btn => {
+    btn.addEventListener('mouseenter', function() {
+        this.style.transform = 'translateY(-3px) scale(1.02)';
+    });
+    
+    btn.addEventListener('mouseleave', function() {
+        this.style.transform = 'translateY(0) scale(1)';
+    });
+    
+    btn.addEventListener('mousedown', function() {
+        this.style.transform = 'translateY(-1px) scale(0.98)';
+    });
+    
+    btn.addEventListener('mouseup', function() {
+        this.style.transform = 'translateY(-3px) scale(1.02)';
+    });
+});
+
+// Animation des inputs au focus
+document.querySelectorAll('.input-modern, .textarea-modern').forEach(input => {
+    input.addEventListener('focus', function() {
+        this.parentElement.style.transform = 'translateY(-2px)';
+    });
+    
+    input.addEventListener('blur', function() {
+        this.parentElement.style.transform = 'translateY(0)';
+    });
+});
+
+// Amélioration de l'interaction avec les cartes de contenu
+document.querySelectorAll('.content-card').forEach(card => {
+    card.addEventListener('mouseenter', function() {
+        this.style.transform = 'translateY(-6px)';
+    });
+    
+    card.addEventListener('mouseleave', function() {
+        this.style.transform = 'translateY(0)';
+    });
+});
+
+// Animation de la sidebar
+document.querySelectorAll('.nav-link').forEach(link => {
+    link.addEventListener('mouseenter', function() {
+        const icon = this.querySelector('.nav-icon');
+        if (icon) {
+            icon.style.transform = 'scale(1.2) rotate(5deg)';
+        }
+    });
+    
+    link.addEventListener('mouseleave', function() {
+        const icon = this.querySelector('.nav-icon');
+        if (icon) {
+            icon.style.transform = 'scale(1) rotate(0deg)';
+        }
+    });
+});
+
+// Animation des éléments au scroll
+const observerOptions = {
+    threshold: 0.1,
+    rootMargin: '0px 0px -50px 0px'
+};
+
+const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+        if (entry.isIntersecting) {
+            entry.target.style.opacity = '1';
+            entry.target.style.transform = 'translateY(0)';
+        }
+    });
+}, observerOptions);
+
+// Observer tous les éléments avec animation
+document.querySelectorAll('.fade-in, .slide-in').forEach(el => {
+    el.style.opacity = '0';
+    el.style.transform = 'translateY(30px)';
+    el.style.transition = 'all 0.6s cubic-bezier(0.4, 0, 0.2, 1)';
+    observer.observe(el);
+});
+
+// Ajout d'effets sonores (optionnel)
+function playClickSound() {
+    // Vous pouvez ajouter des effets sonores ici si souhaité
+    // const audio = new Audio('/static/sounds/click.mp3');
+    // audio.volume = 0.1;
+    // audio.play().catch(() => {});
+}
+
+// Amélioration de l'accessibilité
+document.addEventListener('keydown', function(e) {
+    // Raccourcis clavier
+    if (e.ctrlKey || e.metaKey) {
+        switch(e.key) {
+            case 'n':
+                e.preventDefault();
+                document.querySelector('input[name="prompt"]')?.focus();
+                break;
+            case 'Enter':
+                if (e.target.tagName === 'TEXTAREA') {
+                    e.preventDefault();
+                    document.querySelector('button[type="submit"]')?.click();
+                }
+                break;
+        }
+    }
+    
+    if (e.key === 'Escape') {
+        // Fermer les modales ou réinitialiser les focus
+        document.activeElement?.blur();
+    }
+});
+
+// Messages de feedback utilisateur
+function showToast(message, type = 'success') {
+    const toast = document.createElement('div');
+    toast.style.position = 'fixed';
+    toast.style.top = '2rem';
+    toast.style.right = '2rem';
+    toast.style.background = type === 'success' ? 'var(--accent)' : 'var(--warm)';
+    toast.style.color = 'white';
+    toast.style.padding = '1rem 1.5rem';
+    toast.style.borderRadius = '12px';
+    toast.style.zIndex = '10000';
+    toast.style.transform = 'translateX(100%)';
+    toast.style.transition = 'all 0.3s ease';
+    toast.style.boxShadow = 'var(--shadow-strong)';
+    toast.innerHTML = `<i class="fa-solid fa-check-circle"></i> ${message}`;
+    
+    document.body.appendChild(toast);
+    
+    setTimeout(() => {
+        toast.style.transform = 'translateX(0)';
+    }, 100);
+    
+    setTimeout(() => {
+        toast.style.transform = 'translateX(100%)';
+        setTimeout(() => toast.remove(), 300);
+    }, 3000);
+}
+
+// Simulation d'interactions pour les démonstrations
+setTimeout(() => {
+    if (document.querySelector('.stat-card')) {
+        showToast('Interface chargée avec succès !');
+    }
+}, 1000);
 </script>
 {% endblock %}
