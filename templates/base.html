@@ -4,324 +4,369 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{{ title or "LinkedBoost" }}</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
+        /* Variables pour couleurs douces */
         :root {
-            --primary: #0a66c2;
-            --primary-dark: #004182;
-            --secondary: #f3f2ef;
-            --text-dark: #191919;
-            --text-light: #666666;
-            --success: #057642;
-            --danger: #cc1016;
-            --grey-light: #f3f2ef;
-            --grey: #e0e0e0;
-            --border: #e0e0e0;
+            --primary: #6366f1;
+            --primary-light: #a5b4fc;
+            --primary-ultra-light: #e0e7ff;
+            --secondary: #f8fafc;
+            --accent: #10b981;
+            --accent-light: #6ee7b7;
+            --warm: #fbbf24;
+            --warm-light: #fde68a;
+            --soft-gray: #f1f5f9;
+            --text-primary: #1e293b;
+            --text-secondary: #64748b;
+            --text-light: #94a3b8;
             --white: #ffffff;
-            --shadow: 0 2px 5px rgba(0,0,0,0.1);
+            --glass: rgba(255, 255, 255, 0.25);
+            --glass-border: rgba(255, 255, 255, 0.3);
+            --shadow-soft: 0 4px 20px rgba(99, 102, 241, 0.1);
+            --shadow-medium: 0 8px 30px rgba(99, 102, 241, 0.15);
+            --shadow-strong: 0 20px 40px rgba(0, 0, 0, 0.1);
         }
-        
+
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
         }
-        
+
         body {
             font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-            background-color: var(--secondary);
-            color: var(--text-dark);
-            line-height: 1.5;
-            font-size: 14px;
+            background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+            color: var(--text-primary);
+            line-height: 1.6;
+            overflow-x: hidden;
         }
-        
-        /* Layout */
+
+        /* Layout principal */
         .app-container {
             display: flex;
             min-height: 100vh;
+            position: relative;
         }
-        
-        /* Sidebar */
+
+        /* Sidebar ultra moderne */
         .sidebar {
-            width: 260px;
-            background: var(--white);
-            box-shadow: var(--shadow);
-            position: fixed;
+            width: 280px;
             height: 100vh;
+            position: fixed;
+            left: 0;
+            top: 0;
+            background: linear-gradient(145deg, var(--white) 0%, #fafbff 100%);
+            backdrop-filter: blur(20px);
+            border-right: 1px solid var(--glass-border);
             z-index: 100;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: var(--shadow-medium);
+            overflow-y: auto;
+        }
+
+        .sidebar-header {
+            padding: 2rem;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .sidebar-header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+            animation: float 6s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-20px) rotate(180deg); }
+        }
+
+        .logo-container {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            position: relative;
+            z-index: 2;
+        }
+
+        .logo-icon {
+            width: 45px;
+            height: 45px;
+            background: var(--glass);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            color: white;
+            border: 1px solid var(--glass-border);
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .logo-icon:hover {
+            transform: scale(1.1) rotate(5deg);
+            box-shadow: 0 8px 25px rgba(255,255,255,0.2);
+        }
+
+        .logo-text {
+            color: white;
+            font-size: 1.5rem;
+            font-weight: 700;
+            letter-spacing: -0.025em;
+        }
+
+        .user-info {
+            margin-top: 1.5rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid var(--glass-border);
+            position: relative;
+            z-index: 2;
+        }
+
+        .user-avatar {
+            width: 55px;
+            height: 55px;
+            background: var(--glass);
+            backdrop-filter: blur(10px);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 0.75rem;
+            border: 2px solid var(--glass-border);
+            transition: all 0.3s ease;
+            cursor: pointer;
+            font-size: 1.25rem;
+            color: white;
+        }
+
+        .user-avatar:hover {
+            transform: scale(1.05);
+            box-shadow: 0 8px 20px rgba(255,255,255,0.3);
+        }
+
+        .user-name {
+            color: white;
+            font-weight: 600;
+            font-size: 0.95rem;
+            opacity: 0.95;
+        }
+
+        .user-role {
+            color: white;
+            font-size: 0.8rem;
+            opacity: 0.8;
+            margin-top: 0.25rem;
+        }
+
+        /* Navigation moderne */
+        .nav-menu {
+            padding: 2rem 0;
+        }
+
+        .nav-item {
+            margin: 0.5rem 1.5rem;
+            position: relative;
+        }
+
+        .nav-link {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 1rem 1.5rem;
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-weight: 500;
+            border-radius: 15px;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .nav-link::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(99, 102, 241, 0.1), transparent);
+            transition: all 0.5s ease;
+        }
+
+        .nav-link:hover::before {
+            left: 100%;
+        }
+
+        .nav-link:hover {
+            background: var(--primary-ultra-light);
+            color: var(--primary);
+            transform: translateX(8px);
+            box-shadow: var(--shadow-soft);
+        }
+
+        .nav-link.active {
+            background: linear-gradient(135deg, var(--primary-ultra-light) 0%, rgba(99, 102, 241, 0.15) 100%);
+            color: var(--primary);
+            transform: translateX(5px);
+            box-shadow: var(--shadow-soft);
+        }
+
+        .nav-link.active::after {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 4px;
+            height: 60%;
+            background: var(--primary);
+            border-radius: 0 4px 4px 0;
+        }
+
+        .nav-icon {
+            font-size: 1.25rem;
+            width: 24px;
+            text-align: center;
             transition: all 0.3s ease;
         }
-        
-        .sidebar-header {
-            display: flex;
-            align-items: center;
-            padding: 24px 20px;
-            border-bottom: 1px solid var(--border);
+
+        .nav-link:hover .nav-icon {
+            transform: scale(1.1) rotate(5deg);
         }
-        
-        .sidebar-header h1 {
-            font-size: 22px;
-            font-weight: 700;
-            color: var(--primary);
-            margin-left: 10px;
+
+        .nav-link.danger {
+            color: #ef4444;
+            margin-top: 2rem;
+            border-top: 1px solid var(--soft-gray);
+            padding-top: 1.5rem;
         }
-        
-        .sidebar-header img {
-            width: 30px;
-            height: 30px;
+
+        .nav-link.danger:hover {
+            background: #fef2f2;
+            color: #dc2626;
+            transform: translateX(8px);
         }
-        
-        .sidebar-menu {
-            padding: 20px 0;
-        }
-        
-        .sidebar-menu a {
-            display: flex;
-            align-items: center;
-            padding: 12px 20px;
-            color: var(--text-dark);
-            text-decoration: none;
-            transition: all 0.2s ease;
-            font-weight: 500;
-            border-left: 3px solid transparent;
-        }
-        
-        .sidebar-menu a:hover, .sidebar-menu a.active {
-            background-color: rgba(10, 102, 194, 0.08);
-            color: var(--primary);
-            border-left-color: var(--primary);
-        }
-        
-        .sidebar-menu a i {
-            margin-right: 12px;
-            font-size: 18px;
-        }
-        
-        .sidebar-menu a.danger {
-            color: var(--danger);
-            margin-top: 20px;
-            border-top: 1px solid var(--border);
-            padding-top: 20px;
-        }
-        
-        .sidebar-menu a.danger:hover {
-            background-color: rgba(204, 16, 22, 0.08);
-            border-left-color: var(--danger);
-        }
-        
-        /* Main Content */
+
+        /* Main content */
         .main-content {
             flex: 1;
-            margin-left: 260px;
-            padding: 30px;
+            margin-left: 280px;
             min-height: 100vh;
+            transition: all 0.3s ease;
         }
-        
-        .content-card {
-            background: var(--white);
-            border-radius: 8px;
-            box-shadow: var(--shadow);
-            padding: 24px;
-            margin-bottom: 20px;
-        }
-        
-        /* Typography */
-        h1, h2, h3, h4 {
-            color: var(--text-dark);
-            margin-bottom: 16px;
-            font-weight: 600;
-        }
-        
-        h1 {
-            font-size: 24px;
-        }
-        
-        h2 {
-            font-size: 20px;
-        }
-        
-        h3 {
-            font-size: 16px;
-            color: var(--text-light);
-        }
-        
-        p {
-            margin-bottom: 16px;
-            color: var(--text-light);
-        }
-        
-        /* Forms */
-        .form-group {
-            margin-bottom: 20px;
-        }
-        
-        .form-label {
-            display: block;
-            margin-bottom: 8px;
-            font-weight: 500;
-        }
-        
-        .form-control {
-            width: 100%;
-            padding: 12px;
-            border: 1px solid var(--border);
-            border-radius: 4px;
-            font-size: 14px;
-            transition: border-color 0.2s ease;
-        }
-        
-        .form-control:focus {
-            outline: none;
-            border-color: var(--primary);
-            box-shadow: 0 0 0 2px rgba(10, 102, 194, 0.2);
-        }
-        
-        textarea.form-control {
-            min-height: 120px;
-            resize: vertical;
-        }
-        
-        .form-row {
-            display: flex;
-            gap: 16px;
-            margin-bottom: 20px;
-        }
-        
-        .form-row > * {
-            flex: 1;
-        }
-        
-        /* Buttons */
-        .btn {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            padding: 10px 16px;
-            border-radius: 24px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            font-size: 14px;
-            border: none;
-        }
-        
-        .btn-primary {
-            background-color: var(--primary);
-            color: white;
-        }
-        
-        .btn-primary:hover {
-            background-color: var(--primary-dark);
-        }
-        
-        .btn-outline {
-            background-color: transparent;
-            border: 1px solid var(--primary);
-            color: var(--primary);
-        }
-        
-        .btn-outline:hover {
-            background-color: rgba(10, 102, 194, 0.1);
-        }
-        
-        .btn-danger {
-            background-color: var(--danger);
-            color: white;
-        }
-        
-        .btn-danger:hover {
-            background-color: #a00d12;
-        }
-        
-        .btn-icon {
-            width: 36px;
-            height: 36px;
-            padding: 0;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            border-radius: 50%;
-        }
-        
-        /* Utilities */
-        .text-primary { color: var(--primary); }
-        .text-success { color: var(--success); }
-        .text-danger { color: var(--danger); }
-        .text-light { color: var(--text-light); }
-        
-        .mt-4 { margin-top: 16px; }
-        .mb-4 { margin-bottom: 16px; }
-        
-        .d-flex { display: flex; }
-        .align-center { align-items: center; }
-        .justify-between { justify-content: space-between; }
-        .gap-2 { gap: 8px; }
-        .gap-3 { gap: 12px; }
-        
+
         /* Responsive */
         @media (max-width: 768px) {
             .sidebar {
-                width: 80px;
-                overflow: hidden;
+                transform: translateX(-100%);
+                width: 100%;
             }
-            
-            .sidebar-header h1 {
-                display: none;
+
+            .sidebar.open {
+                transform: translateX(0);
             }
-            
-            .sidebar-menu a span {
-                display: none;
-            }
-            
-            .sidebar-menu a i {
-                margin-right: 0;
-                font-size: 20px;
-            }
-            
+
             .main-content {
-                margin-left: 80px;
+                margin-left: 0;
             }
-            
-            .form-row {
-                flex-direction: column;
-                gap: 10px;
+
+            .mobile-menu-btn {
+                position: fixed;
+                top: 1rem;
+                left: 1rem;
+                z-index: 1001;
+                background: var(--primary);
+                color: white;
+                border: none;
+                border-radius: 12px;
+                width: 50px;
+                height: 50px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-size: 1.25rem;
+                cursor: pointer;
+                box-shadow: var(--shadow-medium);
+                transition: all 0.3s ease;
+            }
+
+            .mobile-menu-btn:hover {
+                transform: scale(1.1);
+                box-shadow: var(--shadow-strong);
             }
         }
-        
+
+        @media (min-width: 769px) {
+            .mobile-menu-btn {
+                display: none;
+            }
+        }
+
         /* Styles pour les mentions LinkedIn */
         .mention {
-            color: #0a66c2;
+            color: var(--primary);
             font-weight: 500;
             text-decoration: none;
-            background-color: rgba(10, 102, 194, 0.08);
-            padding: 2px 4px;
-            border-radius: 3px;
-            transition: background-color 0.2s;
+            background-color: var(--primary-ultra-light);
+            padding: 2px 6px;
+            border-radius: 6px;
+            transition: all 0.2s ease;
         }
 
         .mention:hover {
-            background-color: rgba(10, 102, 194, 0.15);
-            text-decoration: underline;
+            background-color: var(--primary-light);
+            color: white;
+            text-decoration: none;
+            transform: scale(1.05);
         }
 
         .mention-dropdown {
-            background-color: white;
-            border-radius: 8px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            background: white;
+            border-radius: 16px;
+            box-shadow: var(--shadow-strong);
             z-index: 1000;
-            max-height: 300px;
+            max-height: 350px;
             overflow-y: auto;
-            width: 320px;
-            border: 1px solid #e0e0e0;
+            width: 350px;
+            border: 1px solid var(--glass-border);
+            backdrop-filter: blur(20px);
         }
 
         .mention-suggestion {
-            padding: 10px 16px;
+            padding: 1rem 1.5rem;
             cursor: pointer;
             display: flex;
             align-items: center;
-            border-bottom: 1px solid #f3f2ef;
-            transition: background-color 0.2s;
+            border-bottom: 1px solid var(--soft-gray);
+            transition: all 0.2s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .mention-suggestion::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, var(--primary-ultra-light), transparent);
+            transition: all 0.3s ease;
+        }
+
+        .mention-suggestion:hover::before {
+            left: 100%;
         }
 
         .mention-suggestion:last-child {
@@ -330,431 +375,592 @@
 
         .mention-suggestion:hover, 
         .mention-suggestion.active {
-            background-color: #f3f2ef;
-        }
-    </style>
-    <!-- Font Awesome pour les icônes -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-</head>
-<body>
-    <div class="app-container">
-        <div class="sidebar">
-            <div class="sidebar-header">
-                <img src="{{ url_for('static', filename='logo1') }}" alt="LinkedBoost Logo" style="height: 30px;">
-                <h1>LinkedBoost</h1>
-            </div>
-            <div class="sidebar-menu">
-                <a href="{{ url_for('dashboard') }}" {% if request.path == url_for('dashboard') %}class="active"{% endif %}>
-                    <i class="fa-solid fa-chart-line"></i>
-                    <span>Dashboard</span>
-                </a>
-                <a href="{{ url_for('profil') }}" {% if request.path == url_for('profil') %}class="active"{% endif %}>
-                    <i class="fa-solid fa-user"></i>
-                    <span>Profil</span>
-                </a>
-                <a href="{{ url_for('historique') }}" {% if request.path == url_for('historique') %}class="active"{% endif %}>
-                    <i class="fa-solid fa-history"></i>
-                    <span>Historique</span>
-                </a>
-                <a href="{{ url_for('calendar') }}" {% if request.path == url_for('calendar') %}class="active"{% endif %}>
-                    <i class="fa-solid fa-calendar"></i>
-                    <span>Calendrier</span>
-                </a>
-                <a href="{{ url_for('parametres') }}" {% if request.path == url_for('parametres') %}class="active"{% endif %}>
-                    <i class="fa-solid fa-gear"></i>
-                    <span>Paramètres</span>
-                </a>
-                <a href="{{ url_for('logout') }}" class="danger">
-                    <i class="fa-solid fa-right-from-bracket"></i>
-                    <span>Déconnexion</span>
-                </a>
-            </div>
-        </div>
-        
-        <div class="main-content">
-            {% block content %}{% endblock %}
-        </div>
-    </div>
-    
-    <!-- Script de gestion des mentions -->
-    <script>
-        // Fonction pour initialiser l'éditeur de mentions
-        function initMentionEditor(editorElement) {
-          const editor = editorElement;
-          let mentionDropdown = null;
-          let currentMentionSearch = "";
-          let mentionSearchActive = false;
-          let mentionStartPosition = 0;
-          let debounceTimeout = null;
-          
-          // Créer le menu déroulant des mentions
-          function createMentionDropdown() {
-            mentionDropdown = document.createElement('div');
-            mentionDropdown.className = 'mention-dropdown';
-            mentionDropdown.style.display = 'none';
-            mentionDropdown.style.position = 'absolute';
-            mentionDropdown.style.zIndex = '1000';
-            document.body.appendChild(mentionDropdown);
-            return mentionDropdown;
-          }
-          
-          // Positionner le menu déroulant
-          function positionMentionDropdown(textarea) {
-            if (!mentionDropdown) return;
-            
-            // Calculer la position du curseur
-            const text = textarea.value;
-            const subtext = text.substring(0, textarea.selectionStart);
-            const lines = subtext.split('\n');
-            const lineHeight = parseInt(window.getComputedStyle(textarea).lineHeight);
-            const lineCount = lines.length;
-            const charPos = lines[lineCount - 1].length;
-            
-            // Position approximative du caractère @ dans la zone de texte
-            const rect = textarea.getBoundingClientRect();
-            const scrollTop = textarea.scrollTop;
-            
-            const top = rect.top + (lineCount * lineHeight) - scrollTop;
-            const left = rect.left + (charPos * 8); // approximation de la largeur d'un caractère
-            
-            mentionDropdown.style.top = `${top + 20}px`; // 20px en dessous du curseur
-            mentionDropdown.style.left = `${left}px`;
-          }
-          
-          // Rechercher des utilisateurs LinkedIn
-          function searchLinkedInUsers(query) {
-            fetch('/search_linkedin_users', {
-              method: 'POST',
-              headers: {
-                'Content-Type': 'application/json',
-              },
-              body: JSON.stringify({ query }),
-            })
-            .then(response => response.json())
-            .then(data => {
-              if (data.results && data.results.length > 0) {
-                displayMentionSuggestions(data.results);
-              } else {
-                hideMentionDropdown();
-              }
-            })
-            .catch(error => {
-              console.error('Erreur de recherche:', error);
-              hideMentionDropdown();
-            });
-          }
-          
-          // Afficher les suggestions de mentions
-          function displayMentionSuggestions(users) {
-            if (!mentionDropdown) {
-              mentionDropdown = createMentionDropdown();
-            }
-            
-            mentionDropdown.innerHTML = '';
-            
-            users.forEach(user => {
-              const suggestionItem = document.createElement('div');
-              suggestionItem.className = 'mention-suggestion';
-              
-              // Ajouter une image de profil si disponible
-              if (user.image_url) {
-                const img = document.createElement('img');
-                img.src = user.image_url;
-                img.style.width = '32px';
-                img.style.height = '32px';
-                img.style.borderRadius = '50%';
-                img.style.marginRight = '10px';
-                suggestionItem.appendChild(img);
-              } else {
-                // Fallback pour les utilisateurs sans image
-                const placeholder = document.createElement('div');
-                placeholder.style.width = '32px';
-                placeholder.style.height = '32px';
-                placeholder.style.borderRadius = '50%';
-                placeholder.style.backgroundColor = '#0a66c2';
-                placeholder.style.color = 'white';
-                placeholder.style.display = 'flex';
-                placeholder.style.alignItems = 'center';
-                placeholder.style.justifyContent = 'center';
-                placeholder.style.marginRight = '10px';
-                placeholder.textContent = user.name.charAt(0).toUpperCase();
-                suggestionItem.appendChild(placeholder);
-              }
-              
-              // Informations de l'utilisateur
-              const userInfo = document.createElement('div');
-              userInfo.innerHTML = `
-                <div style="font-weight: 500;">${user.name}</div>
-                <div style="font-size: 12px; color: #666;">${user.headline || ''}</div>
-              `;
-              suggestionItem.appendChild(userInfo);
-              
-              // Gérer le clic sur une suggestion
-              suggestionItem.addEventListener('click', () => {
-                insertMention(user);
-                hideMentionDropdown();
-              });
-              
-              // Gérer le survol
-              suggestionItem.addEventListener('mouseenter', () => {
-                suggestionItem.style.backgroundColor = '#f3f2ef';
-              });
-              
-              suggestionItem.addEventListener('mouseleave', () => {
-                suggestionItem.style.backgroundColor = 'transparent';
-              });
-              
-              mentionDropdown.appendChild(suggestionItem);
-            });
-            
-            mentionDropdown.style.display = 'block';
-            positionMentionDropdown(editor);
-          }
-          
-          // Cacher le menu déroulant des mentions
-          function hideMentionDropdown() {
-            if (mentionDropdown) {
-              mentionDropdown.style.display = 'none';
-            }
-            mentionSearchActive = false;
-          }
-          
-          // Insérer une mention dans l'éditeur
-          function insertMention(user) {
-            const cursorPos = editor.selectionStart;
-            const text = editor.value;
-            
-            // Supprimer la recherche partielle (le @...)
-            const textBefore = text.substring(0, mentionStartPosition);
-            const textAfter = text.substring(cursorPos);
-            
-            // Créer la mention au format @[Nom](URL)
-            const mention = `@[${user.name}](${user.profile_url}) `;
-            
-            // Mettre à jour le texte
-            editor.value = textBefore + mention + textAfter;
-            
-            // Repositionner le curseur après la mention
-            editor.selectionStart = editor.selectionEnd = textBefore.length + mention.length;
-            
-            // Focus sur l'éditeur
-            editor.focus();
-            
-            // Déclencher l'événement de changement
-            const event = new Event('input', { bubbles: true });
-            editor.dispatchEvent(event);
-          }
-          
-          // Gérer les entrées clavier
-          editor.addEventListener('keyup', function(e) {
-            // Ignorer les touches spéciales
-            if (['ArrowUp', 'ArrowDown', 'Enter', 'Escape'].includes(e.key)) {
-              return;
-            }
-            
-            const cursorPos = this.selectionStart;
-            const text = this.value;
-            
-            // Chercher le dernier @
-            if (!mentionSearchActive) {
-              const lastAtPos = text.lastIndexOf('@', cursorPos - 1);
-              
-              // Vérifier si le @ est au début ou précédé d'un espace
-              if (lastAtPos >= 0 && (lastAtPos === 0 || text[lastAtPos - 1] === ' ' || text[lastAtPos - 1] === '\n')) {
-                // Vérifier qu'il n'y a pas d'espace entre @ et la position actuelle
-                const textBetween = text.substring(lastAtPos + 1, cursorPos);
-                if (!textBetween.includes(' ') && !textBetween.includes('\n')) {
-                  mentionStartPosition = lastAtPos;
-                  currentMentionSearch = textBetween;
-                  mentionSearchActive = true;
-                }
-              }
-            } else {
-              // Mise à jour de la recherche en cours
-              if (cursorPos <= mentionStartPosition) {
-                // Le curseur est avant le @, désactiver la recherche
-                mentionSearchActive = false;
-                hideMentionDropdown();
-              } else {
-                // Vérifier si le curseur est toujours dans la même recherche
-                const textBetween = text.substring(mentionStartPosition + 1, cursorPos);
-                if (textBetween.includes(' ') || textBetween.includes('\n')) {
-                  // Un espace a été ajouté, désactiver la recherche
-                  mentionSearchActive = false;
-                  hideMentionDropdown();
-                } else {
-                  // Mettre à jour la recherche
-                  currentMentionSearch = textBetween;
-                }
-              }
-            }
-            
-            // Lancer la recherche si nécessaire
-            if (mentionSearchActive && currentMentionSearch.length >= 2) {
-              // Utiliser un debounce pour éviter trop d'appels API
-              clearTimeout(debounceTimeout);
-              debounceTimeout = setTimeout(() => {
-                searchLinkedInUsers(currentMentionSearch);
-              }, 300);
-            } else if (mentionSearchActive && currentMentionSearch.length < 2) {
-              hideMentionDropdown();
-            }
-          });
-          
-          // Gérer les touches spéciales
-          editor.addEventListener('keydown', function(e) {
-            if (!mentionSearchActive || !mentionDropdown || mentionDropdown.style.display === 'none') {
-              return;
-            }
-            
-            const items = mentionDropdown.querySelectorAll('.mention-suggestion');
-            const activeItem = mentionDropdown.querySelector('.mention-suggestion.active');
-            let activeIndex = Array.from(items).indexOf(activeItem);
-            
-            switch (e.key) {
-              case 'ArrowDown':
-                e.preventDefault();
-                if (activeIndex < 0 || activeIndex >= items.length - 1) {
-                  activeIndex = 0;
-                } else {
-                  activeIndex++;
-                }
-                break;
-                
-              case 'ArrowUp':
-                e.preventDefault();
-                if (activeIndex <= 0) {
-                  activeIndex = items.length - 1;
-                } else {
-                  activeIndex--;
-                }
-                break;
-                
-              case 'Enter':
-                e.preventDefault();
-                if (activeItem) {
-                  activeItem.click();
-                } else if (items.length > 0) {
-                  items[0].click();
-                }
-                return;
-                
-              case 'Escape':
-                e.preventDefault();
-                hideMentionDropdown();
-                return;
-                
-              default:
-                return;
-            }
-            
-            // Mettre à jour l'élément actif
-            items.forEach(item => item.classList.remove('active'));
-            if (items[activeIndex]) {
-              items[activeIndex].classList.add('active');
-              items[activeIndex].scrollIntoView({ block: 'nearest' });
-            }
-          });
-          
-          // Cacher le menu déroulant si on clique ailleurs
-          document.addEventListener('click', function(e) {
-            if (mentionDropdown && !mentionDropdown.contains(e.target) && e.target !== editor) {
-              hideMentionDropdown();
-            }
-          });
-          
-          // Nettoyer au démontage
-          return {
-            cleanup: function() {
-              if (mentionDropdown && mentionDropdown.parentNode) {
-                mentionDropdown.parentNode.removeChild(mentionDropdown);
-              }
-            }
-          };
+            background: var(--primary-ultra-light);
+            transform: translateX(4px);
         }
 
-        // Initialiser tous les éditeurs de la page
-        document.addEventListener('DOMContentLoaded', function() {
-          const editors = document.querySelectorAll('.mention-editor');
-          editors.forEach(editor => {
-            const mentionEditor = initMentionEditor(editor);
-            
-            // Stocker l'instance pour nettoyage ultérieur si nécessaire
-            editor.mentionEditor = mentionEditor;
-          });
-          
-          // Convertir les mentions pour l'affichage
-          function renderMentions(container) {
-            const mentionRegex = /@\[(.*?)\]\((.*?)\)/g;
-            const elements = container.querySelectorAll('.convert-mentions');
-            
-            elements.forEach(element => {
-              const html = element.innerHTML.replace(mentionRegex, '<a href="$2" class="mention" target="_blank">@$1</a>');
-              element.innerHTML = html;
-            });
-          }
-          
-          // Convertir les mentions dans les posts existants
-          renderMentions(document);
-        });
-    </script>
-    
-    <!-- Script de débogage pour les mentions -->
+        .mention-suggestion img,
+        .mention-suggestion .mention-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            margin-right: 12px;
+            border: 2px solid var(--primary-light);
+        }
+
+        .mention-avatar {
+            background: var(--primary);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+        }
+
+        /* Animations globales */
+        .fade-in {
+            animation: fadeInUp 0.6s ease-out;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .slide-in {
+            animation: slideInRight 0.5s ease-out;
+        }
+
+        @keyframes slideInRight {
+            from {
+                opacity: 0;
+                transform: translateX(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        /* États de chargement */
+        .loading {
+            position: relative;
+            overflow: hidden;
+        }
+
+        .loading::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.6), transparent);
+            animation: shimmer 2s infinite;
+        }
+
+        @keyframes shimmer {
+            0% { left: -100%; }
+            100% { left: 100%; }
+        }
+
+        /* Scrollbar personnalisée */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: var(--soft-gray);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--primary-light);
+            border-radius: 4px;
+            transition: all 0.3s ease;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--primary);
+        }
+
+        /* Tooltip moderne */
+        [data-tooltip] {
+            position: relative;
+            cursor: pointer;
+        }
+
+        [data-tooltip]:hover::after {
+            content: attr(data-tooltip);
+            position: absolute;
+            bottom: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--text-primary);
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            font-size: 0.875rem;
+            white-space: nowrap;
+            z-index: 1000;
+            opacity: 0;
+            animation: tooltipFadeIn 0.3s ease-out forwards;
+        }
+
+        @keyframes tooltipFadeIn {
+            from {
+                opacity: 0;
+                transform: translateX(-50%) translateY(5px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(-50%) translateY(0);
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Bouton menu mobile -->
+    <button class="mobile-menu-btn" onclick="toggleSidebar()" data-tooltip="Menu">
+        <i class="fas fa-bars"></i>
+    </button>
+
+    <div class="app-container">
+        <!-- Sidebar moderne -->
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <div class="logo-container">
+                    <div class="logo-icon" data-tooltip="LinkedBoost">
+                        <i class="fab fa-linkedin-in"></i>
+                    </div>
+                    <div class="logo-text">LinkedBoost</div>
+                </div>
+                <div class="user-info">
+                    <div class="user-avatar" data-tooltip="Profil utilisateur">
+                        {% if picture %}
+                            <img src="{{ picture }}" alt="Avatar" style="width: 100%; height: 100%; border-radius: 50%; object-fit: cover;">
+                        {% else %}
+                            <i class="fas fa-user"></i>
+                        {% endif %}
+                    </div>
+                    <div class="user-name">
+                        {% if first_name and last_name %}
+                            {{ first_name }} {{ last_name }}
+                        {% elif name %}
+                            {{ name }}
+                        {% else %}
+                            Utilisateur
+                        {% endif %}
+                    </div>
+                    <div class="user-role">
+                        {% if secteur %}
+                            {{ secteur|title }}
+                        {% else %}
+                            Professionnel LinkedIn
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+
+            <nav class="nav-menu">
+                <div class="nav-item">
+                    <a href="{{ url_for('dashboard') }}" 
+                       class="nav-link {% if request.endpoint == 'dashboard' %}active{% endif %}"
+                       data-tooltip="Tableau de bord principal">
+                        <i class="fas fa-chart-line nav-icon"></i>
+                        <span>Dashboard</span>
+                    </a>
+                </div>
+                <div class="nav-item">
+                    <a href="{{ url_for('news_assistant') }}" 
+                       class="nav-link {% if request.endpoint == 'news_assistant' %}active{% endif %}"
+                       data-tooltip="Assistant actualités">
+                        <i class="fas fa-newspaper nav-icon"></i>
+                        <span>Actualités</span>
+                    </a>
+                </div>
+                <div class="nav-item">
+                    <a href="{{ url_for('calendar') }}" 
+                       class="nav-link {% if request.endpoint == 'calendar' %}active{% endif %}"
+                       data-tooltip="Calendrier de publication">
+                        <i class="fas fa-calendar-alt nav-icon"></i>
+                        <span>Calendrier</span>
+                    </a>
+                </div>
+                <div class="nav-item">
+                    <a href="{{ url_for('historique') }}" 
+                       class="nav-link {% if request.endpoint == 'historique' %}active{% endif %}"
+                       data-tooltip="Historique des posts">
+                        <i class="fas fa-history nav-icon"></i>
+                        <span>Historique</span>
+                    </a>
+                </div>
+                <div class="nav-item">
+                    <a href="{{ url_for('profil') }}" 
+                       class="nav-link {% if request.endpoint == 'profil' %}active{% endif %}"
+                       data-tooltip="Paramètres du profil">
+                        <i class="fas fa-user-cog nav-icon"></i>
+                        <span>Profil</span>
+                    </a>
+                </div>
+                <div class="nav-item">
+                    <a href="{{ url_for('parametres') }}" 
+                       class="nav-link {% if request.endpoint == 'parametres' %}active{% endif %}"
+                       data-tooltip="Paramètres de l'application">
+                        <i class="fas fa-cog nav-icon"></i>
+                        <span>Paramètres</span>
+                    </a>
+                </div>
+                <div class="nav-item">
+                    <a href="{{ url_for('logout') }}" 
+                       class="nav-link danger"
+                       data-tooltip="Se déconnecter">
+                        <i class="fas fa-sign-out-alt nav-icon"></i>
+                        <span>Déconnexion</span>
+                    </a>
+                </div>
+            </nav>
+        </aside>
+
+        <!-- Contenu principal -->
+        <main class="main-content">
+            {% block content %}{% endblock %}
+        </main>
+    </div>
+
+    <!-- Scripts pour les fonctionnalités interactives -->
     <script>
-        // Script de débogage pour les mentions
-        document.addEventListener('DOMContentLoaded', function() {
-            // Vérifier si les éditeurs de mentions sont présents
-            const editors = document.querySelectorAll('.mention-editor');
-            console.log('Éditeurs de mentions trouvés:', editors.length);
+        // Fonction pour basculer la sidebar mobile
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            sidebar.classList.toggle('open');
             
-            // Ajouter un événement pour tester manuellement la recherche
-            const testSearchButton = document.createElement('button');
-            testSearchButton.textContent = 'Tester la recherche';
-            testSearchButton.style.position = 'fixed';
-            testSearchButton.style.bottom = '10px';
-            testSearchButton.style.right = '10px';
-            testSearchButton.style.zIndex = '9999';
-            testSearchButton.style.padding = '10px';
-            testSearchButton.style.backgroundColor = '#0a66c2';
-            testSearchButton.style.color = 'white';
-            testSearchButton.style.border = 'none';
-            testSearchButton.style.borderRadius = '4px';
-            testSearchButton.style.cursor = 'pointer';
+            // Fermer automatiquement au clic sur un lien (mobile)
+            if (window.innerWidth <= 768) {
+                const navLinks = sidebar.querySelectorAll('.nav-link');
+                navLinks.forEach(link => {
+                    link.addEventListener('click', () => {
+                        sidebar.classList.remove('open');
+                    });
+                });
+            }
+        }
+
+        // Fermer la sidebar mobile en cliquant à l'extérieur
+        document.addEventListener('click', function(e) {
+            const sidebar = document.getElementById('sidebar');
+            const mobileBtn = document.querySelector('.mobile-menu-btn');
             
-            testSearchButton.addEventListener('click', function() {
-                console.log('Test de recherche LinkedIn...');
+            if (window.innerWidth <= 768 && 
+                !sidebar.contains(e.target) && 
+                !mobileBtn.contains(e.target) && 
+                sidebar.classList.contains('open')) {
+                sidebar.classList.remove('open');
+            }
+        });
+
+        // Gestion du redimensionnement de la fenêtre
+        window.addEventListener('resize', function() {
+            const sidebar = document.getElementById('sidebar');
+            if (window.innerWidth > 768) {
+                sidebar.classList.remove('open');
+            }
+        });
+
+        // Script de gestion des mentions LinkedIn
+        function initMentionEditor(editorElement) {
+            const editor = editorElement;
+            let mentionDropdown = null;
+            let currentMentionSearch = "";
+            let mentionSearchActive = false;
+            let mentionStartPosition = 0;
+            let debounceTimeout = null;
+            
+            // Créer le menu déroulant des mentions
+            function createMentionDropdown() {
+                mentionDropdown = document.createElement('div');
+                mentionDropdown.className = 'mention-dropdown';
+                mentionDropdown.style.display = 'none';
+                mentionDropdown.style.position = 'absolute';
+                mentionDropdown.style.zIndex = '1000';
+                document.body.appendChild(mentionDropdown);
+                return mentionDropdown;
+            }
+            
+            // Positionner le menu déroulant
+            function positionMentionDropdown(textarea) {
+                if (!mentionDropdown) return;
                 
-                // Tester la recherche avec une requête simple
+                const rect = textarea.getBoundingClientRect();
+                const text = textarea.value;
+                const subtext = text.substring(0, textarea.selectionStart);
+                const lines = subtext.split('\n');
+                const lineHeight = parseInt(window.getComputedStyle(textarea).lineHeight) || 24;
+                const lineCount = lines.length;
+                
+                const top = rect.top + (lineCount * lineHeight) - textarea.scrollTop + 25;
+                const left = rect.left + 20;
+                
+                mentionDropdown.style.top = `${Math.min(top, window.innerHeight - 200)}px`;
+                mentionDropdown.style.left = `${Math.min(left, window.innerWidth - 370)}px`;
+            }
+            
+            // Rechercher des utilisateurs LinkedIn
+            function searchLinkedInUsers(query) {
                 fetch('/search_linkedin_users', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
                     },
-                    body: JSON.stringify({ query: 'test' }),
+                    body: JSON.stringify({ query }),
                 })
-                .then(response => {
-                    console.log('Statut de la réponse:', response.status);
-                    return response.json();
-                })
+                .then(response => response.json())
                 .then(data => {
-                    console.log('Résultats de la recherche:', data);
-                    alert('Résultats de recherche reçus! Vérifiez la console pour les détails.');
+                    if (data.results && data.results.length > 0) {
+                        displayMentionSuggestions(data.results);
+                    } else {
+                        hideMentionDropdown();
+                    }
                 })
                 .catch(error => {
-                    console.error('Erreur lors du test de recherche:', error);
-                    alert('Erreur lors du test de recherche: ' + error.message);
+                    console.error('Erreur de recherche:', error);
+                    hideMentionDropdown();
+                });
+            }
+            
+            // Afficher les suggestions de mentions
+            function displayMentionSuggestions(users) {
+                if (!mentionDropdown) {
+                    mentionDropdown = createMentionDropdown();
+                }
+                
+                mentionDropdown.innerHTML = '';
+                
+                users.forEach((user, index) => {
+                    const suggestionItem = document.createElement('div');
+                    suggestionItem.className = 'mention-suggestion';
+                    
+                    // Avatar ou placeholder
+                    let avatarHtml;
+                    if (user.image_url) {
+                        avatarHtml = `<img src="${user.image_url}" alt="${user.name}">`;
+                    } else {
+                        const initial = user.name.charAt(0).toUpperCase();
+                        avatarHtml = `<div class="mention-avatar">${initial}</div>`;
+                    }
+                    
+                    // Contenu de la suggestion
+                    suggestionItem.innerHTML = `
+                        ${avatarHtml}
+                        <div style="flex: 1;">
+                            <div style="font-weight: 600; color: var(--text-primary);">${user.name}</div>
+                            <div style="font-size: 0.875rem; color: var(--text-secondary);">${user.headline || 'Professionnel LinkedIn'}</div>
+                        </div>
+                        <div style="opacity: 0.6;">
+                            <i class="fab fa-linkedin" style="color: var(--primary);"></i>
+                        </div>
+                    `;
+                    
+                    // Gérer la sélection
+                    suggestionItem.addEventListener('click', () => {
+                        insertMention(user);
+                        hideMentionDropdown();
+                    });
+                    
+                    mentionDropdown.appendChild(suggestionItem);
+                });
+                
+                mentionDropdown.style.display = 'block';
+                positionMentionDropdown(editor);
+            }
+            
+            // Cacher le menu déroulant des mentions
+            function hideMentionDropdown() {
+                if (mentionDropdown) {
+                    mentionDropdown.style.display = 'none';
+                }
+                mentionSearchActive = false;
+            }
+            
+            // Insérer une mention dans l'éditeur
+            function insertMention(user) {
+                const cursorPos = editor.selectionStart;
+                const text = editor.value;
+                
+                const textBefore = text.substring(0, mentionStartPosition);
+                const textAfter = text.substring(cursorPos);
+                
+                const mention = `@[${user.name}](${user.profile_url}) `;
+                
+                editor.value = textBefore + mention + textAfter;
+                editor.selectionStart = editor.selectionEnd = textBefore.length + mention.length;
+                
+                editor.focus();
+                
+                // Déclencher l'événement de changement
+                const event = new Event('input', { bubbles: true });
+                editor.dispatchEvent(event);
+            }
+            
+            // Gestionnaires d'événements pour les mentions
+            editor.addEventListener('keyup', function(e) {
+                if (['ArrowUp', 'ArrowDown', 'Enter', 'Escape'].includes(e.key)) {
+                    return;
+                }
+                
+                const cursorPos = this.selectionStart;
+                const text = this.value;
+                
+                if (!mentionSearchActive) {
+                    const lastAtPos = text.lastIndexOf('@', cursorPos - 1);
+                    
+                    if (lastAtPos >= 0 && (lastAtPos === 0 || /\s/.test(text[lastAtPos - 1]))) {
+                        const textBetween = text.substring(lastAtPos + 1, cursorPos);
+                        if (!/\s/.test(textBetween)) {
+                            mentionStartPosition = lastAtPos;
+                            currentMentionSearch = textBetween;
+                            mentionSearchActive = true;
+                        }
+                    }
+                } else {
+                    if (cursorPos <= mentionStartPosition) {
+                        mentionSearchActive = false;
+                        hideMentionDropdown();
+                    } else {
+                        const textBetween = text.substring(mentionStartPosition + 1, cursorPos);
+                        if (/\s/.test(textBetween)) {
+                            mentionSearchActive = false;
+                            hideMentionDropdown();
+                        } else {
+                            currentMentionSearch = textBetween;
+                        }
+                    }
+                }
+                
+                if (mentionSearchActive && currentMentionSearch.length >= 2) {
+                    clearTimeout(debounceTimeout);
+                    debounceTimeout = setTimeout(() => {
+                        searchLinkedInUsers(currentMentionSearch);
+                    }, 300);
+                } else if (mentionSearchActive && currentMentionSearch.length < 2) {
+                    hideMentionDropdown();
+                }
+            });
+            
+            // Gestion des touches de navigation
+            editor.addEventListener('keydown', function(e) {
+                if (!mentionSearchActive || !mentionDropdown || mentionDropdown.style.display === 'none') {
+                    return;
+                }
+                
+                const items = mentionDropdown.querySelectorAll('.mention-suggestion');
+                const activeItem = mentionDropdown.querySelector('.mention-suggestion.active');
+                let activeIndex = Array.from(items).indexOf(activeItem);
+                
+                switch (e.key) {
+                    case 'ArrowDown':
+                        e.preventDefault();
+                        activeIndex = activeIndex < 0 || activeIndex >= items.length - 1 ? 0 : activeIndex + 1;
+                        break;
+                        
+                    case 'ArrowUp':
+                        e.preventDefault();
+                        activeIndex = activeIndex <= 0 ? items.length - 1 : activeIndex - 1;
+                        break;
+                        
+                    case 'Enter':
+                        e.preventDefault();
+                        if (activeItem) {
+                            activeItem.click();
+                        } else if (items.length > 0) {
+                            items[0].click();
+                        }
+                        return;
+                        
+                    case 'Escape':
+                        e.preventDefault();
+                        hideMentionDropdown();
+                        return;
+                        
+                    default:
+                        return;
+                }
+                
+                items.forEach(item => item.classList.remove('active'));
+                if (items[activeIndex]) {
+                    items[activeIndex].classList.add('active');
+                    items[activeIndex].scrollIntoView({ block: 'nearest' });
+                }
+            });
+            
+            // Fermer le dropdown en cliquant ailleurs
+            document.addEventListener('click', function(e) {
+                if (mentionDropdown && !mentionDropdown.contains(e.target) && e.target !== editor) {
+                    hideMentionDropdown();
+                }
+            });
+            
+            return {
+                cleanup: function() {
+                    if (mentionDropdown && mentionDropdown.parentNode) {
+                        mentionDropdown.parentNode.removeChild(mentionDropdown);
+                    }
+                }
+            };
+        }
+
+        // Initialiser les éditeurs de mentions au chargement
+        document.addEventListener('DOMContentLoaded', function() {
+            const editors = document.querySelectorAll('.mention-editor');
+            editors.forEach(editor => {
+                const mentionEditor = initMentionEditor(editor);
+                editor.mentionEditor = mentionEditor;
+            });
+            
+            // Convertir les mentions pour l'affichage
+            function renderMentions(container) {
+                const mentionRegex = /@\[(.*?)\]\((.*?)\)/g;
+                const elements = container.querySelectorAll('.convert-mentions');
+                
+                elements.forEach(element => {
+                    const html = element.innerHTML.replace(mentionRegex, '<a href="$2" class="mention" target="_blank">@$1</a>');
+                    element.innerHTML = html;
+                });
+            }
+            
+            renderMentions(document);
+            
+            // Améliorer les interactions de la sidebar
+            const navLinks = document.querySelectorAll('.nav-link');
+            navLinks.forEach(link => {
+                link.addEventListener('mouseenter', function() {
+                    const icon = this.querySelector('.nav-icon');
+                    if (icon) {
+                        icon.style.transform = 'scale(1.2) rotate(5deg)';
+                    }
+                });
+                
+                link.addEventListener('mouseleave', function() {
+                    const icon = this.querySelector('.nav-icon');
+                    if (icon) {
+                        icon.style.transform = 'scale(1) rotate(0deg)';
+                    }
                 });
             });
             
-            document.body.appendChild(testSearchButton);
+            // Animation du logo
+            const logoIcon = document.querySelector('.logo-icon');
+            if (logoIcon) {
+                logoIcon.addEventListener('click', function() {
+                    this.style.transform = 'scale(0.9) rotate(360deg)';
+                    setTimeout(() => {
+                        this.style.transform = 'scale(1) rotate(0deg)';
+                    }, 300);
+                });
+            }
+        });
+
+        // Raccourcis clavier globaux
+        document.addEventListener('keydown', function(e) {
+            // Alt + M pour toggle sidebar mobile
+            if (e.altKey && e.key === 'm' && window.innerWidth <= 768) {
+                e.preventDefault();
+                toggleSidebar();
+            }
             
-            // Surveiller les événements @ pour le débogage
-            document.addEventListener('keyup', function(e) {
-                const activeElement = document.activeElement;
-                if (activeElement && activeElement.classList.contains('mention-editor') && e.key === '@') {
-                    console.log('@ détecté dans un éditeur de mentions');
-                }
-            });
+            // Escape pour fermer les dropdowns
+            if (e.key === 'Escape') {
+                const openDropdowns = document.querySelectorAll('.mention-dropdown[style*="block"]');
+                openDropdowns.forEach(dropdown => {
+                    dropdown.style.display = 'none';
+                });
+            }
         });
     </script>
 </body>
