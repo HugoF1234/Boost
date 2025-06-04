@@ -1,60 +1,562 @@
 {% extends "base.html" %}
 {% block content %}
-<div class="d-flex align-center justify-between mb-4">
-    <h1>✏️ Modifier le post</h1>
-    <div>
-        <a href="{{ url_for('calendar') }}" class="btn btn-outline">
+<style>
+    /* Variables pour couleurs douces */
+    :root {
+        --primary: #6366f1;
+        --primary-light: #a5b4fc;
+        --primary-ultra-light: #e0e7ff;
+        --secondary: #f8fafc;
+        --accent: #10b981;
+        --accent-light: #6ee7b7;
+        --warm: #fbbf24;
+        --warm-light: #fde68a;
+        --soft-gray: #f1f5f9;
+        --text-primary: #1e293b;
+        --text-secondary: #64748b;
+        --text-light: #94a3b8;
+        --white: #ffffff;
+        --glass: rgba(255, 255, 255, 0.25);
+        --glass-border: rgba(255, 255, 255, 0.3);
+        --shadow-soft: 0 4px 20px rgba(99, 102, 241, 0.1);
+        --shadow-medium: 0 8px 30px rgba(99, 102, 241, 0.15);
+        --shadow-strong: 0 20px 40px rgba(0, 0, 0, 0.1);
+        --success: #10b981;
+        --warning: #f59e0b;
+        --danger: #ef4444;
+    }
+
+    /* Header de page moderne */
+    .page-header {
+        background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 50%, var(--accent-light) 100%);
+        color: white;
+        padding: 2.5rem;
+        border-radius: 24px;
+        margin-bottom: 2rem;
+        position: relative;
+        overflow: hidden;
+        box-shadow: var(--shadow-strong);
+    }
+
+    .page-header::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="sparkles" width="20" height="20" patternUnits="userSpaceOnUse"><circle cx="5" cy="5" r="1" fill="%23ffffff" opacity="0.3"><animate attributeName="opacity" values="0.3;0.8;0.3" dur="3s" repeatCount="indefinite"/></circle><circle cx="15" cy="15" r="0.5" fill="%23ffffff" opacity="0.5"><animate attributeName="opacity" values="0.5;1;0.5" dur="2s" repeatCount="indefinite" begin="1s"/></circle></pattern></defs><rect width="100" height="100" fill="url(%23sparkles)"/></svg>') repeat;
+    }
+
+    .page-header-content {
+        position: relative;
+        z-index: 1;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 1.5rem;
+    }
+
+    .page-title {
+        font-size: 2.2rem;
+        font-weight: 700;
+        margin: 0;
+        text-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        letter-spacing: -0.025em;
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+    }
+
+    /* Boutons modernes */
+    .btn-modern {
+        padding: 0.75rem 1.5rem;
+        border-radius: 16px;
+        font-weight: 600;
+        font-size: 0.9rem;
+        border: none;
+        cursor: pointer;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        text-decoration: none;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .btn-modern::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+        transition: all 0.6s ease;
+    }
+
+    .btn-modern:hover::before {
+        left: 100%;
+    }
+
+    .btn-primary-modern {
+        background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+        color: white;
+        box-shadow: 0 4px 20px rgba(99, 102, 241, 0.3);
+    }
+
+    .btn-primary-modern:hover {
+        transform: translateY(-3px) scale(1.02);
+        box-shadow: 0 8px 30px rgba(99, 102, 241, 0.4);
+    }
+
+    .btn-secondary-modern {
+        background: var(--glass);
+        backdrop-filter: blur(10px);
+        color: white;
+        border: 1px solid var(--glass-border);
+        box-shadow: var(--shadow-soft);
+    }
+
+    .btn-secondary-modern:hover {
+        background: rgba(255, 255, 255, 0.4);
+        transform: translateY(-3px);
+        box-shadow: var(--shadow-medium);
+    }
+
+    .btn-danger-modern {
+        background: linear-gradient(135deg, var(--danger) 0%, #dc2626 100%);
+        color: white;
+        box-shadow: 0 4px 20px rgba(239, 68, 68, 0.3);
+    }
+
+    .btn-danger-modern:hover {
+        transform: translateY(-3px) scale(1.02);
+        box-shadow: 0 8px 30px rgba(239, 68, 68, 0.4);
+    }
+
+    /* Cartes de contenu */
+    .content-card {
+        background: var(--white);
+        border-radius: 24px;
+        border: 1px solid rgba(99, 102, 241, 0.1);
+        overflow: hidden;
+        transition: all 0.3s ease;
+        margin-bottom: 2rem;
+        box-shadow: var(--shadow-soft);
+    }
+
+    .content-card:hover {
+        transform: translateY(-4px);
+        box-shadow: var(--shadow-medium);
+        border-color: var(--primary-light);
+    }
+
+    .card-header {
+        padding: 2rem 2.5rem 1rem;
+        background: linear-gradient(135deg, var(--soft-gray) 0%, #f8fafc 100%);
+        border-bottom: 1px solid rgba(99, 102, 241, 0.1);
+        position: relative;
+    }
+
+    .card-header::after {
+        content: '';
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        height: 1px;
+        background: linear-gradient(90deg, transparent, var(--primary-light), transparent);
+    }
+
+    .card-title {
+        font-size: 1.4rem;
+        font-weight: 600;
+        color: var(--text-primary);
+        margin: 0;
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+    }
+
+    .card-subtitle {
+        color: var(--text-secondary);
+        font-size: 0.95rem;
+        line-height: 1.5;
+        margin-top: 0.5rem;
+    }
+
+    .card-body {
+        padding: 2.5rem;
+    }
+
+    /* Formulaires modernes */
+    .form-group {
+        margin-bottom: 1.5rem;
+        position: relative;
+    }
+
+    .form-label {
+        display: block;
+        margin-bottom: 0.75rem;
+        font-weight: 600;
+        color: var(--text-primary);
+        font-size: 0.95rem;
+    }
+
+    .form-control {
+        width: 100%;
+        padding: 1rem 1.5rem;
+        border: 2px solid rgba(99, 102, 241, 0.1);
+        border-radius: 16px;
+        font-size: 1rem;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        background: rgba(248, 250, 252, 0.5);
+        backdrop-filter: blur(10px);
+        font-family: inherit;
+    }
+
+    .form-control:focus {
+        outline: none;
+        border-color: var(--primary);
+        box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.1);
+        transform: translateY(-2px);
+        background: var(--white);
+    }
+
+    .textarea-modern {
+        min-height: 150px;
+        resize: vertical;
+        line-height: 1.7;
+    }
+
+    /* Preview du post */
+    .post-preview {
+        background: linear-gradient(135deg, var(--primary-ultra-light) 0%, rgba(16, 185, 129, 0.05) 100%);
+        border: 2px solid var(--primary-light);
+        border-radius: 20px;
+        padding: 2rem;
+        margin-bottom: 2rem;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .post-preview::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        right: 0;
+        width: 100px;
+        height: 100px;
+        background: radial-gradient(circle, rgba(99, 102, 241, 0.1) 0%, transparent 70%);
+        border-radius: 50%;
+        transform: translate(30%, -30%);
+    }
+
+    .post-preview-title {
+        font-size: 1.2rem;
+        font-weight: 600;
+        color: var(--primary);
+        margin-bottom: 1rem;
+        position: relative;
+        z-index: 1;
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+    }
+
+    .post-preview-content {
+        background: var(--white);
+        padding: 1.5rem;
+        border-radius: 16px;
+        border-left: 4px solid var(--primary);
+        line-height: 1.7;
+        color: var(--text-primary);
+        position: relative;
+        z-index: 1;
+        white-space: pre-wrap;
+        word-wrap: break-word;
+    }
+
+    /* Checkbox moderne */
+    .checkbox-modern {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        padding: 1rem;
+        background: var(--soft-gray);
+        border-radius: 12px;
+        transition: all 0.3s ease;
+        cursor: pointer;
+        margin-bottom: 1.5rem;
+    }
+
+    .checkbox-modern:hover {
+        background: var(--primary-ultra-light);
+        transform: scale(1.02);
+    }
+
+    .checkbox-modern input[type="checkbox"] {
+        width: 20px;
+        height: 20px;
+        accent-color: var(--primary);
+        cursor: pointer;
+    }
+
+    .checkbox-modern label {
+        font-weight: 500;
+        color: var(--text-primary);
+        cursor: pointer;
+        user-select: none;
+        flex: 1;
+    }
+
+    /* Actions du formulaire */
+    .form-actions {
+        display: flex;
+        gap: 1rem;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        margin-top: 2rem;
+        padding-top: 2rem;
+        border-top: 1px solid rgba(99, 102, 241, 0.1);
+    }
+
+    .form-actions-left {
+        display: flex;
+        gap: 1rem;
+        flex-wrap: wrap;
+    }
+
+    .form-actions-right {
+        display: flex;
+        gap: 1rem;
+        flex-wrap: wrap;
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+        .page-header-content {
+            flex-direction: column;
+            text-align: center;
+        }
+
+        .page-title {
+            font-size: 1.8rem;
+        }
+
+        .card-body {
+            padding: 1.5rem;
+        }
+
+        .form-actions {
+            flex-direction: column;
+            align-items: stretch;
+        }
+
+        .form-actions-left,
+        .form-actions-right {
+            justify-content: center;
+        }
+    }
+
+    /* Animations */
+    .fade-in {
+        animation: fadeInUp 0.6s ease-out;
+    }
+
+    @keyframes fadeInUp {
+        from {
+            opacity: 0;
+            transform: translateY(30px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .slide-in {
+        animation: slideInRight 0.5s ease-out;
+    }
+
+    @keyframes slideInRight {
+        from {
+            opacity: 0;
+            transform: translateX(30px);
+        }
+        to {
+            opacity: 1;
+            transform: translateX(0);
+        }
+    }
+</style>
+
+<!-- Header de page -->
+<div class="page-header fade-in">
+    <div class="page-header-content">
+        <div>
+            <h1 class="page-title">
+                <i class="fas fa-edit"></i>
+                Modifier le post
+            </h1>
+        </div>
+        <a href="{{ url_for('calendar') }}" class="btn-modern btn-secondary-modern">
             <i class="fa-solid fa-arrow-left"></i>
             Retour au calendrier
         </a>
     </div>
 </div>
 
-<div class="content-card">
-    <form method="post" action="{{ url_for('edit_post', post_id=post.id) }}">
-        <div class="form-group">
-            <label class="form-label">Contenu du post</label>
-            <textarea name="post_content" class="form-control" rows="8" required>{{ post.content }}</textarea>
+<!-- Preview du post actuel -->
+<div class="content-card slide-in">
+    <div class="card-header">
+        <h2 class="card-title">
+            <i class="fas fa-eye"></i>
+            Aperçu du post actuel
+        </h2>
+        <p class="card-subtitle">Voici le contenu actuel de votre post programmé</p>
+    </div>
+    
+    <div class="card-body">
+        <div class="post-preview">
+            <h3 class="post-preview-title">
+                <i class="fa-solid fa-calendar"></i>
+                Post programmé pour le {{ post.published_at.strftime("%d/%m/%Y à %H:%M") if post.published_at else "Date inconnue" }}
+            </h3>
+            <div class="post-preview-content">{{ post.content }}</div>
         </div>
-        
-        <div class="form-row">
+    </div>
+</div>
+
+<!-- Formulaire d'édition -->
+<div class="content-card slide-in">
+    <div class="card-header">
+        <h2 class="card-title">
+            <i class="fas fa-pen"></i>
+            Éditer le contenu
+        </h2>
+        <p class="card-subtitle">Modifiez le contenu et la date de publication de votre post</p>
+    </div>
+    
+    <div class="card-body">
+        <form method="post" action="{{ url_for('edit_post', post_id=post.id) }}">
+            <div class="form-group">
+                <label class="form-label">📝 Contenu du post</label>
+                <textarea name="post_content" class="form-control textarea-modern mention-editor" rows="8" required>{{ post.content }}</textarea>
+                <div style="margin-top: 0.75rem; font-size: 0.9rem; color: var(--text-light); display: flex; align-items: center; gap: 0.5rem; padding: 0.75rem; background: var(--primary-ultra-light); border-radius: 12px; border-left: 4px solid var(--primary);">
+                    <i class="fa-solid fa-at"></i>
+                    <span>Tapez @ pour mentionner une personne ou une entreprise</span>
+                </div>
+            </div>
+            
             <div class="form-group">
                 <label class="form-label">📅 Date et heure de publication</label>
                 <input type="datetime-local" name="publish_time" class="form-control" value="{{ formatted_date }}" required>
             </div>
-            <div class="form-group" style="flex: 0.5;">
-                <label class="form-label">&nbsp;</label>
-                <div style="display: flex; align-items: center; height: 43px;">
-                    <input type="checkbox" id="publish-now" name="publish_now" style="margin-right: 8px;">
-                    <label for="publish-now">Publier maintenant</label>
+            
+            <div class="checkbox-modern">
+                <input type="checkbox" id="publish-now" name="publish_now">
+                <label for="publish-now">⚡ Publier maintenant au lieu de programmer</label>
+            </div>
+            
+            <div class="form-actions">
+                <div class="form-actions-left">
+                    <button type="submit" class="btn-modern btn-primary-modern">
+                        <i class="fa-solid fa-save"></i>
+                        Enregistrer les modifications
+                    </button>
+                    <a href="{{ url_for('calendar') }}" class="btn-modern" style="background: var(--white); color: var(--text-secondary); border: 2px solid var(--soft-gray);">
+                        <i class="fa-solid fa-times"></i>
+                        Annuler
+                    </a>
+                </div>
+                <div class="form-actions-right">
+                    <a href="{{ url_for('delete_post', post_id=post.id) }}" class="btn-modern btn-danger-modern">
+                        <i class="fa-solid fa-trash"></i>
+                        Supprimer ce post
+                    </a>
                 </div>
             </div>
-        </div>
-        
-        <div class="d-flex gap-3 mt-4">
-            <button type="submit" class="btn btn-primary">
-                <i class="fa-solid fa-floppy-disk"></i>
-                Enregistrer les modifications
-            </button>
-            <a href="{{ url_for('calendar') }}" class="btn btn-outline">Annuler</a>
-            <a href="{{ url_for('delete_post', post_id=post.id) }}" class="btn btn-danger" style="margin-left: auto;">
-                <i class="fa-solid fa-trash"></i>
-                Supprimer
-            </a>
-        </div>
-    </form>
+        </form>
+    </div>
 </div>
 
 <script>
-// Auto-set current date and time for the datetime-local input if value is not set
-window.addEventListener('load', function() {
-    const dateInput = document.querySelector('input[type="datetime-local"]');
-    if (dateInput && !dateInput.value) {
-        const now = new Date();
-        now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
-        now.setMinutes(now.getMinutes() + 30); // Add 30 minutes for default scheduling
-        dateInput.value = now.toISOString().slice(0, 16);
-    }
+// Animation des éléments au scroll
+const observerOptions = {
+    threshold: 0.1,
+    rootMargin: '0px 0px -50px 0px'
+};
+
+const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+        if (entry.isIntersecting) {
+            entry.target.style.opacity = '1';
+            entry.target.style.transform = 'translateY(0)';
+        }
+    });
+}, observerOptions);
+
+// Observer tous les éléments avec animation
+document.querySelectorAll('.fade-in, .slide-in').forEach(el => {
+    el.style.opacity = '0';
+    el.style.transform = 'translateY(30px)';
+    el.style.transition = 'all 0.6s cubic-bezier(0.4, 0, 0.2, 1)';
+    observer.observe(el);
+});
+
+// Amélioration des interactions des boutons
+document.querySelectorAll('.btn-modern').forEach(btn => {
+    btn.addEventListener('mouseenter', function() {
+        this.style.transform = 'translateY(-3px) scale(1.02)';
+    });
+    
+    btn.addEventListener('mouseleave', function() {
+        this.style.transform = 'translateY(0) scale(1)';
+    });
+    
+    btn.addEventListener('mousedown', function() {
+        this.style.transform = 'translateY(-1px) scale(0.98)';
+    });
+    
+    btn.addEventListener('mouseup', function() {
+        this.style.transform = 'translateY(-3px) scale(1.02)';
+    });
+});
+
+// Animation du formulaire
+document.querySelectorAll('.form-control').forEach(input => {
+    input.addEventListener('focus', function() {
+        this.parentElement.style.transform = 'translateY(-2px)';
+    });
+    
+    input.addEventListener('blur', function() {
+        this.parentElement.style.transform = 'translateY(0)';
+    });
+});
+
+// Animation de la checkbox
+document.querySelector('.checkbox-modern')?.addEventListener('click', function() {
+    this.style.transform = 'scale(0.98)';
+    setTimeout(() => {
+        this.style.transform = 'scale(1.02)';
+        setTimeout(() => {
+            this.style.transform = 'scale(1)';
+        }, 100);
+    }, 100);
+});
+
+// Animation de la preview du post
+document.querySelector('.post-preview')?.addEventListener('mouseenter', function() {
+    this.style.transform = 'scale(1.01)';
+});
+
+document.querySelector('.post-preview')?.addEventListener('mouseleave', function() {
+    this.style.transform = 'scale(1)';
 });
 </script>
 {% endblock %}
