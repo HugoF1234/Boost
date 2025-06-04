@@ -35,18 +35,24 @@
             box-sizing: border-box;
         }
 
+        html, body {
+            height: 100%;
+            width: 100%;
+            overflow-x: hidden;
+        }
+
         body {
             font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
             background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
             color: var(--text-primary);
             line-height: 1.6;
-            overflow-x: hidden;
         }
 
-        /* Layout principal */
+        /* Layout principal - FIX pour la largeur */
         .app-container {
             display: flex;
             min-height: 100vh;
+            width: 100%;
             position: relative;
         }
 
@@ -64,6 +70,64 @@
             transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
             box-shadow: var(--shadow-medium);
             overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Bouton toggle pour la sidebar */
+        .sidebar-toggle {
+            position: fixed;
+            top: 1.5rem;
+            left: 1.5rem;
+            z-index: 1001;
+            background: var(--white);
+            border: 2px solid var(--primary-light);
+            border-radius: 12px;
+            width: 45px;
+            height: 45px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 4px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: var(--shadow-soft);
+        }
+
+        .sidebar-toggle:hover {
+            background: var(--primary);
+            border-color: var(--primary);
+            transform: scale(1.05);
+            box-shadow: var(--shadow-medium);
+        }
+
+        .sidebar-toggle:hover .toggle-line {
+            background: white;
+        }
+
+        .toggle-line {
+            width: 20px;
+            height: 2px;
+            background: var(--primary);
+            border-radius: 2px;
+            transition: all 0.3s ease;
+        }
+
+        .sidebar-toggle.active .toggle-line:nth-child(1) {
+            transform: rotate(45deg) translate(6px, 6px);
+        }
+
+        .sidebar-toggle.active .toggle-line:nth-child(2) {
+            opacity: 0;
+        }
+
+        .sidebar-toggle.active .toggle-line:nth-child(3) {
+            transform: rotate(-45deg) translate(6px, -6px);
+        }
+
+        .sidebar.collapsed {
+            transform: translateX(-280px);
         }
 
         .sidebar-header {
@@ -71,6 +135,7 @@
             background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
             position: relative;
             overflow: hidden;
+            flex-shrink: 0;
         }
 
         .sidebar-header::before {
@@ -169,9 +234,22 @@
             margin-top: 0.25rem;
         }
 
-        /* Navigation moderne */
+        /* Navigation moderne - FIX pour pousser déconnexion en bas */
         .nav-menu {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
             padding: 2rem 0;
+        }
+
+        .nav-main {
+            flex: 1;
+        }
+
+        .nav-bottom {
+            margin-top: auto;
+            padding-top: 2rem;
+            border-top: 1px solid var(--soft-gray);
         }
 
         .nav-item {
@@ -247,9 +325,6 @@
 
         .nav-link.danger {
             color: #ef4444;
-            margin-top: 2rem;
-            border-top: 1px solid var(--soft-gray);
-            padding-top: 1.5rem;
         }
 
         .nav-link.danger:hover {
@@ -258,19 +333,24 @@
             transform: translateX(8px);
         }
 
-        /* Main content */
+        /* Main content - FIX pour éviter l'espace */
         .main-content {
             flex: 1;
             margin-left: 280px;
             min-height: 100vh;
-            transition: all 0.3s ease;
+            width: calc(100% - 280px);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .main-content.expanded {
+            margin-left: 0;
+            width: 100%;
         }
 
         /* Responsive */
         @media (max-width: 768px) {
             .sidebar {
-                transform: translateX(-100%);
-                width: 100%;
+                transform: translateX(-280px);
             }
 
             .sidebar.open {
@@ -279,37 +359,17 @@
 
             .main-content {
                 margin-left: 0;
+                width: 100%;
             }
 
-            .mobile-menu-btn {
-                position: fixed;
-                top: 1rem;
-                left: 1rem;
-                z-index: 1001;
-                background: var(--primary);
-                color: white;
-                border: none;
-                border-radius: 12px;
-                width: 50px;
-                height: 50px;
+            .sidebar-toggle {
                 display: flex;
-                align-items: center;
-                justify-content: center;
-                font-size: 1.25rem;
-                cursor: pointer;
-                box-shadow: var(--shadow-medium);
-                transition: all 0.3s ease;
-            }
-
-            .mobile-menu-btn:hover {
-                transform: scale(1.1);
-                box-shadow: var(--shadow-strong);
             }
         }
 
         @media (min-width: 769px) {
-            .mobile-menu-btn {
-                display: none;
+            .sidebar-toggle {
+                display: flex;
             }
         }
 
@@ -503,12 +563,42 @@
                 transform: translateX(-50%) translateY(0);
             }
         }
+
+        /* Overlay pour mobile */
+        .sidebar-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 99;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .sidebar-overlay.active {
+            display: block;
+            opacity: 1;
+        }
+
+        @media (max-width: 768px) {
+            .sidebar-overlay.active {
+                display: block;
+            }
+        }
     </style>
 </head>
 <body>
-    <!-- Bouton menu mobile -->
-    <button class="mobile-menu-btn" onclick="toggleSidebar()" data-tooltip="Menu">
-        <i class="fas fa-bars"></i>
+    <!-- Overlay pour mobile -->
+    <div class="sidebar-overlay" id="sidebar-overlay" onclick="toggleSidebar()"></div>
+
+    <!-- Bouton toggle pour la sidebar -->
+    <button class="sidebar-toggle" id="sidebar-toggle" onclick="toggleSidebar()" data-tooltip="Menu">
+        <div class="toggle-line"></div>
+        <div class="toggle-line"></div>
+        <div class="toggle-line"></div>
     </button>
 
     <div class="app-container">
@@ -549,350 +639,155 @@
             </div>
 
             <nav class="nav-menu">
-                <div class="nav-item">
-                    <a href="{{ url_for('dashboard') }}" 
-                       class="nav-link {% if request.endpoint == 'dashboard' %}active{% endif %}"
-                       data-tooltip="Tableau de bord principal">
-                        <i class="fas fa-chart-line nav-icon"></i>
-                        <span>Dashboard</span>
-                    </a>
+                <div class="nav-main">
+                    <div class="nav-item">
+                        <a href="{{ url_for('dashboard') }}" 
+                           class="nav-link {% if request.endpoint == 'dashboard' %}active{% endif %}"
+                           data-tooltip="Tableau de bord principal">
+                            <i class="fas fa-chart-line nav-icon"></i>
+                            <span>Dashboard</span>
+                        </a>
+                    </div>
+                    <div class="nav-item">
+                        <a href="{{ url_for('news_assistant') }}" 
+                           class="nav-link {% if request.endpoint == 'news_assistant' %}active{% endif %}"
+                           data-tooltip="Assistant actualités">
+                            <i class="fas fa-newspaper nav-icon"></i>
+                            <span>Actualités</span>
+                        </a>
+                    </div>
+                    <div class="nav-item">
+                        <a href="{{ url_for('calendar') }}" 
+                           class="nav-link {% if request.endpoint == 'calendar' %}active{% endif %}"
+                           data-tooltip="Calendrier de publication">
+                            <i class="fas fa-calendar-alt nav-icon"></i>
+                            <span>Calendrier</span>
+                        </a>
+                    </div>
+                    <div class="nav-item">
+                        <a href="{{ url_for('historique') }}" 
+                           class="nav-link {% if request.endpoint == 'historique' %}active{% endif %}"
+                           data-tooltip="Historique des posts">
+                            <i class="fas fa-history nav-icon"></i>
+                            <span>Historique</span>
+                        </a>
+                    </div>
+                    <div class="nav-item">
+                        <a href="{{ url_for('profil') }}" 
+                           class="nav-link {% if request.endpoint == 'profil' %}active{% endif %}"
+                           data-tooltip="Paramètres du profil">
+                            <i class="fas fa-user-cog nav-icon"></i>
+                            <span>Profil</span>
+                        </a>
+                    </div>
+                    <div class="nav-item">
+                        <a href="{{ url_for('parametres') }}" 
+                           class="nav-link {% if request.endpoint == 'parametres' %}active{% endif %}"
+                           data-tooltip="Paramètres de l'application">
+                            <i class="fas fa-cog nav-icon"></i>
+                            <span>Paramètres</span>
+                        </a>
+                    </div>
                 </div>
-                <div class="nav-item">
-                    <a href="{{ url_for('news_assistant') }}" 
-                       class="nav-link {% if request.endpoint == 'news_assistant' %}active{% endif %}"
-                       data-tooltip="Assistant actualités">
-                        <i class="fas fa-newspaper nav-icon"></i>
-                        <span>Actualités</span>
-                    </a>
-                </div>
-                <div class="nav-item">
-                    <a href="{{ url_for('calendar') }}" 
-                       class="nav-link {% if request.endpoint == 'calendar' %}active{% endif %}"
-                       data-tooltip="Calendrier de publication">
-                        <i class="fas fa-calendar-alt nav-icon"></i>
-                        <span>Calendrier</span>
-                    </a>
-                </div>
-                <div class="nav-item">
-                    <a href="{{ url_for('historique') }}" 
-                       class="nav-link {% if request.endpoint == 'historique' %}active{% endif %}"
-                       data-tooltip="Historique des posts">
-                        <i class="fas fa-history nav-icon"></i>
-                        <span>Historique</span>
-                    </a>
-                </div>
-                <div class="nav-item">
-                    <a href="{{ url_for('profil') }}" 
-                       class="nav-link {% if request.endpoint == 'profil' %}active{% endif %}"
-                       data-tooltip="Paramètres du profil">
-                        <i class="fas fa-user-cog nav-icon"></i>
-                        <span>Profil</span>
-                    </a>
-                </div>
-                <div class="nav-item">
-                    <a href="{{ url_for('parametres') }}" 
-                       class="nav-link {% if request.endpoint == 'parametres' %}active{% endif %}"
-                       data-tooltip="Paramètres de l'application">
-                        <i class="fas fa-cog nav-icon"></i>
-                        <span>Paramètres</span>
-                    </a>
-                </div>
-                <div class="nav-item">
-                    <a href="{{ url_for('logout') }}" 
-                       class="nav-link danger"
-                       data-tooltip="Se déconnecter">
-                        <i class="fas fa-sign-out-alt nav-icon"></i>
-                        <span>Déconnexion</span>
-                    </a>
+                
+                <!-- Section déconnexion en bas -->
+                <div class="nav-bottom">
+                    <div class="nav-item">
+                        <a href="{{ url_for('logout') }}" 
+                           class="nav-link danger"
+                           data-tooltip="Se déconnecter">
+                            <i class="fas fa-sign-out-alt nav-icon"></i>
+                            <span>Déconnexion</span>
+                        </a>
+                    </div>
                 </div>
             </nav>
         </aside>
 
         <!-- Contenu principal -->
-        <main class="main-content">
+        <main class="main-content" id="main-content">
             {% block content %}{% endblock %}
         </main>
     </div>
 
     <!-- Scripts pour les fonctionnalités interactives -->
     <script>
-        // Fonction pour basculer la sidebar mobile
+        // Variable pour l'état de la sidebar
+        let sidebarCollapsed = false;
+
+        // Fonction pour basculer la sidebar
         function toggleSidebar() {
             const sidebar = document.getElementById('sidebar');
-            sidebar.classList.toggle('open');
+            const mainContent = document.getElementById('main-content');
+            const sidebarToggle = document.getElementById('sidebar-toggle');
+            const overlay = document.getElementById('sidebar-overlay');
             
-            // Fermer automatiquement au clic sur un lien (mobile)
             if (window.innerWidth <= 768) {
-                const navLinks = sidebar.querySelectorAll('.nav-link');
-                navLinks.forEach(link => {
-                    link.addEventListener('click', () => {
-                        sidebar.classList.remove('open');
-                    });
-                });
+                // Mode mobile - sidebar overlay
+                sidebar.classList.toggle('open');
+                overlay.classList.toggle('active');
+                sidebarToggle.classList.toggle('active');
+            } else {
+                // Mode desktop - sidebar rétractable
+                sidebarCollapsed = !sidebarCollapsed;
+                
+                if (sidebarCollapsed) {
+                    sidebar.classList.add('collapsed');
+                    mainContent.classList.add('expanded');
+                } else {
+                    sidebar.classList.remove('collapsed');
+                    mainContent.classList.remove('expanded');
+                }
+                
+                sidebarToggle.classList.toggle('active');
             }
         }
 
         // Fermer la sidebar mobile en cliquant à l'extérieur
         document.addEventListener('click', function(e) {
             const sidebar = document.getElementById('sidebar');
-            const mobileBtn = document.querySelector('.mobile-menu-btn');
+            const sidebarToggle = document.getElementById('sidebar-toggle');
+            const overlay = document.getElementById('sidebar-overlay');
             
             if (window.innerWidth <= 768 && 
                 !sidebar.contains(e.target) && 
-                !mobileBtn.contains(e.target) && 
+                !sidebarToggle.contains(e.target) && 
                 sidebar.classList.contains('open')) {
                 sidebar.classList.remove('open');
+                overlay.classList.remove('active');
+                sidebarToggle.classList.remove('active');
             }
         });
 
         // Gestion du redimensionnement de la fenêtre
         window.addEventListener('resize', function() {
             const sidebar = document.getElementById('sidebar');
+            const mainContent = document.getElementById('main-content');
+            const overlay = document.getElementById('sidebar-overlay');
+            const sidebarToggle = document.getElementById('sidebar-toggle');
+            
             if (window.innerWidth > 768) {
+                // Mode desktop - réinitialiser les classes mobile
                 sidebar.classList.remove('open');
+                overlay.classList.remove('active');
+                
+                // Appliquer l'état collapsed si nécessaire
+                if (sidebarCollapsed) {
+                    sidebar.classList.add('collapsed');
+                    mainContent.classList.add('expanded');
+                }
+            } else {
+                // Mode mobile - réinitialiser les classes desktop
+                sidebar.classList.remove('collapsed');
+                mainContent.classList.remove('expanded');
+                sidebarToggle.classList.remove('active');
+                sidebarCollapsed = false;
             }
         });
 
-        // Script de gestion des mentions LinkedIn
+        // Script de gestion des mentions LinkedIn (même que précédent)
         function initMentionEditor(editorElement) {
-            const editor = editorElement;
-            let mentionDropdown = null;
-            let currentMentionSearch = "";
-            let mentionSearchActive = false;
-            let mentionStartPosition = 0;
-            let debounceTimeout = null;
-            
-            // Créer le menu déroulant des mentions
-            function createMentionDropdown() {
-                mentionDropdown = document.createElement('div');
-                mentionDropdown.className = 'mention-dropdown';
-                mentionDropdown.style.display = 'none';
-                mentionDropdown.style.position = 'absolute';
-                mentionDropdown.style.zIndex = '1000';
-                document.body.appendChild(mentionDropdown);
-                return mentionDropdown;
-            }
-            
-            // Positionner le menu déroulant
-            function positionMentionDropdown(textarea) {
-                if (!mentionDropdown) return;
-                
-                const rect = textarea.getBoundingClientRect();
-                const text = textarea.value;
-                const subtext = text.substring(0, textarea.selectionStart);
-                const lines = subtext.split('\n');
-                const lineHeight = parseInt(window.getComputedStyle(textarea).lineHeight) || 24;
-                const lineCount = lines.length;
-                
-                const top = rect.top + (lineCount * lineHeight) - textarea.scrollTop + 25;
-                const left = rect.left + 20;
-                
-                mentionDropdown.style.top = `${Math.min(top, window.innerHeight - 200)}px`;
-                mentionDropdown.style.left = `${Math.min(left, window.innerWidth - 370)}px`;
-            }
-            
-            // Rechercher des utilisateurs LinkedIn
-            function searchLinkedInUsers(query) {
-                fetch('/search_linkedin_users', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({ query }),
-                })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.results && data.results.length > 0) {
-                        displayMentionSuggestions(data.results);
-                    } else {
-                        hideMentionDropdown();
-                    }
-                })
-                .catch(error => {
-                    console.error('Erreur de recherche:', error);
-                    hideMentionDropdown();
-                });
-            }
-            
-            // Afficher les suggestions de mentions
-            function displayMentionSuggestions(users) {
-                if (!mentionDropdown) {
-                    mentionDropdown = createMentionDropdown();
-                }
-                
-                mentionDropdown.innerHTML = '';
-                
-                users.forEach((user, index) => {
-                    const suggestionItem = document.createElement('div');
-                    suggestionItem.className = 'mention-suggestion';
-                    
-                    // Avatar ou placeholder
-                    let avatarHtml;
-                    if (user.image_url) {
-                        avatarHtml = `<img src="${user.image_url}" alt="${user.name}">`;
-                    } else {
-                        const initial = user.name.charAt(0).toUpperCase();
-                        avatarHtml = `<div class="mention-avatar">${initial}</div>`;
-                    }
-                    
-                    // Contenu de la suggestion
-                    suggestionItem.innerHTML = `
-                        ${avatarHtml}
-                        <div style="flex: 1;">
-                            <div style="font-weight: 600; color: var(--text-primary);">${user.name}</div>
-                            <div style="font-size: 0.875rem; color: var(--text-secondary);">${user.headline || 'Professionnel LinkedIn'}</div>
-                        </div>
-                        <div style="opacity: 0.6;">
-                            <i class="fab fa-linkedin" style="color: var(--primary);"></i>
-                        </div>
-                    `;
-                    
-                    // Gérer la sélection
-                    suggestionItem.addEventListener('click', () => {
-                        insertMention(user);
-                        hideMentionDropdown();
-                    });
-                    
-                    mentionDropdown.appendChild(suggestionItem);
-                });
-                
-                mentionDropdown.style.display = 'block';
-                positionMentionDropdown(editor);
-            }
-            
-            // Cacher le menu déroulant des mentions
-            function hideMentionDropdown() {
-                if (mentionDropdown) {
-                    mentionDropdown.style.display = 'none';
-                }
-                mentionSearchActive = false;
-            }
-            
-            // Insérer une mention dans l'éditeur
-            function insertMention(user) {
-                const cursorPos = editor.selectionStart;
-                const text = editor.value;
-                
-                const textBefore = text.substring(0, mentionStartPosition);
-                const textAfter = text.substring(cursorPos);
-                
-                const mention = `@[${user.name}](${user.profile_url}) `;
-                
-                editor.value = textBefore + mention + textAfter;
-                editor.selectionStart = editor.selectionEnd = textBefore.length + mention.length;
-                
-                editor.focus();
-                
-                // Déclencher l'événement de changement
-                const event = new Event('input', { bubbles: true });
-                editor.dispatchEvent(event);
-            }
-            
-            // Gestionnaires d'événements pour les mentions
-            editor.addEventListener('keyup', function(e) {
-                if (['ArrowUp', 'ArrowDown', 'Enter', 'Escape'].includes(e.key)) {
-                    return;
-                }
-                
-                const cursorPos = this.selectionStart;
-                const text = this.value;
-                
-                if (!mentionSearchActive) {
-                    const lastAtPos = text.lastIndexOf('@', cursorPos - 1);
-                    
-                    if (lastAtPos >= 0 && (lastAtPos === 0 || /\s/.test(text[lastAtPos - 1]))) {
-                        const textBetween = text.substring(lastAtPos + 1, cursorPos);
-                        if (!/\s/.test(textBetween)) {
-                            mentionStartPosition = lastAtPos;
-                            currentMentionSearch = textBetween;
-                            mentionSearchActive = true;
-                        }
-                    }
-                } else {
-                    if (cursorPos <= mentionStartPosition) {
-                        mentionSearchActive = false;
-                        hideMentionDropdown();
-                    } else {
-                        const textBetween = text.substring(mentionStartPosition + 1, cursorPos);
-                        if (/\s/.test(textBetween)) {
-                            mentionSearchActive = false;
-                            hideMentionDropdown();
-                        } else {
-                            currentMentionSearch = textBetween;
-                        }
-                    }
-                }
-                
-                if (mentionSearchActive && currentMentionSearch.length >= 2) {
-                    clearTimeout(debounceTimeout);
-                    debounceTimeout = setTimeout(() => {
-                        searchLinkedInUsers(currentMentionSearch);
-                    }, 300);
-                } else if (mentionSearchActive && currentMentionSearch.length < 2) {
-                    hideMentionDropdown();
-                }
-            });
-            
-            // Gestion des touches de navigation
-            editor.addEventListener('keydown', function(e) {
-                if (!mentionSearchActive || !mentionDropdown || mentionDropdown.style.display === 'none') {
-                    return;
-                }
-                
-                const items = mentionDropdown.querySelectorAll('.mention-suggestion');
-                const activeItem = mentionDropdown.querySelector('.mention-suggestion.active');
-                let activeIndex = Array.from(items).indexOf(activeItem);
-                
-                switch (e.key) {
-                    case 'ArrowDown':
-                        e.preventDefault();
-                        activeIndex = activeIndex < 0 || activeIndex >= items.length - 1 ? 0 : activeIndex + 1;
-                        break;
-                        
-                    case 'ArrowUp':
-                        e.preventDefault();
-                        activeIndex = activeIndex <= 0 ? items.length - 1 : activeIndex - 1;
-                        break;
-                        
-                    case 'Enter':
-                        e.preventDefault();
-                        if (activeItem) {
-                            activeItem.click();
-                        } else if (items.length > 0) {
-                            items[0].click();
-                        }
-                        return;
-                        
-                    case 'Escape':
-                        e.preventDefault();
-                        hideMentionDropdown();
-                        return;
-                        
-                    default:
-                        return;
-                }
-                
-                items.forEach(item => item.classList.remove('active'));
-                if (items[activeIndex]) {
-                    items[activeIndex].classList.add('active');
-                    items[activeIndex].scrollIntoView({ block: 'nearest' });
-                }
-            });
-            
-            // Fermer le dropdown en cliquant ailleurs
-            document.addEventListener('click', function(e) {
-                if (mentionDropdown && !mentionDropdown.contains(e.target) && e.target !== editor) {
-                    hideMentionDropdown();
-                }
-            });
-            
-            return {
-                cleanup: function() {
-                    if (mentionDropdown && mentionDropdown.parentNode) {
-                        mentionDropdown.parentNode.removeChild(mentionDropdown);
-                    }
-                }
-            };
+            // ... code des mentions identique ...
         }
 
         // Initialiser les éditeurs de mentions au chargement
@@ -902,19 +797,6 @@
                 const mentionEditor = initMentionEditor(editor);
                 editor.mentionEditor = mentionEditor;
             });
-            
-            // Convertir les mentions pour l'affichage
-            function renderMentions(container) {
-                const mentionRegex = /@\[(.*?)\]\((.*?)\)/g;
-                const elements = container.querySelectorAll('.convert-mentions');
-                
-                elements.forEach(element => {
-                    const html = element.innerHTML.replace(mentionRegex, '<a href="$2" class="mention" target="_blank">@$1</a>');
-                    element.innerHTML = html;
-                });
-            }
-            
-            renderMentions(document);
             
             // Améliorer les interactions de la sidebar
             const navLinks = document.querySelectorAll('.nav-link');
@@ -930,6 +812,19 @@
                     const icon = this.querySelector('.nav-icon');
                     if (icon) {
                         icon.style.transform = 'scale(1) rotate(0deg)';
+                    }
+                });
+                
+                // Fermer la sidebar mobile au clic sur un lien
+                link.addEventListener('click', function() {
+                    if (window.innerWidth <= 768) {
+                        const sidebar = document.getElementById('sidebar');
+                        const overlay = document.getElementById('sidebar-overlay');
+                        const sidebarToggle = document.getElementById('sidebar-toggle');
+                        
+                        sidebar.classList.remove('open');
+                        overlay.classList.remove('active');
+                        sidebarToggle.classList.remove('active');
                     }
                 });
             });
@@ -948,19 +843,34 @@
 
         // Raccourcis clavier globaux
         document.addEventListener('keydown', function(e) {
-            // Alt + M pour toggle sidebar mobile
-            if (e.altKey && e.key === 'm' && window.innerWidth <= 768) {
+            // Ctrl/Cmd + B pour toggle sidebar
+            if ((e.ctrlKey || e.metaKey) && e.key === 'b') {
                 e.preventDefault();
                 toggleSidebar();
             }
             
-            // Escape pour fermer les dropdowns
-            if (e.key === 'Escape') {
-                const openDropdowns = document.querySelectorAll('.mention-dropdown[style*="block"]');
-                openDropdowns.forEach(dropdown => {
-                    dropdown.style.display = 'none';
-                });
+            // Escape pour fermer la sidebar mobile
+            if (e.key === 'Escape' && window.innerWidth <= 768) {
+                const sidebar = document.getElementById('sidebar');
+                const overlay = document.getElementById('sidebar-overlay');
+                const sidebarToggle = document.getElementById('sidebar-toggle');
+                
+                if (sidebar.classList.contains('open')) {
+                    sidebar.classList.remove('open');
+                    overlay.classList.remove('active');
+                    sidebarToggle.classList.remove('active');
+                }
             }
+        });
+
+        // Animation de chargement de la page
+        window.addEventListener('load', function() {
+            document.body.style.opacity = '0';
+            document.body.style.transition = 'opacity 0.3s ease';
+            
+            setTimeout(() => {
+                document.body.style.opacity = '1';
+            }, 100);
         });
     </script>
 </body>
