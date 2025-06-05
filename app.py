@@ -356,28 +356,18 @@ def get_cached_news(query, language, days=3):
 
 def get_news_by_sector(sector, keywords=None, days=7, language="fr"):
     """
-    Récupère les actualités par secteur (utilisé quand aucune recherche spécifique)
-    
-    Args:
-        sector (str): Le secteur d'activité (tech, finance, etc.)
-        keywords (str, optional): Mots-clés supplémentaires
-        days (int, optional): Nombre de jours pour les actualités récentes
-        language (str, optional): Langue des articles (fr, en)
-        
-    Returns:
-        list: Liste d'articles d'actualité
+    Version améliorée pour récupérer plus d'actualités par secteur
     """
-    # Vérifier si nous avons un cache pour cette requête
+    # Vérifier le cache
     cache_key = f"sector_{sector}_{language}_{days}.json"
     cache_path = os.path.join(cache_dir, cache_key)
     
-    # Vérifier si un cache valide existe (moins de 2 heures pour les secteurs)
+    # Vérifier si un cache valide existe (moins de 1 heure pour avoir plus de fraîcheur)
     if os.path.exists(cache_path):
         file_modified_time = os.path.getmtime(cache_path)
         now = datetime.now().timestamp()
         
-        # Si le cache a moins de 2 heures
-        if now - file_modified_time < 7200:  # 2 heures en secondes
+        if now - file_modified_time < 3600:  # 1 heure en secondes
             try:
                 with open(cache_path, 'r', encoding='utf-8') as f:
                     cached_data = json.load(f)
@@ -386,190 +376,146 @@ def get_news_by_sector(sector, keywords=None, days=7, language="fr"):
             except Exception as e:
                 logger.error(f"Erreur de lecture du cache secteur: {str(e)}")
     
-    # Mapping des secteurs vers des termes de recherche pertinents
+    # Mapping étendu avec plus de termes de recherche
     sector_keywords = {
-        'tech': 'technologie informatique développement logiciel innovation intelligence artificielle',
-        'marketing': 'marketing numérique publicité stratégie marque réseaux sociaux',
-        'finance': 'finance banque investissement économie bourse crypto',
-        'sante': 'santé médecine bien-être médical pharmacie',
-        'education': 'éducation enseignement formation apprentissage école université',
-        'rh': 'ressources humaines recrutement emploi talent management',
-        'consulting': 'conseil consulting stratégie entreprise management',
-        'retail': 'commerce distribution retail vente consommation e-commerce',
-        'general': 'actualité France économie business entreprise'
+        'tech': [
+            'technologie OR informatique OR "intelligence artificielle" OR IA OR digital',
+            'startup OR innovation OR développement OR logiciel OR application',
+            'cybersécurité OR blockchain OR cloud OR "réalité virtuelle"',
+            'automation OR robotique OR "machine learning" OR algorithme'
+        ],
+        'marketing': [
+            'marketing OR publicité OR "réseaux sociaux" OR communication',
+            'brand OR marque OR "content marketing" OR SEO',
+            'influencer OR "marketing digital" OR e-commerce OR conversion',
+            '"growth hacking" OR analytics OR "customer experience"'
+        ],
+        'finance': [
+            'finance OR banque OR investissement OR économie OR bourse',
+            'fintech OR crypto OR bitcoin OR "monnaie numérique"',
+            'assurance OR crédit OR "gestion patrimoine" OR épargne',
+            'régulation OR "marché financier" OR trading OR "taux intérêt"'
+        ],
+        'sante': [
+            'santé OR médecine OR "bien-être" OR médical OR hôpital',
+            'pharma OR médicament OR vaccin OR traitement OR thérapie',
+            '"santé mentale" OR nutrition OR prévention OR diagnostic',
+            'biotechnologie OR "recherche médicale" OR "santé digitale"'
+        ],
+        'education': [
+            'éducation OR enseignement OR formation OR école OR université',
+            '"formation professionnelle" OR "e-learning" OR pédagogie',
+            'étudiant OR professeur OR "système éducatif" OR apprentissage',
+            '"compétences numériques" OR "formation continue" OR diplôme'
+        ],
+        'rh': [
+            '"ressources humaines" OR recrutement OR emploi OR "gestion talent"',
+            'management OR leadership OR "bien-être travail" OR motivation',
+            '"télétravail" OR "travail hybride" OR "qualité vie travail"',
+            'formation OR "développement personnel" OR carrière OR "soft skills"'
+        ],
+        'consulting': [
+            'conseil OR consulting OR stratégie OR "transformation digitale"',
+            'management OR "amélioration performance" OR optimisation',
+            '"change management" OR innovation OR "business model"',
+            'audit OR "due diligence" OR "gestion projet" OR efficacité'
+        ],
+        'retail': [
+            'commerce OR distribution OR retail OR vente OR "expérience client"',
+            'e-commerce OR "commerce en ligne" OR marketplace OR omnicanal',
+            'consommation OR "comportement consommateur" OR tendances',
+            '"magasin connecté" OR "retail tech" OR "point vente" OR CRM'
+        ],
+        'general': [
+            'entreprise OR business OR économie OR "actualité business"',
+            'innovation OR startup OR "transformation numérique"',
+            'management OR leadership OR "monde travail"',
+            'France OR "marché français" OR "économie française"'
+        ]
     }
     
-    # Construire la requête de recherche
-    search_query = sector_keywords.get(sector, sector)
-    if keywords:
-        search_query += f" {keywords}"
+    # Récupérer les termes de recherche pour le secteur
+    search_terms = sector_keywords.get(sector, sector_keywords['general'])
     
-    # Préparer les paramètres pour l'API
-    date_from = (datetime.utcnow() - timedelta(days=days)).strftime('%Y-%m-%d')
+    all_articles = []
     
-    params = {
-        'q': search_query,
-        'from': date_from,
-        'sortBy': 'publishedAt',
-        'language': language,
-        'apiKey': NEWS_API_KEY,
-        'pageSize': 50
-    }
+    # Faire plusieurs requêtes avec différents termes pour avoir plus de variété
+    for search_term in search_terms:
+        try:
+            # Ajouter des mots-clés supplémentaires si fournis
+            if keywords:
+                search_query = f"({search_term}) AND ({keywords})"
+            else:
+                search_query = search_term
+            
+            # Préparer les paramètres pour l'API
+            date_from = (datetime.utcnow() - timedelta(days=days)).strftime('%Y-%m-%d')
+            
+            params = {
+                'q': search_query,
+                'from': date_from,
+                'sortBy': 'publishedAt',
+                'language': language,
+                'apiKey': NEWS_API_KEY,
+                'pageSize': 25  # Moins par requête mais plus de requêtes
+            }
+            
+            logger.info(f"Requête NewsAPI secteur {sector}: {search_query}")
+            
+            # Appel à l'API
+            response = requests.get(NEWS_API_URL, params=params, timeout=10)
+            
+            if response.status_code == 200:
+                data = response.json()
+                articles = data.get('articles', [])
+                
+                # Filtrer et formater les articles
+                for article in articles:
+                    if article.get('title') and article.get('description'):
+                        # Éviter les doublons
+                        if not any(existing['url'] == article.get('url') for existing in all_articles):
+                            try:
+                                # Formater la date
+                                date_str = article.get('publishedAt', '')
+                                if date_str:
+                                    date_obj = datetime.strptime(date_str, '%Y-%m-%dT%H:%M:%SZ')
+                                    article['formatted_date'] = date_obj.strftime('%d/%m/%Y')
+                                else:
+                                    article['formatted_date'] = 'Date inconnue'
+                            except:
+                                article['formatted_date'] = 'Date inconnue'
+                            
+                            all_articles.append(article)
+                
+                logger.info(f"Articles trouvés pour '{search_term}': {len(articles)}")
+                
+            else:
+                logger.warning(f"Erreur API pour '{search_term}': {response.status_code}")
+                
+            # Petite pause entre les requêtes pour éviter les limites
+            time.sleep(0.5)
+            
+        except Exception as e:
+            logger.error(f"Erreur lors de la recherche '{search_term}': {str(e)}")
+            continue
     
-    logger.info(f"Requête NewsAPI par secteur: {sector}")
-    logger.info(f"Paramètres: q={search_query}, lang={language}, from={date_from}")
+    # Trier par date et prendre les plus récents
+    all_articles.sort(key=lambda x: x.get('publishedAt', ''), reverse=True)
     
+    # Limiter à 20 articles maximum pour de meilleures performances
+    final_articles = all_articles[:20]
+    
+    logger.info(f"Total articles secteur {sector}: {len(final_articles)}")
+    
+    # Sauvegarder les résultats dans le cache
     try:
-        # Appel à l'API
-        response = requests.get(NEWS_API_URL, params=params, timeout=15)
-        
-        if response.status_code == 200:
-            data = response.json()
-            articles = data.get('articles', [])
-            
-            # Filtrer et formater les articles
-            valid_articles = []
-            for article in articles:
-                if article.get('title') and article.get('description'):
-                    try:
-                        # Formater la date
-                        date_str = article.get('publishedAt', '')
-                        if date_str:
-                            date_obj = datetime.strptime(date_str, '%Y-%m-%dT%H:%M:%SZ')
-                            article['formatted_date'] = date_obj.strftime('%d/%m/%Y')
-                        else:
-                            article['formatted_date'] = 'Date inconnue'
-                    except:
-                        article['formatted_date'] = 'Date inconnue'
-                    
-                    valid_articles.append(article)
-            
-            # Sauvegarder les résultats dans le cache
-            try:
-                with open(cache_path, 'w', encoding='utf-8') as f:
-                    json.dump(valid_articles, f, ensure_ascii=False)
-                    logger.info(f"Cache secteur créé pour: {sector}")
-            except Exception as e:
-                logger.error(f"Erreur d'écriture du cache secteur: {str(e)}")
-            
-            return valid_articles
-            
-        else:
-            error_text = response.text
-            logger.error(f"Erreur API secteur {response.status_code}: {error_text}")
-            raise Exception(f"Erreur de l'API NewsAPI pour le secteur ({response.status_code})")
-            
+        with open(cache_path, 'w', encoding='utf-8') as f:
+            json.dump(final_articles, f, ensure_ascii=False)
+            logger.info(f"Cache secteur créé pour: {sector}")
     except Exception as e:
-        logger.error(f"Exception lors de la recherche par secteur: {str(e)}")
-        raise
-
-def get_news_by_sector_actual(sector, keywords=None, days=7, language="fr"):
-    """
-    VERSION CORRIGÉE - Récupère les actualités avec meilleur debugging
-    """
-    # Mapping des secteurs avec termes plus simples
-    sector_keywords = {
-        'tech': 'technologie',
-        'marketing': 'marketing',
-        'finance': 'finance',
-        'sante': 'santé',
-        'education': 'éducation',
-        'rh': 'emploi',
-        'consulting': 'conseil',
-        'retail': 'commerce',
-    }
+        logger.error(f"Erreur d'écriture du cache secteur: {str(e)}")
     
-    # Construire une requête plus simple
-    search_query = sector_keywords.get(sector, sector)
-    if keywords:
-        search_query = f"{keywords}"  # Utiliser directement les mots-clés
-    
-    # Réduire la période pour éviter les limites
-    date_from = (datetime.utcnow() - timedelta(days=days)).strftime('%Y-%m-%d')
-    
-    # Paramètres de requête simplifiés
-    params = {
-        'q': search_query,
-        'from': date_from,
-        'sortBy': 'publishedAt',  # Trier par date
-        'language': language,
-        'apiKey': NEWS_API_KEY,
-        'pageSize': 50  # Réduire pour éviter les limites
-    }
-    
-    # Log détaillé pour le débogage
-    logger.info(f"🔍 REQUÊTE NewsAPI:")
-    logger.info(f"   URL: {NEWS_API_URL}")
-    logger.info(f"   Query: {search_query}")
-    logger.info(f"   From: {date_from}")
-    logger.info(f"   Language: {language}")
-    logger.info(f"   PageSize: {params['pageSize']}")
-    
-    try:
-        # Appel à l'API avec timeout
-        response = requests.get(NEWS_API_URL, params=params, timeout=10)
-        
-        # Log de la réponse complète
-        logger.info(f"📡 RÉPONSE NewsAPI:")
-        logger.info(f"   Status Code: {response.status_code}")
-        logger.info(f"   Headers: {dict(response.headers)}")
-        
-        if response.status_code == 200:
-            data = response.json()
-            total_results = data.get('totalResults', 0)
-            articles = data.get('articles', [])
-            
-            logger.info(f"✅ SUCCÈS:")
-            logger.info(f"   Total Results: {total_results}")
-            logger.info(f"   Articles retournés: {len(articles)}")
-            
-            # Debug des premiers articles
-            for i, article in enumerate(articles[:3]):
-                logger.info(f"   Article {i+1}: {article.get('title', 'No title')[:50]}...")
-            
-            # Filtrer et formater les articles
-            valid_articles = []
-            for article in articles:
-                if article.get('title') and article.get('description'):
-                    try:
-                        date_str = article.get('publishedAt', '')
-                        if date_str:
-                            date_obj = datetime.strptime(date_str, '%Y-%m-%dT%H:%M:%SZ')
-                            article['formatted_date'] = date_obj.strftime('%d/%m/%Y')
-                        else:
-                            article['formatted_date'] = 'Date inconnue'
-                    except:
-                        article['formatted_date'] = 'Date inconnue'
-                    
-                    valid_articles.append(article)
-            
-            logger.info(f"   Articles valides: {len(valid_articles)}")
-            return valid_articles
-            
-        elif response.status_code == 429:
-            logger.error("🚫 ERREUR 429: Limite de requêtes dépassée")
-            logger.error("   Attendez quelques minutes avant de réessayer")
-            raise Exception("Limite d'API atteinte. Réessayez dans quelques minutes.")
-            
-        elif response.status_code == 401:
-            logger.error("🚫 ERREUR 401: Clé API invalide")
-            logger.error(f"   Clé utilisée: {NEWS_API_KEY[:10]}...")
-            raise Exception("Clé API NewsAPI invalide")
-            
-        else:
-            error_text = response.text
-            logger.error(f"🚫 ERREUR API {response.status_code}: {error_text}")
-            raise Exception(f"Erreur de l'API NewsAPI ({response.status_code})")
-            
-    except requests.exceptions.Timeout:
-        logger.error("⏱️ TIMEOUT: L'API ne répond pas")
-        raise Exception("L'API ne répond pas - délai d'attente dépassé")
-    except requests.exceptions.ConnectionError:
-        logger.error("🌐 ERREUR CONNEXION: Impossible de joindre l'API")
-        raise Exception("Impossible de se connecter à l'API")
-    except Exception as e:
-        logger.error(f"❌ EXCEPTION: {str(e)}")
-        raise
+    return final_articles
 
 @app.route("/test-news")
 def test_news():
@@ -999,7 +945,7 @@ def find_hashtags(text):
 
 @app.route("/select_article", methods=["POST"])
 def select_article():
-    """Route dédiée à la sélection d'articles avec support des prompts personnalisés"""
+    """Route simplifiée pour sélection directe d'articles"""
     if 'profile' not in session:
         return jsonify({'error': 'Non authentifié'}), 401
     
@@ -1011,33 +957,23 @@ def select_article():
             return jsonify({'error': 'Aucune donnée reçue'}), 400
         
         logger.info(f"Article sélectionné: {article_data.get('title', 'Sans titre')}")
-        logger.info(f"Prompt personnalisé: {article_data.get('customPrompt', 'Aucun')}")
-        logger.info(f"Ton: {article_data.get('tone', 'professionnel')}")
-        logger.info(f"Perspective: {article_data.get('perspective', 'neutre')}")
         
         # Valider les données minimales
         if not article_data.get('title') or not article_data.get('description'):
             return jsonify({'error': 'Données d\'article incomplètes'}), 400
         
-        # Préparer les données complètes à stocker
-        complete_article_data = {
+        # Stocker les données basiques dans la session
+        session['selected_article'] = {
             'title': article_data.get('title', ''),
             'description': article_data.get('description', ''),
             'source': article_data.get('source', {}),
             'url': article_data.get('url', ''),
             'formatted_date': article_data.get('formatted_date', ''),
-            'urlToImage': article_data.get('urlToImage', ''),
-            # Nouvelles données pour la personnalisation
-            'customPrompt': article_data.get('customPrompt', ''),
-            'tone': article_data.get('tone', 'professionnel'),
-            'perspective': article_data.get('perspective', 'neutre')
+            'urlToImage': article_data.get('urlToImage', '')
         }
-        
-        # Stocker dans la session
-        session['selected_article'] = complete_article_data
         session['article_success'] = True
         
-        logger.info("Article stocké avec succès dans la session avec les paramètres de personnalisation")
+        logger.info("Article stocké avec succès dans la session")
         
         return jsonify({
             'success': True,
@@ -1148,13 +1084,11 @@ def dashboard():
         if 'generate_from_article' in request.form and selected_article:
             try:
                 logger.info("Génération de post à partir de l'article sélectionné")
+                
+                # NOUVEAU: Récupérer le prompt personnalisé depuis le formulaire
+                custom_instructions = request.form.get("custom_instructions", "").strip()
                 perspective = request.form.get("perspective", "neutre")
                 format_type = request.form.get("format", "standard")
-                
-                # Récupérer les paramètres de l'article (incluant le prompt personnalisé)
-                article_tone = selected_article.get('tone', tone)
-                article_perspective = selected_article.get('perspective', perspective)
-                custom_instructions = selected_article.get('customPrompt', '').strip()
                 
                 # Adapter le prompt selon le format choisi
                 format_instructions = {
@@ -1169,7 +1103,7 @@ def dashboard():
                 # Générer le contenu avec Gemini
                 model = genai.GenerativeModel("gemini-2.0-flash")
                 
-                # Construire le prompt avec les instructions personnalisées si présentes
+                # Construire le prompt avec les instructions personnalisées
                 article_prompt = f"""
                 Rédige un post LinkedIn sur l'actualité suivante:
                 
@@ -1178,8 +1112,8 @@ def dashboard():
                 Source: {selected_article.get('source', {}).get('name')}
                 
                 Instructions:
-                - Ton: {article_tone}
-                - Perspective: {article_perspective}
+                - Ton: {tone}
+                - Perspective: {perspective}
                 - Format: {format_text}
                 - Secteur d'expertise: {user.secteur if user and user.secteur else "general"}
                 - Inclus 2-3 hashtags pertinents
@@ -1188,7 +1122,7 @@ def dashboard():
                 - Format adapté à LinkedIn
                 """
                 
-                # Ajouter les instructions personnalisées si elles existent
+                # NOUVEAU: Ajouter les instructions personnalisées si elles existent
                 if custom_instructions:
                     article_prompt += f"\n\nInstructions supplémentaires spécifiques: {custom_instructions}"
                 
@@ -1289,6 +1223,31 @@ Commence directement par l'accroche, sans titre ni introduction.
         selected_article=selected_article,
         article_success=article_success
     )
+
+# Import nécessaire pour les pauses entre requêtes
+import time
+def cleanup_old_cache_files():
+    """Nettoie les fichiers de cache anciens pour libérer l'espace"""
+    try:
+        if not os.path.exists(cache_dir):
+            return
+        
+        now = datetime.now().timestamp()
+        one_day_ago = now - 86400  # 24 heures
+        
+        for filename in os.listdir(cache_dir):
+            file_path = os.path.join(cache_dir, filename)
+            if os.path.isfile(file_path):
+                file_modified_time = os.path.getmtime(file_path)
+                if file_modified_time < one_day_ago:
+                    os.remove(file_path)
+                    logger.info(f"Cache nettoyé: {filename}")
+    
+    except Exception as e:
+        logger.error(f"Erreur lors du nettoyage du cache: {str(e)}")
+
+# Appeler le nettoyage au démarrage de l'application
+cleanup_old_cache_files()
 
 def process_mentions_for_linkedin(content):
     """
