@@ -783,7 +783,7 @@
                             <p class="article-description">{{ article.description|clean_html }}</p>
                             
                             <div class="article-actions">
-                                <form method="post" action="{{ url_for('news_assistant') }}" style="margin-bottom: 0;">
+                                <form method="post" action="{{ url_for('news_assistant') }}" style="margin-bottom: 0;" class="article-form">
                                     <input type="hidden" name="article_title" value="{{ article.title }}">
                                     <input type="hidden" name="article_description" value="{{ article.description }}">
                                     <input type="hidden" name="article_source" value="{{ article.source.name }}">
@@ -791,7 +791,7 @@
                                     <input type="hidden" name="article_date" value="{{ article.formatted_date }}">
                                     <input type="hidden" name="article_image" value="{{ article.urlToImage }}">
                                     
-                                    <button type="submit" name="select_article" class="btn-article btn-use-article" onclick="selectArticle(event, {{ loop.index0 }})">
+                                    <button type="submit" name="select_article" class="btn-article btn-use-article">
                                         <i class="fa-solid fa-pen-to-square"></i>
                                         Utiliser cet article
                                     </button>
@@ -842,8 +842,11 @@ document.querySelectorAll('.fade-in, .slide-in').forEach(el => {
     observer.observe(el);
 });
 
-// JavaScript pour gérer le formulaire de recherche sans conflits
+// JavaScript pour gérer les formulaires sans conflits
 document.addEventListener('DOMContentLoaded', function() {
+    console.log('🚀 Chargement de la page news assistant');
+    
+    // Gestion du formulaire de recherche
     const searchForm = document.getElementById('search-form');
     const searchBtn = document.getElementById('search-btn');
     const keywordInput = document.getElementById('keyword-input');
@@ -860,12 +863,6 @@ document.addEventListener('DOMContentLoaded', function() {
             searchBtn.disabled = true;
             searchBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Recherche...';
             
-            // Réactiver après 3 secondes au cas où
-            setTimeout(() => {
-                searchBtn.disabled = false;
-                searchBtn.innerHTML = '<i class="fa-solid fa-search"></i> <span>Rechercher</span>';
-            }, 3000);
-            
             console.log('🔍 Recherche lancée avec:', {
                 keyword: keywordInput.value,
                 language: document.querySelector('select[name="language"]').value
@@ -873,27 +870,36 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
     
-    // Sélection d'article sans rechargement
-    function selectArticle(event, articleIndex) {
-        event.preventDefault();
+    // Gestion des formulaires de sélection d'articles
+    const articleForms = document.querySelectorAll('.article-form');
+    console.log(`📝 ${articleForms.length} formulaires d'articles trouvés`);
+    
+    articleForms.forEach((form, index) => {
+        const submitBtn = form.querySelector('.btn-use-article');
         
-        // Animation de sélection
-        const articleCard = document.querySelector(`[data-article-index="${articleIndex}"]`);
-        if (articleCard) {
-            articleCard.style.transform = 'scale(0.95)';
-            articleCard.style.border = '2px solid var(--primary)';
-            
-            setTimeout(() => {
-                // Soumettre le formulaire après l'animation
-                event.target.closest('form').submit();
-            }, 300);
+        if (form && submitBtn) {
+            form.addEventListener('submit', function(e) {
+                console.log(`📰 Sélection de l'article ${index + 1}`);
+                
+                // Animation visuelle
+                const articleCard = form.closest('.article-card');
+                if (articleCard) {
+                    articleCard.style.transform = 'scale(0.98)';
+                    articleCard.style.border = '2px solid var(--primary)';
+                    articleCard.style.boxShadow = '0 0 20px rgba(99, 102, 241, 0.3)';
+                }
+                
+                // Désactiver le bouton
+                submitBtn.disabled = true;
+                submitBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Sélection...';
+                
+                // Laisser le formulaire se soumettre normalement
+                console.log('✅ Soumission du formulaire en cours...');
+            });
         }
-    }
+    });
     
-    // Exposer la fonction globalement
-    window.selectArticle = selectArticle;
-    
-    // Empêcher la disparition lors du scroll
+    // Empêcher la disparition des actualités
     const newsSection = document.getElementById('news-results-section');
     if (newsSection) {
         newsSection.style.position = 'static';
@@ -963,53 +969,61 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 // Animation des cartes d'articles
-document.querySelectorAll('.article-card').forEach((card, index) => {
-    card.style.opacity = '0';
-    card.style.transform = 'translateY(50px) scale(0.9)';
-    card.style.transition = 'all 0.6s cubic-bezier(0.4, 0, 0.2, 1)';
-    
-    setTimeout(() => {
-        card.style.opacity = '1';
-        card.style.transform = 'translateY(0) scale(1)';
-    }, index * 100);
-});
+setTimeout(() => {
+    document.querySelectorAll('.article-card').forEach((card, index) => {
+        card.style.opacity = '0';
+        card.style.transform = 'translateY(50px) scale(0.9)';
+        card.style.transition = 'all 0.6s cubic-bezier(0.4, 0, 0.2, 1)';
+        
+        setTimeout(() => {
+            card.style.opacity = '1';
+            card.style.transform = 'translateY(0) scale(1)';
+        }, index * 100);
+    });
+}, 600);
 
 // Amélioration des interactions des boutons
 document.querySelectorAll('.btn-modern, .btn-article').forEach(btn => {
-    btn.addEventListener('mouseenter', function() {
-        this.style.transform = 'translateY(-3px) scale(1.02)';
-    });
-    
-    btn.addEventListener('mouseleave', function() {
-        this.style.transform = 'translateY(0) scale(1)';
-    });
-    
-    btn.addEventListener('mousedown', function() {
-        this.style.transform = 'translateY(-1px) scale(0.98)';
-    });
-    
-    btn.addEventListener('mouseup', function() {
-        this.style.transform = 'translateY(-3px) scale(1.02)';
-    });
+    if (!btn.closest('.article-form')) {
+        btn.addEventListener('mouseenter', function() {
+            this.style.transform = 'translateY(-3px) scale(1.02)';
+        });
+        
+        btn.addEventListener('mouseleave', function() {
+            this.style.transform = 'translateY(0) scale(1)';
+        });
+        
+        btn.addEventListener('mousedown', function() {
+            this.style.transform = 'translateY(-1px) scale(0.98)';
+        });
+        
+        btn.addEventListener('mouseup', function() {
+            this.style.transform = 'translateY(-3px) scale(1.02)';
+        });
+    }
 });
 
 // Animation spéciale pour les cartes au hover
 document.querySelectorAll('.article-card').forEach(card => {
     card.addEventListener('mouseenter', function() {
-        this.style.transform = 'translateY(-12px) scale(1.03)';
+        if (!this.style.border.includes('var(--primary)')) {
+            this.style.transform = 'translateY(-12px) scale(1.03)';
+        }
     });
     
     card.addEventListener('mouseleave', function() {
-        this.style.transform = 'translateY(0) scale(1)';
+        if (!this.style.border.includes('var(--primary)')) {
+            this.style.transform = 'translateY(0) scale(1)';
+        }
     });
 });
 
 // Animation du formulaire de recherche
-document.querySelector('.form-control')?.addEventListener('focus', function() {
+document.querySelector('#keyword-input')?.addEventListener('focus', function() {
     this.parentElement.style.transform = 'translateY(-4px)';
 });
 
-document.querySelector('.form-control')?.addEventListener('blur', function() {
+document.querySelector('#keyword-input')?.addEventListener('blur', function() {
     this.parentElement.style.transform = 'translateY(0)';
 });
 
@@ -1049,11 +1063,13 @@ window.debugNews = function() {
     const newsSection = document.getElementById('news-results-section');
     const articlesContainer = document.getElementById('articles-container');
     const articleCards = document.querySelectorAll('.article-card');
+    const articleForms = document.querySelectorAll('.article-form');
     
     console.log('🔍 Debug des actualités:');
     console.log('- Section news:', newsSection ? 'trouvée' : 'introuvable');
     console.log('- Container articles:', articlesContainer ? 'trouvé' : 'introuvable');
     console.log('- Nombre d\'articles:', articleCards.length);
+    console.log('- Nombre de formulaires:', articleForms.length);
     
     if (newsSection) {
         console.log('- Style de la section:', {
@@ -1063,24 +1079,43 @@ window.debugNews = function() {
         });
     }
     
-    if (articlesContainer) {
-        console.log('- Style du container:', {
-            display: articlesContainer.style.display,
-            opacity: articlesContainer.style.opacity,
-            visibility: articlesContainer.style.visibility
+    articleForms.forEach((form, index) => {
+        const btn = form.querySelector('.btn-use-article');
+        console.log(`- Formulaire ${index + 1}:`, {
+            hasForm: !!form,
+            hasButton: !!btn,
+            buttonDisabled: btn ? btn.disabled : 'N/A'
         });
-    }
+    });
     
     return {
         newsSection,
         articlesContainer,
-        articleCount: articleCards.length
+        articleCount: articleCards.length,
+        formCount: articleForms.length
     };
+};
+
+// Test automatique des formulaires
+window.testArticleForms = function() {
+    const forms = document.querySelectorAll('.article-form');
+    console.log(`🧪 Test de ${forms.length} formulaires`);
+    
+    forms.forEach((form, index) => {
+        const btn = form.querySelector('.btn-use-article');
+        console.log(`Formulaire ${index + 1}:`, {
+            action: form.action,
+            method: form.method,
+            hasSelectInput: !!form.querySelector('input[name="select_article"]'),
+            buttonText: btn ? btn.textContent.trim() : 'Pas de bouton'
+        });
+    });
 };
 
 // Appel automatique du debug au chargement
 setTimeout(() => {
     window.debugNews();
+    window.testArticleForms();
 }, 1000);
 </script>
 {% endblock %}
