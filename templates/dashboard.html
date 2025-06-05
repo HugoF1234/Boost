@@ -824,51 +824,77 @@ function createParticles(element) {
     }
 }
 
-// Preview des images avec animation
 document.getElementById("images")?.addEventListener("change", function(event) {
     const preview = document.getElementById("image-preview");
+    const files = Array.from(event.target.files);
+    
+    // Limiter à 9 images
+    const maxImages = 9;
+    if (files.length > maxImages) {
+        alert(`Vous ne pouvez sélectionner que ${maxImages} images maximum.`);
+        const dataTransfer = new DataTransfer();
+        files.slice(0, maxImages).forEach(file => dataTransfer.items.add(file));
+        event.target.files = dataTransfer.files;
+    }
+    
     preview.innerHTML = "";
+    preview.style.display = files.length > 0 ? "grid" : "none";
 
     Array.from(event.target.files).forEach((file, index) => {
         if (file.type.startsWith("image/")) {
+            const maxSize = 10 * 1024 * 1024; // 10MB
+            if (file.size > maxSize) {
+                alert(`L'image "${file.name}" est trop volumineuse (max 10MB).`);
+                return;
+            }
+            
             const reader = new FileReader();
             reader.onload = function(e) {
                 const imgContainer = document.createElement("div");
-                imgContainer.style.position = "relative";
-                imgContainer.style.borderRadius = "16px";
-                imgContainer.style.overflow = "hidden";
-                imgContainer.style.border = "2px solid var(--primary-light)";
+                imgContainer.className = "image-preview-item";
                 imgContainer.style.opacity = "0";
                 imgContainer.style.transform = "scale(0.8)";
                 imgContainer.style.transition = "all 0.3s ease";
                 
                 const img = document.createElement("img");
                 img.src = e.target.result;
-                img.style.width = "120px";
-                img.style.height = "120px";
+                img.style.width = "100%";
+                img.style.height = "100%";
                 img.style.objectFit = "cover";
-                img.style.display = "block";
-                img.style.transition = "all 0.3s ease";
+                
+                // Numéro de l'image
+                const numberBadge = document.createElement("div");
+                numberBadge.innerHTML = index + 1;
+                numberBadge.style.cssText = `
+                    position: absolute; top: 8px; left: 8px;
+                    width: 24px; height: 24px;
+                    background: var(--primary); color: white;
+                    border-radius: 50%; display: flex;
+                    align-items: center; justify-content: center;
+                    font-size: 12px; font-weight: 600;
+                `;
+                
+                // Nom du fichier
+                const fileName = document.createElement("div");
+                fileName.innerHTML = file.name.length > 20 ? file.name.substring(0, 20) + "..." : file.name;
+                fileName.style.cssText = `
+                    position: absolute; bottom: 0; left: 0; right: 0;
+                    background: rgba(0,0,0,0.8); color: white;
+                    padding: 8px; font-size: 12px; text-align: center;
+                `;
                 
                 // Bouton de suppression
                 const deleteBtn = document.createElement("button");
                 deleteBtn.innerHTML = '<i class="fa-solid fa-times"></i>';
-                deleteBtn.style.position = "absolute";
-                deleteBtn.style.top = "5px";
-                deleteBtn.style.right = "5px";
-                deleteBtn.style.width = "25px";
-                deleteBtn.style.height = "25px";
-                deleteBtn.style.border = "none";
-                deleteBtn.style.borderRadius = "50%";
-                deleteBtn.style.background = "rgba(239, 68, 68, 0.9)";
-                deleteBtn.style.color = "white";
-                deleteBtn.style.cursor = "pointer";
-                deleteBtn.style.display = "flex";
-                deleteBtn.style.alignItems = "center";
-                deleteBtn.style.justifyContent = "center";
-                deleteBtn.style.fontSize = "12px";
-                deleteBtn.style.opacity = "0";
-                deleteBtn.style.transition = "all 0.3s ease";
+                deleteBtn.type = "button";
+                deleteBtn.style.cssText = `
+                    position: absolute; top: 8px; right: 8px;
+                    width: 28px; height: 28px; border: none;
+                    border-radius: 50%; background: rgba(239, 68, 68, 0.9);
+                    color: white; cursor: pointer; display: flex;
+                    align-items: center; justify-content: center;
+                    font-size: 12px; opacity: 0; transition: all 0.3s ease;
+                `;
                 
                 deleteBtn.onclick = () => {
                     imgContainer.style.opacity = "0";
@@ -887,10 +913,11 @@ document.getElementById("images")?.addEventListener("change", function(event) {
                 };
                 
                 imgContainer.appendChild(img);
+                imgContainer.appendChild(numberBadge);
+                imgContainer.appendChild(fileName);
                 imgContainer.appendChild(deleteBtn);
                 preview.appendChild(imgContainer);
                 
-                // Animation d'entrée
                 setTimeout(() => {
                     imgContainer.style.opacity = "1";
                     imgContainer.style.transform = "scale(1)";
@@ -900,7 +927,6 @@ document.getElementById("images")?.addEventListener("change", function(event) {
         }
     });
 });
-
 // Auto-set date/time avec animation
 window.addEventListener('load', function() {
     const dateInput = document.querySelector('input[type="datetime-local"]');
