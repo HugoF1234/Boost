@@ -88,76 +88,6 @@
         50% { transform: scale(1.05); }
     }
 
-    /* Statistiques interactives */
-    .stats-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-        gap: 1.5rem;
-        margin-bottom: 2rem;
-    }
-
-    .stat-card {
-        background: var(--white);
-        border-radius: 20px;
-        padding: 2rem;
-        text-align: center;
-        border: 1px solid rgba(99, 102, 241, 0.1);
-        transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-        position: relative;
-        overflow: hidden;
-        cursor: pointer;
-        group: hover;
-    }
-
-    .stat-card::before {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: -100%;
-        width: 100%;
-        height: 3px;
-        background: linear-gradient(90deg, var(--primary), var(--accent));
-        transition: all 0.6s ease;
-    }
-
-    .stat-card:hover::before {
-        left: 0;
-    }
-
-    .stat-card:hover {
-        transform: translateY(-8px) scale(1.02);
-        box-shadow: var(--shadow-strong);
-        border-color: var(--primary-light);
-    }
-
-    .stat-card:nth-child(1):hover { border-color: var(--primary); }
-    .stat-card:nth-child(2):hover { border-color: var(--accent); }
-    .stat-card:nth-child(3):hover { border-color: var(--warm); }
-
-    .stat-number {
-        font-size: 3rem;
-        font-weight: 700;
-        margin-bottom: 0.5rem;
-        display: block;
-        background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-        background-clip: text;
-        transition: all 0.3s ease;
-    }
-
-    .stat-card:hover .stat-number {
-        transform: scale(1.1);
-    }
-
-    .stat-label {
-        color: var(--text-secondary);
-        font-weight: 500;
-        text-transform: uppercase;
-        letter-spacing: 0.1em;
-        font-size: 0.85rem;
-    }
-
     /* Cartes de contenu */
     .content-card {
         background: var(--white);
@@ -309,59 +239,11 @@
     }
 
     /* Formulaire en grille */
-    .form-grid {
-        display: grid;
-        grid-template-columns: 2fr 1fr auto;
-        gap: 1rem;
-        align-items: end;
-        margin-bottom: 1.5rem;
-    }
-
     .form-grid-2 {
         display: grid;
         grid-template-columns: 1fr 1fr;
         gap: 1.5rem;
         margin-bottom: 1.5rem;
-    }
-
-    /* Liens d'actualité */
-    .news-link-modern {
-        background: linear-gradient(135deg, var(--primary-ultra-light) 0%, rgba(16, 185, 129, 0.1) 100%);
-        border: 2px solid var(--primary-light);
-        color: var(--primary);
-        padding: 1.5rem;
-        border-radius: 20px;
-        text-decoration: none;
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        margin-top: 1.5rem;
-        transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-        position: relative;
-        overflow: hidden;
-    }
-
-    .news-link-modern::before {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: -100%;
-        width: 100%;
-        height: 100%;
-        background: linear-gradient(90deg, transparent, rgba(99, 102, 241, 0.1), transparent);
-        transition: all 0.8s ease;
-    }
-
-    .news-link-modern:hover::before {
-        left: 100%;
-    }
-
-    .news-link-modern:hover {
-        background: var(--primary);
-        color: white;
-        transform: translateY(-4px) scale(1.02);
-        box-shadow: var(--shadow-strong);
-        border-color: var(--primary);
     }
 
     /* Article sélectionné */
@@ -398,15 +280,6 @@
         .welcome-content {
             flex-direction: column;
             text-align: center;
-        }
-
-        .stats-grid {
-            grid-template-columns: 1fr;
-        }
-
-        .form-grid {
-            grid-template-columns: 1fr;
-            gap: 1rem;
         }
 
         .form-grid-2 {
@@ -448,180 +321,6 @@
             transform: translateX(0);
         }
     }
-
-    /* Loading states */
-    .loading {
-        position: relative;
-        overflow: hidden;
-    }
-
-    .loading::after {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: -100%;
-        width: 100%;
-        height: 100%;
-        background: linear-gradient(90deg, transparent, rgba(255,255,255,0.6), transparent);
-        animation: shimmer 2s infinite;
-    }
-
-    @keyframes shimmer {
-        0% { left: -100%; }
-        100% { left: 100%; }
-    }
-
-    /* Checkbox moderne */
-    .checkbox-modern {
-        display: flex;
-        align-items: center;
-        gap: 0.75rem;
-        padding: 1rem 0;
-        cursor: pointer;
-        transition: all 0.3s ease;
-    }
-
-    .checkbox-modern:hover {
-        color: var(--primary);
-    }
-
-    .checkbox-modern input[type="checkbox"] {
-        width: 20px;
-        height: 20px;
-        accent-color: var(--primary);
-        cursor: pointer;
-    }
-
-    /* Preview d'images */
-    .image-preview {
-        display: flex;
-        gap: 1rem;
-        margin-top: 1rem;
-        flex-wrap: wrap;
-    }
-
-    .image-preview img {
-        width: 120px;
-        height: 120px;
-        object-fit: cover;
-        border-radius: 16px;
-        border: 2px solid var(--primary-light);
-        transition: all 0.3s ease;
-    }
-
-    .image-preview img:hover {
-        transform: scale(1.05);
-        box-shadow: var(--shadow-medium);
-    }
-    .image-preview-grid {
-        display: none;
-        grid-template-columns: repeat(auto-fit, minmax(100px, 120px)); /* Plus petit */
-        gap: 0.75rem; /* Gap réduit */
-        margin-top: 1rem;
-        margin-bottom: 1rem;
-        max-height: 250px; /* Hauteur réduite */
-        overflow-y: auto;
-        padding: 0.75rem;
-        background: var(--soft-gray);
-        border-radius: 12px;
-        border: 2px dashed var(--primary-light);
-        justify-content: center; /* Centrer les éléments */
-    }
-    
-    .image-preview-item {
-        position: relative;
-        background: var(--white);
-        border-radius: 8px; /* Coins moins arrondis */
-        overflow: hidden;
-        box-shadow: var(--shadow-soft);
-        transition: all 0.3s ease;
-        cursor: pointer;
-        width: 100px; /* Largeur fixe */
-        height: 100px; /* Hauteur fixe */
-    }
-    
-    .image-preview-item:hover {
-        transform: translateY(-2px) scale(1.05); /* Moins d'effet */
-        box-shadow: var(--shadow-medium);
-    }
-    
-    .image-preview-item img {
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-        transition: all 0.3s ease;
-    }
-    
-    /* Badges et overlays - VERSION RÉDUITE */
-    .image-preview-item .number-badge {
-        position: absolute;
-        top: 4px;
-        left: 4px;
-        width: 18px;
-        height: 18px;
-        background: var(--primary);
-        color: white;
-        border-radius: 50%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 10px;
-        font-weight: 600;
-        z-index: 2;
-    }
-    
-    .image-preview-item .filename {
-        position: absolute;
-        bottom: 0;
-        left: 0;
-        right: 0;
-        background: rgba(0,0,0,0.8);
-        color: white;
-        padding: 4px;
-        font-size: 9px;
-        text-align: center;
-        z-index: 2;
-        max-height: 20px;
-        overflow: hidden;
-    }
-    
-    .image-preview-item .delete-btn {
-        position: absolute;
-        top: 4px;
-        right: 4px;
-        width: 20px;
-        height: 20px;
-        border: none;
-        border-radius: 50%;
-        background: rgba(239, 68, 68, 0.9);
-        color: white;
-        cursor: pointer;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 10px;
-        opacity: 0;
-        transition: all 0.3s ease;
-        z-index: 3;
-    }
-    
-    .image-preview-item:hover .delete-btn {
-        opacity: 1;
-    }
-    
-    /* Responsive - VERSION MOBILE */
-    @media (max-width: 768px) {
-        .image-preview-grid {
-            grid-template-columns: repeat(auto-fit, minmax(80px, 90px));
-            gap: 0.5rem;
-            padding: 0.5rem;
-        }
-        
-        .image-preview-item {
-            width: 80px;
-            height: 80px;
-        }
-    }
 </style>
 
 <!-- Header de bienvenue -->
@@ -637,24 +336,6 @@
             Article sélectionné avec succès !
         </div>
         {% endif %}
-    </div>
-</div>
-
-<!-- Statistiques interactives -->
-<div class="stats-grid fade-in">
-    <div class="stat-card" onclick="animateCard(this)">
-        <span class="stat-number" data-target="{{ posts|default([])|length }}">0</span>
-        <div class="stat-label">Posts publiés</div>
-    </div>
-    
-    <div class="stat-card" onclick="animateCard(this)">
-        <span class="stat-number" data-target="{{ scheduled_posts|default(0) }}">0</span>
-        <div class="stat-label">Posts programmés</div>
-    </div>
-    
-    <div class="stat-card" onclick="animateCard(this)">
-        <span class="stat-number" data-target="{{ interets|default([])|length }}">0</span>
-        <div class="stat-label">Centres d'intérêt</div>
     </div>
 </div>
 
@@ -734,17 +415,6 @@
                 </select>
             </div>
             
-            <div style="margin-bottom: 1.5rem;">
-                <label style="display: block; margin-bottom: 0.75rem; font-weight: 600; color: var(--text-primary);">📎 Ajouter des images (max 9)</label>
-                <input type="file" name="images[]" id="images" accept="image/*" multiple class="input-modern" style="padding: 1.25rem; border-style: dashed;">
-                <div style="margin-top: 0.75rem; font-size: 0.9rem; color: var(--text-light); display: flex; align-items: center; gap: 0.5rem; padding: 0.75rem; background: var(--primary-ultra-light); border-radius: 12px; border-left: 4px solid var(--primary);">
-                    <i class="fa-solid fa-info-circle"></i>
-                    <span>Vous pouvez sélectionner jusqu'à 9 images. Formats supportés : JPEG, PNG (max 10Mo par image)</span>
-                </div>
-            </div>
-            
-            <div id="image-preview" class="image-preview-grid"></div>
-            
             <div style="display: flex; gap: 1rem; justify-content: flex-end; margin-top: 2rem; padding-top: 1.5rem; border-top: 1px solid rgba(99, 102, 241, 0.1);">
                 <button type="submit" name="generate_from_article" class="btn-modern btn-primary-modern">
                     <i class="fa-solid fa-wand-magic-sparkles"></i>
@@ -759,7 +429,7 @@
         </form>
     </div>
 </div>
-{% endif %}
+{% else %}
 <!-- Section de génération de post standard -->
 <div class="content-card slide-in">
     <div class="card-header-modern">
@@ -769,7 +439,7 @@
     
     <div class="card-body-modern">
         <form method="post">
-            <div class="form-grid">
+            <div style="display: grid; grid-template-columns: 2fr 1fr auto; gap: 1rem; align-items: end; margin-bottom: 1.5rem;">
                 <div>
                     <input type="text" name="prompt" class="input-modern" placeholder="Ex: Partagez des conseils sur le leadership, Annoncez votre nouvel article..." required>
                 </div>
@@ -791,7 +461,7 @@
             </div>
         </form>
         
-        <a href="{{ url_for('news_assistant') }}" class="news-link-modern">
+        <a href="{{ url_for('news_assistant') }}" style="display: flex; align-items: center; justify-content: space-between; padding: 1.5rem; background: linear-gradient(135deg, var(--primary-ultra-light) 0%, rgba(16, 185, 129, 0.1) 100%); border: 2px solid var(--primary-light); color: var(--primary); border-radius: 20px; text-decoration: none; transition: all 0.4s ease; margin-top: 1.5rem;">
             <div style="display: flex; align-items: center; gap: 1rem;">
                 <div style="width: 50px; height: 50px; background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%); border-radius: 15px; display: flex; align-items: center; justify-content: center; color: white; font-size: 1.25rem;">
                     <i class="fa-solid fa-newspaper"></i>
@@ -840,8 +510,8 @@
                     <label style="display: block; margin-bottom: 0.5rem; font-weight: 600; color: var(--text-primary);">📅 Date et heure de publication</label>
                     <input type="datetime-local" name="publish_time" class="input-modern" required>
                 </div>
-                <div class="checkbox-modern">
-                    <input type="checkbox" id="publish-now" name="publish_now">
+                <div style="display: flex; align-items: center; gap: 0.75rem; padding: 1rem; background: var(--soft-gray); border-radius: 12px;">
+                    <input type="checkbox" id="publish-now" name="publish_now" style="width: 20px; height: 20px; accent-color: var(--primary);">
                     <label for="publish-now" style="font-weight: 500; color: var(--text-primary);">Publier maintenant</label>
                 </div>
                 <div>
@@ -857,8 +527,6 @@
                 <input type="file" name="images[]" id="images" accept="image/*" multiple class="input-modern" style="padding: 1.25rem; border-style: dashed;">
             </div>
             
-            <div id="image-preview" class="image-preview"></div>
-            
             <div style="display: flex; gap: 1rem; justify-content: flex-end; margin-top: 2rem; padding-top: 1.5rem; border-top: 1px solid rgba(99, 102, 241, 0.1);">
                 <a href="{{ url_for('dashboard', clear='true') }}" class="btn-modern btn-secondary-modern">
                     <i class="fa-solid fa-times"></i>
@@ -871,259 +539,6 @@
 {% endif %}
 
 <script>
-// Animation des statistiques au chargement
-window.addEventListener('load', function() {
-    setTimeout(() => {
-        animateStatNumbers();
-    }, 500);
-});
-
-function animateStatNumbers() {
-    const statNumbers = document.querySelectorAll('.stat-number');
-    statNumbers.forEach((stat, index) => {
-        const target = parseInt(stat.getAttribute('data-target'));
-        let current = 0;
-        const increment = target / 60;
-        
-        setTimeout(() => {
-            const timer = setInterval(() => {
-                current += increment;
-                stat.textContent = Math.floor(current);
-                
-                if (current >= target) {
-                    stat.textContent = target;
-                    clearInterval(timer);
-                    
-                    // Animation de rebond à la fin
-                    stat.style.transform = 'scale(1.1)';
-                    setTimeout(() => {
-                        stat.style.transform = 'scale(1)';
-                    }, 200);
-                }
-            }, 16);
-        }, index * 300);
-    });
-}
-
-// Animation des cartes statistiques au clic
-function animateCard(card) {
-    card.style.transform = 'scale(0.95)';
-    setTimeout(() => {
-        card.style.transform = 'translateY(-8px) scale(1.02)';
-    }, 100);
-    
-    // Effet de particules
-    createParticles(card);
-}
-
-function createParticles(element) {
-    for (let i = 0; i < 6; i++) {
-        const particle = document.createElement('div');
-        particle.style.position = 'absolute';
-        particle.style.width = '6px';
-        particle.style.height = '6px';
-        particle.style.background = 'var(--primary)';
-        particle.style.borderRadius = '50%';
-        particle.style.pointerEvents = 'none';
-        particle.style.zIndex = '1000';
-        
-        const rect = element.getBoundingClientRect();
-        particle.style.left = (rect.left + rect.width/2) + 'px';
-        particle.style.top = (rect.top + rect.height/2) + 'px';
-        
-        document.body.appendChild(particle);
-        
-        // Animation des particules
-        const angle = (i / 6) * Math.PI * 2;
-        const distance = 50 + Math.random() * 30;
-        const x = Math.cos(angle) * distance;
-        const y = Math.sin(angle) * distance;
-        
-        particle.animate([
-            { 
-                transform: 'translate(0, 0) scale(1)', 
-                opacity: 1 
-            },
-            { 
-                transform: `translate(${x}px, ${y}px) scale(0)`, 
-                opacity: 0 
-            }
-        ], {
-            duration: 800,
-            easing: 'cubic-bezier(0.4, 0, 0.2, 1)'
-        }).onfinish = () => {
-            particle.remove();
-        };
-    }
-}
-
-// JAVASCRIPT CORRIGÉ - Preview des images plus petites
-document.getElementById("images")?.addEventListener("change", function(event) {
-    const preview = document.getElementById("image-preview");
-    const files = Array.from(event.target.files);
-    
-    // Limiter à 9 images
-    const maxImages = 9;
-    if (files.length > maxImages) {
-        alert(`Vous ne pouvez sélectionner que ${maxImages} images maximum.`);
-        const dataTransfer = new DataTransfer();
-        files.slice(0, maxImages).forEach(file => dataTransfer.items.add(file));
-        event.target.files = dataTransfer.files;
-    }
-    
-    preview.innerHTML = "";
-    preview.style.display = files.length > 0 ? "grid" : "none";
-
-    Array.from(event.target.files).forEach((file, index) => {
-        if (file.type.startsWith("image/")) {
-            const maxSize = 10 * 1024 * 1024; // 10MB
-            if (file.size > maxSize) {
-                alert(`L'image "${file.name}" est trop volumineuse (max 10MB).`);
-                return;
-            }
-            
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                const imgContainer = document.createElement("div");
-                imgContainer.className = "image-preview-item";
-                imgContainer.style.cssText = `
-                    position: relative;
-                    background: var(--white);
-                    border-radius: 8px;
-                    overflow: hidden;
-                    box-shadow: var(--shadow-soft);
-                    transition: all 0.3s ease;
-                    cursor: pointer;
-                    width: 100px;
-                    height: 100px;
-                    opacity: 0;
-                    transform: scale(0.8);
-                `;
-                
-                const img = document.createElement("img");
-                img.src = e.target.result;
-                img.style.cssText = `
-                    width: 100%;
-                    height: 100%;
-                    object-fit: cover;
-                    transition: all 0.3s ease;
-                `;
-                
-                // Numéro de l'image - VERSION RÉDUITE
-                const numberBadge = document.createElement("div");
-                numberBadge.innerHTML = index + 1;
-                numberBadge.className = "number-badge";
-                numberBadge.style.cssText = `
-                    position: absolute;
-                    top: 4px;
-                    left: 4px;
-                    width: 18px;
-                    height: 18px;
-                    background: var(--primary);
-                    color: white;
-                    border-radius: 50%;
-                    display: flex;
-                    align-items: center;
-                    justify-content: center;
-                    font-size: 10px;
-                    font-weight: 600;
-                    z-index: 2;
-                `;
-                
-                // Nom du fichier - VERSION RÉDUITE
-                const fileName = document.createElement("div");
-                const shortName = file.name.length > 12 ? file.name.substring(0, 12) + "..." : file.name;
-                fileName.innerHTML = shortName;
-                fileName.className = "filename";
-                fileName.style.cssText = `
-                    position: absolute;
-                    bottom: 0;
-                    left: 0;
-                    right: 0;
-                    background: rgba(0,0,0,0.8);
-                    color: white;
-                    padding: 4px;
-                    font-size: 9px;
-                    text-align: center;
-                    z-index: 2;
-                    max-height: 20px;
-                    overflow: hidden;
-                `;
-                
-                // Bouton de suppression - VERSION RÉDUITE
-                const deleteBtn = document.createElement("button");
-                deleteBtn.innerHTML = '<i class="fa-solid fa-times"></i>';
-                deleteBtn.type = "button";
-                deleteBtn.className = "delete-btn";
-                deleteBtn.style.cssText = `
-                    position: absolute;
-                    top: 4px;
-                    right: 4px;
-                    width: 20px;
-                    height: 20px;
-                    border: none;
-                    border-radius: 50%;
-                    background: rgba(239, 68, 68, 0.9);
-                    color: white;
-                    cursor: pointer;
-                    display: flex;
-                    align-items: center;
-                    justify-content: center;
-                    font-size: 10px;
-                    opacity: 0;
-                    transition: all 0.3s ease;
-                    z-index: 3;
-                `;
-                
-                deleteBtn.onclick = (e) => {
-                    e.stopPropagation();
-                    imgContainer.style.opacity = "0";
-                    imgContainer.style.transform = "scale(0)";
-                    setTimeout(() => imgContainer.remove(), 300);
-                    
-                    // Supprimer du input file
-                    const dataTransfer = new DataTransfer();
-                    Array.from(event.target.files).forEach((f, i) => {
-                        if (i !== index) dataTransfer.items.add(f);
-                    });
-                    event.target.files = dataTransfer.files;
-                    
-                    // Réorganiser les numéros
-                    setTimeout(() => {
-                        document.querySelectorAll('.image-preview-item .number-badge').forEach((badge, i) => {
-                            badge.innerHTML = i + 1;
-                        });
-                    }, 350);
-                };
-                
-                imgContainer.onmouseenter = () => {
-                    deleteBtn.style.opacity = "1";
-                    img.style.transform = "scale(1.05)";
-                    imgContainer.style.transform = "translateY(-2px) scale(1.05)";
-                };
-                
-                imgContainer.onmouseleave = () => {
-                    deleteBtn.style.opacity = "0";
-                    img.style.transform = "scale(1)";
-                    imgContainer.style.transform = "scale(1)";
-                };
-                
-                imgContainer.appendChild(img);
-                imgContainer.appendChild(numberBadge);
-                imgContainer.appendChild(fileName);
-                imgContainer.appendChild(deleteBtn);
-                preview.appendChild(imgContainer);
-                
-                // Animation d'entrée
-                setTimeout(() => {
-                    imgContainer.style.opacity = "1";
-                    imgContainer.style.transform = "scale(1)";
-                }, index * 100);
-            }
-            reader.readAsDataURL(file);
-        }
-    });
-});
 // Auto-set date/time avec animation
 window.addEventListener('load', function() {
     const dateInput = document.querySelector('input[type="datetime-local"]');
@@ -1132,116 +547,7 @@ window.addEventListener('load', function() {
         now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
         now.setMinutes(now.getMinutes() + 30);
         dateInput.value = now.toISOString().slice(0, 16);
-        
-        // Animation de focus
-        dateInput.addEventListener('focus', function() {
-            this.style.transform = 'translateY(-2px)';
-            this.style.boxShadow = '0 8px 25px rgba(99, 102, 241, 0.2)';
-        });
-        
-        dateInput.addEventListener('blur', function() {
-            this.style.transform = 'translateY(0)';
-        });
     }
 });
-
-// Amélioration des interactions des boutons
-document.querySelectorAll('.btn-modern').forEach(btn => {
-    btn.addEventListener('mouseenter', function() {
-        this.style.transform = 'translateY(-3px) scale(1.02)';
-    });
-    
-    btn.addEventListener('mouseleave', function() {
-        this.style.transform = 'translateY(0) scale(1)';
-    });
-    
-    btn.addEventListener('mousedown', function() {
-        this.style.transform = 'translateY(-1px) scale(0.98)';
-    });
-    
-    btn.addEventListener('mouseup', function() {
-        this.style.transform = 'translateY(-3px) scale(1.02)';
-    });
-});
-
-// Animation des inputs au focus
-document.querySelectorAll('.input-modern, .textarea-modern').forEach(input => {
-    input.addEventListener('focus', function() {
-        this.parentElement.style.transform = 'translateY(-2px)';
-    });
-    
-    input.addEventListener('blur', function() {
-        this.parentElement.style.transform = 'translateY(0)';
-    });
-});
-
-// Amélioration de l'interaction avec les cartes de contenu
-document.querySelectorAll('.content-card').forEach(card => {
-    card.addEventListener('mouseenter', function() {
-        this.style.transform = 'translateY(-6px)';
-    });
-    
-    card.addEventListener('mouseleave', function() {
-        this.style.transform = 'translateY(0)';
-    });
-});
-
-// Animation des éléments au scroll
-const observerOptions = {
-    threshold: 0.1,
-    rootMargin: '0px 0px -50px 0px'
-};
-
-const observer = new IntersectionObserver((entries) => {
-    entries.forEach(entry => {
-        if (entry.isIntersecting) {
-            entry.target.style.opacity = '1';
-            entry.target.style.transform = 'translateY(0)';
-        }
-    });
-}, observerOptions);
-
-// Observer tous les éléments avec animation
-document.querySelectorAll('.fade-in, .slide-in').forEach(el => {
-    el.style.opacity = '0';
-    el.style.transform = 'translateY(30px)';
-    el.style.transition = 'all 0.6s cubic-bezier(0.4, 0, 0.2, 1)';
-    observer.observe(el);
-});
-
-// Messages de feedback utilisateur
-function showToast(message, type = 'success') {
-    const toast = document.createElement('div');
-    toast.style.position = 'fixed';
-    toast.style.top = '2rem';
-    toast.style.right = '2rem';
-    toast.style.background = type === 'success' ? 'var(--accent)' : 'var(--warm)';
-    toast.style.color = 'white';
-    toast.style.padding = '1rem 1.5rem';
-    toast.style.borderRadius = '12px';
-    toast.style.zIndex = '10000';
-    toast.style.transform = 'translateX(100%)';
-    toast.style.transition = 'all 0.3s ease';
-    toast.style.boxShadow = 'var(--shadow-strong)';
-    toast.innerHTML = `<i class="fa-solid fa-check-circle"></i> ${message}`;
-    
-    document.body.appendChild(toast);
-    
-    setTimeout(() => {
-        toast.style.transform = 'translateX(0)';
-    }, 100);
-    
-    setTimeout(() => {
-        toast.style.transform = 'translateX(100%)';
-        setTimeout(() => toast.remove(), 300);
-    }, 3000);
-}
-
-// Simulation d'interactions pour les démonstrations
-setTimeout(() => {
-    if (document.querySelector('.stat-card')) {
-        showToast('Interface chargée avec succès !');
-    }
-}, 1000);
 </script>
 {% endblock %}
