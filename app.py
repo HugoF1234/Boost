@@ -713,6 +713,8 @@ def news_assistant():
     
     # Traitement des actions POST
     if request.method == "POST":
+        logger.info(f"POST reçu avec données: {request.form}")
+        
         if 'search' in request.form:
             # Recherche d'actualités avec un mot-clé
             search_keyword = request.form.get('keyword', '')
@@ -724,8 +726,10 @@ def news_assistant():
         elif 'select_article' in request.form:
             # L'utilisateur a sélectionné un article
             try:
-                # Reconstruire l'article à partir des champs individuels
-                selected_article = {
+                logger.info("Traitement de la sélection d'article")
+                
+                # CORRECTION: Récupérer les données directement depuis le formulaire
+                article_data = {
                     'title': request.form.get('article_title', ''),
                     'description': request.form.get('article_description', ''),
                     'source': {'name': request.form.get('article_source', '')},
@@ -734,25 +738,24 @@ def news_assistant():
                     'urlToImage': request.form.get('article_image', '')
                 }
                 
+                logger.info(f"Données article récupérées: {article_data}")
+                
                 # Vérifier que l'article a un titre et une description
-                if not selected_article['title'] or not selected_article['description']:
+                if not article_data['title'] or not article_data['description']:
                     error_message = "L'article sélectionné est incomplet. Veuillez réessayer."
+                    logger.error("Article incomplet détecté")
                 else:
                     # Stocker l'article dans la session
-                    session['selected_article'] = selected_article
-                    # Stocker un message flash pour afficher sur le dashboard
-                    session['article_success'] = "Article sélectionné avec succès! Vous pouvez maintenant générer un post."
+                    session['selected_article'] = article_data
+                    logger.info("Article stocké dans la session avec succès")
                     
-                    # Rediriger directement vers le dashboard
+                    # CORRECTION: Rediriger vers le dashboard avec un paramètre de succès
+                    session['article_success'] = True
                     return redirect(url_for("dashboard"))
+                    
             except Exception as e:
                 error_message = f"Erreur lors de la sélection de l'article: {str(e)}"
                 logger.error(f"Erreur de sélection d'article: {str(e)}")
-            
-        elif 'generate_post' in request.form:
-            # Nous n'utiliserons plus cette partie directement
-            # Elle sera remplacée par le flux sur le dashboard
-            return redirect(url_for("dashboard"))
     
     # Pour les requêtes GET ou si POST n'a pas redirigé
     try:
@@ -761,7 +764,6 @@ def news_assistant():
         
         if search_keyword:
             # Si l'utilisateur a entré un mot-clé, effectuer une recherche générale
-            # sans filtrer par secteur pour obtenir plus de résultats
             news_articles = get_news_by_keyword(search_keyword, language=language, days=30)
         else:
             # Sinon, afficher les actualités du secteur de l'utilisateur
@@ -798,6 +800,7 @@ def news_assistant():
         error=error_message,
         success=success_message
     )
+
     
 @app.route("/")
 def index():
@@ -920,7 +923,9 @@ def dashboard():
         return redirect(url_for("index"))
 
     draft = ""
-    article_success = session.pop('article_success', None)  # Récupérer et supprimer le message
+    
+    # CORRECTION: Récupérer le message de succès de l'article
+    article_success = session.pop('article_success', None)
     
     # Ajouter cette ligne pour gérer le bouton Annuler
     if request.args.get('clear') == 'true':
@@ -948,15 +953,16 @@ def dashboard():
             # Récupérer 3 articles récents maximum
             trending_news = get_news_by_sector(user.secteur, days=1)[:3]
         except Exception as e:
-            print(f"Erreur lors de la récupération des actualités: {str(e)}")
+            logger.error(f"Erreur lors de la récupération des actualités: {str(e)}")
     
     if request.method == "POST":
         prompt = request.form.get("prompt")
         tone = request.form.get("tone", "professionnel")
         
-        # Vérifier si l'utilisateur veut générer un post basé sur un article sélectionné
+        # CORRECTION: Vérifier si l'utilisateur veut générer un post basé sur un article sélectionné
         if 'generate_from_article' in request.form and selected_article:
             try:
+                logger.info("Génération de post à partir de l'article sélectionné")
                 perspective = request.form.get("perspective", "neutre")
                 format_type = request.form.get("format", "standard")
                 
@@ -1002,11 +1008,12 @@ def dashboard():
                 response = model.generate_content(article_prompt)
                 draft = response.text.strip()
                 
-                # Effacer l'article sélectionné après avoir généré le post
-                session.pop('selected_article', None)
+                # CORRECTION: Ne pas effacer l'article immédiatement, le garder pour l'affichage
+                logger.info("Post généré avec succès à partir de l'article")
                 
             except Exception as e:
                 draft = f"Erreur Gemini : {str(e)}"
+                logger.error(f"Erreur lors de la génération du post: {str(e)}")
         else:
             # Génération standard basée sur un prompt optimisé LinkedIn
             try:
@@ -1018,7 +1025,6 @@ def dashboard():
                 
                 # Construction du prompt selon le ton choisi
                 if tone == "personnel":
-                    # Ton personnel : utilise secteur et intérêts
                     tone_instruction = f"""
 - **Ton personnel** : Partage une expérience vécue ou une réflexion personnelle
 - Base-toi sur ton secteur d'activité : {secteur}
@@ -1027,7 +1033,6 @@ def dashboard():
 - Raconte une anecdote ou un apprentissage personnel"""
                 
                 elif tone == "professionnel":
-                    # Ton professionnel : expertise et autorité
                     tone_instruction = """
 - **Ton professionnel** : Démontre ton expertise et ta crédibilité
 - Utilise un vocabulaire technique et précis
@@ -1036,7 +1041,6 @@ def dashboard():
 - Position d'expert qui apporte de la valeur"""
                 
                 elif tone == "inspirant":
-                    # Ton inspirant : motivation et vision
                     tone_instruction = """
 - **Ton inspirant** : Motive et encourage ton audience
 - Utilise des mots positifs et énergiques
@@ -1045,7 +1049,6 @@ def dashboard():
 - Ton optimiste qui donne envie d'agir"""
                 
                 else:  # conversationnel
-                    # Ton conversationnel : accessible et amical
                     tone_instruction = """
 - **Ton conversationnel** : Crée une discussion détendue
 - Utilise un langage courant et accessible
@@ -1084,6 +1087,7 @@ Commence directement par l'accroche, sans titre ni introduction.
                 
             except Exception as e:
                 draft = f"Erreur Gemini : {str(e)}"
+                logger.error(f"Erreur lors de la génération standard: {str(e)}")
 
     session['draft'] = draft
     
