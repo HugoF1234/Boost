@@ -1106,6 +1106,8 @@ def dashboard():
                 
                 # CORRECTION: Ne pas effacer l'article immédiatement, le garder pour l'affichage
                 logger.info("Post généré avec succès à partir de l'article")
+                session.pop('selected_article', None)
+                logger.info("Article effacé de la session après génération")
                 
             except Exception as e:
                 draft = f"Erreur Gemini : {str(e)}"
