@@ -685,6 +685,20 @@
         </div>
         
         <form method="post">
+            <!-- NOUVEAU: Champ pour le prompt personnalisé -->
+            <div style="margin-bottom: 1.5rem;">
+                <label style="display: block; margin-bottom: 0.75rem; font-weight: 600; color: var(--text-primary); font-size: 1rem;">
+                    <i class="fa-solid fa-magic-wand-sparkles"></i>
+                    Instructions personnalisées (optionnel)
+                </label>
+                <textarea name="custom_instructions" class="textarea-modern" rows="4" 
+                          placeholder="Ex: Écris ce post du point de vue d'un expert en cybersécurité, mets l'accent sur les risques pour les PME, utilise un ton professionnel mais accessible, ajoute des conseils pratiques..."></textarea>
+                <div style="margin-top: 0.75rem; font-size: 0.9rem; color: var(--text-light); display: flex; align-items: center; gap: 0.5rem; padding: 0.75rem; background: var(--primary-ultra-light); border-radius: 12px; border-left: 4px solid var(--primary);">
+                    <i class="fa-solid fa-lightbulb"></i>
+                    <span>Personnalisez votre post avec vos propres instructions. Laissez vide pour utiliser les paramètres par défaut.</span>
+                </div>
+            </div>
+
             <div class="form-grid-2">
                 <div>
                     <label style="display: block; margin-bottom: 0.5rem; font-weight: 600; color: var(--text-primary);">Ton du post</label>
@@ -709,6 +723,16 @@
                     </select>
                 </div>
             </div>
+
+            <div style="margin-bottom: 1.5rem;">
+                <label style="display: block; margin-bottom: 0.5rem; font-weight: 600; color: var(--text-primary);">Format du post</label>
+                <select name="format" class="input-modern">
+                    <option value="standard">📄 Post standard (analyse classique)</option>
+                    <option value="question">❓ Post question (engagement fort)</option>
+                    <option value="listpoints">📝 Points clés (liste structurée)</option>
+                    <option value="story">📖 Storytelling (narration engageante)</option>
+                </select>
+            </div>
             
             <div style="margin-bottom: 1.5rem;">
                 <label style="display: block; margin-bottom: 0.75rem; font-weight: 600; color: var(--text-primary);">📎 Ajouter des images (max 9)</label>
@@ -721,10 +745,10 @@
             
             <div id="image-preview" class="image-preview-grid"></div>
             
-            <div style="display: flex; gap: 1rem; justify-content: flex-end;">
+            <div style="display: flex; gap: 1rem; justify-content: flex-end; margin-top: 2rem; padding-top: 1.5rem; border-top: 1px solid rgba(99, 102, 241, 0.1);">
                 <button type="submit" name="generate_from_article" class="btn-modern btn-primary-modern">
                     <i class="fa-solid fa-wand-magic-sparkles"></i>
-                    Générer mon post
+                    Générer mon post personnalisé
                 </button>
                 
                 <a href="{{ url_for('dashboard', clear='true') }}" class="btn-modern btn-secondary-modern">
@@ -735,7 +759,7 @@
         </form>
     </div>
 </div>
-{% else %}
+{% endif %}
 <!-- Section de génération de post standard -->
 <div class="content-card slide-in">
     <div class="card-header-modern">
