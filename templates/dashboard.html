@@ -933,6 +933,7 @@ function createParticles(element) {
     }
 }
 
+// JAVASCRIPT CORRIGÉ - Preview des images plus petites
 document.getElementById("images")?.addEventListener("change", function(event) {
     const preview = document.getElementById("image-preview");
     const files = Array.from(event.target.files);
@@ -961,64 +962,126 @@ document.getElementById("images")?.addEventListener("change", function(event) {
             reader.onload = function(e) {
                 const imgContainer = document.createElement("div");
                 imgContainer.className = "image-preview-item";
-                imgContainer.style.opacity = "0";
-                imgContainer.style.transform = "scale(0.8)";
-                imgContainer.style.transition = "all 0.3s ease";
+                imgContainer.style.cssText = `
+                    position: relative;
+                    background: var(--white);
+                    border-radius: 8px;
+                    overflow: hidden;
+                    box-shadow: var(--shadow-soft);
+                    transition: all 0.3s ease;
+                    cursor: pointer;
+                    width: 100px;
+                    height: 100px;
+                    opacity: 0;
+                    transform: scale(0.8);
+                `;
                 
                 const img = document.createElement("img");
                 img.src = e.target.result;
-                img.style.width = "100%";
-                img.style.height = "100%";
-                img.style.objectFit = "cover";
+                img.style.cssText = `
+                    width: 100%;
+                    height: 100%;
+                    object-fit: cover;
+                    transition: all 0.3s ease;
+                `;
                 
-                // Numéro de l'image
+                // Numéro de l'image - VERSION RÉDUITE
                 const numberBadge = document.createElement("div");
                 numberBadge.innerHTML = index + 1;
+                numberBadge.className = "number-badge";
                 numberBadge.style.cssText = `
-                    position: absolute; top: 8px; left: 8px;
-                    width: 24px; height: 24px;
-                    background: var(--primary); color: white;
-                    border-radius: 50%; display: flex;
-                    align-items: center; justify-content: center;
-                    font-size: 12px; font-weight: 600;
+                    position: absolute;
+                    top: 4px;
+                    left: 4px;
+                    width: 18px;
+                    height: 18px;
+                    background: var(--primary);
+                    color: white;
+                    border-radius: 50%;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    font-size: 10px;
+                    font-weight: 600;
+                    z-index: 2;
                 `;
                 
-                // Nom du fichier
+                // Nom du fichier - VERSION RÉDUITE
                 const fileName = document.createElement("div");
-                fileName.innerHTML = file.name.length > 20 ? file.name.substring(0, 20) + "..." : file.name;
+                const shortName = file.name.length > 12 ? file.name.substring(0, 12) + "..." : file.name;
+                fileName.innerHTML = shortName;
+                fileName.className = "filename";
                 fileName.style.cssText = `
-                    position: absolute; bottom: 0; left: 0; right: 0;
-                    background: rgba(0,0,0,0.8); color: white;
-                    padding: 8px; font-size: 12px; text-align: center;
+                    position: absolute;
+                    bottom: 0;
+                    left: 0;
+                    right: 0;
+                    background: rgba(0,0,0,0.8);
+                    color: white;
+                    padding: 4px;
+                    font-size: 9px;
+                    text-align: center;
+                    z-index: 2;
+                    max-height: 20px;
+                    overflow: hidden;
                 `;
                 
-                // Bouton de suppression
+                // Bouton de suppression - VERSION RÉDUITE
                 const deleteBtn = document.createElement("button");
                 deleteBtn.innerHTML = '<i class="fa-solid fa-times"></i>';
                 deleteBtn.type = "button";
+                deleteBtn.className = "delete-btn";
                 deleteBtn.style.cssText = `
-                    position: absolute; top: 8px; right: 8px;
-                    width: 28px; height: 28px; border: none;
-                    border-radius: 50%; background: rgba(239, 68, 68, 0.9);
-                    color: white; cursor: pointer; display: flex;
-                    align-items: center; justify-content: center;
-                    font-size: 12px; opacity: 0; transition: all 0.3s ease;
+                    position: absolute;
+                    top: 4px;
+                    right: 4px;
+                    width: 20px;
+                    height: 20px;
+                    border: none;
+                    border-radius: 50%;
+                    background: rgba(239, 68, 68, 0.9);
+                    color: white;
+                    cursor: pointer;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    font-size: 10px;
+                    opacity: 0;
+                    transition: all 0.3s ease;
+                    z-index: 3;
                 `;
                 
-                deleteBtn.onclick = () => {
+                deleteBtn.onclick = (e) => {
+                    e.stopPropagation();
                     imgContainer.style.opacity = "0";
                     imgContainer.style.transform = "scale(0)";
                     setTimeout(() => imgContainer.remove(), 300);
+                    
+                    // Supprimer du input file
+                    const dataTransfer = new DataTransfer();
+                    Array.from(event.target.files).forEach((f, i) => {
+                        if (i !== index) dataTransfer.items.add(f);
+                    });
+                    event.target.files = dataTransfer.files;
+                    
+                    // Réorganiser les numéros
+                    setTimeout(() => {
+                        document.querySelectorAll('.image-preview-item .number-badge').forEach((badge, i) => {
+                            badge.innerHTML = i + 1;
+                        });
+                    }, 350);
                 };
                 
                 imgContainer.onmouseenter = () => {
                     deleteBtn.style.opacity = "1";
                     img.style.transform = "scale(1.05)";
+                    imgContainer.style.transform = "translateY(-2px) scale(1.05)";
                 };
                 
                 imgContainer.onmouseleave = () => {
                     deleteBtn.style.opacity = "0";
                     img.style.transform = "scale(1)";
+                    imgContainer.style.transform = "scale(1)";
                 };
                 
                 imgContainer.appendChild(img);
@@ -1027,6 +1090,7 @@ document.getElementById("images")?.addEventListener("change", function(event) {
                 imgContainer.appendChild(deleteBtn);
                 preview.appendChild(imgContainer);
                 
+                // Animation d'entrée
                 setTimeout(() => {
                     imgContainer.style.opacity = "1";
                     imgContainer.style.transform = "scale(1)";
