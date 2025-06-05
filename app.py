@@ -309,7 +309,7 @@ def get_news_by_keyword(keyword, days=30, language="fr"):
     except Exception as e:
         logger.error(f"Exception lors de la recherche par mot-clé: {str(e)}")
         raise
-
+    
 def get_cached_news(query, language, days=3):
     """
     Récupère les résultats mis en cache ou effectue un nouvel appel API
@@ -354,9 +354,9 @@ def get_cached_news(query, language, days=3):
     
     return articles
 
-def get_news_by_sector(sector, keywords=None, days=3, language="fr"):
+def get_news_by_sector(sector, keywords=None, days=7, language="fr"):
     """
-    Version avec cache de la fonction de récupération d'actualités
+    Récupère les actualités par secteur (utilisé quand aucune recherche spécifique)
     
     Args:
         sector (str): Le secteur d'activité (tech, finance, etc.)
@@ -367,17 +367,36 @@ def get_news_by_sector(sector, keywords=None, days=3, language="fr"):
     Returns:
         list: Liste d'articles d'actualité
     """
+    # Vérifier si nous avons un cache pour cette requête
+    cache_key = f"sector_{sector}_{language}_{days}.json"
+    cache_path = os.path.join(cache_dir, cache_key)
+    
+    # Vérifier si un cache valide existe (moins de 2 heures pour les secteurs)
+    if os.path.exists(cache_path):
+        file_modified_time = os.path.getmtime(cache_path)
+        now = datetime.now().timestamp()
+        
+        # Si le cache a moins de 2 heures
+        if now - file_modified_time < 7200:  # 2 heures en secondes
+            try:
+                with open(cache_path, 'r', encoding='utf-8') as f:
+                    cached_data = json.load(f)
+                    logger.info(f"Utilisation du cache secteur pour: {sector}")
+                    return cached_data
+            except Exception as e:
+                logger.error(f"Erreur de lecture du cache secteur: {str(e)}")
+    
     # Mapping des secteurs vers des termes de recherche pertinents
     sector_keywords = {
-        'tech': 'technologie informatique développement logiciel innovation internet',
+        'tech': 'technologie informatique développement logiciel innovation intelligence artificielle',
         'marketing': 'marketing numérique publicité stratégie marque réseaux sociaux',
-        'finance': 'finance banque investissement économie bourse',
+        'finance': 'finance banque investissement économie bourse crypto',
         'sante': 'santé médecine bien-être médical pharmacie',
-        'education': 'éducation enseignement formation apprentissage école',
+        'education': 'éducation enseignement formation apprentissage école université',
         'rh': 'ressources humaines recrutement emploi talent management',
         'consulting': 'conseil consulting stratégie entreprise management',
-        'retail': 'commerce distribution retail vente consommation',
-        # Définir d'autres secteurs selon vos besoins
+        'retail': 'commerce distribution retail vente consommation e-commerce',
+        'general': 'actualité France économie business entreprise'
     }
     
     # Construire la requête de recherche
@@ -385,8 +404,64 @@ def get_news_by_sector(sector, keywords=None, days=3, language="fr"):
     if keywords:
         search_query += f" {keywords}"
     
-    # Utiliser la fonction de cache
-    return get_cached_news(search_query, language, days)
+    # Préparer les paramètres pour l'API
+    date_from = (datetime.utcnow() - timedelta(days=days)).strftime('%Y-%m-%d')
+    
+    params = {
+        'q': search_query,
+        'from': date_from,
+        'sortBy': 'publishedAt',
+        'language': language,
+        'apiKey': NEWS_API_KEY,
+        'pageSize': 50
+    }
+    
+    logger.info(f"Requête NewsAPI par secteur: {sector}")
+    logger.info(f"Paramètres: q={search_query}, lang={language}, from={date_from}")
+    
+    try:
+        # Appel à l'API
+        response = requests.get(NEWS_API_URL, params=params, timeout=15)
+        
+        if response.status_code == 200:
+            data = response.json()
+            articles = data.get('articles', [])
+            
+            # Filtrer et formater les articles
+            valid_articles = []
+            for article in articles:
+                if article.get('title') and article.get('description'):
+                    try:
+                        # Formater la date
+                        date_str = article.get('publishedAt', '')
+                        if date_str:
+                            date_obj = datetime.strptime(date_str, '%Y-%m-%dT%H:%M:%SZ')
+                            article['formatted_date'] = date_obj.strftime('%d/%m/%Y')
+                        else:
+                            article['formatted_date'] = 'Date inconnue'
+                    except:
+                        article['formatted_date'] = 'Date inconnue'
+                    
+                    valid_articles.append(article)
+            
+            # Sauvegarder les résultats dans le cache
+            try:
+                with open(cache_path, 'w', encoding='utf-8') as f:
+                    json.dump(valid_articles, f, ensure_ascii=False)
+                    logger.info(f"Cache secteur créé pour: {sector}")
+            except Exception as e:
+                logger.error(f"Erreur d'écriture du cache secteur: {str(e)}")
+            
+            return valid_articles
+            
+        else:
+            error_text = response.text
+            logger.error(f"Erreur API secteur {response.status_code}: {error_text}")
+            raise Exception(f"Erreur de l'API NewsAPI pour le secteur ({response.status_code})")
+            
+    except Exception as e:
+        logger.error(f"Exception lors de la recherche par secteur: {str(e)}")
+        raise
 
 def get_news_by_sector_actual(sector, keywords=None, days=7, language="fr"):
     """
@@ -690,6 +765,8 @@ def search_linkedin_users_alternative(query):
     return jsonify({"results": results})
 
 
+# Modifications à apporter dans app.py
+
 @app.route("/news_assistant", methods=["GET", "POST"])
 def news_assistant():
     if 'profile' not in session:
@@ -728,14 +805,17 @@ def news_assistant():
             try:
                 logger.info("Traitement de la sélection d'article")
                 
-                # CORRECTION: Récupérer les données directement depuis le formulaire
+                # Récupérer les données directement depuis le formulaire
                 article_data = {
                     'title': request.form.get('article_title', ''),
                     'description': request.form.get('article_description', ''),
                     'source': {'name': request.form.get('article_source', '')},
                     'url': request.form.get('article_url', ''),
                     'formatted_date': request.form.get('article_date', ''),
-                    'urlToImage': request.form.get('article_image', '')
+                    'urlToImage': request.form.get('article_image', ''),
+                    'customPrompt': request.form.get('custom_prompt', ''),
+                    'tone': request.form.get('tone', 'professionnel'),
+                    'perspective': request.form.get('perspective', 'neutre')
                 }
                 
                 logger.info(f"Données article récupérées: {article_data}")
@@ -749,7 +829,7 @@ def news_assistant():
                     session['selected_article'] = article_data
                     logger.info("Article stocké dans la session avec succès")
                     
-                    # CORRECTION: Rediriger vers le dashboard avec un paramètre de succès
+                    # Rediriger vers le dashboard avec un paramètre de succès
                     session['article_success'] = True
                     return redirect(url_for("dashboard"))
                     
@@ -763,7 +843,7 @@ def news_assistant():
         logger.info(f"Recherche d'actualités: secteur={sector}, keyword={search_keyword}, langue={language}")
         
         if search_keyword:
-            # Si l'utilisateur a entré un mot-clé, effectuer une recherche générale
+            # Si l'utilisateur a entré un mot-clé, effectuer une recherche générale (ignorer le secteur)
             news_articles = get_news_by_keyword(search_keyword, language=language, days=30)
         else:
             # Sinon, afficher les actualités du secteur de l'utilisateur
@@ -919,7 +999,7 @@ def find_hashtags(text):
 
 @app.route("/select_article", methods=["POST"])
 def select_article():
-    """Route dédiée à la sélection d'articles"""
+    """Route dédiée à la sélection d'articles avec support des prompts personnalisés"""
     if 'profile' not in session:
         return jsonify({'error': 'Non authentifié'}), 401
     
@@ -928,27 +1008,36 @@ def select_article():
         article_data = request.get_json()
         
         if not article_data:
-            # Fallback : essayer de récupérer depuis le formulaire
-            article_data = {
-                'title': request.form.get('title', ''),
-                'description': request.form.get('description', ''),
-                'source': {'name': request.form.get('source', '')},
-                'url': request.form.get('url', ''),
-                'formatted_date': request.form.get('date', ''),
-                'urlToImage': request.form.get('image', '')
-            }
+            return jsonify({'error': 'Aucune donnée reçue'}), 400
         
         logger.info(f"Article sélectionné: {article_data.get('title', 'Sans titre')}")
+        logger.info(f"Prompt personnalisé: {article_data.get('customPrompt', 'Aucun')}")
+        logger.info(f"Ton: {article_data.get('tone', 'professionnel')}")
+        logger.info(f"Perspective: {article_data.get('perspective', 'neutre')}")
         
         # Valider les données minimales
         if not article_data.get('title') or not article_data.get('description'):
             return jsonify({'error': 'Données d\'article incomplètes'}), 400
         
+        # Préparer les données complètes à stocker
+        complete_article_data = {
+            'title': article_data.get('title', ''),
+            'description': article_data.get('description', ''),
+            'source': article_data.get('source', {}),
+            'url': article_data.get('url', ''),
+            'formatted_date': article_data.get('formatted_date', ''),
+            'urlToImage': article_data.get('urlToImage', ''),
+            # Nouvelles données pour la personnalisation
+            'customPrompt': article_data.get('customPrompt', ''),
+            'tone': article_data.get('tone', 'professionnel'),
+            'perspective': article_data.get('perspective', 'neutre')
+        }
+        
         # Stocker dans la session
-        session['selected_article'] = article_data
+        session['selected_article'] = complete_article_data
         session['article_success'] = True
         
-        logger.info("Article stocké avec succès dans la session")
+        logger.info("Article stocké avec succès dans la session avec les paramètres de personnalisation")
         
         return jsonify({
             'success': True,
@@ -1020,7 +1109,7 @@ def dashboard():
 
     draft = ""
     
-    # CORRECTION: Récupérer le message de succès de l'article
+    # Récupérer le message de succès de l'article
     article_success = session.pop('article_success', None)
     
     # Ajouter cette ligne pour gérer le bouton Annuler
@@ -1055,15 +1144,17 @@ def dashboard():
         prompt = request.form.get("prompt")
         tone = request.form.get("tone", "professionnel")
         
-        # CORRECTION: Vérifier si l'utilisateur veut générer un post basé sur un article sélectionné
+        # Vérifier si l'utilisateur veut générer un post basé sur un article sélectionné
         if 'generate_from_article' in request.form and selected_article:
             try:
                 logger.info("Génération de post à partir de l'article sélectionné")
                 perspective = request.form.get("perspective", "neutre")
                 format_type = request.form.get("format", "standard")
                 
-                # Récupérer les instructions personnalisées
-                custom_instructions = request.form.get("custom_instructions", "").strip()
+                # Récupérer les paramètres de l'article (incluant le prompt personnalisé)
+                article_tone = selected_article.get('tone', tone)
+                article_perspective = selected_article.get('perspective', perspective)
+                custom_instructions = selected_article.get('customPrompt', '').strip()
                 
                 # Adapter le prompt selon le format choisi
                 format_instructions = {
@@ -1087,8 +1178,8 @@ def dashboard():
                 Source: {selected_article.get('source', {}).get('name')}
                 
                 Instructions:
-                - Ton: {tone}
-                - Perspective: {perspective}
+                - Ton: {article_tone}
+                - Perspective: {article_perspective}
                 - Format: {format_text}
                 - Secteur d'expertise: {user.secteur if user and user.secteur else "general"}
                 - Inclus 2-3 hashtags pertinents
@@ -1099,15 +1190,14 @@ def dashboard():
                 
                 # Ajouter les instructions personnalisées si elles existent
                 if custom_instructions:
-                    article_prompt += f"\nInstructions supplémentaires: {custom_instructions}"
+                    article_prompt += f"\n\nInstructions supplémentaires spécifiques: {custom_instructions}"
                 
                 response = model.generate_content(article_prompt)
                 draft = response.text.strip()
                 
-                # CORRECTION: Ne pas effacer l'article immédiatement, le garder pour l'affichage
-                logger.info("Post généré avec succès à partir de l'article")
+                # Effacer l'article de la session après génération
                 session.pop('selected_article', None)
-                logger.info("Article effacé de la session après génération")
+                logger.info("Post généré avec succès à partir de l'article avec prompt personnalisé")
                 
             except Exception as e:
                 draft = f"Erreur Gemini : {str(e)}"
@@ -1117,7 +1207,7 @@ def dashboard():
             try:
                 model = genai.GenerativeModel("gemini-2.0-flash")
                 
-                # Récupérer les intérêts et secteur de l'utilisateur (uniquement pour ton personnel)
+                # Récupérer les intérêts et secteur de l'utilisateur
                 interets = user.interets if user and user.interets else []
                 secteur = user.secteur if user and user.secteur else "général"
                 
