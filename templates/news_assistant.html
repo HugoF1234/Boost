@@ -502,6 +502,99 @@
         flex-wrap: wrap;
     }
 
+    /* Modal pour le prompt personnalisé */
+    .modal-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.75);
+        backdrop-filter: blur(8px);
+        z-index: 10000;
+        display: none;
+        justify-content: center;
+        align-items: center;
+        padding: 2rem;
+    }
+
+    .modal-overlay.show {
+        display: flex;
+    }
+
+    .modal-content {
+        background: var(--white);
+        border-radius: 24px;
+        padding: 2.5rem;
+        max-width: 600px;
+        width: 100%;
+        box-shadow: var(--shadow-strong);
+        position: relative;
+        max-height: 90vh;
+        overflow-y: auto;
+    }
+
+    .modal-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1.5rem;
+        padding-bottom: 1rem;
+        border-bottom: 1px solid var(--soft-gray);
+    }
+
+    .modal-title {
+        font-size: 1.4rem;
+        font-weight: 600;
+        color: var(--text-primary);
+        margin: 0;
+    }
+
+    .modal-close {
+        background: none;
+        border: none;
+        font-size: 1.5rem;
+        color: var(--text-light);
+        cursor: pointer;
+        padding: 0.5rem;
+        border-radius: 8px;
+        transition: all 0.3s ease;
+    }
+
+    .modal-close:hover {
+        background: var(--soft-gray);
+        color: var(--text-primary);
+    }
+
+    .modal-body {
+        margin-bottom: 2rem;
+    }
+
+    .prompt-input {
+        width: 100%;
+        min-height: 120px;
+        padding: 1rem;
+        border: 2px solid rgba(99, 102, 241, 0.1);
+        border-radius: 12px;
+        font-family: inherit;
+        font-size: 0.95rem;
+        line-height: 1.6;
+        resize: vertical;
+        transition: all 0.3s ease;
+    }
+
+    .prompt-input:focus {
+        outline: none;
+        border-color: var(--primary);
+        box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.1);
+    }
+
+    .modal-actions {
+        display: flex;
+        gap: 1rem;
+        justify-content: flex-end;
+    }
+
     /* État vide */
     .empty-state {
         text-align: center;
@@ -553,6 +646,15 @@
         }
 
         .selected-article-actions {
+            flex-direction: column;
+        }
+
+        .modal-content {
+            margin: 1rem;
+            padding: 1.5rem;
+        }
+
+        .modal-actions {
             flex-direction: column;
         }
     }
@@ -662,7 +764,7 @@
     <div class="card-body">
         <h2 style="margin-bottom: 1.5rem; color: var(--text-primary); display: flex; align-items: center; gap: 0.75rem;">
             <i class="fas fa-search"></i>
-            Rechercher l'actualité pour votre secteur
+            Rechercher l'actualité
         </h2>
         
         <form method="get" action="{{ url_for('news_assistant') }}" id="search-form">
@@ -687,6 +789,18 @@
                 </div>
             </div>
         </form>
+        
+        <div style="margin-top: 1rem; padding: 1rem; background: var(--primary-ultra-light); border-radius: 12px; border-left: 4px solid var(--primary);">
+            <p style="margin: 0; color: var(--text-secondary); font-size: 0.9rem;">
+                <i class="fa-solid fa-info-circle"></i>
+                <strong>Astuce :</strong> 
+                {% if keyword %}
+                    Recherche personnalisée active. <a href="{{ url_for('news_assistant') }}" style="color: var(--primary);">Revenir aux actualités de votre secteur</a>
+                {% else %}
+                    Actualités du secteur {{ secteur|title if secteur else 'général' }}. Utilisez la recherche pour explorer d'autres sujets.
+                {% endif %}
+            </p>
+        </div>
     </div>
 </div>
 
@@ -742,9 +856,9 @@
         <div class="results-header">
             <h3 class="results-title">
                 {% if keyword %}
-                    📈 Actualités sur "{{ keyword }}" dans le secteur {{ sector|capitalize }}
+                    📈 Actualités sur "{{ keyword }}"
                 {% else %}
-                    📰 Actualités dans le secteur {{ sector|capitalize }}
+                    📰 Actualités {{ secteur|title if secteur else 'générales' }}
                 {% endif %}
             </h3>
             
@@ -757,13 +871,44 @@
             <div class="articles-grid" id="articles-container">
                 {% for article in news %}
                     <div class="article-card" data-article-index="{{ loop.index0 }}" id="article-{{ loop.index0 }}">
-                        <!-- Contenu de la carte inchangé jusqu'aux actions -->
+                        <!-- Image de l'article -->
+                        <div class="article-image">
+                            {% if article.urlToImage %}
+                                <img src="{{ article.urlToImage }}" alt="{{ article.title }}" loading="lazy">
+                            {% else %}
+                                <div class="article-image-placeholder">
+                                    <i class="fa-solid fa-newspaper"></i>
+                                </div>
+                            {% endif %}
+                            
+                            <div class="article-source-badge">
+                                {{ article.source.name }}
+                            </div>
+                        </div>
                         
+                        <!-- Contenu de l'article -->
+                        <div class="article-content">
+                            <h4 class="article-title">{{ article.title|clean_html }}</h4>
+                            
+                            <div class="article-meta">
+                                <span>
+                                    <i class="fa-regular fa-calendar"></i>
+                                    {{ article.formatted_date }}
+                                </span>
+                                <span>
+                                    <i class="fa-solid fa-eye"></i>
+                                    {{ article.source.name }}
+                                </span>
+                            </div>
+                            
+                            <p class="article-description">{{ article.description|clean_html }}</p>
+                        </div>
+                        
+                        <!-- Actions de l'article -->
                         <div class="article-actions">
-                            <!-- NOUVEAU: Bouton JavaScript au lieu de formulaire -->
                             <button type="button" 
                                     class="btn-article btn-use-article"
-                                    onclick="selectArticle({{ loop.index0 }})"
+                                    onclick="openPromptModal({{ loop.index0 }})"
                                     id="btn-{{ loop.index0 }}">
                                 <i class="fa-solid fa-pen-to-square"></i>
                                 <span class="btn-text">Utiliser cet article</span>
@@ -775,7 +920,7 @@
                             </a>
                         </div>
                         
-                        <!-- NOUVEAU: Données JSON pour JavaScript -->
+                        <!-- Données JSON pour JavaScript -->
                         <script type="application/json" class="article-data">
                             {
                                 "title": {{ article.title|tojson }},
@@ -795,40 +940,172 @@
                     <i class="fa-regular fa-newspaper"></i>
                 </div>
                 <h3>Aucune actualité trouvée</h3>
-                <p>Essayez avec d'autres mots-clés ou changez la langue de recherche.<br>Vous pouvez également rechercher des sujets plus généraux.</p>
+                <p>
+                    {% if keyword %}
+                        Aucun article trouvé pour "{{ keyword }}". Essayez avec d'autres mots-clés ou changez la langue de recherche.
+                    {% else %}
+                        Aucune actualité disponible pour votre secteur actuellement. Essayez une recherche personnalisée.
+                    {% endif %}
+                </p>
             </div>
         {% endif %}
     </div>
 </div>
 
+<!-- Modal pour le prompt personnalisé -->
+<div class="modal-overlay" id="promptModal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3 class="modal-title">
+                <i class="fa-solid fa-magic-wand-sparkles"></i>
+                Personnaliser votre post
+            </h3>
+            <button class="modal-close" onclick="closePromptModal()">
+                <i class="fa-solid fa-times"></i>
+            </button>
+        </div>
+        
+        <div class="modal-body">
+            <div style="background: var(--primary-ultra-light); padding: 1.5rem; border-radius: 12px; margin-bottom: 1.5rem; border-left: 4px solid var(--primary);">
+                <h4 style="margin: 0 0 0.5rem; color: var(--primary); font-size: 1rem;">Article sélectionné :</h4>
+                <p style="margin: 0; color: var(--text-secondary); font-size: 0.9rem;" id="selected-article-preview">
+                    <!-- Sera rempli par JavaScript -->
+                </p>
+            </div>
+            
+            <div style="margin-bottom: 1.5rem;">
+                <label style="display: block; margin-bottom: 0.75rem; font-weight: 600; color: var(--text-primary);">
+                    <i class="fa-solid fa-comment-dots"></i>
+                    Instructions personnalisées (optionnel)
+                </label>
+                <textarea id="customPrompt" class="prompt-input" 
+                          placeholder="Ex: Écris ce post du point de vue d'un expert en cybersécurité, mets l'accent sur les risques pour les PME, utilise un ton professionnel mais accessible..."></textarea>
+                <div style="margin-top: 0.5rem; font-size: 0.85rem; color: var(--text-light);">
+                    <i class="fa-solid fa-lightbulb"></i>
+                    Laissez vide pour utiliser les paramètres par défaut
+                </div>
+            </div>
+            
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1.5rem;">
+                <div>
+                    <label style="display: block; margin-bottom: 0.5rem; font-weight: 600; color: var(--text-primary);">Ton</label>
+                    <select id="toneSelect" class="form-control">
+                        <option value="professionnel">Professionnel</option>
+                        <option value="familier">Familier</option>
+                        <option value="inspirant">Inspirant</option>
+                        <option value="humoristique">Humoristique</option>
+                        <option value="factuel">Factuel</option>
+                        <option value="critique">Critique</option>
+                    </select>
+                </div>
+                
+                <div>
+                    <label style="display: block; margin-bottom: 0.5rem; font-weight: 600; color: var(--text-primary);">Perspective</label>
+                    <select id="perspectiveSelect" class="form-control">
+                        <option value="neutre">Neutre</option>
+                        <option value="enthousiaste">Enthousiaste</option>
+                        <option value="analytique">Analytique</option>
+                        <option value="innovant">Innovateur</option>
+                        <option value="expert">Expert du domaine</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+        
+        <div class="modal-actions">
+            <button class="btn-modern" style="background: var(--soft-gray); color: var(--text-secondary);" onclick="closePromptModal()">
+                <i class="fa-solid fa-times"></i>
+                Annuler
+            </button>
+            <button class="btn-modern btn-primary-modern" onclick="selectArticleWithPrompt()" id="confirmBtn">
+                <i class="fa-solid fa-magic-wand-sparkles"></i>
+                Générer mon post
+            </button>
+        </div>
+    </div>
+</div>
+
 <script>
-// JAVASCRIPT SIMPLIFIÉ ET ROBUSTE
+// Variables globales
+let currentArticleIndex = -1;
 let isSelecting = false;
 
-function selectArticle(index) {
+// Ouvrir le modal avec les détails de l'article
+function openPromptModal(articleIndex) {
     if (isSelecting) {
         console.log('⚠️ Sélection déjà en cours');
         return;
     }
     
-    console.log(`🚀 Sélection de l'article ${index}`);
+    currentArticleIndex = articleIndex;
+    
+    // Récupérer les données de l'article
+    const articleCard = document.getElementById(`article-${articleIndex}`);
+    const articleDataScript = articleCard.querySelector('.article-data');
+    const articleData = JSON.parse(articleDataScript.textContent);
+    
+    // Mettre à jour le preview dans le modal
+    const preview = document.getElementById('selected-article-preview');
+    preview.innerHTML = `<strong>${articleData.title}</strong><br><small>${articleData.source.name} - ${articleData.formatted_date}</small>`;
+    
+    // Réinitialiser le formulaire
+    document.getElementById('customPrompt').value = '';
+    document.getElementById('toneSelect').value = 'professionnel';
+    document.getElementById('perspectiveSelect').value = 'neutre';
+    
+    // Afficher le modal
+    const modal = document.getElementById('promptModal');
+    modal.classList.add('show');
+    
+    // Focus sur le textarea
+    setTimeout(() => {
+        document.getElementById('customPrompt').focus();
+    }, 300);
+}
+
+// Fermer le modal
+function closePromptModal() {
+    const modal = document.getElementById('promptModal');
+    modal.classList.remove('show');
+    currentArticleIndex = -1;
+}
+
+// Sélectionner l'article avec le prompt personnalisé
+function selectArticleWithPrompt() {
+    if (isSelecting || currentArticleIndex === -1) {
+        console.log('⚠️ Sélection déjà en cours ou aucun article sélectionné');
+        return;
+    }
+    
+    console.log(`🚀 Sélection de l'article ${currentArticleIndex} avec prompt personnalisé`);
     isSelecting = true;
     
     try {
         // Récupérer les données de l'article
-        const articleCard = document.getElementById(`article-${index}`);
+        const articleCard = document.getElementById(`article-${currentArticleIndex}`);
         const articleDataScript = articleCard.querySelector('.article-data');
         const articleData = JSON.parse(articleDataScript.textContent);
         
-        console.log('📄 Données article:', articleData);
+        // Récupérer les paramètres du formulaire
+        const customPrompt = document.getElementById('customPrompt').value.trim();
+        const tone = document.getElementById('toneSelect').value;
+        const perspective = document.getElementById('perspectiveSelect').value;
         
-        // Récupérer le bouton
-        const button = document.getElementById(`btn-${index}`);
-        const originalText = button.innerHTML;
+        // Préparer les données à envoyer
+        const dataToSend = {
+            ...articleData,
+            customPrompt: customPrompt,
+            tone: tone,
+            perspective: perspective
+        };
+        
+        console.log('📄 Données à envoyer:', dataToSend);
         
         // Mettre à jour l'interface
-        button.disabled = true;
-        button.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Sélection...';
+        const confirmBtn = document.getElementById('confirmBtn');
+        const originalText = confirmBtn.innerHTML;
+        confirmBtn.disabled = true;
+        confirmBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Génération...';
         
         // Animation de la carte
         articleCard.style.transform = 'scale(0.98)';
@@ -842,7 +1119,7 @@ function selectArticle(index) {
                 'Content-Type': 'application/json',
                 'X-Requested-With': 'XMLHttpRequest'
             },
-            body: JSON.stringify(articleData)
+            body: JSON.stringify(dataToSend)
         })
         .then(response => {
             console.log('📡 Réponse serveur:', response.status);
@@ -852,13 +1129,16 @@ function selectArticle(index) {
             console.log('✅ Succès:', data);
             
             if (data.success) {
+                // Fermer le modal
+                closePromptModal();
+                
                 // Afficher un message de succès
-                showSuccessMessage('Article sélectionné avec succès!');
+                showSuccessMessage('Article sélectionné avec succès! Redirection...');
                 
                 // Rediriger après un court délai
                 setTimeout(() => {
                     window.location.href = data.redirect || '/dashboard';
-                }, 1000);
+                }, 1500);
             } else {
                 throw new Error(data.error || 'Erreur inconnue');
             }
@@ -867,8 +1147,8 @@ function selectArticle(index) {
             console.error('❌ Erreur:', error);
             
             // Restaurer l'interface
-            button.disabled = false;
-            button.innerHTML = originalText;
+            confirmBtn.disabled = false;
+            confirmBtn.innerHTML = originalText;
             articleCard.style.transform = 'scale(1)';
             articleCard.style.border = '';
             articleCard.style.boxShadow = '';
@@ -886,6 +1166,7 @@ function selectArticle(index) {
     }
 }
 
+// Fonctions d'affichage des messages
 function showSuccessMessage(message) {
     const toast = document.createElement('div');
     toast.innerHTML = `
@@ -898,7 +1179,7 @@ function showSuccessMessage(message) {
             padding: 1rem 1.5rem;
             border-radius: 12px;
             box-shadow: 0 8px 30px rgba(16, 185, 129, 0.3);
-            z-index: 10000;
+            z-index: 10001;
             display: flex;
             align-items: center;
             gap: 0.75rem;
@@ -930,7 +1211,7 @@ function showErrorMessage(message) {
             padding: 1rem 1.5rem;
             border-radius: 12px;
             box-shadow: 0 8px 30px rgba(239, 68, 68, 0.3);
-            z-index: 10000;
+            z-index: 10001;
             display: flex;
             align-items: center;
             gap: 0.75rem;
@@ -950,7 +1231,35 @@ function showErrorMessage(message) {
     }, 5000);
 }
 
-// CSS pour l'animation
+// Gestion des événements du modal
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('🎯 Système de sélection avec prompt initialisé');
+    console.log(`📊 ${document.querySelectorAll('.article-card').length} articles trouvés`);
+    
+    // Fermer le modal en cliquant sur l'overlay
+    document.getElementById('promptModal').addEventListener('click', function(e) {
+        if (e.target === this) {
+            closePromptModal();
+        }
+    });
+    
+    // Fermer le modal avec Escape
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape' && document.getElementById('promptModal').classList.contains('show')) {
+            closePromptModal();
+        }
+    });
+    
+    // Soumettre avec Ctrl/Cmd + Enter
+    document.getElementById('customPrompt').addEventListener('keydown', function(e) {
+        if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
+            e.preventDefault();
+            selectArticleWithPrompt();
+        }
+    });
+});
+
+// CSS pour l'animation des toasts
 const style = document.createElement('style');
 style.textContent = `
     @keyframes slideInRight {
@@ -959,11 +1268,5 @@ style.textContent = `
     }
 `;
 document.head.appendChild(style);
-
-// Initialisation
-document.addEventListener('DOMContentLoaded', function() {
-    console.log('🎯 Système de sélection initialisé');
-    console.log(`📊 ${document.querySelectorAll('.article-card').length} articles trouvés`);
-});
 </script>
 {% endblock %}
