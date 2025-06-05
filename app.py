@@ -1082,6 +1082,8 @@ def process_mentions_for_linkedin(content):
     
     return processed_content, mention_entities
 
+# Ajout à app.py pour gérer les images multiples
+
 @app.route("/publish", methods=["POST"])
 def publish():
     access_token = session.get("access_token")
@@ -1126,51 +1128,79 @@ def publish():
     # Traiter les mentions pour LinkedIn
     processed_content, mention_entities = process_mentions_for_linkedin(content)
 
+    # ✅ NOUVELLE GESTION D'IMAGES MULTIPLES
     media_assets = []
-    uploaded_files = request.files.getlist("images[]")
-
-    for file in uploaded_files:
-        if file.filename:
-            register_payload = {
-                "registerUploadRequest": {
-                    "owner": urn,
-                    "recipes": ["urn:li:digitalmediaRecipe:feedshare-image"],
-                    "serviceRelationships": [
-                        {"relationshipType": "OWNER", "identifier": "urn:li:userGeneratedContent"}
-                    ]
+    uploaded_files = request.files.getlist("images[]")  # getlist pour multiple files
+    
+    # Limiter à 9 images maximum (limite LinkedIn)
+    max_images = min(len(uploaded_files), 9)
+    
+    for i in range(max_images):
+        file = uploaded_files[i]
+        if file and file.filename:
+            try:
+                # 1. Enregistrer le média sur LinkedIn
+                register_payload = {
+                    "registerUploadRequest": {
+                        "owner": urn,
+                        "recipes": ["urn:li:digitalmediaRecipe:feedshare-image"],
+                        "serviceRelationships": [
+                            {"relationshipType": "OWNER", "identifier": "urn:li:userGeneratedContent"}
+                        ]
+                    }
                 }
-            }
 
-            reg_resp = requests.post(LINKEDIN_ASSET_REGISTRATION_URL, headers=headers, json=register_payload)
-            if reg_resp.status_code != 200:
-                print(f"Erreur registre upload: {reg_resp.text}")
+                reg_resp = requests.post(LINKEDIN_ASSET_REGISTRATION_URL, headers=headers, json=register_payload)
+                if reg_resp.status_code != 200:
+                    logger.error(f"Erreur registre upload image {i+1}: {reg_resp.text}")
+                    continue
+
+                upload_info = reg_resp.json().get("value", {})
+                upload_url = upload_info.get("uploadMechanism", {}).get("com.linkedin.digitalmedia.uploading.MediaUploadHttpRequest", {}).get("uploadUrl")
+                asset = upload_info.get("asset")
+
+                if not upload_url or not asset:
+                    logger.error(f"Upload URL ou asset manquant pour image {i+1}")
+                    continue
+
+                # 2. Uploader l'image
+                upload_headers = {
+                    "Authorization": f"Bearer {access_token}",
+                    "Content-Type": file.content_type or "image/png"
+                }
+
+                file_bytes = file.read()
+                put_resp = requests.put(upload_url, data=file_bytes, headers=upload_headers)
+
+                if put_resp.status_code not in [200, 201]:
+                    logger.error(f"Erreur upload image {i+1}: {put_resp.text}")
+                    continue
+
+                # 3. Ajouter à la liste des médias
+                media_assets.append({
+                    "status": "READY",
+                    "media": asset,
+                    "description": {
+                        "text": f"Image {i+1}"
+                    }
+                })
+                
+                logger.info(f"Image {i+1} uploadée avec succès: {asset}")
+                
+            except Exception as e:
+                logger.error(f"Exception lors de l'upload de l'image {i+1}: {str(e)}")
                 continue
 
-            upload_info = reg_resp.json().get("value", {})
-            upload_url = upload_info.get("uploadMechanism", {}).get("com.linkedin.digitalmedia.uploading.MediaUploadHttpRequest", {}).get("uploadUrl")
-            asset = upload_info.get("asset")
-
-            if not upload_url or not asset:
-                continue
-
-            upload_headers = {
-                "Authorization": f"Bearer {access_token}",
-                "Content-Type": file.content_type or "image/png"
-            }
-
-            file_bytes = file.read()
-            put_resp = requests.put(upload_url, data=file_bytes, headers=upload_headers)
-
-            if put_resp.status_code not in [200, 201]:
-                print(f"Erreur upload image: {put_resp.text}")
-                continue
-
-            media_assets.append({
-                "status": "READY",
-                "media": asset
-            })
-
-    share_media_category = "IMAGE" if media_assets else "NONE"
+    # Déterminer le type de média
+    if len(media_assets) == 0:
+        share_media_category = "NONE"
+        media_content = []
+    elif len(media_assets) == 1:
+        share_media_category = "IMAGE"
+        media_content = media_assets
+    else:
+        share_media_category = "IMAGE"  # LinkedIn supporte les images multiples
+        media_content = media_assets
 
     # Construire le payload de post avec les mentions si présentes
     post_data = {
@@ -1180,7 +1210,7 @@ def publish():
             "com.linkedin.ugc.ShareContent": {
                 "shareCommentary": {"text": processed_content},
                 "shareMediaCategory": share_media_category,
-                "media": media_assets
+                "media": media_content
             }
         },
         "visibility": {
@@ -1192,6 +1222,7 @@ def publish():
     if mention_entities:
         post_data["specificContent"]["com.linkedin.ugc.ShareContent"]["mentions"] = mention_entities
 
+    # Publier le post
     post_resp = requests.post(LINKEDIN_POSTS_URL, headers=headers, json=post_data)
 
     if post_resp.status_code == 201:
@@ -1203,8 +1234,8 @@ def publish():
         session['draft'] = ""
         return redirect(url_for("dashboard"))
     else:
+        logger.error(f"Erreur publication: {post_resp.text}")
         return f"<h2>❌ Erreur lors de la publication :</h2><pre>{post_resp.text}</pre><p><a href='/dashboard'>Retour</a></p>"
-
 
 @app.route("/edit_post/<int:post_id>", methods=["GET", "POST"])
 def edit_post(post_id):
