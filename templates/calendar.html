@@ -1,111 +1,1019 @@
 {% extends "base.html" %}
 {% block content %}
-<div class="d-flex align-center justify-between mb-4">
-    <h1>📅 Calendrier des publications</h1>
-    <div>
-        <a href="{{ url_for('dashboard') }}" class="btn btn-outline">
+<style>
+    /* Variables pour couleurs douces */
+    :root {
+        --primary: #6366f1;
+        --primary-light: #a5b4fc;
+        --primary-ultra-light: #e0e7ff;
+        --secondary: #f8fafc;
+        --accent: #10b981;
+        --accent-light: #6ee7b7;
+        --warm: #fbbf24;
+        --warm-light: #fde68a;
+        --soft-gray: #f1f5f9;
+        --text-primary: #1e293b;
+        --text-secondary: #64748b;
+        --text-light: #94a3b8;
+        --white: #ffffff;
+        --glass: rgba(255, 255, 255, 0.25);
+        --glass-border: rgba(255, 255, 255, 0.3);
+        --shadow-soft: 0 4px 20px rgba(99, 102, 241, 0.1);
+        --shadow-medium: 0 8px 30px rgba(99, 102, 241, 0.15);
+        --shadow-strong: 0 20px 40px rgba(0, 0, 0, 0.1);
+        --success: #10b981;
+        --warning: #f59e0b;
+        --danger: #ef4444;
+    }
+
+    /* Header de page moderne */
+    .page-header {
+        background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 50%, var(--accent-light) 100%);
+        color: white;
+        padding: 2.5rem;
+        border-radius: 24px;
+        margin-bottom: 2rem;
+        position: relative;
+        overflow: hidden;
+        box-shadow: var(--shadow-strong);
+    }
+
+    .page-header::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="sparkles" width="20" height="20" patternUnits="userSpaceOnUse"><circle cx="5" cy="5" r="1" fill="%23ffffff" opacity="0.3"><animate attributeName="opacity" values="0.3;0.8;0.3" dur="3s" repeatCount="indefinite"/></circle><circle cx="15" cy="15" r="0.5" fill="%23ffffff" opacity="0.5"><animate attributeName="opacity" values="0.5;1;0.5" dur="2s" repeatCount="indefinite" begin="1s"/></circle></pattern></defs><rect width="100" height="100" fill="url(%23sparkles)"/></svg>') repeat;
+    }
+
+    .page-header-content {
+        position: relative;
+        z-index: 1;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 1.5rem;
+    }
+
+    .page-title {
+        font-size: 2.2rem;
+        font-weight: 700;
+        margin: 0;
+        text-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        letter-spacing: -0.025em;
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+    }
+
+    .page-subtitle {
+        opacity: 0.9;
+        font-size: 1rem;
+        font-weight: 400;
+        margin-top: 0.5rem;
+    }
+
+    /* Statistiques du calendrier */
+    .calendar-stats {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 1.5rem;
+        margin-bottom: 2rem;
+    }
+
+    .stat-card {
+        background: var(--white);
+        padding: 2rem;
+        border-radius: 20px;
+        text-align: center;
+        border: 1px solid rgba(99, 102, 241, 0.1);
+        transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        position: relative;
+        overflow: hidden;
+        cursor: pointer;
+        box-shadow: var(--shadow-soft);
+    }
+
+    .stat-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 3px;
+        background: linear-gradient(90deg, var(--primary), var(--accent));
+        transition: all 0.6s ease;
+    }
+
+    .stat-card:hover::before {
+        left: 0;
+    }
+
+    .stat-card:hover {
+        transform: translateY(-8px) scale(1.02);
+        box-shadow: var(--shadow-strong);
+        border-color: var(--primary-light);
+    }
+
+    .stat-icon {
+        width: 60px;
+        height: 60px;
+        margin: 0 auto 1rem;
+        background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.5rem;
+        color: white;
+        transition: all 0.3s ease;
+    }
+
+    .stat-card:hover .stat-icon {
+        transform: scale(1.1) rotate(10deg);
+    }
+
+    .stat-number {
+        font-size: 2rem;
+        font-weight: 700;
+        color: var(--primary);
+        margin-bottom: 0.5rem;
+        display: block;
+    }
+
+    .stat-label {
+        color: var(--text-secondary);
+        font-weight: 500;
+        font-size: 0.9rem;
+    }
+
+    /* Boutons modernes */
+    .btn-modern {
+        padding: 0.75rem 1.5rem;
+        border-radius: 16px;
+        font-weight: 600;
+        font-size: 0.9rem;
+        border: none;
+        cursor: pointer;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        text-decoration: none;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .btn-modern::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+        transition: all 0.6s ease;
+    }
+
+    .btn-modern:hover::before {
+        left: 100%;
+    }
+
+    .btn-primary-modern {
+        background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+        color: white;
+        box-shadow: 0 4px 20px rgba(99, 102, 241, 0.3);
+    }
+
+    .btn-primary-modern:hover {
+        transform: translateY(-3px) scale(1.02);
+        box-shadow: 0 8px 30px rgba(99, 102, 241, 0.4);
+    }
+
+    .btn-secondary-modern {
+        background: var(--glass);
+        backdrop-filter: blur(10px);
+        color: white;
+        border: 1px solid var(--glass-border);
+        box-shadow: var(--shadow-soft);
+    }
+
+    .btn-secondary-modern:hover {
+        background: rgba(255, 255, 255, 0.4);
+        transform: translateY(-3px);
+        box-shadow: var(--shadow-medium);
+    }
+
+    /* Cartes de contenu */
+    .content-card {
+        background: var(--white);
+        border-radius: 24px;
+        border: 1px solid rgba(99, 102, 241, 0.1);
+        overflow: hidden;
+        transition: all 0.3s ease;
+        margin-bottom: 2rem;
+        box-shadow: var(--shadow-soft);
+    }
+
+    .content-card:hover {
+        transform: translateY(-4px);
+        box-shadow: var(--shadow-medium);
+        border-color: var(--primary-light);
+    }
+
+    .card-body {
+        padding: 2.5rem;
+    }
+
+    /* Timeline moderne des posts */
+    .posts-timeline {
+        position: relative;
+    }
+
+    .posts-timeline::before {
+        content: '';
+        position: absolute;
+        left: 2rem;
+        top: 0;
+        bottom: 0;
+        width: 2px;
+        background: linear-gradient(to bottom, var(--primary), var(--accent));
+        border-radius: 2px;
+    }
+
+    .timeline-item {
+        position: relative;
+        margin-bottom: 2rem;
+        padding-left: 5rem;
+    }
+
+    .timeline-item::before {
+        content: '';
+        position: absolute;
+        left: 1.25rem;
+        top: 1rem;
+        width: 1.5rem;
+        height: 1.5rem;
+        background: var(--white);
+        border: 3px solid var(--primary);
+        border-radius: 50%;
+        z-index: 2;
+        transition: all 0.3s ease;
+    }
+
+    .timeline-item:hover::before {
+        transform: scale(1.3);
+        border-color: var(--accent);
+        box-shadow: 0 0 0 6px rgba(99, 102, 241, 0.2);
+    }
+
+    .post-card {
+        background: var(--white);
+        border-radius: 20px;
+        padding: 2rem;
+        border: 1px solid var(--soft-gray);
+        transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        position: relative;
+        overflow: hidden;
+        box-shadow: var(--shadow-soft);
+    }
+
+    .post-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(99, 102, 241, 0.05), transparent);
+        transition: all 0.8s ease;
+    }
+
+    .post-card:hover::before {
+        left: 100%;
+    }
+
+    .post-card:hover {
+        transform: translateY(-6px) scale(1.02);
+        box-shadow: var(--shadow-strong);
+        border-color: var(--primary-light);
+    }
+
+    .post-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        margin-bottom: 1.5rem;
+        flex-wrap: wrap;
+        gap: 1rem;
+    }
+
+    .post-date-badge {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        background: linear-gradient(135deg, var(--primary-ultra-light) 0%, rgba(16, 185, 129, 0.1) 100%);
+        padding: 1rem 1.5rem;
+        border-radius: 16px;
+        border: 1px solid var(--primary-light);
+        flex: 1;
+        min-width: 250px;
+    }
+
+    .date-icon {
+        width: 50px;
+        height: 50px;
+        background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+        border-radius: 12px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-weight: 700;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .date-icon::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+        transition: all 0.8s ease;
+    }
+
+    .post-card:hover .date-icon::before {
+        left: 100%;
+    }
+
+    .date-day {
+        font-size: 1.2rem;
+        line-height: 1;
+    }
+
+    .date-month {
+        font-size: 0.7rem;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    .date-details {
+        flex: 1;
+    }
+
+    .date-full {
+        font-weight: 600;
+        color: var(--text-primary);
+        font-size: 1.1rem;
+        margin-bottom: 0.25rem;
+    }
+
+    .date-time {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        color: var(--text-secondary);
+        font-size: 0.9rem;
+    }
+
+    .countdown-badge {
+        background: linear-gradient(135deg, var(--warm) 0%, var(--warm-light) 100%);
+        color: var(--text-primary);
+        padding: 0.5rem 1rem;
+        border-radius: 20px;
+        font-size: 0.8rem;
+        font-weight: 600;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        border: 1px solid var(--warm);
+        animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+        0%, 100% { transform: scale(1); }
+        50% { transform: scale(1.05); }
+    }
+
+    .post-content {
+        background: var(--soft-gray);
+        padding: 1.5rem;
+        border-radius: 16px;
+        margin-bottom: 1.5rem;
+        border-left: 4px solid var(--primary);
+        line-height: 1.7;
+        color: var(--text-primary);
+        position: relative;
+        overflow: hidden;
+    }
+
+    .post-content::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        right: 0;
+        width: 80px;
+        height: 80px;
+        background: radial-gradient(circle, rgba(99, 102, 241, 0.1) 0%, transparent 70%);
+        border-radius: 50%;
+        transform: translate(25%, -25%);
+    }
+
+    .post-actions {
+        display: flex;
+        gap: 1rem;
+        flex-wrap: wrap;
+    }
+
+    .btn-action {
+        padding: 0.75rem 1.25rem;
+        border-radius: 12px;
+        font-size: 0.85rem;
+        font-weight: 600;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        transition: all 0.3s ease;
+        border: 1px solid;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .btn-action::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+        transition: all 0.6s ease;
+    }
+
+    .btn-action:hover::before {
+        left: 100%;
+    }
+
+    .btn-edit {
+        background: var(--primary-ultra-light);
+        color: var(--primary);
+        border-color: var(--primary-light);
+    }
+
+    .btn-edit:hover {
+        background: var(--primary);
+        color: white;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
+    }
+
+    .btn-delete {
+        background: #fef2f2;
+        color: var(--danger);
+        border-color: #fca5a5;
+    }
+
+    .btn-delete:hover {
+        background: var(--danger);
+        color: white;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
+    }
+
+    /* État vide */
+    .empty-state {
+        text-align: center;
+        padding: 4rem 2rem;
+        color: var(--text-light);
+    }
+
+    .empty-state-icon {
+        width: 120px;
+        height: 120px;
+        margin: 0 auto 2rem;
+        background: linear-gradient(135deg, var(--soft-gray) 0%, #e2e8f0 100%);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 3rem;
+        color: var(--text-light);
+        position: relative;
+        overflow: hidden;
+    }
+
+    .empty-state-icon::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(99, 102, 241, 0.1), transparent);
+        animation: shimmer 2s infinite;
+    }
+
+    @keyframes shimmer {
+        0% { left: -100%; }
+        100% { left: 100%; }
+    }
+
+    .empty-state h3 {
+        font-size: 1.8rem;
+        margin-bottom: 1rem;
+        color: var(--text-primary);
+        font-weight: 600;
+    }
+
+    .empty-state p {
+        font-size: 1rem;
+        margin-bottom: 2rem;
+        line-height: 1.6;
+        max-width: 500px;
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+    /* Conseils de programmation */
+    .tips-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: 1.5rem;
+        margin-top: 2rem;
+    }
+
+    .tip-card {
+        background: var(--white);
+        border-radius: 20px;
+        padding: 2rem;
+        border: 1px solid var(--soft-gray);
+        transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        position: relative;
+        overflow: hidden;
+        box-shadow: var(--shadow-soft);
+    }
+
+    .tip-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 3px;
+        background: linear-gradient(90deg, var(--primary), var(--accent), var(--warm));
+        transform: scaleX(0);
+        transition: all 0.6s ease;
+    }
+
+    .tip-card:hover::before {
+        transform: scaleX(1);
+    }
+
+    .tip-card:hover {
+        transform: translateY(-6px);
+        box-shadow: var(--shadow-strong);
+        border-color: var(--primary-light);
+    }
+
+    .tip-icon {
+        width: 60px;
+        height: 60px;
+        margin-bottom: 1.5rem;
+        background: linear-gradient(135deg, var(--primary-ultra-light) 0%, rgba(16, 185, 129, 0.1) 100%);
+        border-radius: 16px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.5rem;
+        color: var(--primary);
+        transition: all 0.3s ease;
+    }
+
+    .tip-card:hover .tip-icon {
+        transform: scale(1.1) rotate(5deg);
+        background: var(--primary);
+        color: white;
+    }
+
+    .tip-title {
+        font-size: 1.2rem;
+        font-weight: 600;
+        color: var(--text-primary);
+        margin-bottom: 1rem;
+    }
+
+    .tip-description {
+        color: var(--text-secondary);
+        line-height: 1.6;
+        font-size: 0.95rem;
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+        .page-header-content {
+            flex-direction: column;
+            text-align: center;
+        }
+
+        .page-title {
+            font-size: 1.8rem;
+        }
+
+        .calendar-stats {
+            grid-template-columns: 1fr;
+        }
+
+        .timeline-item {
+            padding-left: 3rem;
+        }
+
+        .posts-timeline::before {
+            left: 1rem;
+        }
+
+        .timeline-item::before {
+            left: 0.25rem;
+        }
+
+        .post-header {
+            flex-direction: column;
+            align-items: stretch;
+        }
+
+        .post-actions {
+            justify-content: center;
+        }
+
+        .tips-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+
+    /* Animations */
+    .fade-in {
+        animation: fadeInUp 0.6s ease-out;
+    }
+
+    @keyframes fadeInUp {
+        from {
+            opacity: 0;
+            transform: translateY(30px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .slide-in {
+        animation: slideInRight 0.5s ease-out;
+    }
+
+    @keyframes slideInRight {
+        from {
+            opacity: 0;
+            transform: translateX(30px);
+        }
+        to {
+            opacity: 1;
+            transform: translateX(0);
+        }
+    }
+</style>
+
+<!-- Header de page -->
+<div class="page-header fade-in">
+    <div class="page-header-content">
+        <div>
+            <h1 class="page-title">
+                <i class="fas fa-calendar-alt"></i>
+                Calendrier des publications
+            </h1>
+            <p class="page-subtitle">Gérez et suivez vos publications LinkedIn programmées</p>
+        </div>
+        <a href="{{ url_for('dashboard') }}" class="btn-modern btn-secondary-modern">
             <i class="fa-solid fa-plus"></i>
-            Programmer un post
+            Nouveau post
         </a>
     </div>
 </div>
 
-<div class="content-card">
-    {% if posts and posts|length > 0 %}
-        <div class="mb-4">
-            <h3>Posts à venir</h3>
-            <p>Vos publications programmées apparaîtront automatiquement sur votre profil LinkedIn aux dates indiquées.</p>
+<!-- Statistiques du calendrier -->
+<div class="calendar-stats fade-in">
+    <div class="stat-card">
+        <div class="stat-icon">
+            <i class="fas fa-clock"></i>
         </div>
-        
-        <div style="border-radius:8px; overflow:hidden; border:1px solid var(--border);">
-            {% for post in posts %}
-                <div style="padding:20px; {% if not loop.last %}border-bottom:1px solid var(--border);{% endif %} position:relative;">
-                    <div class="d-flex align-center gap-3" style="margin-bottom:16px;">
-                        <div style="width:60px; height:60px; border-radius:8px; background-color:var(--primary); color:white; display:flex; flex-direction:column; align-items:center; justify-content:center; font-weight:600;">
-                            <div style="font-size:18px;">{{ post.published_at.strftime("%d") }}</div>
-                            <div style="font-size:12px; text-transform:uppercase;">{{ post.published_at.strftime("%b") }}</div>
-                        </div>
-                        
-                        <div>
-                            <div style="font-weight:600; margin-bottom:4px;">
-                                {{ post.published_at.strftime("%A %d %B %Y") }}
-                            </div>
-                            <div style="color:var(--text-light); display:flex; align-items:center; gap:8px;">
-                                <i class="fa-regular fa-clock"></i>
-                                <span>{{ post.published_at.strftime("%H:%M") }}</span>
+        <span class="stat-number">{{ posts|length }}</span>
+        <div class="stat-label">Posts programmés</div>
+    </div>
+    
+    <div class="stat-card">
+        <div class="stat-icon">
+            <i class="fas fa-calendar-week"></i>
+        </div>
+        <span class="stat-number">{{ (posts|selectattr('published_at')|list|length) if posts else 0 }}</span>
+        <div class="stat-label">Cette semaine</div>
+    </div>
+    
+    <div class="stat-card">
+        <div class="stat-icon">
+            <i class="fas fa-chart-line"></i>
+        </div>
+        <span class="stat-number">100%</span>
+        <div class="stat-label">Taux de réussite</div>
+    </div>
+</div>
+
+<!-- Contenu principal -->
+<div class="content-card slide-in">
+    <div class="card-body">
+        {% if posts and posts|length > 0 %}
+            <div style="margin-bottom: 2rem;">
+                <h3 style="color: var(--text-primary); margin-bottom: 0.5rem; display: flex; align-items: center; gap: 0.75rem;">
+                    <i class="fas fa-list"></i>
+                    Posts à venir
+                </h3>
+                <p style="color: var(--text-secondary);">Vos publications programmées apparaîtront automatiquement sur votre profil LinkedIn aux dates indiquées.</p>
+            </div>
+            
+            <div class="posts-timeline">
+                {% for post in posts %}
+                    <div class="timeline-item">
+                        <div class="post-card">
+                            <div class="post-header">
+                                <div class="post-date-badge">
+                                    <div class="date-icon">
+                                        <div class="date-day">{{ post.published_at.strftime("%d") }}</div>
+                                        <div class="date-month">{{ post.published_at.strftime("%b") }}</div>
+                                    </div>
+                                    
+                                    <div class="date-details">
+                                        <div class="date-full">{{ post.published_at.strftime("%A %d %B %Y") }}</div>
+                                        <div class="date-time">
+                                            <i class="fa-regular fa-clock"></i>
+                                            <span>{{ post.published_at.strftime("%H:%M") }}</span>
+                                        </div>
+                                    </div>
+                                </div>
                                 
                                 {% set time_diff = (post.published_at - now).total_seconds() if now is defined else 0 %}
                                 {% if time_diff > 0 %}
-                                    <span style="background-color:#e6f7ee; color:#16a34a; padding:2px 8px; border-radius:12px; font-size:12px;">
-                                        {% if time_diff < 3600 %}
-                                            Dans {{ (time_diff / 60)|int }} minutes
-                                        {% elif time_diff < 86400 %}
-                                            Dans {{ (time_diff / 3600)|int }} heures
-                                        {% else %}
-                                            Dans {{ (time_diff / 86400)|int }} jours
-                                        {% endif %}
-                                    </span>
+                                    <div class="countdown-badge">
+                                        <i class="fa-solid fa-hourglass-half"></i>
+                                        <span>
+                                            {% if time_diff < 3600 %}
+                                                Dans {{ (time_diff / 60)|int }} min
+                                            {% elif time_diff < 86400 %}
+                                                Dans {{ (time_diff / 3600)|int }}h
+                                            {% else %}
+                                                Dans {{ (time_diff / 86400)|int }}j
+                                            {% endif %}
+                                        </span>
+                                    </div>
                                 {% endif %}
+                            </div>
+                            
+                            <div class="post-content">
+                                {{ post.content|truncate(200) }}
+                            </div>
+                            
+                            <div class="post-actions">
+                                <a href="{{ url_for('edit_post', post_id=post.id) }}" class="btn-action btn-edit">
+                                    <i class="fa-solid fa-pen"></i>
+                                    Éditer
+                                </a>
+                                <a href="{{ url_for('delete_post', post_id=post.id) }}" class="btn-action btn-delete">
+                                    <i class="fa-solid fa-trash"></i>
+                                    Supprimer
+                                </a>
                             </div>
                         </div>
                     </div>
-                    
-                    <div style="padding:16px; background-color:var(--grey-light); border-radius:8px; margin-bottom:16px;">
-                        {{ post.content|truncate(280) }}
-                    </div>
-                    
-                    <div class="d-flex gap-2">
-                        <a href="{{ url_for('edit_post', post_id=post.id) }}" class="btn btn-outline btn-icon" title="Éditer">
-                            <i class="fa-solid fa-pen"></i>
-                        </a>
-                        <a href="{{ url_for('delete_post', post_id=post.id) }}" class="btn btn-outline btn-icon" title="Supprimer" style="color:var(--danger); border-color:var(--danger);">
-                            <i class="fa-solid fa-trash"></i>
-                        </a>
-                    </div>
-                </div>
-            {% endfor %}
-        </div>
-    {% else %}
-        <div style="text-align:center; padding:40px 20px;">
-            <div style="font-size:48px; margin-bottom:16px; color:var(--text-light);">
-                <i class="fa-regular fa-calendar"></i>
+                {% endfor %}
             </div>
-            <h3>Aucun post programmé</h3>
-            <p>Vous n'avez pas encore programmé de publications pour les jours à venir.</p>
-            <a href="{{ url_for('dashboard') }}" class="btn btn-primary mt-4">
-                <i class="fa-solid fa-calendar-plus"></i>
-                Programmer un post
-            </a>
-        </div>
-    {% endif %}
+        {% else %}
+            <!-- État vide -->
+            <div class="empty-state">
+                <div class="empty-state-icon">
+                    <i class="fa-regular fa-calendar"></i>
+                </div>
+                <h3>Aucun post programmé</h3>
+                <p>Vous n'avez pas encore programmé de publications pour les jours à venir. Commencez dès maintenant à planifier votre contenu LinkedIn pour maintenir une présence régulière et engageante.</p>
+                <a href="{{ url_for('dashboard') }}" class="btn-modern btn-primary-modern">
+                    <i class="fa-solid fa-calendar-plus"></i>
+                    Programmer mon premier post
+                </a>
+            </div>
+        {% endif %}
+    </div>
 </div>
 
-<div class="content-card">
-    <h2>Conseils de programmation</h2>
-    <div class="d-flex gap-3" style="flex-wrap:wrap;">
-        <div style="flex:1; min-width:200px; padding:20px; background-color:var(--grey-light); border-radius:8px;">
-            <div style="margin-bottom:12px; font-size:20px; color:var(--primary);">
-                <i class="fa-solid fa-lightbulb"></i>
-            </div>
-            <h3 style="font-size:16px; margin-bottom:8px;">Meilleurs moments</h3>
-            <p style="margin-bottom:0;">Publiez en semaine entre 8h et 10h du matin pour un engagement optimal.</p>
-        </div>
+<!-- Conseils de programmation -->
+<div class="content-card slide-in">
+    <div class="card-body">
+        <h2 style="color: var(--text-primary); margin-bottom: 1rem; display: flex; align-items: center; gap: 0.75rem;">
+            <i class="fas fa-lightbulb"></i>
+            Conseils de programmation
+        </h2>
+        <p style="color: var(--text-secondary); margin-bottom: 2rem;">Optimisez votre stratégie de contenu avec ces bonnes pratiques éprouvées.</p>
         
-        <div style="flex:1; min-width:200px; padding:20px; background-color:var(--grey-light); border-radius:8px;">
-            <div style="margin-bottom:12px; font-size:20px; color:var(--primary);">
-                <i class="fa-solid fa-chart-line"></i>
+        <div class="tips-grid">
+            <div class="tip-card">
+                <div class="tip-icon">
+                    <i class="fa-solid fa-clock"></i>
+                </div>
+                <h3 class="tip-title">Meilleurs moments</h3>
+                <p class="tip-description">Publiez en semaine entre 8h et 10h du matin pour un engagement optimal. Les mardis, mercredis et jeudis sont particulièrement efficaces.</p>
             </div>
-            <h3 style="font-size:16px; margin-bottom:8px;">Régularité</h3>
-            <p style="margin-bottom:0;">Maintenez un calendrier régulier de 2-3 posts par semaine pour une présence constante.</p>
-        </div>
-        
-        <div style="flex:1; min-width:200px; padding:20px; background-color:var(--grey-light); border-radius:8px;">
-            <div style="margin-bottom:12px; font-size:20px; color:var(--primary);">
-                <i class="fa-solid fa-bullhorn"></i>
+            
+            <div class="tip-card">
+                <div class="tip-icon">
+                    <i class="fa-solid fa-chart-line"></i>
+                </div>
+                <h3 class="tip-title">Régularité</h3>
+                <p class="tip-description">Maintenez un calendrier régulier de 2-3 posts par semaine pour une présence constante. La cohérence est plus importante que la quantité.</p>
             </div>
-            <h3 style="font-size:16px; margin-bottom:8px;">Événements</h3>
-            <p style="margin-bottom:0;">Planifiez vos publications autour des événements importants de votre secteur.</p>
+            
+            <div class="tip-card">
+                <div class="tip-icon">
+                    <i class="fa-solid fa-bullhorn"></i>
+                </div>
+                <h3 class="tip-title">Événements</h3>
+                <p class="tip-description">Planifiez vos publications autour des événements importants de votre secteur et des tendances actuelles pour maximiser la pertinence.</p>
+            </div>
         </div>
     </div>
 </div>
+
+<script>
+// Animation des éléments au scroll
+const observerOptions = {
+    threshold: 0.1,
+    rootMargin: '0px 0px -50px 0px'
+};
+
+const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+        if (entry.isIntersecting) {
+            entry.target.style.opacity = '1';
+            entry.target.style.transform = 'translateY(0)';
+        }
+    });
+}, observerOptions);
+
+// Observer tous les éléments avec animation
+document.querySelectorAll('.fade-in, .slide-in').forEach(el => {
+    el.style.opacity = '0';
+    el.style.transform = 'translateY(30px)';
+    el.style.transition = 'all 0.6s cubic-bezier(0.4, 0, 0.2, 1)';
+    observer.observe(el);
+});
+
+// Animation des cartes statistiques
+document.querySelectorAll('.stat-card').forEach((card, index) => {
+    card.style.opacity = '0';
+    card.style.transform = 'translateY(50px) scale(0.9)';
+    card.style.transition = 'all 0.6s cubic-bezier(0.4, 0, 0.2, 1)';
+    
+    setTimeout(() => {
+        card.style.opacity = '1';
+        card.style.transform = 'translateY(0) scale(1)';
+    }, index * 150);
+});
+
+// Animation des timeline items
+document.querySelectorAll('.timeline-item').forEach((item, index) => {
+    item.style.opacity = '0';
+    item.style.transform = 'translateX(-50px)';
+    item.style.transition = 'all 0.8s cubic-bezier(0.4, 0, 0.2, 1)';
+    
+    setTimeout(() => {
+        item.style.opacity = '1';
+        item.style.transform = 'translateX(0)';
+    }, index * 200);
+});
+
+// Animation des tip cards
+document.querySelectorAll('.tip-card').forEach((card, index) => {
+    card.style.opacity = '0';
+    card.style.transform = 'translateY(30px) scale(0.95)';
+    card.style.transition = 'all 0.6s cubic-bezier(0.4, 0, 0.2, 1)';
+    
+    setTimeout(() => {
+        card.style.opacity = '1';
+        card.style.transform = 'translateY(0) scale(1)';
+    }, index * 100);
+});
+
+// Amélioration des interactions des boutons
+document.querySelectorAll('.btn-modern, .btn-action').forEach(btn => {
+    btn.addEventListener('mouseenter', function() {
+        this.style.transform = 'translateY(-3px) scale(1.02)';
+    });
+    
+    btn.addEventListener('mouseleave', function() {
+        this.style.transform = 'translateY(0) scale(1)';
+    });
+    
+    btn.addEventListener('mousedown', function() {
+        this.style.transform = 'translateY(-1px) scale(0.98)';
+    });
+    
+    btn.addEventListener('mouseup', function() {
+        this.style.transform = 'translateY(-3px) scale(1.02)';
+    });
+});
+
+// Animation des post cards au hover
+document.querySelectorAll('.post-card').forEach(card => {
+    card.addEventListener('mouseenter', function() {
+        const icon = this.querySelector('.date-icon');
+        if (icon) {
+            icon.style.transform = 'scale(1.1) rotate(5deg)';
+        }
+    });
+    
+    card.addEventListener('mouseleave', function() {
+        const icon = this.querySelector('.date-icon');
+        if (icon) {
+            icon.style.transform = 'scale(1) rotate(0deg)';
+        }
+    });
+});
+
+// Animation des stat cards avec effet de compteur
+function animateCounters() {
+    document.querySelectorAll('.stat-number').forEach(stat => {
+        const target = parseInt(stat.textContent.replace(/[^\d]/g, ''));
+        if (isNaN(target)) return;
+        
+        let current = 0;
+        const increment = target / 60;
+        
+        const timer = setInterval(() => {
+            current += increment;
+            if (current >= target) {
+                stat.textContent = target + (stat.textContent.includes('%') ? '%' : '');
+                clearInterval(timer);
+            } else {
+                stat.textContent = Math.floor(current) + (stat.textContent.includes('%') ? '%' : '');
+            }
+        }, 16);
+    });
+}
+
+// Lancer l'animation des compteurs après un délai
+setTimeout(animateCounters, 1000);
+
+// Fonction pour créer des particules lors du clic sur les cartes
+function createParticles(element) {
+    for (let i = 0; i < 6; i++) {
+        const particle = document.createElement('div');
+        particle.style.position = 'absolute';
+        particle.style.width = '4px';
+        particle.style.height = '4px';
+        particle.style.background = 'var(--primary)';
+        particle.style.borderRadius = '50%';
+        particle.style.pointerEvents = 'none';
+        particle.style.zIndex = '1000';
+        
+        const rect = element.getBoundingClientRect();
+        particle.style.left = (rect.left + rect.width/2) + 'px';
+        particle.style.top = (rect.top + rect.height/2) + 'px';
+        
+        document.body.appendChild(particle);
+        
+        const angle = (i / 6) * Math.PI * 2;
+        const distance = 30 + Math.random() * 20;
+        const x = Math.cos(angle) * distance;
+        const y = Math.sin(angle) * distance;
+        
+        particle.animate([
+            { transform: 'translate(0, 0) scale(1)', opacity: 1 },
+            { transform: `translate(${x}px, ${y}px) scale(0)`, opacity: 0 }
+        ], {
+            duration: 600,
+            easing: 'cubic-bezier(0.4, 0, 0.2, 1)'
+        }).onfinish = () => {
+            particle.remove();
+        };
+    }
+}
+
+// Ajouter l'effet de particules aux cartes statistiques
+document.querySelectorAll('.stat-card').forEach(card => {
+    card.addEventListener('click', function() {
+        createParticles(this);
+    });
+});
+</script>
 {% endblock %}
