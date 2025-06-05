@@ -515,47 +515,111 @@
     }
     .image-preview-grid {
         display: none;
-        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-        gap: 1rem;
-        margin-top: 1.5rem;
-        margin-bottom: 1.5rem;
-        max-height: 400px;
+        grid-template-columns: repeat(auto-fit, minmax(100px, 120px)); /* Plus petit */
+        gap: 0.75rem; /* Gap réduit */
+        margin-top: 1rem;
+        margin-bottom: 1rem;
+        max-height: 250px; /* Hauteur réduite */
         overflow-y: auto;
-        padding: 1rem;
+        padding: 0.75rem;
         background: var(--soft-gray);
-        border-radius: 16px;
+        border-radius: 12px;
         border: 2px dashed var(--primary-light);
+        justify-content: center; /* Centrer les éléments */
     }
-
+    
     .image-preview-item {
         position: relative;
         background: var(--white);
-        border-radius: 12px;
+        border-radius: 8px; /* Coins moins arrondis */
         overflow: hidden;
         box-shadow: var(--shadow-soft);
         transition: all 0.3s ease;
         cursor: pointer;
-        aspect-ratio: 1;
-        min-height: 150px;
+        width: 100px; /* Largeur fixe */
+        height: 100px; /* Hauteur fixe */
     }
-
+    
     .image-preview-item:hover {
-        transform: translateY(-4px);
+        transform: translateY(-2px) scale(1.05); /* Moins d'effet */
         box-shadow: var(--shadow-medium);
     }
-
+    
     .image-preview-item img {
         width: 100%;
         height: 100%;
         object-fit: cover;
         transition: all 0.3s ease;
     }
-
+    
+    /* Badges et overlays - VERSION RÉDUITE */
+    .image-preview-item .number-badge {
+        position: absolute;
+        top: 4px;
+        left: 4px;
+        width: 18px;
+        height: 18px;
+        background: var(--primary);
+        color: white;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 10px;
+        font-weight: 600;
+        z-index: 2;
+    }
+    
+    .image-preview-item .filename {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        background: rgba(0,0,0,0.8);
+        color: white;
+        padding: 4px;
+        font-size: 9px;
+        text-align: center;
+        z-index: 2;
+        max-height: 20px;
+        overflow: hidden;
+    }
+    
+    .image-preview-item .delete-btn {
+        position: absolute;
+        top: 4px;
+        right: 4px;
+        width: 20px;
+        height: 20px;
+        border: none;
+        border-radius: 50%;
+        background: rgba(239, 68, 68, 0.9);
+        color: white;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 10px;
+        opacity: 0;
+        transition: all 0.3s ease;
+        z-index: 3;
+    }
+    
+    .image-preview-item:hover .delete-btn {
+        opacity: 1;
+    }
+    
+    /* Responsive - VERSION MOBILE */
     @media (max-width: 768px) {
         .image-preview-grid {
-            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
-            gap: 0.75rem;
-            padding: 0.75rem;
+            grid-template-columns: repeat(auto-fit, minmax(80px, 90px));
+            gap: 0.5rem;
+            padding: 0.5rem;
+        }
+        
+        .image-preview-item {
+            width: 80px;
+            height: 80px;
         }
     }
 </style>
