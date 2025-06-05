@@ -602,13 +602,15 @@
             </div>
             
             <div style="margin-bottom: 1.5rem;">
-                <label style="display: block; margin-bottom: 0.5rem; font-weight: 600; color: var(--text-primary);">Instructions personnalisées (facultatif)</label>
-                <textarea name="custom_instructions" class="textarea-modern" rows="3" placeholder="Ex: Parle de cet article mais insiste sur les dangers de l'IA au quotidien. Ajoute ton point de vue sur la régulation..."></textarea>
-                <div style="margin-top: 0.75rem; font-size: 0.9rem; color: var(--text-light); display: flex; align-items: center; gap: 0.5rem;">
-                    <i class="fa-solid fa-lightbulb"></i>
-                    Ajoutez des instructions spécifiques pour personnaliser le contenu généré.
+                <label style="display: block; margin-bottom: 0.75rem; font-weight: 600; color: var(--text-primary);">📎 Ajouter des images (max 9)</label>
+                <input type="file" name="images[]" id="images" accept="image/*" multiple class="input-modern" style="padding: 1.25rem; border-style: dashed;">
+                <div style="margin-top: 0.75rem; font-size: 0.9rem; color: var(--text-light); display: flex; align-items: center; gap: 0.5rem; padding: 0.75rem; background: var(--primary-ultra-light); border-radius: 12px; border-left: 4px solid var(--primary);">
+                    <i class="fa-solid fa-info-circle"></i>
+                    <span>Vous pouvez sélectionner jusqu'à 9 images. Formats supportés : JPEG, PNG (max 10Mo par image)</span>
                 </div>
             </div>
+            
+            <div id="image-preview" class="image-preview-grid"></div>
             
             <div style="display: flex; gap: 1rem; justify-content: flex-end;">
                 <button type="submit" name="generate_from_article" class="btn-modern btn-primary-modern">
