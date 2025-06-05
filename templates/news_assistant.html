@@ -285,9 +285,11 @@
 
     /* Grille d'articles */
     .articles-grid {
-        display: grid;
+        display: grid !important;
         grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
         gap: 2rem;
+        opacity: 1 !important;
+        visibility: visible !important;
     }
 
     .article-card {
@@ -298,6 +300,9 @@
         transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
         position: relative;
         box-shadow: var(--shadow-soft);
+        display: block !important;
+        opacity: 1 !important;
+        visibility: visible !important;
     }
 
     .article-card:hover {
@@ -411,12 +416,13 @@
         align-items: center;
         justify-content: center;
         gap: 0.5rem;
+        border: none;
+        cursor: pointer;
     }
 
     .btn-use-article {
         background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
         color: white;
-        border: none;
         box-shadow: 0 4px 15px rgba(99, 102, 241, 0.3);
     }
 
@@ -551,6 +557,32 @@
         }
     }
 
+    /* CSS pour forcer l'affichage */
+    #news-results-section {
+        display: block !important;
+        opacity: 1 !important;
+        visibility: visible !important;
+    }
+
+    .articles-grid {
+        display: grid !important;
+        opacity: 1 !important;
+        visibility: visible !important;
+    }
+
+    .article-card {
+        display: block !important;
+        opacity: 1 !important;
+        visibility: visible !important;
+    }
+
+    /* Animation de sélection */
+    .article-card.selecting {
+        transform: scale(0.95) !important;
+        border: 2px solid var(--primary) !important;
+        box-shadow: 0 0 20px rgba(99, 102, 241, 0.3) !important;
+    }
+
     /* Animations */
     .fade-in {
         animation: fadeInUp 0.6s ease-out;
@@ -633,12 +665,13 @@
             Rechercher l'actualité pour votre secteur
         </h2>
         
-        <form method="post" action="{{ url_for('news_assistant') }}">
+        <form method="get" action="{{ url_for('news_assistant') }}" id="search-form">
             <div class="search-form">
                 <div class="form-group">
                     <input type="text" name="keyword" class="form-control" 
                            placeholder="Ex: Intelligence artificielle, crypto-monnaies, télétravail..." 
-                           value="{{ keyword }}">
+                           value="{{ keyword }}"
+                           id="keyword-input">
                 </div>
                 <div class="form-group">
                     <select name="language" class="form-control">
@@ -647,9 +680,9 @@
                     </select>
                 </div>
                 <div>
-                    <button type="submit" name="search" class="btn-modern btn-primary-modern">
+                    <button type="submit" class="btn-modern btn-primary-modern" id="search-btn">
                         <i class="fa-solid fa-search"></i>
-                        Rechercher
+                        <span>Rechercher</span>
                     </button>
                 </div>
             </div>
@@ -704,7 +737,7 @@
 {% endif %}
 
 <!-- Résultats de la recherche -->
-<div class="content-card slide-in">
+<div class="content-card slide-in" id="news-results-section">
     <div class="card-body">
         <div class="results-header">
             <h3 class="results-title">
@@ -721,12 +754,12 @@
         </div>
         
         {% if news %}
-            <div class="articles-grid">
+            <div class="articles-grid" id="articles-container">
                 {% for article in news %}
-                    <div class="article-card">
+                    <div class="article-card" data-article-index="{{ loop.index0 }}">
                         <div class="article-image">
                             {% if article.urlToImage %}
-                                <img src="{{ article.urlToImage }}" alt="{{ article.title }}">
+                                <img src="{{ article.urlToImage }}" alt="{{ article.title }}" onerror="this.parentElement.innerHTML='<div class=\'article-image-placeholder\'><i class=\'fa-regular fa-image\'></i></div>'">
                             {% else %}
                                 <div class="article-image-placeholder">
                                     <i class="fa-regular fa-image"></i>
@@ -750,7 +783,7 @@
                             <p class="article-description">{{ article.description|clean_html }}</p>
                             
                             <div class="article-actions">
-                                <form method="post" action="{{ url_for('news_assistant') }}">
+                                <form method="post" action="{{ url_for('news_assistant') }}" style="margin-bottom: 0;">
                                     <input type="hidden" name="article_title" value="{{ article.title }}">
                                     <input type="hidden" name="article_description" value="{{ article.description }}">
                                     <input type="hidden" name="article_source" value="{{ article.source.name }}">
@@ -758,7 +791,7 @@
                                     <input type="hidden" name="article_date" value="{{ article.formatted_date }}">
                                     <input type="hidden" name="article_image" value="{{ article.urlToImage }}">
                                     
-                                    <button type="submit" name="select_article" class="btn-article btn-use-article">
+                                    <button type="submit" name="select_article" class="btn-article btn-use-article" onclick="selectArticle(event, {{ loop.index0 }})">
                                         <i class="fa-solid fa-pen-to-square"></i>
                                         Utiliser cet article
                                     </button>
@@ -774,7 +807,7 @@
                 {% endfor %}
             </div>
         {% else %}
-            <div class="empty-state">
+            <div class="empty-state" id="empty-news-state">
                 <div class="empty-state-icon">
                     <i class="fa-regular fa-newspaper"></i>
                 </div>
@@ -807,6 +840,126 @@ document.querySelectorAll('.fade-in, .slide-in').forEach(el => {
     el.style.transform = 'translateY(30px)';
     el.style.transition = 'all 0.6s cubic-bezier(0.4, 0, 0.2, 1)';
     observer.observe(el);
+});
+
+// JavaScript pour gérer le formulaire de recherche sans conflits
+document.addEventListener('DOMContentLoaded', function() {
+    const searchForm = document.getElementById('search-form');
+    const searchBtn = document.getElementById('search-btn');
+    const keywordInput = document.getElementById('keyword-input');
+    
+    if (searchForm) {
+        searchForm.addEventListener('submit', function(e) {
+            // Empêcher les doubles soumissions
+            if (searchBtn.disabled) {
+                e.preventDefault();
+                return;
+            }
+            
+            // Désactiver le bouton temporairement
+            searchBtn.disabled = true;
+            searchBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Recherche...';
+            
+            // Réactiver après 3 secondes au cas où
+            setTimeout(() => {
+                searchBtn.disabled = false;
+                searchBtn.innerHTML = '<i class="fa-solid fa-search"></i> <span>Rechercher</span>';
+            }, 3000);
+            
+            console.log('🔍 Recherche lancée avec:', {
+                keyword: keywordInput.value,
+                language: document.querySelector('select[name="language"]').value
+            });
+        });
+    }
+    
+    // Sélection d'article sans rechargement
+    function selectArticle(event, articleIndex) {
+        event.preventDefault();
+        
+        // Animation de sélection
+        const articleCard = document.querySelector(`[data-article-index="${articleIndex}"]`);
+        if (articleCard) {
+            articleCard.style.transform = 'scale(0.95)';
+            articleCard.style.border = '2px solid var(--primary)';
+            
+            setTimeout(() => {
+                // Soumettre le formulaire après l'animation
+                event.target.closest('form').submit();
+            }, 300);
+        }
+    }
+    
+    // Exposer la fonction globalement
+    window.selectArticle = selectArticle;
+    
+    // Empêcher la disparition lors du scroll
+    const newsSection = document.getElementById('news-results-section');
+    if (newsSection) {
+        newsSection.style.position = 'static';
+        newsSection.style.visibility = 'visible';
+        newsSection.style.opacity = '1';
+        newsSection.style.display = 'block';
+    }
+    
+    // Observer pour maintenir la visibilité
+    const visibilityObserver = new MutationObserver(function(mutations) {
+        mutations.forEach(function(mutation) {
+            if (mutation.type === 'attributes' && mutation.attributeName === 'style') {
+                const target = mutation.target;
+                if (target.id === 'news-results-section' || target.classList.contains('articles-grid')) {
+                    if (target.style.display === 'none' || target.style.opacity === '0') {
+                        target.style.display = 'block';
+                        target.style.opacity = '1';
+                        target.style.visibility = 'visible';
+                        console.log('🔧 Restauration forcée de l\'affichage des actualités');
+                    }
+                }
+            }
+        });
+    });
+    
+    // Observer les changements sur la section des news
+    if (newsSection) {
+        visibilityObserver.observe(newsSection, {
+            attributes: true,
+            childList: true,
+            subtree: true
+        });
+    }
+    
+    // Force l'affichage après chargement
+    setTimeout(() => {
+        const articlesContainer = document.getElementById('articles-container');
+        if (articlesContainer) {
+            articlesContainer.style.display = 'grid';
+            articlesContainer.style.opacity = '1';
+            articlesContainer.style.visibility = 'visible';
+            
+            // Compter et afficher les articles trouvés
+            const articleCards = articlesContainer.querySelectorAll('.article-card');
+            console.log(`📰 ${articleCards.length} articles affichés avec succès`);
+            
+            // Animation d'entrée pour chaque article
+            articleCards.forEach((card, index) => {
+                card.style.opacity = '0';
+                card.style.transform = 'translateY(30px)';
+                card.style.transition = 'all 0.5s ease';
+                
+                setTimeout(() => {
+                    card.style.opacity = '1';
+                    card.style.transform = 'translateY(0)';
+                }, index * 100);
+            });
+        }
+        
+        // Vérifier s'il y a un état vide
+        const emptyState = document.getElementById('empty-news-state');
+        if (emptyState) {
+            emptyState.style.display = 'block';
+            console.log('📭 État vide affiché - aucune actualité trouvée');
+        }
+    }, 500);
 });
 
 // Animation des cartes d'articles
@@ -870,5 +1023,64 @@ document.querySelectorAll('.article-source-badge').forEach(badge => {
         this.style.transform = 'scale(1) rotate(0deg)';
     });
 });
+
+// Protection contre la disparition des actualités
+setInterval(() => {
+    const newsSection = document.getElementById('news-results-section');
+    const articlesContainer = document.getElementById('articles-container');
+    
+    if (newsSection && newsSection.style.display === 'none') {
+        newsSection.style.display = 'block';
+        newsSection.style.opacity = '1';
+        newsSection.style.visibility = 'visible';
+        console.log('🔧 Protection automatique - actualités restaurées');
+    }
+    
+    if (articlesContainer && articlesContainer.style.display === 'none') {
+        articlesContainer.style.display = 'grid';
+        articlesContainer.style.opacity = '1';
+        articlesContainer.style.visibility = 'visible';
+        console.log('🔧 Protection automatique - conteneur d\'articles restauré');
+    }
+}, 2000);
+
+// Fonction de debug pour vérifier l'état des actualités
+window.debugNews = function() {
+    const newsSection = document.getElementById('news-results-section');
+    const articlesContainer = document.getElementById('articles-container');
+    const articleCards = document.querySelectorAll('.article-card');
+    
+    console.log('🔍 Debug des actualités:');
+    console.log('- Section news:', newsSection ? 'trouvée' : 'introuvable');
+    console.log('- Container articles:', articlesContainer ? 'trouvé' : 'introuvable');
+    console.log('- Nombre d\'articles:', articleCards.length);
+    
+    if (newsSection) {
+        console.log('- Style de la section:', {
+            display: newsSection.style.display,
+            opacity: newsSection.style.opacity,
+            visibility: newsSection.style.visibility
+        });
+    }
+    
+    if (articlesContainer) {
+        console.log('- Style du container:', {
+            display: articlesContainer.style.display,
+            opacity: articlesContainer.style.opacity,
+            visibility: articlesContainer.style.visibility
+        });
+    }
+    
+    return {
+        newsSection,
+        articlesContainer,
+        articleCount: articleCards.length
+    };
+};
+
+// Appel automatique du debug au chargement
+setTimeout(() => {
+    window.debugNews();
+}, 1000);
 </script>
 {% endblock %}
