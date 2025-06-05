@@ -850,3 +850,112 @@
         {% endif %}
     </div>
 </div>
+
+<!-- Ajoutez ceci à la fin du fichier templates/news_assistant.html, juste avant </document_content> -->
+
+<script>
+// Script pour gérer la sélection d'articles
+function selectArticle(index) {
+    console.log('Sélection article index:', index);
+    
+    // Récupérer l'élément article
+    const articleCard = document.getElementById(`article-${index}`);
+    if (!articleCard) {
+        console.error('Article non trouvé');
+        return;
+    }
+    
+    // Récupérer les données JSON de l'article
+    const articleDataScript = articleCard.querySelector('.article-data');
+    if (!articleDataScript) {
+        console.error('Données article non trouvées');
+        return;
+    }
+    
+    let articleData;
+    try {
+        articleData = JSON.parse(articleDataScript.textContent);
+    } catch (e) {
+        console.error('Erreur parsing JSON:', e);
+        return;
+    }
+    
+    // Animation de sélection
+    articleCard.classList.add('selecting');
+    
+    // Changer le texte du bouton
+    const button = document.getElementById(`btn-${index}`);
+    if (button) {
+        button.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Sélection en cours...';
+        button.disabled = true;
+    }
+    
+    // Envoyer la sélection au serveur
+    fetch('/select_article', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(articleData)
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            // Rediriger vers le dashboard
+            window.location.href = data.redirect;
+        } else {
+            console.error('Erreur:', data.error);
+            // Réinitialiser le bouton
+            if (button) {
+                button.innerHTML = '<i class="fa-solid fa-pen-to-square"></i> <span class="btn-text">Utiliser cet article</span>';
+                button.disabled = false;
+            }
+            articleCard.classList.remove('selecting');
+        }
+    })
+    .catch(error => {
+        console.error('Erreur réseau:', error);
+        // Réinitialiser le bouton
+        if (button) {
+            button.innerHTML = '<i class="fa-solid fa-pen-to-square"></i> <span class="btn-text">Utiliser cet article</span>';
+            button.disabled = false;
+        }
+        articleCard.classList.remove('selecting');
+    });
+}
+
+// Animation du bouton de recherche
+document.getElementById('search-btn')?.addEventListener('click', function() {
+    const icon = this.querySelector('i');
+    const text = this.querySelector('span');
+    
+    icon.className = 'fa-solid fa-spinner fa-spin';
+    text.textContent = 'Recherche...';
+});
+
+// Validation du formulaire
+document.getElementById('search-form')?.addEventListener('submit', function(e) {
+    const keywordInput = document.getElementById('keyword-input');
+    if (keywordInput && keywordInput.value.trim().length < 2 && keywordInput.value.trim().length > 0) {
+        e.preventDefault();
+        alert('Veuillez entrer au moins 2 caractères pour votre recherche');
+    }
+});
+
+// Animation des cartes d'articles au chargement
+document.addEventListener('DOMContentLoaded', function() {
+    const articleCards = document.querySelectorAll('.article-card');
+    articleCards.forEach((card, index) => {
+        card.style.opacity = '0';
+        card.style.transform = 'translateY(30px)';
+        card.style.transition = 'all 0.6s cubic-bezier(0.4, 0, 0.2, 1)';
+        
+        setTimeout(() => {
+            card.style.opacity = '1';
+            card.style.transform = 'translateY(0)';
+        }, index * 100);
+    });
+});
+</script>
+
+{% endblock %}
