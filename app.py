@@ -991,7 +991,7 @@ def dashboard():
                 - Secteur d'expertise: {user.secteur if user and user.secteur else "general"}
                 - Inclus 2-3 hashtags pertinents
                 - Le post doit être personnel, comme si la personne donnait son avis sur cette actualité
-                - Maximum 500 caractères
+                - Maximum 800 caractères
                 - Format adapté à LinkedIn
                 """
                 
