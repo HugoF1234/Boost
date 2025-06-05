@@ -388,104 +388,182 @@ def get_news_by_sector(sector, keywords=None, days=3, language="fr"):
     # Utiliser la fonction de cache
     return get_cached_news(search_query, language, days)
 
-
-def get_news_by_sector_actual(sector, keywords=None, days=30, language="fr"):
+def get_news_by_sector_actual(sector, keywords=None, days=7, language="fr"):
     """
-    Récupère les actualités récentes par secteur d'activité avec recherche optimisée
+    VERSION CORRIGÉE - Récupère les actualités avec meilleur debugging
     """
-    # Mapping des secteurs avec des termes plus efficaces pour l'API
+    # Mapping des secteurs avec termes plus simples
     sector_keywords = {
-        'tech': 'technologie OR informatique OR numérique',
-        'marketing': 'marketing OR publicité OR communication',
-        'finance': 'finance OR économie OR banque',
-        'sante': 'santé OR médecine OR hôpital',
-        'education': 'éducation OR école OR université',
-        'rh': 'ressources humaines OR emploi OR recrutement',
-        'consulting': 'conseil OR consulting OR entreprise',
-        'retail': 'commerce OR distribution OR consommation',
+        'tech': 'technologie',
+        'marketing': 'marketing',
+        'finance': 'finance',
+        'sante': 'santé',
+        'education': 'éducation',
+        'rh': 'emploi',
+        'consulting': 'conseil',
+        'retail': 'commerce',
     }
     
-    # Construire une requête plus efficace
-    base_query = sector_keywords.get(sector, sector)
-    
-    # Ajouter les mots-clés si présents, sinon ajouter "actualité" pour garantir des résultats
+    # Construire une requête plus simple
+    search_query = sector_keywords.get(sector, sector)
     if keywords:
-        search_query = f"{base_query} AND {keywords}"
-    else:
-        search_query = f"{base_query} AND (actualité OR news OR information)"
+        search_query = f"{keywords}"  # Utiliser directement les mots-clés
     
-    # Augmenter la période pour avoir plus d'articles (30 jours au lieu de 3)
-    # NewsAPI gratuit permet d'aller jusqu'à un mois en arrière
+    # Réduire la période pour éviter les limites
     date_from = (datetime.utcnow() - timedelta(days=days)).strftime('%Y-%m-%d')
     
-    # Préparer les paramètres de la requête
+    # Paramètres de requête simplifiés
     params = {
         'q': search_query,
         'from': date_from,
-        'sortBy': 'relevancy',  # Trier par pertinence plutôt que date pour avoir des résultats de qualité
+        'sortBy': 'publishedAt',  # Trier par date
         'language': language,
         'apiKey': NEWS_API_KEY,
-        'pageSize': 100  # Demander le maximum d'articles (100 est la limite)
+        'pageSize': 50  # Réduire pour éviter les limites
     }
     
     # Log détaillé pour le débogage
-    logger.info(f"Requête NewsAPI: {NEWS_API_URL}")
-    logger.info(f"Paramètres: q={search_query}, lang={language}, from={date_from}")
+    logger.info(f"🔍 REQUÊTE NewsAPI:")
+    logger.info(f"   URL: {NEWS_API_URL}")
+    logger.info(f"   Query: {search_query}")
+    logger.info(f"   From: {date_from}")
+    logger.info(f"   Language: {language}")
+    logger.info(f"   PageSize: {params['pageSize']}")
     
     try:
-        # Appel à l'API avec un timeout étendu
-        response = requests.get(NEWS_API_URL, params=params, timeout=15)
+        # Appel à l'API avec timeout
+        response = requests.get(NEWS_API_URL, params=params, timeout=10)
         
-        # Log de la réponse pour débogage
-        logger.info(f"Code de statut: {response.status_code}")
+        # Log de la réponse complète
+        logger.info(f"📡 RÉPONSE NewsAPI:")
+        logger.info(f"   Status Code: {response.status_code}")
+        logger.info(f"   Headers: {dict(response.headers)}")
         
         if response.status_code == 200:
             data = response.json()
             total_results = data.get('totalResults', 0)
             articles = data.get('articles', [])
             
-            logger.info(f"Résultats totaux: {total_results}, Articles retournés: {len(articles)}")
+            logger.info(f"✅ SUCCÈS:")
+            logger.info(f"   Total Results: {total_results}")
+            logger.info(f"   Articles retournés: {len(articles)}")
             
-            # Filtrer les articles sans contenu
+            # Debug des premiers articles
+            for i, article in enumerate(articles[:3]):
+                logger.info(f"   Article {i+1}: {article.get('title', 'No title')[:50]}...")
+            
+            # Filtrer et formater les articles
             valid_articles = []
             for article in articles:
-                # Vérifier que l'article a du contenu
                 if article.get('title') and article.get('description'):
                     try:
-                        # Formater la date
                         date_str = article.get('publishedAt', '')
-                        date_obj = datetime.strptime(date_str, '%Y-%m-%dT%H:%M:%SZ')
-                        article['formatted_date'] = date_obj.strftime('%d/%m/%Y')
+                        if date_str:
+                            date_obj = datetime.strptime(date_str, '%Y-%m-%dT%H:%M:%SZ')
+                            article['formatted_date'] = date_obj.strftime('%d/%m/%Y')
+                        else:
+                            article['formatted_date'] = 'Date inconnue'
                     except:
                         article['formatted_date'] = 'Date inconnue'
                     
                     valid_articles.append(article)
             
-            # Log des articles valides
-            logger.info(f"Articles valides après filtrage: {len(valid_articles)}")
-            
+            logger.info(f"   Articles valides: {len(valid_articles)}")
             return valid_articles
-        elif response.status_code == 401:
-            error_text = response.json().get('message', 'Erreur d\'authentification')
-            logger.error(f"Erreur 401: {error_text}")
-            raise Exception(f"Erreur d'API: {error_text}")
+            
         elif response.status_code == 429:
-            error_text = response.json().get('message', 'Limite de requêtes dépassée')
-            logger.error(f"Erreur 429: {error_text}")
-            raise Exception(f"Limite d'API atteinte: {error_text}")
+            logger.error("🚫 ERREUR 429: Limite de requêtes dépassée")
+            logger.error("   Attendez quelques minutes avant de réessayer")
+            raise Exception("Limite d'API atteinte. Réessayez dans quelques minutes.")
+            
+        elif response.status_code == 401:
+            logger.error("🚫 ERREUR 401: Clé API invalide")
+            logger.error(f"   Clé utilisée: {NEWS_API_KEY[:10]}...")
+            raise Exception("Clé API NewsAPI invalide")
+            
         else:
             error_text = response.text
-            logger.error(f"Erreur API {response.status_code}: {error_text}")
+            logger.error(f"🚫 ERREUR API {response.status_code}: {error_text}")
             raise Exception(f"Erreur de l'API NewsAPI ({response.status_code})")
+            
     except requests.exceptions.Timeout:
-        logger.error("Timeout lors de la connexion à NewsAPI")
+        logger.error("⏱️ TIMEOUT: L'API ne répond pas")
         raise Exception("L'API ne répond pas - délai d'attente dépassé")
     except requests.exceptions.ConnectionError:
-        logger.error("Problème de connexion réseau pour NewsAPI")
-        raise Exception("Impossible de se connecter à l'API - vérifiez votre connexion")
+        logger.error("🌐 ERREUR CONNEXION: Impossible de joindre l'API")
+        raise Exception("Impossible de se connecter à l'API")
     except Exception as e:
-        logger.error(f"Exception: {str(e)}")
+        logger.error(f"❌ EXCEPTION: {str(e)}")
         raise
+
+@app.route("/test-news")
+def test_news():
+    """Route de test pour débugger les actualités"""
+    try:
+        # Test avec une requête simple
+        test_articles = get_news_by_sector_actual("tech", "intelligence artificielle", days=7, language="fr")
+        
+        html_debug = f"""
+        <h1>🔍 Test News API - Debug</h1>
+        <h2>Résultats trouvés: {len(test_articles)}</h2>
+        
+        <h3>📊 Informations de debug:</h3>
+        <ul>
+            <li><strong>Clé API:</strong> {NEWS_API_KEY[:15]}...</li>
+            <li><strong>URL API:</strong> {NEWS_API_URL}</li>
+            <li><strong>Secteur testé:</strong> tech</li>
+            <li><strong>Mot-clé:</strong> intelligence artificielle</li>
+        </ul>
+        
+        <h3>📰 Articles trouvés:</h3>
+        """
+        
+        for i, article in enumerate(test_articles[:5]):
+            html_debug += f"""
+            <div style="border: 1px solid #ccc; padding: 15px; margin: 10px 0; border-radius: 8px;">
+                <h4>{i+1}. {article.get('title', 'No title')}</h4>
+                <p><strong>Source:</strong> {article.get('source', {}).get('name', 'Unknown')}</p>
+                <p><strong>Description:</strong> {article.get('description', 'No description')[:200]}...</p>
+                <p><strong>Date:</strong> {article.get('formatted_date', 'Unknown')}</p>
+                <p><strong>URL:</strong> <a href="{article.get('url', '#')}" target="_blank">Lire l'article</a></p>
+            </div>
+            """
+        
+        if not test_articles:
+            html_debug += """
+            <div style="background: #fee; padding: 20px; border-radius: 8px; margin: 20px 0;">
+                <h3>❌ Aucun article trouvé</h3>
+                <p>Causes possibles:</p>
+                <ul>
+                    <li>Clé API NewsAPI expirée ou invalide</li>
+                    <li>Limite de requêtes atteinte (429)</li>
+                    <li>Aucun article disponible pour ces critères</li>
+                    <li>Problème de connexion réseau</li>
+                </ul>
+                <p><strong>Action recommandée:</strong> Vérifiez les logs serveur pour plus de détails.</p>
+            </div>
+            """
+        
+        html_debug += '<p><a href="/news_assistant">← Retour aux actualités</a></p>'
+        return html_debug
+        
+    except Exception as e:
+        return f"""
+        <h1>❌ Erreur lors du test News API</h1>
+        <div style="background: #fee; padding: 20px; border-radius: 8px;">
+            <h3>Erreur détectée:</h3>
+            <p><strong>{str(e)}</strong></p>
+            
+            <h3>Actions à effectuer:</h3>
+            <ol>
+                <li>Vérifiez votre clé API NewsAPI sur <a href="https://newsapi.org/account" target="_blank">newsapi.org</a></li>
+                <li>Assurez-vous que la clé est bien définie dans vos variables d'environnement</li>
+                <li>Vérifiez que vous n'avez pas dépassé la limite de 100 requêtes/jour (plan gratuit)</li>
+                <li>Essayez avec d'autres mots-clés plus simples</li>
+            </ol>
+        </div>
+        <p><a href="/news_assistant">← Retour aux actualités</a></p>
+        """
 
 @app.route("/search_linkedin_users", methods=["POST"])
 def search_linkedin_users():
