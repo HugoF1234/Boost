@@ -916,7 +916,103 @@ def find_hashtags(text):
     hashtag_pattern = r'#(\w+)'
     hashtags = re.findall(hashtag_pattern, text)
     return ['#' + tag for tag in hashtags]
+
+@app.route("/select_article", methods=["POST"])
+def select_article():
+    """Route dédiée à la sélection d'articles"""
+    if 'profile' not in session:
+        return jsonify({'error': 'Non authentifié'}), 401
     
+    try:
+        # Récupérer les données JSON de l'article
+        article_data = request.get_json()
+        
+        if not article_data:
+            # Fallback : essayer de récupérer depuis le formulaire
+            article_data = {
+                'title': request.form.get('title', ''),
+                'description': request.form.get('description', ''),
+                'source': {'name': request.form.get('source', '')},
+                'url': request.form.get('url', ''),
+                'formatted_date': request.form.get('date', ''),
+                'urlToImage': request.form.get('image', '')
+            }
+        
+        logger.info(f"Article sélectionné: {article_data.get('title', 'Sans titre')}")
+        
+        # Valider les données minimales
+        if not article_data.get('title') or not article_data.get('description'):
+            return jsonify({'error': 'Données d\'article incomplètes'}), 400
+        
+        # Stocker dans la session
+        session['selected_article'] = article_data
+        session['article_success'] = True
+        
+        logger.info("Article stocké avec succès dans la session")
+        
+        return jsonify({
+            'success': True,
+            'message': 'Article sélectionné avec succès',
+            'redirect': url_for('dashboard')
+        })
+        
+    except Exception as e:
+        logger.error(f"Erreur lors de la sélection: {str(e)}")
+        return jsonify({'error': str(e)}), 500
+
+@app.route("/debug_articles")
+def debug_articles():
+    """Route de débogage pour tester le système d'articles"""
+    if 'profile' not in session:
+        return "Non connecté - <a href='/'>Se connecter</a>"
+    
+    debug_info = {
+        'session_keys': list(session.keys()),
+        'selected_article_exists': 'selected_article' in session,
+        'selected_article_data': session.get('selected_article', 'Aucun'),
+        'article_success': session.get('article_success', False),
+        'profile_sub': session.get('profile', {}).get('sub', 'Non défini')
+    }
+    
+    # Test de création d'un article factice
+    test_article = {
+        'title': 'Article de test - Intelligence Artificielle',
+        'description': 'Ceci est un article de test pour vérifier le système de sélection d\'articles.',
+        'source': {'name': 'Test Source'},
+        'url': 'https://example.com/test-article',
+        'formatted_date': '01/01/2025',
+        'urlToImage': ''
+    }
+    
+    # Si on ajoute ?set_test=1 à l'URL, on met l'article de test en session
+    if request.args.get('set_test') == '1':
+        session['selected_article'] = test_article
+        session['article_success'] = True
+        debug_info['test_article_set'] = True
+    
+    # Si on ajoute ?clear=1 à l'URL, on efface tout
+    if request.args.get('clear') == '1':
+        session.pop('selected_article', None)
+        session.pop('article_success', None)
+        debug_info['session_cleared'] = True
+    
+    return f"""
+    <!DOCTYPE html>
+    <html>
+    <head><title>Debug Articles</title></head>
+    <body style="font-family: Arial; margin: 20px;">
+        <h1>🔍 Debug Articles</h1>
+        <pre>{debug_info}</pre>
+        <p>
+            <a href="?set_test=1" style="margin: 5px; padding: 8px; background: green; color: white; text-decoration: none;">Test Article</a>
+            <a href="?clear=1" style="margin: 5px; padding: 8px; background: red; color: white; text-decoration: none;">Clear Session</a>
+            <a href="/dashboard" style="margin: 5px; padding: 8px; background: blue; color: white; text-decoration: none;">Dashboard</a>
+            <a href="/news_assistant" style="margin: 5px; padding: 8px; background: purple; color: white; text-decoration: none;">News</a>
+        </p>
+    </body>
+    </html>
+    """
+
 @app.route("/dashboard", methods=["GET", "POST"])
 def dashboard():
     if 'profile' not in session:
