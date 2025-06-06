@@ -89,6 +89,80 @@ db = SQLAlchemy(app)
 # -----------------------
 # MODÈLES SQLALCHEMY
 # -----------------------
+class LocalUser(db.Model):
+    __tablename__ = 'local_users'
+    id = db.Column(db.Integer, primary_key=True)
+    email = db.Column(db.String(120), unique=True, nullable=False)
+    password_hash = db.Column(db.String(255), nullable=False)
+    first_name = db.Column(db.String(50), nullable=False)
+    last_name = db.Column(db.String(50), nullable=False)
+    company = db.Column(db.String(120))
+    job_title = db.Column(db.String(120))
+    is_active = db.Column(db.Boolean, default=True)
+    is_verified = db.Column(db.Boolean, default=False)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    last_login = db.Column(db.DateTime)
+    login_attempts = db.Column(db.Integer, default=0)
+    locked_until = db.Column(db.DateTime)
+    
+    def set_password(self, password):
+        self.password_hash = generate_password_hash(password)
+    
+    def check_password(self, password):
+        return check_password_hash(self.password_hash, password)
+    
+    def is_locked(self):
+        if self.locked_until:
+            return datetime.utcnow() < self.locked_until
+        return False
+    
+    def lock_account(self, minutes=15):
+        self.locked_until = datetime.utcnow() + timedelta(minutes=minutes)
+        db.session.commit()
+    
+    def unlock_account(self):
+        self.login_attempts = 0
+        self.locked_until = None
+        db.session.commit()
+    
+    @property
+    def full_name(self):
+        return f"{self.first_name} {self.last_name}"
+
+# Fonctions utilitaires
+def is_valid_email(email):
+    pattern = r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$'
+    return re.match(pattern, email) is not None
+
+def is_strong_password(password):
+    """Vérifier que le mot de passe est suffisamment fort"""
+    if len(password) < 8:
+        return False, "Le mot de passe doit contenir au moins 8 caractères"
+    
+    if not re.search(r'[A-Z]', password):
+        return False, "Le mot de passe doit contenir au moins une majuscule"
+    
+    if not re.search(r'[a-z]', password):
+        return False, "Le mot de passe doit contenir au moins une minuscule"
+    
+    if not re.search(r'[0-9]', password):
+        return False, "Le mot de passe doit contenir au moins un chiffre"
+    
+    if not re.search(r'[!@#$%^&*(),.?\":{}|<>]', password):
+        return False, "Le mot de passe doit contenir au moins un caractère spécial"
+    
+    return True, "Mot de passe valide"
+
+# Décorateur pour vérifier l'authentification
+def login_required(f):
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        if 'user_id' not in session:
+            return redirect(url_for('signin'))
+        return f(*args, **kwargs)
+    return decorated_function
+
+
 class User(db.Model):
     __tablename__ = 'users'  # Nom explicite pour éviter les conflits avec mot-clé SQL
     id = db.Column(db.Integer, primary_key=True)
@@ -131,21 +205,9 @@ def init_db():
             existing_tables = inspector.get_table_names()
             logger.info(f"Tables existantes après création: {existing_tables}")
             
-            # Vérifier spécifiquement les tables users et posts
-            if 'users' in existing_tables:
-                logger.info("Table 'users' existe")
-            else:
-                logger.warning("Table 'users' n'existe pas malgré la tentative de création")
-                
-            if 'posts' in existing_tables:
-                logger.info("Table 'posts' existe")
-            else:
-                logger.warning("Table 'posts' n'existe pas malgré la tentative de création")
-        
         except Exception as e:
             logger.error(f"Erreur lors de l'initialisation de la base de données: {str(e)}")
             raise
-
 # Initialiser la base de données au démarrage
 init_db()
 
@@ -834,7 +896,140 @@ def news_assistant():
     
 @app.route("/")
 def index():
-    session.clear()
+    # Si déjà connecté, rediriger vers LinkedIn
+    if 'user_id' in session:
+        return redirect(url_for('linkedin_auth'))
+    
+    return render_template("index_auth.html")
+
+@app.route("/signin", methods=["GET", "POST"])
+def signin():
+    if 'user_id' in session:
+        return redirect(url_for('linkedin_auth'))
+    
+    if request.method == "POST":
+        email = request.form.get("email", "").strip().lower()
+        password = request.form.get("password", "")
+        
+        if not email or not password:
+            return render_template("signin.html", error="Veuillez remplir tous les champs")
+        
+        if not is_valid_email(email):
+            return render_template("signin.html", error="Format d'email invalide")
+        
+        # Rechercher l'utilisateur
+        user = LocalUser.query.filter_by(email=email).first()
+        
+        if not user:
+            return render_template("signin.html", error="Email ou mot de passe incorrect")
+        
+        # Vérifier si le compte est verrouillé
+        if user.is_locked():
+            minutes_left = int((user.locked_until - datetime.utcnow()).total_seconds() / 60)
+            return render_template("signin.html", error=f"Compte verrouillé. Réessayez dans {minutes_left} minutes")
+        
+        # Vérifier le mot de passe
+        if not user.check_password(password):
+            # Incrémenter les tentatives échouées
+            user.login_attempts += 1
+            if user.login_attempts >= 5:
+                user.lock_account()
+                db.session.commit()
+                return render_template("signin.html", error="Trop de tentatives échouées. Compte verrouillé pour 15 minutes")
+            else:
+                db.session.commit()
+                return render_template("signin.html", error="Email ou mot de passe incorrect")
+        
+        # Connexion réussie
+        user.login_attempts = 0
+        user.last_login = datetime.utcnow()
+        user.locked_until = None
+        db.session.commit()
+        
+        session['user_id'] = user.id
+        session['user_email'] = user.email
+        session['user_name'] = user.full_name
+        
+        logger.info(f"Connexion réussie pour: {email}")
+        return redirect(url_for('linkedin_auth'))
+    
+    return render_template("signin.html")
+
+# Route Sign Up (Inscription)
+@app.route("/signup", methods=["GET", "POST"])
+def signup():
+    if 'user_id' in session:
+        return redirect(url_for('linkedin_auth'))
+    
+    if request.method == "POST":
+        # Récupérer les données du formulaire
+        email = request.form.get("email", "").strip().lower()
+        password = request.form.get("password", "")
+        confirm_password = request.form.get("confirm_password", "")
+        first_name = request.form.get("first_name", "").strip()
+        last_name = request.form.get("last_name", "").strip()
+        company = request.form.get("company", "").strip()
+        job_title = request.form.get("job_title", "").strip()
+        
+        # Validations
+        if not all([email, password, confirm_password, first_name, last_name]):
+            return render_template("signup.html", error="Veuillez remplir tous les champs obligatoires")
+        
+        if not is_valid_email(email):
+            return render_template("signup.html", error="Format d'email invalide")
+        
+        if password != confirm_password:
+            return render_template("signup.html", error="Les mots de passe ne correspondent pas")
+        
+        is_valid, password_message = is_strong_password(password)
+        if not is_valid:
+            return render_template("signup.html", error=password_message)
+        
+        # Vérifier si l'email existe déjà
+        if LocalUser.query.filter_by(email=email).first():
+            return render_template("signup.html", error="Un compte avec cet email existe déjà")
+        
+        try:
+            # Créer le nouveau utilisateur
+            user = LocalUser(
+                email=email,
+                first_name=first_name,
+                last_name=last_name,
+                company=company,
+                job_title=job_title
+            )
+            user.set_password(password)
+            
+            db.session.add(user)
+            db.session.commit()
+            
+            # Connexion automatique après inscription
+            session['user_id'] = user.id
+            session['user_email'] = user.email
+            session['user_name'] = user.full_name
+            
+            logger.info(f"Nouveau compte créé: {email}")
+            return redirect(url_for('welcome'))
+            
+        except Exception as e:
+            db.session.rollback()
+            logger.error(f"Erreur lors de la création du compte: {str(e)}")
+            return render_template("signup.html", error="Erreur lors de la création du compte")
+    
+    return render_template("signup.html")
+
+# Route de bienvenue après inscription
+@app.route("/welcome")
+@login_required
+def welcome():
+    user_id = session.get('user_id')
+    user = LocalUser.query.get(user_id)
+    return render_template("welcome.html", user=user)
+
+# Route vers LinkedIn (protégée)
+@app.route("/linkedin_auth")
+@login_required
+def linkedin_auth():
     params = {
         "response_type": "code",
         "client_id": CLIENT_ID,
@@ -845,6 +1040,85 @@ def index():
     }
     auth_url = f"{LINKEDIN_AUTH_URL}?{urlencode(params)}"
     return redirect(auth_url)
+
+
+@app.route("/api/check_email", methods=["POST"])
+def check_email():
+    email = request.json.get('email', '').strip().lower()
+    
+    if not is_valid_email(email):
+        return jsonify({'available': False, 'message': 'Format d\'email invalide'})
+    
+    user = LocalUser.query.filter_by(email=email).first()
+    if user:
+        return jsonify({'available': False, 'message': 'Cet email est déjà utilisé'})
+    
+    return jsonify({'available': True, 'message': 'Email disponible'})
+
+# Route de profil utilisateur
+@app.route("/profile")
+@login_required
+def profile():
+    user_id = session.get('user_id')
+    user = LocalUser.query.get(user_id)
+    return render_template("user_profile.html", user=user)
+
+# Route pour mettre à jour le profil
+@app.route("/profile/update", methods=["POST"])
+@login_required
+def update_profile():
+    user_id = session.get('user_id')
+    user = LocalUser.query.get(user_id)
+    
+    user.first_name = request.form.get("first_name", "").strip()
+    user.last_name = request.form.get("last_name", "").strip()
+    user.company = request.form.get("company", "").strip()
+    user.job_title = request.form.get("job_title", "").strip()
+    
+    try:
+        db.session.commit()
+        session['user_name'] = user.full_name
+        return redirect(url_for('profile'))
+    except Exception as e:
+        db.session.rollback()
+        return render_template("user_profile.html", user=user, error="Erreur lors de la mise à jour")
+
+# Route de déconnexion
+@app.route("/logout")
+def logout():
+    user_email = session.get('user_email')
+    session.clear()
+    
+    if user_email:
+        logger.info(f"Déconnexion de: {user_email}")
+    
+    resp = make_response(redirect("/"))
+    resp.set_cookie('linkedin_session', '', expires=0)
+    resp.headers["Cache-Control"] = "no-cache, no-store, must-revalidate"
+    resp.headers["Pragma"] = "no-cache"
+    resp.headers["Expires"] = "0"
+    return resp
+
+# Route mot de passe oublié
+@app.route("/forgot_password", methods=["GET", "POST"])
+def forgot_password():
+    if request.method == "POST":
+        email = request.form.get("email", "").strip().lower()
+        
+        if not email or not is_valid_email(email):
+            return render_template("forgot_password.html", error="Veuillez entrer une adresse email valide")
+        
+        user = LocalUser.query.filter_by(email=email).first()
+        if user:
+            # En production, vous enverriez un email ici
+            logger.info(f"Demande de réinitialisation de mot de passe pour: {email}")
+            return render_template("forgot_password.html", success="Si cet email existe, vous recevrez les instructions de réinitialisation")
+        else:
+            # Ne pas révéler si l'email existe ou non
+            return render_template("forgot_password.html", success="Si cet email existe, vous recevrez les instructions de réinitialisation")
+    
+    return render_template("forgot_password.html")
+
 
 @app.route("/callback")
 def callback():
