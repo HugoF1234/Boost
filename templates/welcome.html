@@ -1,0 +1,618 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LinkedBoost - Bienvenue</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #6366f1;
+            --primary-light: #a5b4fc;
+            --primary-ultra-light: #e0e7ff;
+            --secondary: #f8fafc;
+            --accent: #10b981;
+            --accent-light: #6ee7b7;
+            --warm: #fbbf24;
+            --warm-light: #fde68a;
+            --soft-gray: #f1f5f9;
+            --text-primary: #1e293b;
+            --text-secondary: #64748b;
+            --text-light: #94a3b8;
+            --white: #ffffff;
+            --glass: rgba(255, 255, 255, 0.25);
+            --glass-border: rgba(255, 255, 255, 0.3);
+            --shadow-soft: 0 4px 20px rgba(99, 102, 241, 0.1);
+            --shadow-medium: 0 8px 30px rgba(99, 102, 241, 0.15);
+            --shadow-strong: 0 20px 40px rgba(0, 0, 0, 0.1);
+            --success: #10b981;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 50%, var(--accent-light) 100%);
+            color: var(--text-primary);
+            line-height: 1.6;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="sparkles" width="20" height="20" patternUnits="userSpaceOnUse"><circle cx="5" cy="5" r="1" fill="%23ffffff" opacity="0.1"><animate attributeName="opacity" values="0.1;0.3;0.1" dur="3s" repeatCount="indefinite"/></circle><circle cx="15" cy="15" r="0.5" fill="%23ffffff" opacity="0.2"><animate attributeName="opacity" values="0.2;0.5;0.2" dur="2s" repeatCount="indefinite" begin="1s"/></circle></pattern></defs><rect width="100" height="100" fill="url(%23sparkles)"/></svg>') repeat;
+            z-index: 1;
+        }
+        
+        .welcome-container {
+            position: relative;
+            z-index: 2;
+            width: 100%;
+            max-width: 600px;
+            margin: 2rem;
+        }
+        
+        .welcome-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border-radius: 24px;
+            box-shadow: var(--shadow-strong);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            overflow: hidden;
+            text-align: center;
+            animation: slideIn 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(50px) scale(0.9);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+        
+        .welcome-header {
+            padding: 4rem 3rem 2rem;
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.1) 0%, rgba(99, 102, 241, 0.05) 100%);
+            border-bottom: 1px solid rgba(99, 102, 241, 0.1);
+            position: relative;
+        }
+
+        .welcome-header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 150px;
+            height: 150px;
+            background: radial-gradient(circle, rgba(16, 185, 129, 0.1) 0%, transparent 70%);
+            border-radius: 50%;
+            transform: translate(30%, -30%);
+        }
+        
+        .success-icon {
+            width: 100px;
+            height: 100px;
+            background: linear-gradient(135deg, var(--success) 0%, var(--accent-light) 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3rem;
+            color: white;
+            margin: 0 auto 2rem;
+            box-shadow: var(--shadow-medium);
+            position: relative;
+            z-index: 2;
+            animation: bounceIn 1s ease-out 0.5s both;
+        }
+
+        @keyframes bounceIn {
+            0% {
+                opacity: 0;
+                transform: scale(0.3);
+            }
+            50% {
+                opacity: 1;
+                transform: scale(1.1);
+            }
+            100% {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+        
+        .welcome-title {
+            font-size: 2.5rem;
+            font-weight: 800;
+            color: var(--text-primary);
+            margin-bottom: 1rem;
+            position: relative;
+            z-index: 2;
+            animation: fadeInUp 0.8s ease-out 0.2s both;
+        }
+        
+        .welcome-subtitle {
+            font-size: 1.2rem;
+            color: var(--text-secondary);
+            margin-bottom: 1rem;
+            position: relative;
+            z-index: 2;
+            animation: fadeInUp 0.8s ease-out 0.4s both;
+        }
+
+        .user-info {
+            display: inline-flex;
+            align-items: center;
+            gap: 1rem;
+            background: rgba(255, 255, 255, 0.8);
+            padding: 1rem 2rem;
+            border-radius: 20px;
+            border: 1px solid var(--primary-light);
+            margin-top: 1rem;
+            position: relative;
+            z-index: 2;
+            animation: fadeInUp 0.8s ease-out 0.6s both;
+        }
+
+        .user-avatar {
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.5rem;
+            font-weight: 700;
+        }
+
+        .user-details h3 {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 0.25rem;
+        }
+
+        .user-details p {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+        }
+        
+        .welcome-body {
+            padding: 3rem;
+        }
+
+        .steps-container {
+            margin-bottom: 3rem;
+        }
+
+        .steps-title {
+            font-size: 1.4rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 2rem;
+            animation: fadeInUp 0.8s ease-out 0.8s both;
+        }
+
+        .steps-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+
+        .step-item {
+            text-align: center;
+            animation: fadeInUp 0.8s ease-out both;
+        }
+
+        .step-item:nth-child(1) { animation-delay: 1s; }
+        .step-item:nth-child(2) { animation-delay: 1.2s; }
+        .step-item:nth-child(3) { animation-delay: 1.4s; }
+
+        .step-icon {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, var(--primary-ultra-light) 0%, rgba(16, 185, 129, 0.1) 100%);
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            color: var(--primary);
+            margin: 0 auto 1rem;
+            border: 2px solid var(--primary-light);
+            transition: all 0.3s ease;
+        }
+
+        .step-item:hover .step-icon {
+            transform: scale(1.1) rotate(5deg);
+            background: var(--primary);
+            color: white;
+        }
+
+        .step-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 0.5rem;
+        }
+
+        .step-description {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            line-height: 1.5;
+        }
+        
+        .action-buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            animation: fadeInUp 0.8s ease-out 1.6s both;
+        }
+        
+        .btn-primary {
+            padding: 1.25rem 2rem;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+            color: white;
+            border: none;
+            border-radius: 16px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.75rem;
+            text-decoration: none;
+            box-shadow: 0 4px 20px rgba(99, 102, 241, 0.3);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-primary::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+            transition: all 0.6s ease;
+        }
+
+        .btn-primary:hover::before {
+            left: 100%;
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-3px) scale(1.02);
+            box-shadow: 0 8px 30px rgba(99, 102, 241, 0.4);
+        }
+
+        .btn-secondary {
+            padding: 1rem 2rem;
+            background: rgba(255, 255, 255, 0.8);
+            color: var(--primary);
+            border: 2px solid var(--primary);
+            border-radius: 16px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            text-decoration: none;
+        }
+
+        .btn-secondary:hover {
+            background: var(--primary);
+            color: white;
+            transform: translateY(-2px);
+        }
+
+        .welcome-footer {
+            padding: 2rem 3rem;
+            background: rgba(248, 250, 252, 0.5);
+            border-top: 1px solid rgba(99, 102, 241, 0.1);
+            font-size: 0.9rem;
+            color: var(--text-light);
+            animation: fadeInUp 0.8s ease-out 1.8s both;
+        }
+
+        .tips-section {
+            background: linear-gradient(135deg, var(--primary-ultra-light) 0%, rgba(16, 185, 129, 0.05) 100%);
+            padding: 2rem;
+            border-radius: 16px;
+            margin-bottom: 2rem;
+            border: 1px solid var(--primary-light);
+            animation: fadeInUp 0.8s ease-out 1.4s both;
+        }
+
+        .tips-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: var(--primary);
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .tips-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .tips-list li {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            margin-bottom: 0.75rem;
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+
+        .tips-list li i {
+            color: var(--success);
+            width: 16px;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .welcome-container {
+                margin: 1rem;
+            }
+            
+            .welcome-header, .welcome-body {
+                padding: 2rem 1.5rem;
+            }
+            
+            .welcome-title {
+                font-size: 2rem;
+            }
+
+            .steps-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .user-info {
+                flex-direction: column;
+                text-align: center;
+            }
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Confettis animation */
+        .confetti {
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            background: var(--primary);
+            animation: confetti-fall 3s linear infinite;
+        }
+
+        .confetti:nth-child(odd) {
+            background: var(--accent);
+            animation-duration: 2.5s;
+        }
+
+        .confetti:nth-child(3n) {
+            background: var(--warm);
+            animation-duration: 3.5s;
+        }
+
+        @keyframes confetti-fall {
+            0% {
+                transform: translateY(-100vh) rotate(0deg);
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(100vh) rotate(720deg);
+                opacity: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="welcome-container">
+        <div class="welcome-card">
+            <div class="welcome-header">
+                <div class="success-icon">
+                    <i class="fas fa-check"></i>
+                </div>
+                <h1 class="welcome-title">Félicitations ! 🎉</h1>
+                <p class="welcome-subtitle">Votre compte LinkedBoost a été créé avec succès</p>
+                <div class="user-info">
+                    <div class="user-avatar">
+                        {{ user.first_name[0]|upper if user.first_name else 'U' }}
+                    </div>
+                    <div class="user-details">
+                        <h3>{{ user.full_name }}</h3>
+                        <p>{{ user.email }}</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="welcome-body">
+                <div class="tips-section">
+                    <h3 class="tips-title">
+                        <i class="fas fa-lightbulb"></i>
+                        Conseils pour bien démarrer
+                    </h3>
+                    <ul class="tips-list">
+                        <li>
+                            <i class="fas fa-check-circle"></i>
+                            <span>Connectez votre compte LinkedIn pour commencer</span>
+                        </li>
+                        <li>
+                            <i class="fas fa-check-circle"></i>
+                            <span>Configurez votre secteur d'activité dans votre profil</span>
+                        </li>
+                        <li>
+                            <i class="fas fa-check-circle"></i>
+                            <span>Explorez l'assistant d'actualités pour vos premiers posts</span>
+                        </li>
+                        <li>
+                            <i class="fas fa-check-circle"></i>
+                            <span>Programmez vos publications pour une présence régulière</span>
+                        </li>
+                    </ul>
+                </div>
+
+                <div class="steps-container">
+                    <h2 class="steps-title">Prochaines étapes</h2>
+                    <div class="steps-grid">
+                        <div class="step-item">
+                            <div class="step-icon">
+                                <i class="fab fa-linkedin-in"></i>
+                            </div>
+                            <h3 class="step-title">1. Connecter LinkedIn</h3>
+                            <p class="step-description">Liez votre compte LinkedIn pour commencer à publier du contenu</p>
+                        </div>
+                        
+                        <div class="step-item">
+                            <div class="step-icon">
+                                <i class="fas fa-user-cog"></i>
+                            </div>
+                            <h3 class="step-title">2. Configurer le profil</h3>
+                            <p class="step-description">Personnalisez vos préférences et centres d'intérêt</p>
+                        </div>
+                        
+                        <div class="step-item">
+                            <div class="step-icon">
+                                <i class="fas fa-rocket"></i>
+                            </div>
+                            <h3 class="step-title">3. Premier post</h3>
+                            <p class="step-description">Créez votre premier post avec l'IA</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="action-buttons">
+                    <a href="{{ url_for('linkedin_auth') }}" class="btn-primary">
+                        <i class="fab fa-linkedin-in"></i>
+                        <span>Connecter mon compte LinkedIn</span>
+                    </a>
+                    
+                    <a href="{{ url_for('profile') }}" class="btn-secondary">
+                        <i class="fas fa-user-cog"></i>
+                        <span>Configurer mon profil plus tard</span>
+                    </a>
+                </div>
+            </div>
+            
+            <div class="welcome-footer">
+                <p>
+                    <i class="fas fa-shield-alt"></i>
+                    Vos données sont sécurisées et ne seront jamais partagées avec des tiers.
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Animation d'entrée
+        document.addEventListener('DOMContentLoaded', function() {
+            // Créer des confettis
+            createConfetti();
+            
+            // Animation des boutons
+            const buttons = document.querySelectorAll('.btn-primary, .btn-secondary');
+            buttons.forEach(btn => {
+                btn.addEventListener('mouseenter', function() {
+                    this.style.transform = 'translateY(-5px) scale(1.02)';
+                });
+                
+                btn.addEventListener('mouseleave', function() {
+                    this.style.transform = 'translateY(0) scale(1)';
+                });
+            });
+
+            // Animation de l'icône de succès
+            const successIcon = document.querySelector('.success-icon');
+            successIcon.addEventListener('click', function() {
+                this.style.transform = 'scale(0.9) rotate(360deg)';
+                setTimeout(() => {
+                    this.style.transform = 'scale(1) rotate(0deg)';
+                }, 600);
+                createConfetti();
+            });
+
+            // Animation des step items
+            document.querySelectorAll('.step-item').forEach(item => {
+                item.addEventListener('mouseenter', function() {
+                    this.style.transform = 'translateY(-10px)';
+                });
+                
+                item.addEventListener('mouseleave', function() {
+                    this.style.transform = 'translateY(0)';
+                });
+            });
+        });
+
+        // Créer des confettis
+        function createConfetti() {
+            const confettiContainer = document.body;
+            const colors = ['var(--primary)', 'var(--accent)', 'var(--warm)'];
+            
+            for (let i = 0; i < 20; i++) {
+                const confetti = document.createElement('div');
+                confetti.className = 'confetti';
+                confetti.style.left = Math.random() * 100 + '%';
+                confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+                confetti.style.animationDelay = Math.random() * 2 + 's';
+                confetti.style.borderRadius = Math.random() > 0.5 ? '50%' : '0';
+                confettiContainer.appendChild(confetti);
+                
+                // Supprimer après animation
+                setTimeout(() => {
+                    confetti.remove();
+                }, 4000);
+            }
+        }
+
+        // Effet de parallaxe léger
+        document.addEventListener('mousemove', function(e) {
+            const mouseX = e.clientX / window.innerWidth;
+            const mouseY = e.clientY / window.innerHeight;
+            
+            const card = document.querySelector('.welcome-card');
+            card.style.transform = `perspective(1000px) rotateY(${(mouseX - 0.5) * 2}deg) rotateX(${(mouseY - 0.5) * -2}deg)`;
+        });
+    </script>
+</body>
+</html>
