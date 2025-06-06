@@ -1,330 +1,835 @@
-# app.py - Modifications pour un système d'authentification classique
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LinkedBoost - Propulsez votre présence LinkedIn</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #6366f1;
+            --primary-light: #a5b4fc;
+            --primary-ultra-light: #e0e7ff;
+            --secondary: #f8fafc;
+            --accent: #10b981;
+            --accent-light: #6ee7b7;
+            --warm: #fbbf24;
+            --warm-light: #fde68a;
+            --soft-gray: #f1f5f9;
+            --text-primary: #1e293b;
+            --text-secondary: #64748b;
+            --text-light: #94a3b8;
+            --white: #ffffff;
+            --glass: rgba(255, 255, 255, 0.25);
+            --glass-border: rgba(255, 255, 255, 0.3);
+            --shadow-soft: 0 4px 20px rgba(99, 102, 241, 0.1);
+            --shadow-medium: 0 8px 30px rgba(99, 102, 241, 0.15);
+            --shadow-strong: 0 20px 40px rgba(0, 0, 0, 0.1);
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 50%, var(--accent-light) 100%);
+            color: var(--text-primary);
+            line-height: 1.6;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+        }
 
-# Ajouter ces imports en haut du fichier
-from werkzeug.security import generate_password_hash, check_password_hash
-from functools import wraps
-import re
-from datetime import datetime, timedelta
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="sparkles" width="20" height="20" patternUnits="userSpaceOnUse"><circle cx="5" cy="5" r="1" fill="%23ffffff" opacity="0.1"><animate attributeName="opacity" values="0.1;0.3;0.1" dur="3s" repeatCount="indefinite"/></circle><circle cx="15" cy="15" r="0.5" fill="%23ffffff" opacity="0.2"><animate attributeName="opacity" values="0.2;0.5;0.2" dur="2s" repeatCount="indefinite" begin="1s"/></circle></pattern></defs><rect width="100" height="100" fill="url(%23sparkles)"/></svg>') repeat;
+            z-index: 1;
+        }
+        
+        .main-container {
+            position: relative;
+            z-index: 2;
+            width: 100%;
+            max-width: 1200px;
+            margin: 2rem;
+        }
+        
+        .hero-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border-radius: 32px;
+            box-shadow: var(--shadow-strong);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            overflow: hidden;
+            animation: slideIn 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+        }
 
-# Modèle utilisateur mis à jour
-class LocalUser(db.Model):
-    __tablename__ = 'local_users'
-    id = db.Column(db.Integer, primary_key=True)
-    email = db.Column(db.String(120), unique=True, nullable=False)
-    password_hash = db.Column(db.String(255), nullable=False)
-    first_name = db.Column(db.String(50), nullable=False)
-    last_name = db.Column(db.String(50), nullable=False)
-    company = db.Column(db.String(120))
-    job_title = db.Column(db.String(120))
-    is_active = db.Column(db.Boolean, default=True)
-    is_verified = db.Column(db.Boolean, default=False)
-    created_at = db.Column(db.DateTime, default=datetime.utcnow)
-    last_login = db.Column(db.DateTime)
-    login_attempts = db.Column(db.Integer, default=0)
-    locked_until = db.Column(db.DateTime)
-    
-    def set_password(self, password):
-        self.password_hash = generate_password_hash(password)
-    
-    def check_password(self, password):
-        return check_password_hash(self.password_hash, password)
-    
-    def is_locked(self):
-        if self.locked_until:
-            return datetime.utcnow() < self.locked_until
-        return False
-    
-    def lock_account(self, minutes=15):
-        self.locked_until = datetime.utcnow() + timedelta(minutes=minutes)
-        db.session.commit()
-    
-    def unlock_account(self):
-        self.login_attempts = 0
-        self.locked_until = None
-        db.session.commit()
-    
-    @property
-    def full_name(self):
-        return f"{self.first_name} {self.last_name}"
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(50px) scale(0.95);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+        
+        .hero-header {
+            padding: 4rem 3rem 2rem;
+            text-align: center;
+            background: linear-gradient(135deg, rgba(99, 102, 241, 0.1) 0%, rgba(16, 185, 129, 0.05) 100%);
+            border-bottom: 1px solid rgba(99, 102, 241, 0.1);
+            position: relative;
+            overflow: hidden;
+        }
 
-# Fonctions utilitaires
-def is_valid_email(email):
-    pattern = r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$'
-    return re.match(pattern, email) is not None
+        .hero-header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(99, 102, 241, 0.05) 0%, transparent 70%);
+            animation: float 8s ease-in-out infinite;
+        }
 
-def is_strong_password(password):
-    """Vérifier que le mot de passe est suffisamment fort"""
-    if len(password) < 8:
-        return False, "Le mot de passe doit contenir au moins 8 caractères"
-    
-    if not re.search(r'[A-Z]', password):
-        return False, "Le mot de passe doit contenir au moins une majuscule"
-    
-    if not re.search(r'[a-z]', password):
-        return False, "Le mot de passe doit contenir au moins une minuscule"
-    
-    if not re.search(r'[0-9]', password):
-        return False, "Le mot de passe doit contenir au moins un chiffre"
-    
-    if not re.search(r'[!@#$%^&*(),.?\":{}|<>]', password):
-        return False, "Le mot de passe doit contenir au moins un caractère spécial"
-    
-    return True, "Mot de passe valide"
+        @keyframes float {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-30px) rotate(180deg); }
+        }
+        
+        .logo-section {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+            position: relative;
+            z-index: 2;
+        }
+        
+        .logo-icon {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+            border-radius: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.5rem;
+            color: white;
+            box-shadow: var(--shadow-medium);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            cursor: pointer;
+        }
 
-# Décorateur pour vérifier l'authentification
-def login_required(f):
-    @wraps(f)
-    def decorated_function(*args, **kwargs):
-        if 'user_id' not in session:
-            return redirect(url_for('signin'))
-        return f(*args, **kwargs)
-    return decorated_function
+        .logo-icon:hover {
+            transform: scale(1.1) rotate(10deg);
+            box-shadow: var(--shadow-strong);
+        }
+        
+        .logo-text {
+            color: var(--text-primary);
+            font-size: 3rem;
+            font-weight: 800;
+            letter-spacing: -0.05em;
+            position: relative;
+        }
+        
+        .main-title {
+            font-size: 3.5rem;
+            font-weight: 800;
+            color: var(--text-primary);
+            margin-bottom: 1rem;
+            position: relative;
+            z-index: 2;
+            line-height: 1.1;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
 
-# Route principale - Page d'accueil avec choix
-@app.route("/")
-def index():
-    # Si déjà connecté, rediriger vers LinkedIn
-    if 'user_id' in session:
-        return redirect(url_for('linkedin_auth'))
-    
-    return render_template("index_auth.html")
+        .main-title .highlight {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .main-subtitle {
+            font-size: 1.4rem;
+            color: var(--text-secondary);
+            margin-bottom: 2rem;
+            position: relative;
+            z-index: 2;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+            line-height: 1.5;
+        }
+        
+        .hero-body {
+            padding: 3rem;
+        }
 
-# Route Sign In (Connexion)
-@app.route("/signin", methods=["GET", "POST"])
-def signin():
-    if 'user_id' in session:
-        return redirect(url_for('linkedin_auth'))
-    
-    if request.method == "POST":
-        email = request.form.get("email", "").strip().lower()
-        password = request.form.get("password", "")
-        
-        if not email or not password:
-            return render_template("signin.html", error="Veuillez remplir tous les champs")
-        
-        if not is_valid_email(email):
-            return render_template("signin.html", error="Format d'email invalide")
-        
-        # Rechercher l'utilisateur
-        user = LocalUser.query.filter_by(email=email).first()
-        
-        if not user:
-            return render_template("signin.html", error="Email ou mot de passe incorrect")
-        
-        # Vérifier si le compte est verrouillé
-        if user.is_locked():
-            minutes_left = int((user.locked_until - datetime.utcnow()).total_seconds() / 60)
-            return render_template("signin.html", error=f"Compte verrouillé. Réessayez dans {minutes_left} minutes")
-        
-        # Vérifier le mot de passe
-        if not user.check_password(password):
-            # Incrémenter les tentatives échouées
-            user.login_attempts += 1
-            if user.login_attempts >= 5:
-                user.lock_account()
-                db.session.commit()
-                return render_template("signin.html", error="Trop de tentatives échouées. Compte verrouillé pour 15 minutes")
-            else:
-                db.session.commit()
-                return render_template("signin.html", error="Email ou mot de passe incorrect")
-        
-        # Connexion réussie
-        user.login_attempts = 0
-        user.last_login = datetime.utcnow()
-        user.locked_until = None
-        db.session.commit()
-        
-        session['user_id'] = user.id
-        session['user_email'] = user.email
-        session['user_name'] = user.full_name
-        
-        logger.info(f"Connexion réussie pour: {email}")
-        return redirect(url_for('linkedin_auth'))
-    
-    return render_template("signin.html")
+        .auth-section {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 3rem;
+            margin-bottom: 3rem;
+        }
 
-# Route Sign Up (Inscription)
-@app.route("/signup", methods=["GET", "POST"])
-def signup():
-    if 'user_id' in session:
-        return redirect(url_for('linkedin_auth'))
-    
-    if request.method == "POST":
-        # Récupérer les données du formulaire
-        email = request.form.get("email", "").strip().lower()
-        password = request.form.get("password", "")
-        confirm_password = request.form.get("confirm_password", "")
-        first_name = request.form.get("first_name", "").strip()
-        last_name = request.form.get("last_name", "").strip()
-        company = request.form.get("company", "").strip()
-        job_title = request.form.get("job_title", "").strip()
-        
-        # Validations
-        if not all([email, password, confirm_password, first_name, last_name]):
-            return render_template("signup.html", error="Veuillez remplir tous les champs obligatoires")
-        
-        if not is_valid_email(email):
-            return render_template("signup.html", error="Format d'email invalide")
-        
-        if password != confirm_password:
-            return render_template("signup.html", error="Les mots de passe ne correspondent pas")
-        
-        is_valid, password_message = is_strong_password(password)
-        if not is_valid:
-            return render_template("signup.html", error=password_message)
-        
-        # Vérifier si l'email existe déjà
-        if LocalUser.query.filter_by(email=email).first():
-            return render_template("signup.html", error="Un compte avec cet email existe déjà")
-        
-        try:
-            # Créer le nouveau utilisateur
-            user = LocalUser(
-                email=email,
-                first_name=first_name,
-                last_name=last_name,
-                company=company,
-                job_title=job_title
-            )
-            user.set_password(password)
+        .auth-card {
+            background: linear-gradient(135deg, var(--white) 0%, var(--soft-gray) 100%);
+            border-radius: 24px;
+            padding: 3rem;
+            text-align: center;
+            border: 2px solid rgba(99, 102, 241, 0.1);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+            cursor: pointer;
+        }
+
+        .auth-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(99, 102, 241, 0.1), transparent);
+            transition: all 0.8s ease;
+        }
+
+        .auth-card:hover::before {
+            left: 100%;
+        }
+
+        .auth-card:hover {
+            transform: translateY(-8px) scale(1.02);
+            border-color: var(--primary);
+            box-shadow: var(--shadow-strong);
+        }
+
+        .auth-icon {
+            width: 80px;
+            height: 80px;
+            margin: 0 auto 2rem;
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            color: white;
+            transition: all 0.3s ease;
+        }
+
+        .signin-card .auth-icon {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+        }
+
+        .signup-card .auth-icon {
+            background: linear-gradient(135deg, var(--accent) 0%, var(--accent-light) 100%);
+        }
+
+        .auth-card:hover .auth-icon {
+            transform: scale(1.1) rotate(5deg);
+        }
+
+        .auth-title {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 1rem;
+        }
+
+        .auth-description {
+            font-size: 1rem;
+            color: var(--text-secondary);
+            margin-bottom: 2rem;
+            line-height: 1.6;
+        }
+
+        .auth-benefits {
+            list-style: none;
+            padding: 0;
+            margin: 2rem 0;
+            text-align: left;
+        }
+
+        .auth-benefits li {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            margin-bottom: 0.75rem;
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+
+        .auth-benefits li i {
+            color: var(--accent);
+            width: 16px;
+            flex-shrink: 0;
+        }
+
+        .btn-auth {
+            width: 100%;
+            padding: 1.25rem 2rem;
+            border: none;
+            border-radius: 16px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.75rem;
+            text-decoration: none;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-auth::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+            transition: all 0.6s ease;
+        }
+
+        .btn-auth:hover::before {
+            left: 100%;
+        }
+
+        .btn-signin {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+            color: white;
+            box-shadow: 0 4px 20px rgba(99, 102, 241, 0.3);
+        }
+
+        .btn-signin:hover {
+            transform: translateY(-3px) scale(1.02);
+            box-shadow: 0 8px 30px rgba(99, 102, 241, 0.4);
+        }
+
+        .btn-signup {
+            background: linear-gradient(135deg, var(--accent) 0%, var(--accent-light) 100%);
+            color: white;
+            box-shadow: 0 4px 20px rgba(16, 185, 129, 0.3);
+        }
+
+        .btn-signup:hover {
+            transform: translateY(-3px) scale(1.02);
+            box-shadow: 0 8px 30px rgba(16, 185, 129, 0.4);
+        }
+
+        /* Section des fonctionnalités */
+        .features-section {
+            padding: 3rem;
+            background: linear-gradient(135deg, var(--primary-ultra-light) 0%, rgba(16, 185, 129, 0.05) 100%);
+            border-radius: 24px;
+            margin-bottom: 3rem;
+            border: 1px solid var(--primary-light);
+        }
+
+        .features-title {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            text-align: center;
+            margin-bottom: 3rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 1rem;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 2rem;
+        }
+
+        .feature-item {
+            text-align: center;
+            padding: 2rem;
+            background: var(--white);
+            border-radius: 20px;
+            border: 1px solid rgba(99, 102, 241, 0.1);
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .feature-item:hover {
+            transform: translateY(-6px);
+            box-shadow: var(--shadow-medium);
+            border-color: var(--primary-light);
+        }
+
+        .feature-icon {
+            width: 60px;
+            height: 60px;
+            margin: 0 auto 1.5rem;
+            background: linear-gradient(135deg, var(--primary-ultra-light) 0%, rgba(16, 185, 129, 0.1) 100%);
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            color: var(--primary);
+            transition: all 0.3s ease;
+        }
+
+        .feature-item:hover .feature-icon {
+            background: var(--primary);
+            color: white;
+            transform: scale(1.1) rotate(5deg);
+        }
+
+        .feature-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 0.75rem;
+        }
+
+        .feature-description {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            line-height: 1.6;
+        }
+
+        /* Footer */
+        .hero-footer {
+            text-align: center;
+            padding: 2rem 3rem;
+            color: var(--text-light);
+            font-size: 0.9rem;
+            border-top: 1px solid rgba(99, 102, 241, 0.1);
+            background: rgba(248, 250, 252, 0.5);
+        }
+
+        .hero-footer p {
+            margin-bottom: 1rem;
+        }
+
+        .social-links {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+        }
+
+        .social-link {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+            background: var(--primary-ultra-light);
+            color: var(--primary);
+            border-radius: 50%;
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+
+        .social-link:hover {
+            background: var(--primary);
+            color: white;
+            transform: translateY(-2px) scale(1.1);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .main-container {
+                margin: 1rem;
+            }
             
-            db.session.add(user)
-            db.session.commit()
+            .hero-header, .hero-body {
+                padding: 2rem 1.5rem;
+            }
             
-            # Connexion automatique après inscription
-            session['user_id'] = user.id
-            session['user_email'] = user.email
-            session['user_name'] = user.full_name
+            .logo-text {
+                font-size: 2rem;
+            }
             
-            logger.info(f"Nouveau compte créé: {email}")
-            return redirect(url_for('welcome'))
+            .main-title {
+                font-size: 2.5rem;
+            }
+
+            .main-subtitle {
+                font-size: 1.1rem;
+            }
+
+            .auth-section {
+                grid-template-columns: 1fr;
+                gap: 2rem;
+            }
+
+            .features-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .features-section {
+                padding: 2rem;
+            }
+        }
+
+        /* Animations */
+        .auth-card {
+            animation: fadeInUp 0.8s ease-out;
+            animation-fill-mode: both;
+        }
+
+        .auth-card:nth-child(1) { animation-delay: 0.2s; }
+        .auth-card:nth-child(2) { animation-delay: 0.4s; }
+
+        .feature-item {
+            animation: fadeInUp 0.6s ease-out;
+            animation-fill-mode: both;
+        }
+
+        .feature-item:nth-child(1) { animation-delay: 0.6s; }
+        .feature-item:nth-child(2) { animation-delay: 0.8s; }
+        .feature-item:nth-child(3) { animation-delay: 1s; }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Particules flottantes */
+        .floating-particle {
+            position: absolute;
+            background: var(--primary);
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .floating-particle:nth-child(odd) {
+            background: var(--accent);
+        }
+
+        .floating-particle:nth-child(3n) {
+            background: var(--warm);
+        }
+    </style>
+</head>
+<body>
+    <div class="main-container">
+        <div class="hero-card">
+            <div class="hero-header">
+                <div class="logo-section">
+                    <div class="logo-icon">
+                        <i class="fab fa-linkedin-in"></i>
+                    </div>
+                    <div class="logo-text">LinkedBoost</div>
+                </div>
+                <h1 class="main-title">
+                    Propulsez votre présence <span class="highlight">LinkedIn</span>
+                </h1>
+                <p class="main-subtitle">
+                    Créez du contenu viral, programmez vos publications et développez votre influence 
+                    professionnelle avec l'intelligence artificielle.
+                </p>
+            </div>
             
-        except Exception as e:
-            db.session.rollback()
-            logger.error(f"Erreur lors de la création du compte: {str(e)}")
-            return render_template("signup.html", error="Erreur lors de la création du compte")
-    
-    return render_template("signup.html")
+            <div class="hero-body">
+                <div class="auth-section">
+                    <div class="auth-card signin-card" onclick="location.href='/signin'">
+                        <div class="auth-icon">
+                            <i class="fa-solid fa-sign-in-alt"></i>
+                        </div>
+                        <h2 class="auth-title">Se connecter</h2>
+                        <p class="auth-description">
+                            Accédez à votre compte LinkedBoost et continuez à développer votre présence LinkedIn.
+                        </p>
+                        <ul class="auth-benefits">
+                            <li>
+                                <i class="fa-solid fa-check"></i>
+                                <span>Accès instantané à vos brouillons</span>
+                            </li>
+                            <li>
+                                <i class="fa-solid fa-check"></i>
+                                <span>Historique de vos publications</span>
+                            </li>
+                            <li>
+                                <i class="fa-solid fa-check"></i>
+                                <span>Calendrier de programmation</span>
+                            </li>
+                        </ul>
+                        <a href="/signin" class="btn-auth btn-signin">
+                            <i class="fa-solid fa-sign-in-alt"></i>
+                            <span>Se connecter</span>
+                        </a>
+                    </div>
 
-# Route de bienvenue après inscription
-@app.route("/welcome")
-@login_required
-def welcome():
-    user_id = session.get('user_id')
-    user = LocalUser.query.get(user_id)
-    return render_template("welcome.html", user=user)
+                    <div class="auth-card signup-card" onclick="location.href='/signup'">
+                        <div class="auth-icon">
+                            <i class="fa-solid fa-user-plus"></i>
+                        </div>
+                        <h2 class="auth-title">Créer un compte</h2>
+                        <p class="auth-description">
+                            Rejoignez LinkedBoost gratuitement et transformez votre stratégie de contenu LinkedIn.
+                        </p>
+                        <ul class="auth-benefits">
+                            <li>
+                                <i class="fa-solid fa-check"></i>
+                                <span>Assistant IA pour le contenu</span>
+                            </li>
+                            <li>
+                                <i class="fa-solid fa-check"></i>
+                                <span>Programmation automatique</span>
+                            </li>
+                            <li>
+                                <i class="fa-solid fa-check"></i>
+                                <span>Analyse des actualités</span>
+                            </li>
+                        </ul>
+                        <a href="/signup" class="btn-auth btn-signup">
+                            <i class="fa-solid fa-rocket"></i>
+                            <span>Commencer gratuitement</span>
+                        </a>
+                    </div>
+                </div>
 
-# Route vers LinkedIn (protégée)
-@app.route("/linkedin_auth")
-@login_required
-def linkedin_auth():
-    params = {
-        "response_type": "code",
-        "client_id": CLIENT_ID,
-        "redirect_uri": REDIRECT_URI,
-        "scope": SCOPES,
-        "state": "random123",
-        "prompt": "login"
-    }
-    auth_url = f"{LINKEDIN_AUTH_URL}?{urlencode(params)}"
-    return redirect(auth_url)
+                <div class="features-section">
+                    <h2 class="features-title">
+                        <i class="fa-solid fa-sparkles"></i>
+                        Pourquoi choisir LinkedBoost ?
+                    </h2>
+                    <div class="features-grid">
+                        <div class="feature-item">
+                            <div class="feature-icon">
+                                <i class="fa-solid fa-brain"></i>
+                            </div>
+                            <h3 class="feature-title">IA Générative</h3>
+                            <p class="feature-description">
+                                Notre intelligence artificielle crée du contenu engageant adapté à votre secteur et à votre audience.
+                            </p>
+                        </div>
 
-# Route de déconnexion
-@app.route("/logout")
-def logout():
-    user_email = session.get('user_email')
-    session.clear()
-    
-    if user_email:
-        logger.info(f"Déconnexion de: {user_email}")
-    
-    resp = make_response(redirect("/"))
-    resp.set_cookie('linkedin_session', '', expires=0)
-    resp.headers["Cache-Control"] = "no-cache, no-store, must-revalidate"
-    resp.headers["Pragma"] = "no-cache"
-    resp.headers["Expires"] = "0"
-    return resp
+                        <div class="feature-item">
+                            <div class="feature-icon">
+                                <i class="fa-solid fa-newspaper"></i>
+                            </div>
+                            <h3 class="feature-title">Actualités en Temps Réel</h3>
+                            <p class="feature-description">
+                                Restez au fait des tendances de votre secteur et créez du contenu d'actualité viral.
+                            </p>
+                        </div>
 
-# Route mot de passe oublié
-@app.route("/forgot_password", methods=["GET", "POST"])
-def forgot_password():
-    if request.method == "POST":
-        email = request.form.get("email", "").strip().lower()
-        
-        if not email or not is_valid_email(email):
-            return render_template("forgot_password.html", error="Veuillez entrer une adresse email valide")
-        
-        user = LocalUser.query.filter_by(email=email).first()
-        if user:
-            # En production, vous enverriez un email ici
-            logger.info(f"Demande de réinitialisation de mot de passe pour: {email}")
-            return render_template("forgot_password.html", success="Si cet email existe, vous recevrez les instructions de réinitialisation")
-        else:
-            # Ne pas révéler si l'email existe ou non
-            return render_template("forgot_password.html", success="Si cet email existe, vous recevrez les instructions de réinitialisation")
-    
-    return render_template("forgot_password.html")
-
-# Modifier la fonction init_db pour inclure la nouvelle table
-def init_db():
-    """Initialiser la base de données avec les tables nécessaires"""
-    with app.app_context():
-        try:
-            # Vérifier les tables existantes avant la création
-            inspector = inspect(db.engine)
-            existing_tables = inspector.get_table_names()
-            logger.info(f"Tables existantes avant création: {existing_tables}")
+                        <div class="feature-item">
+                            <div class="feature-icon">
+                                <i class="fa-solid fa-calendar-alt"></i>
+                            </div>
+                            <h3 class="feature-title">Programmation Intelligente</h3>
+                            <p class="feature-description">
+                                Planifiez vos publications aux meilleurs moments pour maximiser votre engagement.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
             
-            # Créer les tables si elles n'existent pas
-            db.create_all()
-            logger.info("Tables créées ou vérifiées avec succès")
+            <div class="hero-footer">
+                <p>&copy; 2025 LinkedBoost - Développé avec ❤️ pour les professionnels ambitieux</p>
+                <div class="social-links">
+                    <a href="#" class="social-link" title="LinkedIn">
+                        <i class="fab fa-linkedin-in"></i>
+                    </a>
+                    <a href="#" class="social-link" title="Twitter">
+                        <i class="fab fa-twitter"></i>
+                    </a>
+                    <a href="#" class="social-link" title="GitHub">
+                        <i class="fab fa-github"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Animation d'entrée
+        document.addEventListener('DOMContentLoaded', function() {
+            createFloatingParticles();
             
-            # Vérifier les tables après création
-            existing_tables = inspector.get_table_names()
-            logger.info(f"Tables existantes après création: {existing_tables}")
+            // Animation du logo
+            const logoIcon = document.querySelector('.logo-icon');
+            logoIcon.addEventListener('click', function() {
+                this.style.transform = 'scale(0.9) rotate(360deg)';
+                setTimeout(() => {
+                    this.style.transform = 'scale(1) rotate(0deg)';
+                }, 600);
+                createSparkles();
+            });
+
+            // Animation des cartes d'authentification
+            document.querySelectorAll('.auth-card').forEach(card => {
+                card.addEventListener('mouseenter', function() {
+                    const icon = this.querySelector('.auth-icon');
+                    icon.style.transform = 'scale(1.2) rotate(10deg)';
+                });
+                
+                card.addEventListener('mouseleave', function() {
+                    const icon = this.querySelector('.auth-icon');
+                    icon.style.transform = 'scale(1) rotate(0deg)';
+                });
+            });
+
+            // Animation des feature items
+            document.querySelectorAll('.feature-item').forEach(item => {
+                item.addEventListener('mouseenter', function() {
+                    this.style.transform = 'translateY(-10px) scale(1.02)';
+                });
+                
+                item.addEventListener('mouseleave', function() {
+                    this.style.transform = 'translateY(0) scale(1)';
+                });
+            });
+        });
+
+        // Créer des particules flottantes
+        function createFloatingParticles() {
+            const container = document.body;
             
-        except Exception as e:
-            logger.error(f"Erreur lors de l'initialisation de la base de données: {str(e)}")
-            raise
+            for (let i = 0; i < 15; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'floating-particle';
+                
+                const size = Math.random() * 6 + 2;
+                particle.style.width = size + 'px';
+                particle.style.height = size + 'px';
+                particle.style.left = Math.random() * 100 + '%';
+                particle.style.top = Math.random() * 100 + '%';
+                
+                particle.style.animation = `float ${Math.random() * 10 + 10}s linear infinite`;
+                particle.style.animationDelay = Math.random() * 10 + 's';
+                
+                container.appendChild(particle);
+                
+                // Supprimer et recréer après animation
+                setTimeout(() => {
+                    particle.remove();
+                }, 20000);
+            }
+            
+            // Recréer des particules périodiquement
+            setTimeout(createFloatingParticles, 5000);
+        }
 
-# Route API pour vérifier la disponibilité d'un email
-@app.route("/api/check_email", methods=["POST"])
-def check_email():
-    email = request.json.get('email', '').strip().lower()
-    
-    if not is_valid_email(email):
-        return jsonify({'available': False, 'message': 'Format d\'email invalide'})
-    
-    user = LocalUser.query.filter_by(email=email).first()
-    if user:
-        return jsonify({'available': False, 'message': 'Cet email est déjà utilisé'})
-    
-    return jsonify({'available': True, 'message': 'Email disponible'})
+        // Créer des étincelles
+        function createSparkles() {
+            const logoIcon = document.querySelector('.logo-icon');
+            const rect = logoIcon.getBoundingClientRect();
+            
+            for (let i = 0; i < 8; i++) {
+                const sparkle = document.createElement('div');
+                sparkle.style.position = 'fixed';
+                sparkle.style.width = '4px';
+                sparkle.style.height = '4px';
+                sparkle.style.background = 'var(--warm)';
+                sparkle.style.borderRadius = '50%';
+                sparkle.style.pointerEvents = 'none';
+                sparkle.style.zIndex = '1000';
+                sparkle.style.left = (rect.left + rect.width/2) + 'px';
+                sparkle.style.top = (rect.top + rect.height/2) + 'px';
+                
+                document.body.appendChild(sparkle);
+                
+                const angle = (i / 8) * Math.PI * 2;
+                const distance = 50 + Math.random() * 30;
+                const x = Math.cos(angle) * distance;
+                const y = Math.sin(angle) * distance;
+                
+                sparkle.animate([
+                    { transform: 'translate(0, 0) scale(1)', opacity: 1 },
+                    { transform: `translate(${x}px, ${y}px) scale(0)`, opacity: 0 }
+                ], {
+                    duration: 800,
+                    easing: 'cubic-bezier(0.4, 0, 0.2, 1)'
+                }).onfinish = () => {
+                    sparkle.remove();
+                };
+            }
+        }
 
-# Route de profil utilisateur
-@app.route("/profile")
-@login_required
-def profile():
-    user_id = session.get('user_id')
-    user = LocalUser.query.get(user_id)
-    return render_template("user_profile.html", user=user)
+        // Effet de parallaxe léger
+        document.addEventListener('mousemove', function(e) {
+            const mouseX = e.clientX / window.innerWidth;
+            const mouseY = e.clientY / window.innerHeight;
+            
+            const heroCard = document.querySelector('.hero-card');
+            heroCard.style.transform = `perspective(1000px) rotateY(${(mouseX - 0.5) * 2}deg) rotateX(${(mouseY - 0.5) * -2}deg)`;
+        });
 
-# Route pour mettre à jour le profil
-@app.route("/profile/update", methods=["POST"])
-@login_required
-def update_profile():
-    user_id = session.get('user_id')
-    user = LocalUser.query.get(user_id)
-    
-    user.first_name = request.form.get("first_name", "").strip()
-    user.last_name = request.form.get("last_name", "").strip()
-    user.company = request.form.get("company", "").strip()
-    user.job_title = request.form.get("job_title", "").strip()
-    
-    try:
-        db.session.commit()
-        session['user_name'] = user.full_name
-        return redirect(url_for('profile'))
-    except Exception as e:
-        db.session.rollback()
-        return render_template("user_profile.html", user=user, error="Erreur lors de la mise à jour")
+        // Animation au scroll
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                }
+            });
+        }, observerOptions);
+
+        // Observer les éléments avec animation
+        document.querySelectorAll('.auth-card, .feature-item').forEach(el => {
+            el.style.opacity = '0';
+            el.style.transform = 'translateY(30px)';
+            el.style.transition = 'all 0.6s cubic-bezier(0.4, 0, 0.2, 1)';
+            observer.observe(el);
+        });
+
+        // Animation CSS pour les particules flottantes
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes float {
+                0% {
+                    transform: translateY(100vh) rotate(0deg);
+                    opacity: 0;
+                }
+                10% {
+                    opacity: 1;
+                }
+                90% {
+                    opacity: 1;
+                }
+                100% {
+                    transform: translateY(-100vh) rotate(360deg);
+                    opacity: 0;
+                }
+            }
+        `;
+        document.head.appendChild(style);
+    </script>
+</body>
+</html>
