@@ -188,60 +188,6 @@ class Post(db.Model):
     scheduled = db.Column(db.Boolean, default=False)
 
 # Fonction d'initialisation de la base de données
-def init_db():
-    """Initialiser la base de données avec les tables nécessaires"""
-    with app.app_context():
-        try:
-            # Vérifier les tables existantes avant la création
-            inspector = inspect(db.engine)
-            existing_tables = inspector.get_table_names()
-            logger.info(f"Tables existantes avant création: {existing_tables}")
-            
-            # Créer les tables si elles n'existent pas
-            db.create_all()
-            logger.info("Tables créées ou vérifiées avec succès")
-            
-            # 🔥 NOUVEAU : Créer un utilisateur admin par défaut sur Render
-            if os.getenv("RENDER"):
-                create_default_admin()
-            
-            # Vérifier les tables après création
-            existing_tables = inspector.get_table_names()
-            logger.info(f"Tables existantes après création: {existing_tables}")
-            
-        except Exception as e:
-            logger.error(f"Erreur lors de l'initialisation de la base de données: {str(e)}")
-            raise
-
-# Initialiser la base de données au démarrage
-init_db()
-
-# -----------------------
-# LINKEDIN + GEMINI
-# -----------------------
-CLIENT_ID = os.getenv("LINKEDIN_CLIENT_ID", "86occjps58doir")
-CLIENT_SECRET = os.getenv("LINKEDIN_CLIENT_SECRET", "WPL_AP1.C8C6uXjTbpJyQUx2.Y7COPg==")
-REDIRECT_URI = os.getenv("LINKEDIN_REDIRECT_URI", "https://linkedinboost.onrender.com/callback")
-
-LINKEDIN_AUTH_URL = "https://www.linkedin.com/oauth/v2/authorization"
-LINKEDIN_TOKEN_URL = "https://www.linkedin.com/oauth/v2/accessToken"
-LINKEDIN_USERINFO_URL = "https://api.linkedin.com/v2/userinfo"
-LINKEDIN_ASSET_REGISTRATION_URL = "https://api.linkedin.com/v2/assets?action=registerUpload"
-LINKEDIN_POSTS_URL = "https://api.linkedin.com/v2/ugcPosts"
-
-SCOPES = "openid email profile w_member_social"
-GEMINI_API_KEY = os.getenv("GEMINI_API_KEY", "AIzaSyD76qCZzbr9P74etHmr8qWb1qoe7eapDbc")
-genai.configure(api_key=GEMINI_API_KEY)
-import requests
-import re
-from datetime import datetime, timedelta
-
-# Ajouter cette configuration près de vos autres constantes
-NEWS_API_KEY = "2cc0499903c24433a7646123cb3a82e0"  # Remplacez par votre vraie clé
-NEWS_API_URL = "https://newsapi.org/v2/everything"
-# -----------------------
-# ROUTES FLASK
-# -----------------------
 def create_default_admin():
     """Créer un utilisateur admin par défaut sur Render"""
     try:
@@ -270,6 +216,61 @@ def create_default_admin():
             
     except Exception as e:
         logger.error(f"❌ Erreur lors de la création de l'admin: {str(e)}")
+        
+
+def init_db():
+    """Initialiser la base de données avec les tables nécessaires"""
+    with app.app_context():
+        try:
+            # Vérifier les tables existantes avant la création
+            inspector = inspect(db.engine)
+            existing_tables = inspector.get_table_names()
+            logger.info(f"Tables existantes avant création: {existing_tables}")
+            
+            # Créer les tables si elles n'existent pas
+            db.create_all()
+            logger.info("Tables créées ou vérifiées avec succès")
+            
+            # 🔥 NOUVEAU : Créer un utilisateur admin par défaut sur Render
+            if os.getenv("RENDER"):
+                create_default_admin()
+            
+            # Vérifier les tables après création
+            existing_tables = inspector.get_table_names()
+            logger.info(f"Tables existantes après création: {existing_tables}")
+            
+        except Exception as e:
+            logger.error(f"Erreur lors de l'initialisation de la base de données: {str(e)}")
+            raise
+
+# Initialiser la base de données au démarrage
+init_db()
+# -----------------------
+# LINKEDIN + GEMINI
+# -----------------------
+CLIENT_ID = os.getenv("LINKEDIN_CLIENT_ID", "86occjps58doir")
+CLIENT_SECRET = os.getenv("LINKEDIN_CLIENT_SECRET", "WPL_AP1.C8C6uXjTbpJyQUx2.Y7COPg==")
+REDIRECT_URI = os.getenv("LINKEDIN_REDIRECT_URI", "https://linkedinboost.onrender.com/callback")
+
+LINKEDIN_AUTH_URL = "https://www.linkedin.com/oauth/v2/authorization"
+LINKEDIN_TOKEN_URL = "https://www.linkedin.com/oauth/v2/accessToken"
+LINKEDIN_USERINFO_URL = "https://api.linkedin.com/v2/userinfo"
+LINKEDIN_ASSET_REGISTRATION_URL = "https://api.linkedin.com/v2/assets?action=registerUpload"
+LINKEDIN_POSTS_URL = "https://api.linkedin.com/v2/ugcPosts"
+
+SCOPES = "openid email profile w_member_social"
+GEMINI_API_KEY = os.getenv("GEMINI_API_KEY", "AIzaSyD76qCZzbr9P74etHmr8qWb1qoe7eapDbc")
+genai.configure(api_key=GEMINI_API_KEY)
+import requests
+import re
+from datetime import datetime, timedelta
+
+# Ajouter cette configuration près de vos autres constantes
+NEWS_API_KEY = "2cc0499903c24433a7646123cb3a82e0"  # Remplacez par votre vraie clé
+NEWS_API_URL = "https://newsapi.org/v2/everything"
+# -----------------------
+# ROUTES FLASK
+# -----------------------
 
 import json
 import os
