@@ -2017,15 +2017,6 @@ def publish_scheduled():
     return f"✅ {count} post(s) planifié(s) publiés automatiquement."
 
 
-@app.route("/logout")
-def logout():
-    session.clear()
-    resp = make_response(redirect("/"))
-    resp.set_cookie('linkedin_session', '', expires=0)
-    resp.headers["Cache-Control"] = "no-cache, no-store, must-revalidate"
-    resp.headers["Pragma"] = "no-cache"
-    resp.headers["Expires"] = "0"
-    return resp
 @app.errorhandler(500)
 def handle_500(e):
     logger.error(f"Erreur 500: {str(e)}")
