@@ -9,6 +9,10 @@ import os
 import google.generativeai as genai
 import logging
 from datetime import datetime, timedelta
+from werkzeug.security import generate_password_hash, check_password_hash
+from functools import wraps
+import re
+from datetime import datetime, timedelta
 # Configuration du logging
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
