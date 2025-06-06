@@ -201,6 +201,10 @@ def init_db():
             db.create_all()
             logger.info("Tables créées ou vérifiées avec succès")
             
+            # 🔥 NOUVEAU : Créer un utilisateur admin par défaut sur Render
+            if os.getenv("RENDER"):
+                create_default_admin()
+            
             # Vérifier les tables après création
             existing_tables = inspector.get_table_names()
             logger.info(f"Tables existantes après création: {existing_tables}")
@@ -208,6 +212,7 @@ def init_db():
         except Exception as e:
             logger.error(f"Erreur lors de l'initialisation de la base de données: {str(e)}")
             raise
+
 # Initialiser la base de données au démarrage
 init_db()
 
@@ -237,6 +242,34 @@ NEWS_API_URL = "https://newsapi.org/v2/everything"
 # -----------------------
 # ROUTES FLASK
 # -----------------------
+def create_default_admin():
+    """Créer un utilisateur admin par défaut sur Render"""
+    try:
+        # Vérifier si un admin existe déjà
+        admin_user = LocalUser.query.filter_by(email="admin@linkedboost.com").first()
+        
+        if not admin_user:
+            admin_user = LocalUser(
+                email="admin@linkedboost.com",
+                first_name="Admin",
+                last_name="LinkedBoost",
+                company="LinkedBoost",
+                job_title="Administrateur",
+                is_verified=True
+            )
+            admin_user.set_password("AdminLinkedBoost2025!")
+            
+            db.session.add(admin_user)
+            db.session.commit()
+            
+            logger.info("✅ Utilisateur admin créé sur Render")
+            logger.info("📧 Email: admin@linkedboost.com")
+            logger.info("🔐 Password: AdminLinkedBoost2025!")
+        else:
+            logger.info("ℹ️ Utilisateur admin déjà existant")
+            
+    except Exception as e:
+        logger.error(f"❌ Erreur lors de la création de l'admin: {str(e)}")
 
 import json
 import os
