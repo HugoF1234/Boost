@@ -41,9 +41,6 @@
             color: var(--text-primary);
             line-height: 1.6;
             min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
             position: relative;
             overflow: hidden;
         }
@@ -317,6 +314,14 @@
             position: relative;
             overflow: hidden;
             margin-bottom: 1.5rem;
+        }
+        .login-container {
+            position: relative;
+            z-index: 2;
+            width: 100%;
+            max-width: 550px;
+            margin: 0 auto 2rem auto; /* Centrer avec margin auto */
+            padding: 0 2rem;
         }
 
         .btn-login::before {
