@@ -3,49 +3,37 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ResoBoost - Propulsez votre présence LinkedIn</title>
+    <title>LinkedBoost - Propulsez votre présence LinkedIn</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         :root {
-            --primary: #8b7355;
-            --primary-light: #a89480;
-            --primary-ultra-light: #f3e3cc;
-            --secondary: #faf8f5;
-            --accent: #6b8e23;
-            --accent-light: #9acd32;
-            --warm: #cd853f;
-            --warm-light: #deb887;
-            --soft-gray: #f5f0e8;
-            --text-primary: #1e293b;
-            --text-secondary: #64748b;
-            --text-light: #94a3b8;
-            --white: #ffffff;
-            --danger: #ef4444;
-            --success: #10b981;
-            --shadow-soft: 0 4px 20px rgba(139, 115, 85, 0.1);
-            --shadow-medium: 0 8px 30px rgba(139, 115, 85, 0.15);
-            --shadow-strong: 0 20px 40px rgba(0, 0, 0, 0.1);
+            --primary: #8b7355;           /* Au lieu de #6366f1 */
+            --primary-light: #a89480;     /* Au lieu de #a5b4fc */
+            --primary-ultra-light: #f3e3cc; /* Au lieu de #e0e7ff */
+            --secondary: #faf8f5;         /* Au lieu de #f8fafc */
+            --accent: #6b8e23;            /* Au lieu de #10b981 */
+            --accent-light: #9acd32;      /* Au lieu de #6ee7b7 */
+            --warm: #cd853f;              /* Au lieu de #fbbf24 */
+            --warm-light: #deb887;        /* Au lieu de #fde68a */
+            --soft-gray: #f5f0e8;         /* Au lieu de #f1f5f9 */
         }
-
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
         }
-
-        html {
-            scroll-behavior: smooth;
-        }
                 
         body {
             font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-            background: linear-gradient(135deg, var(--primary-ultra-light) 0%, #e6d7b8 50%, #d4c4a8 100%);
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 50%, var(--accent-light) 100%);
             color: var(--text-primary);
             line-height: 1.6;
             min-height: 100vh;
-            overflow-y: auto;
+            overflow-y: auto; /* AJOUTER CETTE LIGNE */
+            padding: 2rem 0; /* AJOUTER CETTE LIGNE */
             position: relative;
+            overflow: hidden;
         }
 
         body::before {
@@ -58,25 +46,23 @@
             background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="sparkles" width="20" height="20" patternUnits="userSpaceOnUse"><circle cx="5" cy="5" r="1" fill="%23ffffff" opacity="0.1"><animate attributeName="opacity" values="0.1;0.3;0.1" dur="3s" repeatCount="indefinite"/></circle><circle cx="15" cy="15" r="0.5" fill="%23ffffff" opacity="0.2"><animate attributeName="opacity" values="0.2;0.5;0.2" dur="2s" repeatCount="indefinite" begin="1s"/></circle></pattern></defs><rect width="100" height="100" fill="url(%23sparkles)"/></svg>') repeat;
             z-index: 1;
         }
-
         .main-container {
             position: relative;
             z-index: 2;
             width: 100%;
             max-width: 1200px;
-            margin: 0 auto;
-            padding: 2rem;
+            margin: 0 auto; /* MODIFIER */
+            padding: 0 2rem; /* AJOUTER */
         }
                 
         .hero-card {
             background: rgba(255, 255, 255, 0.95);
             backdrop-filter: blur(20px);
-            border-radius: 24px;
+            border-radius: 32px;
             box-shadow: var(--shadow-strong);
             border: 1px solid rgba(255, 255, 255, 0.3);
             overflow: hidden;
             animation: slideIn 0.8s cubic-bezier(0.4, 0, 0.2, 1);
-            margin-bottom: 2rem;
         }
 
         @keyframes slideIn {
@@ -93,8 +79,8 @@
         .hero-header {
             padding: 4rem 3rem 2rem;
             text-align: center;
-            background: linear-gradient(135deg, rgba(139, 115, 85, 0.1) 0%, rgba(107, 142, 35, 0.05) 100%);
-            border-bottom: 1px solid rgba(139, 115, 85, 0.1);
+            background: linear-gradient(135deg, rgba(99, 102, 241, 0.1) 0%, rgba(16, 185, 129, 0.05) 100%);
+            border-bottom: 1px solid rgba(99, 102, 241, 0.1);
             position: relative;
             overflow: hidden;
         }
@@ -106,7 +92,7 @@
             left: -50%;
             width: 200%;
             height: 200%;
-            background: radial-gradient(circle, rgba(139, 115, 85, 0.05) 0%, transparent 70%);
+            background: radial-gradient(circle, rgba(99, 102, 241, 0.05) 0%, transparent 70%);
             animation: float 8s ease-in-out infinite;
         }
 
@@ -182,6 +168,14 @@
             margin-right: auto;
             line-height: 1.5;
         }
+        .main-container {
+            position: relative;
+            z-index: 2;
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto 2rem auto; /* Centrer avec margin auto */
+            padding: 0 2rem; /* Ajouter du padding */
+        }
         
         .hero-body {
             padding: 3rem;
@@ -199,7 +193,7 @@
             border-radius: 24px;
             padding: 3rem;
             text-align: center;
-            border: 2px solid rgba(139, 115, 85, 0.1);
+            border: 2px solid rgba(99, 102, 241, 0.1);
             transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
             position: relative;
             overflow: hidden;
@@ -213,7 +207,7 @@
             left: -100%;
             width: 100%;
             height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(139, 115, 85, 0.1), transparent);
+            background: linear-gradient(90deg, transparent, rgba(99, 102, 241, 0.1), transparent);
             transition: all 0.8s ease;
         }
 
@@ -324,29 +318,29 @@
         .btn-signin {
             background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
             color: white;
-            box-shadow: 0 4px 20px rgba(139, 115, 85, 0.3);
+            box-shadow: 0 4px 20px rgba(99, 102, 241, 0.3);
         }
 
         .btn-signin:hover {
             transform: translateY(-3px) scale(1.02);
-            box-shadow: 0 8px 30px rgba(139, 115, 85, 0.4);
+            box-shadow: 0 8px 30px rgba(99, 102, 241, 0.4);
         }
 
         .btn-signup {
             background: linear-gradient(135deg, var(--accent) 0%, var(--accent-light) 100%);
             color: white;
-            box-shadow: 0 4px 20px rgba(107, 142, 35, 0.3);
+            box-shadow: 0 4px 20px rgba(16, 185, 129, 0.3);
         }
 
         .btn-signup:hover {
             transform: translateY(-3px) scale(1.02);
-            box-shadow: 0 8px 30px rgba(107, 142, 35, 0.4);
+            box-shadow: 0 8px 30px rgba(16, 185, 129, 0.4);
         }
 
         /* Section des fonctionnalités */
         .features-section {
             padding: 3rem;
-            background: linear-gradient(135deg, var(--primary-ultra-light) 0%, rgba(107, 142, 35, 0.05) 100%);
+            background: linear-gradient(135deg, var(--primary-ultra-light) 0%, rgba(16, 185, 129, 0.05) 100%);
             border-radius: 24px;
             margin-bottom: 3rem;
             border: 1px solid var(--primary-light);
@@ -375,7 +369,7 @@
             padding: 2rem;
             background: var(--white);
             border-radius: 20px;
-            border: 1px solid rgba(139, 115, 85, 0.1);
+            border: 1px solid rgba(99, 102, 241, 0.1);
             transition: all 0.3s ease;
             cursor: pointer;
         }
@@ -390,7 +384,7 @@
             width: 60px;
             height: 60px;
             margin: 0 auto 1.5rem;
-            background: linear-gradient(135deg, var(--primary-ultra-light) 0%, rgba(107, 142, 35, 0.1) 100%);
+            background: linear-gradient(135deg, var(--primary-ultra-light) 0%, rgba(16, 185, 129, 0.1) 100%);
             border-radius: 16px;
             display: flex;
             align-items: center;
@@ -425,7 +419,7 @@
             padding: 2rem 3rem;
             color: var(--text-light);
             font-size: 0.9rem;
-            border-top: 1px solid rgba(139, 115, 85, 0.1);
+            border-top: 1px solid rgba(99, 102, 241, 0.1);
             background: rgba(248, 250, 252, 0.5);
         }
 
@@ -458,76 +452,13 @@
             transform: translateY(-2px) scale(1.1);
         }
 
-        /* Nouvelles sections pour le scroll */
-        .content-section {
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(20px);
-            border-radius: 24px;
-            box-shadow: var(--shadow-strong);
-            border: 1px solid rgba(255, 255, 255, 0.3);
-            padding: 4rem 3rem;
-            margin-bottom: 2rem;
-            text-align: center;
-        }
-
-        .section-title {
-            font-size: 2.5rem;
-            font-weight: 700;
-            color: var(--text-primary);
-            margin-bottom: 1.5rem;
-        }
-
-        .section-content {
-            font-size: 1.1rem;
-            color: var(--text-secondary);
-            line-height: 1.7;
-            max-width: 800px;
-            margin: 0 auto;
-        }
-
-        /* Navigation pour le scroll */
-        .scroll-nav {
-            position: fixed;
-            top: 2rem;
-            right: 2rem;
-            z-index: 100;
-            background: rgba(255, 255, 255, 0.9);
-            backdrop-filter: blur(20px);
-            border-radius: 20px;
-            padding: 1rem;
-            box-shadow: var(--shadow-medium);
-            border: 1px solid rgba(255, 255, 255, 0.3);
-        }
-
-        .scroll-nav a {
-            display: block;
-            padding: 0.75rem 1.5rem;
-            color: var(--primary);
-            text-decoration: none;
-            border-radius: 12px;
-            margin-bottom: 0.5rem;
-            transition: all 0.3s ease;
-            font-weight: 500;
-        }
-
-        .scroll-nav a:hover {
-            background: var(--primary);
-            color: white;
-            transform: translateX(5px);
-        }
-
-        .scroll-nav a:last-child {
-            margin-bottom: 0;
-        }
-
         /* Responsive */
         @media (max-width: 768px) {
             .main-container {
                 margin: 1rem;
-                padding: 1rem;
             }
             
-            .hero-header, .hero-body, .content-section {
+            .hero-header, .hero-body {
                 padding: 2rem 1.5rem;
             }
             
@@ -554,27 +485,6 @@
 
             .features-section {
                 padding: 2rem;
-            }
-
-            .scroll-nav {
-                position: relative;
-                top: auto;
-                right: auto;
-                margin-bottom: 2rem;
-                display: flex;
-                justify-content: center;
-                gap: 1rem;
-                overflow-x: auto;
-                padding: 1rem 2rem;
-            }
-
-            .scroll-nav a {
-                margin-bottom: 0;
-                white-space: nowrap;
-            }
-
-            .section-title {
-                font-size: 2rem;
             }
         }
 
@@ -627,91 +537,137 @@
     </style>
 </head>
 <body>
-    <!-- Navigation pour le scroll fluide -->
-    <div class="scroll-nav">
-        <a href="#accueil">🏠 Accueil</a>
-        <a href="#fonctionnalites">✨ Fonctionnalités</a>
-        <a href="#avantages">💪 Avantages</a>
-        <a href="#temoignages">💬 Témoignages</a>
-    </div>
-
     <div class="main-container">
-        <!-- Section Témoignages -->
-        <section id="temoignages">
-            <div class="content-section">
-                <h2 class="section-title">💬 Ce que disent nos utilisateurs</h2>
-                <div class="section-content">
-                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem; margin-top: 3rem;">
-                        <div style="background: var(--white); padding: 2rem; border-radius: 20px; box-shadow: var(--shadow-soft); border: 1px solid rgba(139, 115, 85, 0.1);">
-                            <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1.5rem;">
-                                <div style="width: 50px; height: 50px; background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-weight: 700;">M</div>
-                                <div>
-                                    <h4 style="color: var(--text-primary); margin-bottom: 0.25rem;">Marie Dubois</h4>
-                                    <p style="color: var(--text-secondary); font-size: 0.9rem;">Directrice Marketing</p>
-                                </div>
-                            </div>
-                            <p style="color: var(--text-secondary); line-height: 1.6; font-style: italic;">
-                                "ResoBoost a révolutionné ma présence LinkedIn. Je génère maintenant du contenu de qualité en quelques minutes !"
-                            </p>
-                            <div style="color: var(--warm); margin-top: 1rem;">⭐⭐⭐⭐⭐</div>
-                        </div>
-
-                        <div style="background: var(--white); padding: 2rem; border-radius: 20px; box-shadow: var(--shadow-soft); border: 1px solid rgba(139, 115, 85, 0.1);">
-                            <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1.5rem;">
-                                <div style="width: 50px; height: 50px; background: linear-gradient(135deg, var(--accent) 0%, var(--accent-light) 100%); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-weight: 700;">P</div>
-                                <div>
-                                    <h4 style="color: var(--text-primary); margin-bottom: 0.25rem;">Pierre Martin</h4>
-                                    <p style="color: var(--text-secondary); font-size: 0.9rem;">Consultant IT</p>
-                                </div>
-                            </div>
-                            <p style="color: var(--text-secondary); line-height: 1.6; font-style: italic;">
-                                "L'IA de ResoBoost comprend parfaitement mon secteur. Mes posts génèrent 5x plus d'engagement qu'avant !"
-                            </p>
-                            <div style="color: var(--warm); margin-top: 1rem;">⭐⭐⭐⭐⭐</div>
-                        </div>
-
-                        <div style="background: var(--white); padding: 2rem; border-radius: 20px; box-shadow: var(--shadow-soft); border: 1px solid rgba(139, 115, 85, 0.1);">
-                            <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1.5rem;">
-                                <div style="width: 50px; height: 50px; background: linear-gradient(135deg, var(--warm) 0%, var(--warm-light) 100%); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-weight: 700;">S</div>
-                                <div>
-                                    <h4 style="color: var(--text-primary); margin-bottom: 0.25rem;">Sarah Chen</h4>
-                                    <p style="color: var(--text-secondary); font-size: 0.9rem;">CEO Startup</p>
-                                </div>
-                            </div>
-                            <p style="color: var(--text-secondary); line-height: 1.6; font-style: italic;">
-                                "Grâce à ResoBoost, j'ai développé ma notoriété et attiré de nouveaux investisseurs. Un outil indispensable !"
-                            </p>
-                            <div style="color: var(--warm); margin-top: 1rem;">⭐⭐⭐⭐⭐</div>
-                        </div>
+        <div class="hero-card">
+            <div class="hero-header">
+                <div class="logo-section">
+                    <div class="logo-icon">
+                        <i class="fab fa-linkedin-in"></i>
                     </div>
+                    <div class="logo-text">LinkedBoost</div>
                 </div>
+                <h1 class="main-title">
+                    Propulsez votre présence <span class="highlight">LinkedIn</span>
+                </h1>
+                <p class="main-subtitle">
+                    Créez du contenu viral, programmez vos publications et développez votre influence 
+                    professionnelle avec l'intelligence artificielle.
+                </p>
             </div>
-        </section>
-
-        <!-- Section CTA Final -->
-        <section>
-            <div class="content-section" style="background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%); color: white;">
-                <h2 class="section-title" style="color: white;">🎯 Prêt à transformer votre LinkedIn ?</h2>
-                <div class="section-content">
-                    <p style="color: rgba(255,255,255,0.9); font-size: 1.2rem; margin-bottom: 3rem;">
-                        Rejoignez plus de 10 000 professionnels qui font confiance à ResoBoost pour développer leur influence LinkedIn.
-                    </p>
-                    <div style="display: flex; gap: 2rem; justify-content: center; flex-wrap: wrap;">
-                        <a href="/signup" class="btn-auth" style="background: white; color: var(--primary); border: none; box-shadow: 0 4px 20px rgba(0,0,0,0.2);">
-                            <i class="fa-solid fa-rocket"></i>
-                            <span>Commencer gratuitement</span>
-                        </a>
-                        <a href="/signin" class="btn-auth" style="background: rgba(255,255,255,0.2); backdrop-filter: blur(10px); border: 2px solid white; color: white;">
+            
+            <div class="hero-body">
+                <div class="auth-section">
+                    <div class="auth-card signin-card" onclick="location.href='/signin'">
+                        <div class="auth-icon">
+                            <i class="fa-solid fa-sign-in-alt"></i>
+                        </div>
+                        <h2 class="auth-title">Se connecter</h2>
+                        <p class="auth-description">
+                            Accédez à votre compte LinkedBoost et continuez à développer votre présence LinkedIn.
+                        </p>
+                        <ul class="auth-benefits">
+                            <li>
+                                <i class="fa-solid fa-check"></i>
+                                <span>Accès instantané à vos brouillons</span>
+                            </li>
+                            <li>
+                                <i class="fa-solid fa-check"></i>
+                                <span>Historique de vos publications</span>
+                            </li>
+                            <li>
+                                <i class="fa-solid fa-check"></i>
+                                <span>Calendrier de programmation</span>
+                            </li>
+                        </ul>
+                        <a href="/signin" class="btn-auth btn-signin">
                             <i class="fa-solid fa-sign-in-alt"></i>
                             <span>Se connecter</span>
                         </a>
                     </div>
-                    <p style="color: rgba(255,255,255,0.7); font-size: 0.9rem; margin-top: 2rem;">
-                        🔒 Aucune carte bancaire requise • ⚡ Configuration en 2 minutes • 🎁 Essai gratuit illimité
-                    </p>
+
+                    <div class="auth-card signup-card" onclick="location.href='/signup'">
+                        <div class="auth-icon">
+                            <i class="fa-solid fa-user-plus"></i>
+                        </div>
+                        <h2 class="auth-title">Créer un compte</h2>
+                        <p class="auth-description">
+                            Rejoignez LinkedBoost gratuitement et transformez votre stratégie de contenu LinkedIn.
+                        </p>
+                        <ul class="auth-benefits">
+                            <li>
+                                <i class="fa-solid fa-check"></i>
+                                <span>Assistant IA pour le contenu</span>
+                            </li>
+                            <li>
+                                <i class="fa-solid fa-check"></i>
+                                <span>Programmation automatique</span>
+                            </li>
+                            <li>
+                                <i class="fa-solid fa-check"></i>
+                                <span>Analyse des actualités</span>
+                            </li>
+                        </ul>
+                        <a href="/signup" class="btn-auth btn-signup">
+                            <i class="fa-solid fa-rocket"></i>
+                            <span>Commencer gratuitement</span>
+                        </a>
+                    </div>
+                </div>
+
+                <div class="features-section">
+                    <h2 class="features-title">
+                        <i class="fa-solid fa-sparkles"></i>
+                        Pourquoi choisir LinkedBoost ?
+                    </h2>
+                    <div class="features-grid">
+                        <div class="feature-item">
+                            <div class="feature-icon">
+                                <i class="fa-solid fa-brain"></i>
+                            </div>
+                            <h3 class="feature-title">IA Générative</h3>
+                            <p class="feature-description">
+                                Notre intelligence artificielle crée du contenu engageant adapté à votre secteur et à votre audience.
+                            </p>
+                        </div>
+
+                        <div class="feature-item">
+                            <div class="feature-icon">
+                                <i class="fa-solid fa-newspaper"></i>
+                            </div>
+                            <h3 class="feature-title">Actualités en Temps Réel</h3>
+                            <p class="feature-description">
+                                Restez au fait des tendances de votre secteur et créez du contenu d'actualité viral.
+                            </p>
+                        </div>
+
+                        <div class="feature-item">
+                            <div class="feature-icon">
+                                <i class="fa-solid fa-calendar-alt"></i>
+                            </div>
+                            <h3 class="feature-title">Programmation Intelligente</h3>
+                            <p class="feature-description">
+                                Planifiez vos publications aux meilleurs moments pour maximiser votre engagement.
+                            </p>
+                        </div>
+                    </div>
                 </div>
             </div>
-        </section>
+            
+            <div class="hero-footer">
+                <p>&copy; 2025 LinkedBoost - Développé avec ❤️ pour les professionnels ambitieux</p>
+                <div class="social-links">
+                    <a href="#" class="social-link" title="LinkedIn">
+                        <i class="fab fa-linkedin-in"></i>
+                    </a>
+                    <a href="#" class="social-link" title="Twitter">
+                        <i class="fab fa-twitter"></i>
+                    </a>
+                    <a href="#" class="social-link" title="GitHub">
+                        <i class="fab fa-github"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
     </div>
 
     <script>
@@ -750,46 +706,6 @@
                 
                 item.addEventListener('mouseleave', function() {
                     this.style.transform = 'translateY(0) scale(1)';
-                });
-            });
-
-            // Scroll fluide pour les liens de navigation
-            document.querySelectorAll('.scroll-nav a').forEach(link => {
-                link.addEventListener('click', function(e) {
-                    e.preventDefault();
-                    const targetId = this.getAttribute('href');
-                    const targetSection = document.querySelector(targetId);
-                    
-                    if (targetSection) {
-                        targetSection.scrollIntoView({
-                            behavior: 'smooth',
-                            block: 'start'
-                        });
-                    }
-                });
-            });
-
-            // Mise en surbrillance du lien actif lors du scroll
-            const sections = document.querySelectorAll('section[id]');
-            const navLinks = document.querySelectorAll('.scroll-nav a');
-
-            window.addEventListener('scroll', () => {
-                let current = '';
-                sections.forEach(section => {
-                    const sectionTop = section.offsetTop;
-                    const sectionHeight = section.clientHeight;
-                    if (window.pageYOffset >= sectionTop - 200) {
-                        current = section.getAttribute('id');
-                    }
-                });
-
-                navLinks.forEach(link => {
-                    link.style.background = '';
-                    link.style.color = 'var(--primary)';
-                    if (link.getAttribute('href') === `#${current}`) {
-                        link.style.background = 'var(--primary)';
-                        link.style.color = 'white';
-                    }
                 });
             });
         });
@@ -865,9 +781,7 @@
             const mouseY = e.clientY / window.innerHeight;
             
             const heroCard = document.querySelector('.hero-card');
-            if (heroCard) {
-                heroCard.style.transform = `perspective(1000px) rotateY(${(mouseX - 0.5) * 2}deg) rotateX(${(mouseY - 0.5) * -2}deg)`;
-            }
+            heroCard.style.transform = `perspective(1000px) rotateY(${(mouseX - 0.5) * 2}deg) rotateX(${(mouseY - 0.5) * -2}deg)`;
         });
 
         // Animation au scroll
@@ -886,7 +800,7 @@
         }, observerOptions);
 
         // Observer les éléments avec animation
-        document.querySelectorAll('.auth-card, .feature-item, .content-section').forEach(el => {
+        document.querySelectorAll('.auth-card, .feature-item').forEach(el => {
             el.style.opacity = '0';
             el.style.transform = 'translateY(30px)';
             el.style.transition = 'all 0.6s cubic-bezier(0.4, 0, 0.2, 1)';
@@ -916,171 +830,4 @@
         document.head.appendChild(style);
     </script>
 </body>
-</html> principale -->
-        <section id="accueil">
-            <div class="hero-card">
-                <div class="hero-header">
-                    <div class="logo-section">
-                        <div class="logo-icon">
-                            <i class="fab fa-linkedin-in"></i>
-                        </div>
-                        <div class="logo-text">ResoBoost</div>
-                    </div>
-                    <h1 class="main-title">
-                        Propulsez votre présence <span class="highlight">LinkedIn</span>
-                    </h1>
-                    <p class="main-subtitle">
-                        Créez du contenu viral, programmez vos publications et développez votre influence 
-                        professionnelle avec l'intelligence artificielle.
-                    </p>
-                </div>
-                
-                <div class="hero-body">
-                    <div class="auth-section">
-                        <div class="auth-card signin-card" onclick="location.href='/signin'">
-                            <div class="auth-icon">
-                                <i class="fa-solid fa-sign-in-alt"></i>
-                            </div>
-                            <h2 class="auth-title">Se connecter</h2>
-                            <p class="auth-description">
-                                Accédez à votre compte ResoBoost et continuez à développer votre présence LinkedIn.
-                            </p>
-                            <ul class="auth-benefits">
-                                <li>
-                                    <i class="fa-solid fa-check"></i>
-                                    <span>Accès instantané à vos brouillons</span>
-                                </li>
-                                <li>
-                                    <i class="fa-solid fa-check"></i>
-                                    <span>Historique de vos publications</span>
-                                </li>
-                                <li>
-                                    <i class="fa-solid fa-check"></i>
-                                    <span>Calendrier de programmation</span>
-                                </li>
-                            </ul>
-                            <a href="/signin" class="btn-auth btn-signin">
-                                <i class="fa-solid fa-sign-in-alt"></i>
-                                <span>Se connecter</span>
-                            </a>
-                        </div>
-
-                        <div class="auth-card signup-card" onclick="location.href='/signup'">
-                            <div class="auth-icon">
-                                <i class="fa-solid fa-user-plus"></i>
-                            </div>
-                            <h2 class="auth-title">Créer un compte</h2>
-                            <p class="auth-description">
-                                Rejoignez ResoBoost gratuitement et transformez votre stratégie de contenu LinkedIn.
-                            </p>
-                            <ul class="auth-benefits">
-                                <li>
-                                    <i class="fa-solid fa-check"></i>
-                                    <span>Assistant IA pour le contenu</span>
-                                </li>
-                                <li>
-                                    <i class="fa-solid fa-check"></i>
-                                    <span>Programmation automatique</span>
-                                </li>
-                                <li>
-                                    <i class="fa-solid fa-check"></i>
-                                    <span>Analyse des actualités</span>
-                                </li>
-                            </ul>
-                            <a href="/signup" class="btn-auth btn-signup">
-                                <i class="fa-solid fa-rocket"></i>
-                                <span>Commencer gratuitement</span>
-                            </a>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="hero-footer">
-                    <p>&copy; 2025 ResoBoost - Développé avec ❤️ pour les professionnels ambitieux</p>
-                    <div class="social-links">
-                        <a href="#" class="social-link" title="LinkedIn">
-                            <i class="fab fa-linkedin-in"></i>
-                        </a>
-                        <a href="#" class="social-link" title="Twitter">
-                            <i class="fab fa-twitter"></i>
-                        </a>
-                        <a href="#" class="social-link" title="GitHub">
-                            <i class="fab fa-github"></i>
-                        </a>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- Section Fonctionnalités -->
-        <section id="fonctionnalites">
-            <div class="content-section">
-                <h2 class="section-title">
-                    <i class="fa-solid fa-sparkles"></i>
-                    Pourquoi choisir ResoBoost ?
-                </h2>
-                <div class="features-grid">
-                    <div class="feature-item">
-                        <div class="feature-icon">
-                            <i class="fa-solid fa-brain"></i>
-                        </div>
-                        <h3 class="feature-title">IA Générative</h3>
-                        <p class="feature-description">
-                            Notre intelligence artificielle crée du contenu engageant adapté à votre secteur et à votre audience.
-                        </p>
-                    </div>
-
-                    <div class="feature-item">
-                        <div class="feature-icon">
-                            <i class="fa-solid fa-newspaper"></i>
-                        </div>
-                        <h3 class="feature-title">Actualités en Temps Réel</h3>
-                        <p class="feature-description">
-                            Restez au fait des tendances de votre secteur et créez du contenu d'actualité viral.
-                        </p>
-                    </div>
-
-                    <div class="feature-item">
-                        <div class="feature-icon">
-                            <i class="fa-solid fa-calendar-alt"></i>
-                        </div>
-                        <h3 class="feature-title">Programmation Intelligente</h3>
-                        <p class="feature-description">
-                            Planifiez vos publications aux meilleurs moments pour maximiser votre engagement.
-                        </p>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- Section Avantages -->
-        <section id="avantages">
-            <div class="content-section">
-                <h2 class="section-title">🚀 Boostez votre influence LinkedIn</h2>
-                <div class="section-content">
-                    <p style="margin-bottom: 2rem;">
-                        ResoBoost transforme votre présence LinkedIn en quelques clics. Grâce à notre IA avancée, 
-                        vous créez du contenu professionnel et engageant sans effort.
-                    </p>
-                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 2rem; margin-top: 3rem;">
-                        <div style="text-align: center; padding: 2rem; background: var(--primary-ultra-light); border-radius: 16px;">
-                            <div style="font-size: 3rem; margin-bottom: 1rem;">⏱️</div>
-                            <h4 style="color: var(--primary); margin-bottom: 1rem;">Gain de temps</h4>
-                            <p style="color: var(--text-secondary);">Créez 10 posts en 10 minutes au lieu de 10 heures</p>
-                        </div>
-                        <div style="text-align: center; padding: 2rem; background: var(--primary-ultra-light); border-radius: 16px;">
-                            <div style="font-size: 3rem; margin-bottom: 1rem;">📈</div>
-                            <h4 style="color: var(--primary); margin-bottom: 1rem;">Plus d'engagement</h4>
-                            <p style="color: var(--text-secondary);">Augmentez vos interactions de 300% en moyenne</p>
-                        </div>
-                        <div style="text-align: center; padding: 2rem; background: var(--primary-ultra-light); border-radius: 16px;">
-                            <div style="font-size: 3rem; margin-bottom: 1rem;">🎯</div>
-                            <h4 style="color: var(--primary); margin-bottom: 1rem;">Contenu pertinent</h4>
-                            <p style="color: var(--text-secondary);">IA adaptée à votre secteur et audience</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- Section
+</html>
