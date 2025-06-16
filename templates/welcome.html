@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>LinkedBoost - Bienvenue</title>
+    <title>ResoBoost - Bienvenue</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
@@ -41,11 +41,9 @@
             color: var(--text-primary);
             line-height: 1.6;
             min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            padding: 2rem 0;
+            overflow-y: auto;
             position: relative;
-            overflow: hidden;
         }
 
         body::before {
@@ -64,7 +62,8 @@
             z-index: 2;
             width: 100%;
             max-width: 600px;
-            margin: 2rem;
+            margin: 0 auto;
+            padding: 0 2rem;
         }
         
         .welcome-card {
@@ -123,6 +122,12 @@
             position: relative;
             z-index: 2;
             animation: bounceIn 1s ease-out 0.5s both;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+        }
+
+        .success-icon:hover {
+            transform: scale(1.05);
         }
 
         @keyframes bounceIn {
@@ -224,11 +229,16 @@
         .step-item {
             text-align: center;
             animation: fadeInUp 0.8s ease-out both;
+            transition: transform 0.3s ease;
         }
 
         .step-item:nth-child(1) { animation-delay: 1s; }
         .step-item:nth-child(2) { animation-delay: 1.2s; }
         .step-item:nth-child(3) { animation-delay: 1.4s; }
+
+        .step-item:hover {
+            transform: translateY(-5px);
+        }
 
         .step-icon {
             width: 80px;
@@ -246,9 +256,9 @@
         }
 
         .step-item:hover .step-icon {
-            transform: scale(1.1) rotate(5deg);
             background: var(--primary);
             color: white;
+            transform: scale(1.05);
         }
 
         .step-title {
@@ -280,7 +290,7 @@
             font-size: 1.1rem;
             font-weight: 600;
             cursor: pointer;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            transition: all 0.3s ease;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -307,7 +317,7 @@
         }
         
         .btn-primary:hover {
-            transform: translateY(-3px) scale(1.02);
+            transform: translateY(-2px);
             box-shadow: 0 8px 30px rgba(99, 102, 241, 0.4);
         }
 
@@ -383,8 +393,12 @@
 
         /* Responsive */
         @media (max-width: 768px) {
+            body {
+                padding: 1rem 0;
+            }
+            
             .welcome-container {
-                margin: 1rem;
+                padding: 0 1rem;
             }
             
             .welcome-header, .welcome-body {
@@ -415,36 +429,6 @@
                 transform: translateY(0);
             }
         }
-
-        /* Confettis animation */
-        .confetti {
-            position: absolute;
-            width: 10px;
-            height: 10px;
-            background: var(--primary);
-            animation: confetti-fall 3s linear infinite;
-        }
-
-        .confetti:nth-child(odd) {
-            background: var(--accent);
-            animation-duration: 2.5s;
-        }
-
-        .confetti:nth-child(3n) {
-            background: var(--warm);
-            animation-duration: 3.5s;
-        }
-
-        @keyframes confetti-fall {
-            0% {
-                transform: translateY(-100vh) rotate(0deg);
-                opacity: 1;
-            }
-            100% {
-                transform: translateY(100vh) rotate(720deg);
-                opacity: 0;
-            }
-        }
     </style>
 </head>
 <body>
@@ -455,7 +439,7 @@
                     <i class="fas fa-check"></i>
                 </div>
                 <h1 class="welcome-title">Félicitations ! 🎉</h1>
-                <p class="welcome-subtitle">Votre compte LinkedBoost a été créé avec succès</p>
+                <p class="welcome-subtitle">Votre compte ResoBoost a été créé avec succès</p>
                 <div class="user-info">
                     <div class="user-avatar">
                         {{ user.first_name[0]|upper if user.first_name else 'U' }}
@@ -545,73 +529,28 @@
     </div>
 
     <script>
-        // Animation d'entrée
+        // Animation d'entrée simple
         document.addEventListener('DOMContentLoaded', function() {
-            // Créer des confettis
-            createConfetti();
-            
-            // Animation des boutons
+            // Animation des boutons plus subtile
             const buttons = document.querySelectorAll('.btn-primary, .btn-secondary');
             buttons.forEach(btn => {
                 btn.addEventListener('mouseenter', function() {
-                    this.style.transform = 'translateY(-5px) scale(1.02)';
+                    this.style.transform = 'translateY(-2px)';
                 });
                 
                 btn.addEventListener('mouseleave', function() {
-                    this.style.transform = 'translateY(0) scale(1)';
-                });
-            });
-
-            // Animation de l'icône de succès
-            const successIcon = document.querySelector('.success-icon');
-            successIcon.addEventListener('click', function() {
-                this.style.transform = 'scale(0.9) rotate(360deg)';
-                setTimeout(() => {
-                    this.style.transform = 'scale(1) rotate(0deg)';
-                }, 600);
-                createConfetti();
-            });
-
-            // Animation des step items
-            document.querySelectorAll('.step-item').forEach(item => {
-                item.addEventListener('mouseenter', function() {
-                    this.style.transform = 'translateY(-10px)';
-                });
-                
-                item.addEventListener('mouseleave', function() {
                     this.style.transform = 'translateY(0)';
                 });
             });
-        });
 
-        // Créer des confettis
-        function createConfetti() {
-            const confettiContainer = document.body;
-            const colors = ['var(--primary)', 'var(--accent)', 'var(--warm)'];
-            
-            for (let i = 0; i < 20; i++) {
-                const confetti = document.createElement('div');
-                confetti.className = 'confetti';
-                confetti.style.left = Math.random() * 100 + '%';
-                confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
-                confetti.style.animationDelay = Math.random() * 2 + 's';
-                confetti.style.borderRadius = Math.random() > 0.5 ? '50%' : '0';
-                confettiContainer.appendChild(confetti);
-                
-                // Supprimer après animation
+            // Animation de l'icône de succès plus subtile
+            const successIcon = document.querySelector('.success-icon');
+            successIcon.addEventListener('click', function() {
+                this.style.transform = 'scale(0.95)';
                 setTimeout(() => {
-                    confetti.remove();
-                }, 4000);
-            }
-        }
-
-        // Effet de parallaxe léger
-        document.addEventListener('mousemove', function(e) {
-            const mouseX = e.clientX / window.innerWidth;
-            const mouseY = e.clientY / window.innerHeight;
-            
-            const card = document.querySelector('.welcome-card');
-            card.style.transform = `perspective(1000px) rotateY(${(mouseX - 0.5) * 2}deg) rotateX(${(mouseY - 0.5) * -2}deg)`;
+                    this.style.transform = 'scale(1)';
+                }, 150);
+            });
         });
     </script>
 </body>
