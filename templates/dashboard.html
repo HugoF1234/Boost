@@ -1,673 +1,776 @@
-<!DOCTYPE html>
-<html lang="fr">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard - ResoBoost</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <style>
-        /* Palette noble et apaisante */
-        :root {
-            --noble-cream: #faf9f7;
-            --noble-warm: #f5f2ed;
-            --noble-sage: #8b9a7c;
-            --noble-sage-light: #a8b59a;
-            --noble-sage-dark: #6b7865;
-            --noble-stone: #e8e4de;
-            --noble-charcoal: #4a4943;
-            --noble-charcoal-light: #6b6960;
-            --noble-mist: #f0ede8;
-            --noble-accent: #9c8b7a;
-            --noble-accent-light: #b5a495;
-            
-            /* Couleurs fonctionnelles douces */
-            --gentle-success: #7c9885;
-            --gentle-warning: #b8a082;
-            --gentle-info: #8ba3b8;
-            
-            /* Ombres très subtiles */
-            --shadow-whisper: 0 2px 12px rgba(139, 154, 124, 0.08);
-            --shadow-gentle: 0 4px 20px rgba(139, 154, 124, 0.12);
-            --shadow-soft: 0 8px 32px rgba(139, 154, 124, 0.16);
-        }
+{% extends "base.html" %}
+{% block content %}
+<style>
+    /* Palette noble et apaisante */
+    :root {
+        --noble-cream: #faf9f7;
+        --noble-warm: #f5f2ed;
+        --noble-sage: #8b9a7c;
+        --noble-sage-light: #a8b59a;
+        --noble-sage-dark: #6b7865;
+        --noble-stone: #e8e4de;
+        --noble-charcoal: #4a4943;
+        --noble-charcoal-light: #6b6960;
+        --noble-mist: #f0ede8;
+        --noble-accent: #9c8b7a;
+        --noble-accent-light: #b5a495;
+        
+        /* Couleurs fonctionnelles douces */
+        --gentle-success: #7c9885;
+        --gentle-warning: #b8a082;
+        --gentle-info: #8ba3b8;
+        
+        /* Ombres très subtiles */
+        --shadow-whisper: 0 2px 12px rgba(139, 154, 124, 0.08);
+        --shadow-gentle: 0 4px 20px rgba(139, 154, 124, 0.12);
+        --shadow-soft: 0 8px 32px rgba(139, 154, 124, 0.16);
+    }
 
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+    body {
+        background: var(--noble-cream);
+        color: var(--noble-charcoal);
+        line-height: 1.7;
+    }
 
-        body {
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-            background: var(--noble-cream);
-            color: var(--noble-charcoal);
-            line-height: 1.7;
-            font-weight: 400;
-        }
+    /* Header noble et accueillant */
+    .welcome-section {
+        background: linear-gradient(135deg, var(--noble-warm) 0%, var(--noble-mist) 100%);
+        border-radius: 20px;
+        padding: 2.5rem;
+        margin-bottom: 2rem;
+        border: 1px solid var(--noble-stone);
+        box-shadow: var(--shadow-whisper);
+        position: relative;
+        overflow: hidden;
+    }
 
-        .dashboard-container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 2rem;
-            min-height: 100vh;
-        }
+    .welcome-section::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        right: 0;
+        width: 120px;
+        height: 120px;
+        background: radial-gradient(circle, rgba(139, 154, 124, 0.06) 0%, transparent 70%);
+        border-radius: 50%;
+        transform: translate(30%, -30%);
+    }
 
-        /* Header noble et accueillant */
-        .welcome-section {
-            background: linear-gradient(135deg, var(--noble-warm) 0%, var(--noble-mist) 100%);
-            border-radius: 20px;
-            padding: 2.5rem;
-            margin-bottom: 2rem;
-            border: 1px solid var(--noble-stone);
-            box-shadow: var(--shadow-whisper);
-            position: relative;
-            overflow: hidden;
-        }
+    .welcome-content {
+        position: relative;
+        z-index: 1;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 1.5rem;
+    }
 
-        .welcome-section::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            right: 0;
-            width: 120px;
-            height: 120px;
-            background: radial-gradient(circle, rgba(139, 154, 124, 0.06) 0%, transparent 70%);
-            border-radius: 50%;
-            transform: translate(30%, -30%);
-        }
+    .greeting {
+        font-size: 1.75rem;
+        font-weight: 600;
+        color: var(--noble-charcoal);
+        margin-bottom: 0.5rem;
+        letter-spacing: -0.02em;
+    }
 
+    .greeting-subtitle {
+        color: var(--noble-charcoal-light);
+        font-size: 1rem;
+        font-weight: 400;
+    }
+
+    .user-stats {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+        gap: 1rem;
+        margin-top: 1.5rem;
+    }
+
+    .stat-item {
+        text-align: center;
+        padding: 1rem;
+        background: rgba(255, 255, 255, 0.6);
+        border-radius: 12px;
+        border: 1px solid rgba(139, 154, 124, 0.1);
+        transition: all 0.3s ease;
+    }
+
+    .stat-item:hover {
+        background: rgba(255, 255, 255, 0.8);
+        transform: translateY(-2px);
+        box-shadow: var(--shadow-gentle);
+    }
+
+    .stat-number {
+        font-size: 1.4rem;
+        font-weight: 600;
+        color: var(--noble-sage);
+        display: block;
+        margin-bottom: 0.25rem;
+    }
+
+    .stat-label {
+        font-size: 0.8rem;
+        color: var(--noble-charcoal-light);
+        font-weight: 500;
+    }
+
+    .success-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        background: linear-gradient(135deg, rgba(124, 152, 133, 0.1) 0%, rgba(124, 152, 133, 0.05) 100%);
+        color: var(--gentle-success);
+        padding: 0.5rem 1rem;
+        border-radius: 20px;
+        font-size: 0.85rem;
+        font-weight: 500;
+        border: 1px solid rgba(124, 152, 133, 0.2);
+        animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+        0%, 100% { transform: scale(1); }
+        50% { transform: scale(1.02); }
+    }
+
+    /* Section principale de création */
+    .creation-section {
+        background: white;
+        border-radius: 20px;
+        padding: 2.5rem;
+        margin-bottom: 2rem;
+        border: 1px solid var(--noble-stone);
+        box-shadow: var(--shadow-whisper);
+    }
+
+    .section-header {
+        margin-bottom: 2rem;
+    }
+
+    .section-title {
+        font-size: 1.4rem;
+        font-weight: 600;
+        color: var(--noble-charcoal);
+        margin-bottom: 0.5rem;
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+    }
+
+    .section-subtitle {
+        color: var(--noble-charcoal-light);
+        font-size: 0.95rem;
+        line-height: 1.6;
+    }
+
+    /* Article sélectionné - style très doux */
+    .selected-article {
+        background: linear-gradient(135deg, rgba(139, 154, 124, 0.04) 0%, rgba(156, 139, 122, 0.04) 100%);
+        border: 1px solid rgba(139, 154, 124, 0.15);
+        border-radius: 16px;
+        padding: 2rem;
+        margin-bottom: 2rem;
+        position: relative;
+    }
+
+    .selected-article::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 4px;
+        height: 100%;
+        background: linear-gradient(to bottom, var(--noble-sage), var(--noble-accent));
+        border-radius: 2px;
+    }
+
+    .article-title {
+        font-size: 1.2rem;
+        font-weight: 600;
+        color: var(--noble-charcoal);
+        margin-bottom: 1rem;
+        line-height: 1.5;
+    }
+
+    .article-description {
+        color: var(--noble-charcoal-light);
+        line-height: 1.6;
+        margin-bottom: 1.5rem;
+    }
+
+    .article-meta {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        flex-wrap: wrap;
+        gap: 1rem;
+        font-size: 0.9rem;
+        color: var(--noble-charcoal-light);
+    }
+
+    /* Formulaire de génération */
+    .generation-form {
+        display: grid;
+        gap: 1.5rem;
+    }
+
+    .form-row {
+        display: grid;
+        grid-template-columns: 1fr 1fr auto;
+        gap: 1.5rem;
+        align-items: end;
+    }
+
+    .form-group {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .form-label {
+        font-size: 0.9rem;
+        font-weight: 500;
+        color: var(--noble-charcoal);
+        margin-bottom: 0.75rem;
+    }
+
+    .form-control {
+        padding: 0.875rem 1.125rem;
+        border: 1.5px solid var(--noble-stone);
+        border-radius: 12px;
+        font-size: 0.95rem;
+        background: var(--noble-cream);
+        color: var(--noble-charcoal);
+        transition: all 0.3s ease;
+        font-family: inherit;
+    }
+
+    .form-control:focus {
+        outline: none;
+        border-color: var(--noble-sage);
+        box-shadow: 0 0 0 3px rgba(139, 154, 124, 0.1);
+        background: white;
+    }
+
+    .textarea-control {
+        min-height: 120px;
+        resize: vertical;
+        line-height: 1.6;
+    }
+
+    .mention-tip {
+        margin-top: 0.5rem;
+        font-size: 0.8rem;
+        color: var(--noble-charcoal-light);
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.75rem;
+        background: rgba(139, 154, 124, 0.05);
+        border-radius: 8px;
+        border-left: 3px solid var(--noble-sage);
+    }
+
+    /* Boutons nobles et doux */
+    .btn {
+        padding: 0.875rem 1.75rem;
+        border-radius: 12px;
+        font-weight: 500;
+        font-size: 0.95rem;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.625rem;
+        text-decoration: none;
+        border: none;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .btn-primary {
+        background: linear-gradient(135deg, var(--noble-sage) 0%, var(--noble-sage-light) 100%);
+        color: white;
+        box-shadow: var(--shadow-whisper);
+    }
+
+    .btn-primary:hover {
+        transform: translateY(-1px);
+        box-shadow: var(--shadow-gentle);
+        background: linear-gradient(135deg, var(--noble-sage-dark) 0%, var(--noble-sage) 100%);
+    }
+
+    .btn-secondary {
+        background: white;
+        color: var(--noble-charcoal);
+        border: 1.5px solid var(--noble-stone);
+    }
+
+    .btn-secondary:hover {
+        background: var(--noble-warm);
+        border-color: var(--noble-sage);
+        transform: translateY(-1px);
+    }
+
+    /* Lien vers actualités */
+    .news-invitation {
+        background: linear-gradient(135deg, rgba(156, 139, 122, 0.06) 0%, rgba(139, 154, 124, 0.06) 100%);
+        border: 1px solid rgba(156, 139, 122, 0.15);
+        border-radius: 16px;
+        padding: 1.75rem;
+        margin-top: 2rem;
+        text-decoration: none;
+        display: flex;
+        align-items: center;
+        gap: 1.25rem;
+        transition: all 0.3s ease;
+    }
+
+    .news-invitation:hover {
+        background: linear-gradient(135deg, rgba(156, 139, 122, 0.08) 0%, rgba(139, 154, 124, 0.08) 100%);
+        transform: translateY(-2px);
+        box-shadow: var(--shadow-gentle);
+    }
+
+    .news-icon {
+        width: 56px;
+        height: 56px;
+        background: linear-gradient(135deg, var(--noble-accent) 0%, var(--noble-accent-light) 100%);
+        border-radius: 14px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.5rem;
+        color: white;
+        flex-shrink: 0;
+    }
+
+    .news-content {
+        flex: 1;
+    }
+
+    .news-title {
+        font-size: 1.1rem;
+        font-weight: 600;
+        color: var(--noble-charcoal);
+        margin-bottom: 0.375rem;
+    }
+
+    .news-subtitle {
+        color: var(--noble-charcoal-light);
+        font-size: 0.9rem;
+        line-height: 1.5;
+    }
+
+    .news-arrow {
+        color: var(--noble-sage);
+        font-size: 1.2rem;
+        transition: all 0.3s ease;
+    }
+
+    .news-invitation:hover .news-arrow {
+        transform: translateX(4px);
+    }
+
+    /* Section du contenu généré */
+    .generated-content {
+        background: white;
+        border-radius: 20px;
+        padding: 2.5rem;
+        margin-bottom: 2rem;
+        border: 1px solid var(--noble-stone);
+        box-shadow: var(--shadow-whisper);
+        border: 2px solid var(--noble-sage-light);
+    }
+
+    .content-preview {
+        background: var(--noble-warm);
+        border-radius: 16px;
+        padding: 2rem;
+        border-left: 4px solid var(--noble-sage);
+        margin-bottom: 2rem;
+    }
+
+    .content-text {
+        line-height: 1.7;
+        color: var(--noble-charcoal);
+        white-space: pre-wrap;
+        font-size: 1rem;
+    }
+
+    /* Actions de publication */
+    .publish-section {
+        border-top: 1px solid var(--noble-stone);
+        padding-top: 2rem;
+        margin-top: 2rem;
+    }
+
+    .publish-options {
+        display: grid;
+        grid-template-columns: 1fr auto auto;
+        gap: 1.5rem;
+        align-items: end;
+        margin-bottom: 1.5rem;
+    }
+
+    .checkbox-group {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        padding: 0.875rem 1.125rem;
+        background: var(--noble-mist);
+        border-radius: 12px;
+        border: 1px solid var(--noble-stone);
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+
+    .checkbox-group:hover {
+        background: var(--noble-warm);
+    }
+
+    .checkbox-group input[type="checkbox"] {
+        width: 18px;
+        height: 18px;
+        accent-color: var(--noble-sage);
+    }
+
+    .checkbox-label {
+        font-size: 0.9rem;
+        color: var(--noble-charcoal);
+        font-weight: 500;
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
         .welcome-content {
-            position: relative;
-            z-index: 1;
-        }
-
-        .greeting {
-            font-size: 1.75rem;
-            font-weight: 600;
-            color: var(--noble-charcoal);
-            margin-bottom: 0.5rem;
-            letter-spacing: -0.02em;
-        }
-
-        .greeting-subtitle {
-            color: var(--noble-charcoal-light);
-            font-size: 1rem;
-            font-weight: 400;
-            margin-bottom: 2rem;
-        }
-
-        .user-stats {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
-            gap: 1.5rem;
-            margin-top: 1.5rem;
-        }
-
-        .stat-item {
+            flex-direction: column;
             text-align: center;
-            padding: 1.25rem;
-            background: rgba(255, 255, 255, 0.6);
-            border-radius: 16px;
-            border: 1px solid rgba(139, 154, 124, 0.1);
-            transition: all 0.3s ease;
-        }
-
-        .stat-item:hover {
-            background: rgba(255, 255, 255, 0.8);
-            transform: translateY(-2px);
-            box-shadow: var(--shadow-gentle);
-        }
-
-        .stat-number {
-            font-size: 1.5rem;
-            font-weight: 600;
-            color: var(--noble-sage);
-            display: block;
-            margin-bottom: 0.25rem;
-        }
-
-        .stat-label {
-            font-size: 0.85rem;
-            color: var(--noble-charcoal-light);
-            font-weight: 500;
-        }
-
-        /* Section principale de création */
-        .creation-section {
-            background: white;
-            border-radius: 20px;
-            padding: 2.5rem;
-            margin-bottom: 2rem;
-            border: 1px solid var(--noble-stone);
-            box-shadow: var(--shadow-whisper);
-        }
-
-        .section-header {
-            margin-bottom: 2rem;
-        }
-
-        .section-title {
-            font-size: 1.4rem;
-            font-weight: 600;
-            color: var(--noble-charcoal);
-            margin-bottom: 0.5rem;
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
-        }
-
-        .section-subtitle {
-            color: var(--noble-charcoal-light);
-            font-size: 0.95rem;
-            line-height: 1.6;
-        }
-
-        /* Article sélectionné - style très doux */
-        .selected-article {
-            background: linear-gradient(135deg, rgba(139, 154, 124, 0.04) 0%, rgba(156, 139, 122, 0.04) 100%);
-            border: 1px solid rgba(139, 154, 124, 0.15);
-            border-radius: 16px;
-            padding: 2rem;
-            margin-bottom: 2rem;
-            position: relative;
-        }
-
-        .selected-article::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 4px;
-            height: 100%;
-            background: linear-gradient(to bottom, var(--noble-sage), var(--noble-accent));
-            border-radius: 2px;
-        }
-
-        .article-title {
-            font-size: 1.2rem;
-            font-weight: 600;
-            color: var(--noble-charcoal);
-            margin-bottom: 1rem;
-            line-height: 1.5;
-        }
-
-        .article-description {
-            color: var(--noble-charcoal-light);
-            line-height: 1.6;
-            margin-bottom: 1.5rem;
-        }
-
-        .article-meta {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            flex-wrap: wrap;
-            gap: 1rem;
-            font-size: 0.9rem;
-            color: var(--noble-charcoal-light);
-        }
-
-        /* Formulaire de génération */
-        .generation-form {
-            display: grid;
-            gap: 1.5rem;
         }
 
         .form-row {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 1.5rem;
-        }
-
-        .form-group {
-            display: flex;
-            flex-direction: column;
-        }
-
-        .form-label {
-            font-size: 0.9rem;
-            font-weight: 500;
-            color: var(--noble-charcoal);
-            margin-bottom: 0.75rem;
-        }
-
-        .form-control {
-            padding: 0.875rem 1.125rem;
-            border: 1.5px solid var(--noble-stone);
-            border-radius: 12px;
-            font-size: 0.95rem;
-            background: var(--noble-cream);
-            color: var(--noble-charcoal);
-            transition: all 0.3s ease;
-            font-family: inherit;
-        }
-
-        .form-control:focus {
-            outline: none;
-            border-color: var(--noble-sage);
-            box-shadow: 0 0 0 3px rgba(139, 154, 124, 0.1);
-            background: white;
-        }
-
-        .textarea-control {
-            min-height: 120px;
-            resize: vertical;
-            line-height: 1.6;
-        }
-
-        /* Boutons nobles et doux */
-        .btn {
-            padding: 0.875rem 1.75rem;
-            border-radius: 12px;
-            font-weight: 500;
-            font-size: 0.95rem;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            display: inline-flex;
-            align-items: center;
-            gap: 0.625rem;
-            text-decoration: none;
-            border: none;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .btn-primary {
-            background: linear-gradient(135deg, var(--noble-sage) 0%, var(--noble-sage-light) 100%);
-            color: white;
-            box-shadow: var(--shadow-whisper);
-        }
-
-        .btn-primary:hover {
-            transform: translateY(-1px);
-            box-shadow: var(--shadow-gentle);
-            background: linear-gradient(135deg, var(--noble-sage-dark) 0%, var(--noble-sage) 100%);
-        }
-
-        .btn-secondary {
-            background: white;
-            color: var(--noble-charcoal);
-            border: 1.5px solid var(--noble-stone);
-        }
-
-        .btn-secondary:hover {
-            background: var(--noble-warm);
-            border-color: var(--noble-sage);
-            transform: translateY(-1px);
-        }
-
-        /* Lien vers actualités */
-        .news-invitation {
-            background: linear-gradient(135deg, rgba(156, 139, 122, 0.06) 0%, rgba(139, 154, 124, 0.06) 100%);
-            border: 1px solid rgba(156, 139, 122, 0.15);
-            border-radius: 16px;
-            padding: 1.75rem;
-            margin-top: 2rem;
-            text-decoration: none;
-            display: flex;
-            align-items: center;
-            gap: 1.25rem;
-            transition: all 0.3s ease;
-        }
-
-        .news-invitation:hover {
-            background: linear-gradient(135deg, rgba(156, 139, 122, 0.08) 0%, rgba(139, 154, 124, 0.08) 100%);
-            transform: translateY(-2px);
-            box-shadow: var(--shadow-gentle);
-        }
-
-        .news-icon {
-            width: 56px;
-            height: 56px;
-            background: linear-gradient(135deg, var(--noble-accent) 0%, var(--noble-accent-light) 100%);
-            border-radius: 14px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.5rem;
-            color: white;
-            flex-shrink: 0;
-        }
-
-        .news-content {
-            flex: 1;
-        }
-
-        .news-title {
-            font-size: 1.1rem;
-            font-weight: 600;
-            color: var(--noble-charcoal);
-            margin-bottom: 0.375rem;
-        }
-
-        .news-subtitle {
-            color: var(--noble-charcoal-light);
-            font-size: 0.9rem;
-            line-height: 1.5;
-        }
-
-        /* Section du contenu généré */
-        .generated-content {
-            background: white;
-            border-radius: 20px;
-            padding: 2.5rem;
-            margin-bottom: 2rem;
-            border: 1px solid var(--noble-stone);
-            box-shadow: var(--shadow-whisper);
-        }
-
-        .content-preview {
-            background: var(--noble-warm);
-            border-radius: 16px;
-            padding: 2rem;
-            border-left: 4px solid var(--noble-sage);
-            margin-bottom: 2rem;
-        }
-
-        .content-text {
-            line-height: 1.7;
-            color: var(--noble-charcoal);
-            white-space: pre-wrap;
-            font-size: 1rem;
-        }
-
-        /* Actions de publication */
-        .publish-section {
-            border-top: 1px solid var(--noble-stone);
-            padding-top: 2rem;
-            margin-top: 2rem;
+            grid-template-columns: 1fr;
         }
 
         .publish-options {
-            display: grid;
-            grid-template-columns: 1fr auto auto;
-            gap: 1.5rem;
-            align-items: end;
-            margin-bottom: 1.5rem;
+            grid-template-columns: 1fr;
         }
 
-        .checkbox-group {
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
-            padding: 0.875rem 1.125rem;
-            background: var(--noble-mist);
-            border-radius: 12px;
-            border: 1px solid var(--noble-stone);
-            cursor: pointer;
-            transition: all 0.3s ease;
+        .user-stats {
+            grid-template-columns: repeat(2, 1fr);
         }
 
-        .checkbox-group:hover {
-            background: var(--noble-warm);
+        .news-invitation {
+            flex-direction: column;
+            text-align: center;
         }
+    }
 
-        .checkbox-group input[type="checkbox"] {
-            width: 18px;
-            height: 18px;
-            accent-color: var(--noble-sage);
+    /* Animations très douces */
+    .fade-in {
+        animation: gentleFadeIn 0.8s ease-out;
+    }
+
+    @keyframes gentleFadeIn {
+        from {
+            opacity: 0;
+            transform: translateY(20px);
         }
-
-        .checkbox-label {
-            font-size: 0.9rem;
-            color: var(--noble-charcoal);
-            font-weight: 500;
+        to {
+            opacity: 1;
+            transform: translateY(0);
         }
+    }
 
-        /* Responsive */
-        @media (max-width: 768px) {
-            .dashboard-container {
-                padding: 1rem;
-            }
+    /* Icônes avec style noble */
+    .icon-noble {
+        color: var(--noble-sage);
+        font-size: 1.125rem;
+    }
+</style>
 
-            .form-row {
-                grid-template-columns: 1fr;
-            }
+<!-- Section d'accueil noble -->
+<div class="welcome-section fade-in">
+    <div class="welcome-content">
+        <div>
+            <h1 class="greeting">Bienvenue, {{ first_name }} 🌿</h1>
+            <p class="greeting-subtitle">{{ name }} | {{ email }}</p>
+        </div>
+        {% if article_success %}
+        <div class="success-badge">
+            <i class="fas fa-check-circle"></i>
+            Article sélectionné avec succès !
+        </div>
+        {% endif %}
+    </div>
+    <div class="user-stats">
+        <div class="stat-item">
+            <span class="stat-number">{{ scheduled_posts }}</span>
+            <span class="stat-label">En attente</span>
+        </div>
+        <div class="stat-item">
+            <span class="stat-number">{{ posts|length if posts else 0 }}</span>
+            <span class="stat-label">Total posts</span>
+        </div>
+        <div class="stat-item">
+            <span class="stat-number">100%</span>
+            <span class="stat-label">Succès</span>
+        </div>
+    </div>
+</div>
 
-            .publish-options {
-                grid-template-columns: 1fr;
-            }
+<!-- Section pour l'article sélectionné -->
+{% if selected_article %}
+<div class="creation-section fade-in">
+    <div class="section-header">
+        <h2 class="section-title">
+            <i class="fas fa-feather-alt icon-noble"></i>
+            Créer à partir de votre article
+        </h2>
+        <p class="section-subtitle">Transformons cette actualité en contenu engageant qui reflète votre expertise</p>
+    </div>
 
-            .user-stats {
-                grid-template-columns: repeat(2, 1fr);
-            }
-
-            .news-invitation {
-                flex-direction: column;
-                text-align: center;
-            }
-        }
-
-        /* Animations très douces */
-        .fade-in {
-            animation: gentleFadeIn 0.8s ease-out;
-        }
-
-        @keyframes gentleFadeIn {
-            from {
-                opacity: 0;
-                transform: translateY(20px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        /* Icônes avec style noble */
-        .icon-noble {
-            color: var(--noble-sage);
-            font-size: 1.125rem;
-        }
-
-        .success-badge {
-            display: inline-flex;
-            align-items: center;
-            gap: 0.5rem;
-            background: linear-gradient(135deg, rgba(124, 152, 133, 0.1) 0%, rgba(124, 152, 133, 0.05) 100%);
-            color: var(--gentle-success);
-            padding: 0.5rem 1rem;
-            border-radius: 20px;
-            font-size: 0.85rem;
-            font-weight: 500;
-            border: 1px solid rgba(124, 152, 133, 0.2);
-        }
-    </style>
-</head>
-<body>
-    <div class="dashboard-container">
-        <!-- Section d'accueil noble -->
-        <div class="welcome-section fade-in">
-            <div class="welcome-content">
-                <h1 class="greeting">Bonjour Marie 🌿</h1>
-                <p class="greeting-subtitle">Créons ensemble du contenu authentique qui résonne avec votre audience</p>
-                
-                <!-- Badge de succès si article sélectionné -->
-                <div class="success-badge">
-                    <i class="fas fa-check-circle"></i>
-                    Article sélectionné avec succès
-                </div>
-                
-                <div class="user-stats">
-                    <div class="stat-item">
-                        <span class="stat-number">12</span>
-                        <span class="stat-label">Posts publiés</span>
-                    </div>
-                    <div class="stat-item">
-                        <span class="stat-number">3</span>
-                        <span class="stat-label">En attente</span>
-                    </div>
-                    <div class="stat-item">
-                        <span class="stat-number">1.2k</span>
-                        <span class="stat-label">Vues totales</span>
-                    </div>
-                    <div class="stat-item">
-                        <span class="stat-number">89%</span>
-                        <span class="stat-label">Engagement</span>
-                    </div>
-                </div>
+    <div class="selected-article">
+        <h3 class="article-title">{{ selected_article.title|clean_html }}</h3>
+        <p class="article-description">{{ selected_article.description|clean_html }}</p>
+        <div class="article-meta">
+            <div>
+                <i class="fas fa-globe icon-noble"></i>
+                <a href="{{ selected_article.url }}" target="_blank" style="color: var(--noble-sage); text-decoration: none; font-weight: 500;">
+                    {{ selected_article.source.name }}
+                </a>
+            </div>
+            <div>
+                <i class="fas fa-calendar icon-noble"></i>
+                {{ selected_article.formatted_date }}
+            </div>
+        </div>
+    </div>
+    
+    <form method="post">
+        <div class="form-group">
+            <label class="form-label">
+                <i class="fas fa-magic icon-noble"></i>
+                Instructions personnalisées (optionnel)
+            </label>
+            <textarea name="custom_instructions" class="form-control textarea-control" 
+                      placeholder="Partagez votre perspective unique sur ce sujet. Par exemple : 'En tant qu'expert en transformation digitale, j'aimerais mettre l'accent sur les défis d'adoption dans les PME...'"></textarea>
+            <div class="mention-tip">
+                <i class="fas fa-lightbulb icon-noble"></i>
+                <span>Personnalisez votre post avec vos propres instructions. Laissez vide pour utiliser les paramètres par défaut.</span>
             </div>
         </div>
 
-        <!-- Section article sélectionné -->
-        <div class="creation-section fade-in">
-            <div class="section-header">
-                <h2 class="section-title">
-                    <i class="fas fa-feather-alt icon-noble"></i>
-                    Créer à partir de votre article
-                </h2>
-                <p class="section-subtitle">Transformons cette actualité en contenu engageant qui reflète votre expertise</p>
+        <div class="form-row">
+            <div class="form-group">
+                <label class="form-label">Ton du post</label>
+                <select name="tone" class="form-control">
+                    <option value="professionnel">Professionnel bienveillant</option>
+                    <option value="familier">Conversationnel</option>
+                    <option value="inspirant">Inspirant</option>
+                    <option value="humoristique">Décontracté</option>
+                    <option value="factuel">Pédagogique</option>
+                    <option value="critique">Analytique</option>
+                </select>
             </div>
-
-            <div class="selected-article">
-                <h3 class="article-title">L'intelligence artificielle transforme le secteur de la santé : nouvelles perspectives pour 2025</h3>
-                <p class="article-description">Les récentes avancées en IA générative ouvrent de nouvelles possibilités dans le diagnostic médical et la personnalisation des traitements. Les professionnels de santé adoptent progressivement ces technologies...</p>
-                <div class="article-meta">
-                    <div>
-                        <i class="fas fa-globe icon-noble"></i>
-                        Le Figaro Santé
-                    </div>
-                    <div>
-                        <i class="fas fa-calendar icon-noble"></i>
-                        15 janvier 2025
-                    </div>
-                </div>
+            
+            <div class="form-group">
+                <label class="form-label">Perspective</label>
+                <select name="perspective" class="form-control">
+                    <option value="neutre">Neutre</option>
+                    <option value="enthousiaste">Enthousiaste</option>
+                    <option value="analytique">Analytique</option>
+                    <option value="innovant">Innovateur</option>
+                    <option value="expert">Expert du domaine</option>
+                </select>
             </div>
-
-            <form class="generation-form">
-                <div class="form-group">
-                    <label class="form-label">Instructions personnalisées</label>
-                    <textarea class="form-control textarea-control" placeholder="Partagez votre perspective unique sur ce sujet. Par exemple : 'En tant qu'expert en transformation digitale, j'aimerais mettre l'accent sur les défis d'adoption de l'IA dans les PME...'"></textarea>
-                </div>
-
-                <div class="form-row">
-                    <div class="form-group">
-                        <label class="form-label">Ton de voix</label>
-                        <select class="form-control">
-                            <option>Professionnel bienveillant</option>
-                            <option>Conversationnel</option>
-                            <option>Inspirant</option>
-                            <option>Pédagogique</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label">Format</label>
-                        <select class="form-control">
-                            <option>Réflexion personnelle</option>
-                            <option>Question ouverte</option>
-                            <option>Points clés</option>
-                            <option>Retour d'expérience</option>
-                        </select>
-                    </div>
-                </div>
-
-                <div style="display: flex; gap: 1rem; justify-content: flex-end; margin-top: 1.5rem;">
-                    <button type="button" class="btn btn-secondary">
-                        <i class="fas fa-times"></i>
-                        Annuler
-                    </button>
-                    <button type="submit" class="btn btn-primary">
-                        <i class="fas fa-magic"></i>
-                        Créer mon contenu
-                    </button>
-                </div>
-            </form>
+            
+            <button type="submit" name="generate_from_article" class="btn btn-primary">
+                <i class="fas fa-magic"></i>
+                Créer mon contenu
+            </button>
         </div>
+    </form>
+    
+    <a href="{{ url_for('dashboard', clear='true') }}" class="btn btn-secondary" style="margin-top: 1rem;">
+        <i class="fas fa-times"></i>
+        Annuler
+    </a>
+</div>
+{% else %}
+<!-- Section de génération de post standard -->
+<div class="creation-section fade-in">
+    <div class="section-header">
+        <h2 class="section-title">
+            <i class="fas fa-pen-fancy icon-noble"></i>
+            Créer un nouveau post
+        </h2>
+        <p class="section-subtitle">Utilisez l'IA pour créer rapidement un contenu authentique et engageant pour votre audience LinkedIn</p>
+    </div>
+    
+    <form method="post">
+        <div class="form-row">
+            <div class="form-group">
+                <label class="form-label">Sujet de votre post</label>
+                <input type="text" name="prompt" class="form-control" placeholder="Ex: Partagez des conseils sur le leadership, Annoncez votre nouvel article..." required>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Ton de voix</label>
+                <select name="tone" class="form-control">
+                    <option value="professionnel">Professionnel bienveillant</option>
+                    <option value="familier">Conversationnel</option>
+                    <option value="inspirant">Inspirant</option>
+                    <option value="humoristique">Décontracté</option>
+                    <option value="factuel">Pédagogique</option>
+                </select>
+            </div>
+            <button type="submit" class="btn btn-primary">
+                <i class="fas fa-magic"></i>
+                Créer
+            </button>
+        </div>
+    </form>
+    
+    <a href="{{ url_for('news_assistant') }}" class="news-invitation">
+        <div class="news-icon">
+            <i class="fas fa-newspaper"></i>
+        </div>
+        <div class="news-content">
+            <h3 class="news-title">Créer un post basé sur l'actualité</h3>
+            <p class="news-subtitle">Inspirez-vous des sujets tendances de votre secteur</p>
+        </div>
+        <div class="news-arrow">
+            <i class="fas fa-arrow-right"></i>
+        </div>
+    </a>
+</div>
+{% endif %}
 
-        <!-- Section contenu généré -->
-        <div class="generated-content fade-in">
-            <div class="section-header">
+{% if draft %}
+<div class="generated-content fade-in">
+    <div class="section-header">
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+            <div>
                 <h2 class="section-title">
                     <i class="fas fa-edit icon-noble"></i>
                     Votre contenu personnalisé
                 </h2>
                 <p class="section-subtitle">Relisez et ajustez votre message avant publication</p>
             </div>
-
-            <div class="content-preview">
-                <div class="content-text">🌟 L'IA en santé : une révolution en douceur
-
-En tant que consultante en transformation digitale, je suis fascinée par l'adoption progressive de l'IA dans nos hôpitaux. 
-
-Ce qui me frappe le plus ? Ce n'est pas la technologie qui est le défi, mais l'humain qui reste au centre.
-
-Les équipes médicales que j'accompagne me rappellent chaque jour que l'innovation réussie, c'est celle qui amplifie l'empathie, pas qui la remplace.
-
-Et vous, comment percevez-vous cette transformation dans votre secteur ?
-
-#IA #Santé #TransformationDigitale #Innovation</div>
-            </div>
-
-            <div class="publish-section">
-                <div class="publish-options">
-                    <div class="form-group">
-                        <label class="form-label">Programmer pour</label>
-                        <input type="datetime-local" class="form-control" value="2025-01-16T09:00">
-                    </div>
-                    <div class="checkbox-group">
-                        <input type="checkbox" id="publish-now">
-                        <label class="checkbox-label" for="publish-now">Publier maintenant</label>
-                    </div>
-                    <button type="submit" class="btn btn-primary">
-                        <i class="fas fa-paper-plane"></i>
-                        Publier
-                    </button>
-                </div>
+            <div class="success-badge">
+                <i class="fas fa-circle-check"></i> 
+                Post généré avec succès
             </div>
         </div>
-
-        <!-- Invitation vers les actualités -->
-        <a href="#" class="news-invitation fade-in">
-            <div class="news-icon">
-                <i class="fas fa-newspaper"></i>
-            </div>
-            <div class="news-content">
-                <h3 class="news-title">Explorer les actualités de votre secteur</h3>
-                <p class="news-subtitle">Découvrez les sujets qui captent l'attention dans votre domaine d'expertise</p>
-            </div>
-            <i class="fas fa-arrow-right icon-noble"></i>
-        </a>
     </div>
+    
+    <form method="post" action="{{ url_for('publish') }}" enctype="multipart/form-data">
+        <div class="form-group">
+            <label class="form-label">Contenu de votre post</label>
+            <textarea name="post_content" class="form-control textarea-control mention-editor" rows="8" required>{{ draft }}</textarea>
+            <div class="mention-tip">
+                <i class="fas fa-at icon-noble"></i>
+                <span>Tapez @ pour mentionner une personne ou une entreprise</span>
+            </div>
+        </div>
+        
+        <div class="publish-options">
+            <div class="form-group">
+                <label class="form-label">📅 Date et heure de publication</label>
+                <input type="datetime-local" name="publish_time" class="form-control" required>
+            </div>
+            <div class="checkbox-group">
+                <input type="checkbox" id="publish-now" name="publish_now">
+                <label class="checkbox-label" for="publish-now">⚡ Publier maintenant</label>
+            </div>
+            <button type="submit" class="btn btn-primary">
+                <i class="fas fa-paper-plane"></i>
+                Publier
+            </button>
+        </div>
+        
+        <div class="form-group">
+            <label class="form-label">📎 Ajouter des images (optionnel)</label>
+            <input type="file" name="images[]" id="images" accept="image/*" multiple class="form-control" style="padding: 1.25rem; border-style: dashed;">
+        </div>
+        
+        <a href="{{ url_for('dashboard', clear='true') }}" class="btn btn-secondary">
+            <i class="fas fa-times"></i>
+            Annuler
+        </a>
+    </form>
+</div>
+{% endif %}
 
-    <script>
-        // Animations douces au chargement
-        document.addEventListener('DOMContentLoaded', function() {
-            // Animation progressive des éléments
-            const elements = document.querySelectorAll('.fade-in');
-            elements.forEach((el, index) => {
-                el.style.opacity = '0';
-                el.style.transform = 'translateY(20px)';
-                el.style.transition = 'all 0.8s ease';
-                
-                setTimeout(() => {
-                    el.style.opacity = '1';
-                    el.style.transform = 'translateY(0)';
-                }, index * 200);
-            });
+<script>
+// Auto-set date/time avec animation
+window.addEventListener('load', function() {
+    const dateInput = document.querySelector('input[type="datetime-local"]');
+    if (dateInput) {
+        const now = new Date();
+        now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
+        now.setMinutes(now.getMinutes() + 30);
+        dateInput.value = now.toISOString().slice(0, 16);
+    }
+});
 
-            // Interactions douces sur les boutons
-            document.querySelectorAll('.btn').forEach(btn => {
-                btn.addEventListener('mouseenter', function() {
-                    this.style.transform = 'translateY(-1px)';
-                });
-                
-                btn.addEventListener('mouseleave', function() {
-                    this.style.transform = 'translateY(0)';
-                });
-            });
+// Animations douces au chargement
+document.addEventListener('DOMContentLoaded', function() {
+    // Animation progressive des éléments
+    const elements = document.querySelectorAll('.fade-in');
+    elements.forEach((el, index) => {
+        el.style.opacity = '0';
+        el.style.transform = 'translateY(20px)';
+        el.style.transition = 'all 0.8s ease';
+        
+        setTimeout(() => {
+            el.style.opacity = '1';
+            el.style.transform = 'translateY(0)';
+        }, index * 200);
+    });
 
-            // Animation douce sur les statistiques
-            document.querySelectorAll('.stat-item').forEach(item => {
-                item.addEventListener('mouseenter', function() {
-                    this.style.transform = 'translateY(-3px) scale(1.02)';
-                });
-                
-                item.addEventListener('mouseleave', function() {
-                    this.style.transform = 'translateY(0) scale(1)';
-                });
-            });
+    // Interactions douces sur les boutons
+    document.querySelectorAll('.btn').forEach(btn => {
+        btn.addEventListener('mouseenter', function() {
+            this.style.transform = 'translateY(-1px)';
         });
-    </script>
-</body>
-</html>
+        
+        btn.addEventListener('mouseleave', function() {
+            this.style.transform = 'translateY(0)';
+        });
+    });
+
+    // Animation douce sur les statistiques
+    document.querySelectorAll('.stat-item').forEach(item => {
+        item.addEventListener('mouseenter', function() {
+            this.style.transform = 'translateY(-3px) scale(1.02)';
+        });
+        
+        item.addEventListener('mouseleave', function() {
+            this.style.transform = 'translateY(0) scale(1)';
+        });
+    });
+
+    // Animation du lien actualités
+    const newsLink = document.querySelector('.news-invitation');
+    if (newsLink) {
+        newsLink.addEventListener('mouseenter', function() {
+            const icon = this.querySelector('.news-icon');
+            const arrow = this.querySelector('.news-arrow');
+            
+            if (icon) icon.style.transform = 'scale(1.05) rotate(2deg)';
+            if (arrow) arrow.style.transform = 'translateX(6px)';
+        });
+        
+        newsLink.addEventListener('mouseleave', function() {
+            const icon = this.querySelector('.news-icon');
+            const arrow = this.querySelector('.news-arrow');
+            
+            if (icon) icon.style.transform = 'scale(1) rotate(0deg)';
+            if (arrow) arrow.style.transform = 'translateX(0)';
+        });
+    }
+});
+</script>
+{% endblock %}
