@@ -209,6 +209,64 @@
         font-size: 0.9rem;
         color: var(--noble-charcoal-light);
     }
+    .linkedin-post {
+    background: white;
+    border: 1px solid #ddd;
+    border-radius: 12px;
+    padding: 1rem 1.25rem;
+    max-width: 600px;
+    margin: 2rem auto;
+    font-family: 'Segoe UI', Tahoma, sans-serif;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+    }
+    
+    .linkedin-header {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        margin-bottom: 1rem;
+    }
+    
+    .linkedin-avatar {
+        width: 48px;
+        height: 48px;
+        border-radius: 50%;
+        object-fit: cover;
+        border: 1px solid #ccc;
+    }
+    
+    .linkedin-name {
+        font-weight: 600;
+        font-size: 1rem;
+        color: #0a66c2;
+    }
+    
+    .linkedin-subline {
+        font-size: 0.875rem;
+        color: #555;
+    }
+    
+    .linkedin-date {
+        font-size: 0.75rem;
+        color: #888;
+    }
+    
+    .linkedin-text {
+        font-size: 1rem;
+        color: #222;
+        line-height: 1.5;
+        margin-bottom: 1rem;
+        white-space: pre-wrap;
+    }
+    
+    .linkedin-actions {
+        display: flex;
+        justify-content: space-around;
+        font-size: 0.875rem;
+        color: #666;
+        border-top: 1px solid #eee;
+        padding-top: 0.75rem;
+    }
 
     /* Formulaire de génération */
     .generation-form {
@@ -664,75 +722,33 @@
             </div>
         </div>
     </div>
-
-    <!-- Aperçu LinkedIn en temps réel -->
-    <div class="linkedin-preview" id="linkedin-preview">
-        <div class="linkedin-post">
-            <div class="linkedin-header">
-                <div class="linkedin-avatar">
-                    {% if picture %}
-                        <img src="{{ picture }}" alt="Photo de profil">
-                    {% else %}
-                        <div class="avatar-placeholder">
-                            <i class="fas fa-user"></i>
-                        </div>
-                    {% endif %}
-                </div>
-                <div class="linkedin-user-info">
-                    <div class="linkedin-name">{{ first_name }} {{ last_name }}</div>
-                    <div class="linkedin-headline">{{ secteur|title if secteur else 'Professionnel' }} • Propulsé par ResoBoost</div>
-                    <div class="linkedin-time">
-                        <i class="fas fa-globe"></i>
-                        <span>Maintenant</span>
-                    </div>
-                </div>
-                <div class="linkedin-options">
-                    <i class="fas fa-ellipsis-h"></i>
-                </div>
-            </div>
-            
-            <div class="linkedin-content" id="preview-content">
-                {{ draft|nl2br|safe }}
-            </div>
-            
-            <div class="linkedin-images" id="preview-images" style="display: none;">
-                <!-- Les images seront ajoutées ici dynamiquement -->
-            </div>
-            
-            <div class="linkedin-actions">
-                <div class="linkedin-action">
-                    <i class="fas fa-thumbs-up"></i>
-                    <span>J'aime</span>
-                </div>
-                <div class="linkedin-action">
-                    <i class="fas fa-comment"></i>
-                    <span>Commenter</span>
-                </div>
-                <div class="linkedin-action">
-                    <i class="fas fa-share"></i>
-                    <span>Partager</span>
-                </div>
-                <div class="linkedin-action">
-                    <i class="fas fa-paper-plane"></i>
-                    <span>Envoyer</span>
-                </div>
+    <div class="linkedin-post">
+        <div class="linkedin-header">
+            <img src="{{ user_avatar_url }}" alt="Photo de profil" class="linkedin-avatar">
+            <div>
+                <div class="linkedin-name">{{ user_fullname }}</div>
+                <div class="linkedin-subline">{{ user_role }} · {{ user_company }}</div>
+                <div class="linkedin-date">il y a quelques jours · <i class="fas fa-globe-europe"></i></div>
             </div>
         </div>
+        <div class="linkedin-text">
+            {{ draft | safe }}
+        </div>
+        <div class="linkedin-actions">
+            <span><i class="far fa-thumbs-up"></i> J’aime</span>
+            <span><i class="far fa-comment"></i> Commenter</span>
+            <span><i class="fas fa-share"></i> Partager</span>
+        </div>
     </div>
-    
+
     <form method="post" action="{{ url_for('publish') }}" enctype="multipart/form-data">
         <div class="form-group">
             <label class="form-label">Contenu de votre post</label>
-            <textarea name="post_content" class="form-control textarea-control mention-editor" rows="8" required id="post-content-editor">{{ draft }}</textarea>
+            <textarea name="post_content" class="form-control textarea-control mention-editor" rows="8" required>{{ draft }}</textarea>
             <div class="mention-tip">
                 <i class="fas fa-at icon-noble"></i>
                 <span>Tapez @ pour mentionner une personne ou une entreprise</span>
             </div>
-        </div>
-        
-        <div class="form-group">
-            <label class="form-label">📎 Ajouter des images (optionnel)</label>
-            <input type="file" name="images[]" id="images" accept="image/*" multiple class="form-control" style="padding: 1.25rem; border-style: dashed;">
         </div>
         
         <div class="publish-options">
@@ -748,6 +764,11 @@
                 <i class="fas fa-paper-plane"></i>
                 Publier
             </button>
+        </div>
+        
+        <div class="form-group">
+            <label class="form-label">📎 Ajouter des images (optionnel)</label>
+            <input type="file" name="images[]" id="images" accept="image/*" multiple class="form-control" style="padding: 1.25rem; border-style: dashed;">
         </div>
         
         <a href="{{ url_for('dashboard', clear='true') }}" class="btn btn-secondary">
