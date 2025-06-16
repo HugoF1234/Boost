@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>LinkedBoost - Connexion</title>
+    <title>ResoBoost - Connexion</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
@@ -41,8 +41,9 @@
             color: var(--text-primary);
             line-height: 1.6;
             min-height: 100vh;
+            padding: 2rem 0;
+            overflow-y: auto;
             position: relative;
-            overflow: hidden;
         }
 
         body::before {
@@ -60,8 +61,9 @@
             position: relative;
             z-index: 2;
             width: 100%;
-            max-width: 480px;
-            margin: 2rem;
+            max-width: 550px;
+            margin: 0 auto;
+            padding: 0 2rem;
         }
         
         .login-card {
@@ -120,7 +122,7 @@
         }
 
         .back-link:hover {
-            transform: translateX(-5px);
+            transform: translateX(-3px);
             color: var(--accent);
         }
         
@@ -146,10 +148,11 @@
             color: white;
             box-shadow: var(--shadow-soft);
             transition: all 0.3s ease;
+            cursor: pointer;
         }
 
         .logo-icon:hover {
-            transform: scale(1.1) rotate(5deg);
+            transform: scale(1.05);
             box-shadow: var(--shadow-medium);
         }
         
@@ -210,7 +213,7 @@
             outline: none;
             border-color: var(--primary);
             box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.1);
-            transform: translateY(-2px);
+            transform: translateY(-1px);
             background: var(--white);
         }
 
@@ -225,7 +228,7 @@
 
         .form-control:focus + .form-icon {
             color: var(--primary);
-            transform: scale(1.1);
+            transform: scale(1.05);
         }
         
         .error-message {
@@ -305,23 +308,16 @@
             font-size: 1.1rem;
             font-weight: 600;
             cursor: pointer;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            transition: all 0.3s ease;
             display: flex;
             align-items: center;
             justify-content: center;
             gap: 0.75rem;
+            text-decoration: none;
             box-shadow: 0 4px 20px rgba(99, 102, 241, 0.3);
             position: relative;
             overflow: hidden;
             margin-bottom: 1.5rem;
-        }
-        .login-container {
-            position: relative;
-            z-index: 2;
-            width: 100%;
-            max-width: 550px;
-            margin: 0 auto 2rem auto; /* Centrer avec margin auto */
-            padding: 0 2rem;
         }
 
         .btn-login::before {
@@ -340,7 +336,7 @@
         }
         
         .btn-login:hover {
-            transform: translateY(-3px) scale(1.02);
+            transform: translateY(-2px);
             box-shadow: 0 8px 30px rgba(99, 102, 241, 0.4);
         }
 
@@ -383,8 +379,12 @@
 
         /* Responsive */
         @media (max-width: 768px) {
+            body {
+                padding: 1rem 0;
+            }
+            
             .login-container {
-                margin: 1rem;
+                padding: 0 1rem;
             }
             
             .login-header, .login-body {
@@ -466,10 +466,10 @@
                     <div class="logo-icon">
                         <i class="fab fa-linkedin-in"></i>
                     </div>
-                    <div class="logo-text">LinkedBoost</div>
+                    <div class="logo-text">ResoBoost</div>
                 </div>
                 <h1 class="login-title">Bon retour !</h1>
-                <p class="login-subtitle">Connectez-vous à votre compte LinkedBoost</p>
+                <p class="login-subtitle">Connectez-vous à votre compte ResoBoost</p>
             </div>
             
             <div class="login-body">
@@ -519,7 +519,7 @@
             </div>
             
             <div class="login-footer">
-                <p>&copy; 2025 LinkedBoost - Propulsez votre présence LinkedIn</p>
+                <p>&copy; 2025 ResoBoost - Propulsez votre présence LinkedIn</p>
             </div>
         </div>
     </div>
@@ -538,7 +538,7 @@
             btn.style.background = 'linear-gradient(135deg, #94a3b8 0%, #64748b 100%)';
         });
 
-        // Validation en temps réel
+        // Validation en temps réel subtile
         const emailInput = document.getElementById('email');
         const passwordInput = document.getElementById('password');
 
@@ -567,10 +567,10 @@
             }
         });
 
-        // Animation des champs de saisie
+        // Animation des champs de saisie plus subtile
         document.querySelectorAll('.form-control').forEach(input => {
             input.addEventListener('focus', function() {
-                this.parentElement.style.transform = 'translateY(-2px)';
+                this.parentElement.style.transform = 'translateY(-1px)';
             });
             
             input.addEventListener('blur', function() {
@@ -578,12 +578,12 @@
             });
         });
 
-        // Animation du logo
+        // Animation du logo plus subtile
         document.querySelector('.logo-icon').addEventListener('click', function() {
-            this.style.transform = 'scale(0.9) rotate(360deg)';
+            this.style.transform = 'scale(0.95)';
             setTimeout(() => {
-                this.style.transform = 'scale(1) rotate(0deg)';
-            }, 600);
+                this.style.transform = 'scale(1)';
+            }, 150);
         });
 
         // Gestion des erreurs visuelles
@@ -592,7 +592,7 @@
             document.getElementById('email').focus();
         }
 
-        // Animation d'entrée retardée pour les éléments
+        // Animation d'entrée
         document.addEventListener('DOMContentLoaded', function() {
             document.body.style.opacity = '0';
             document.body.style.transition = 'opacity 0.5s ease';
@@ -600,15 +600,6 @@
             setTimeout(() => {
                 document.body.style.opacity = '1';
             }, 100);
-        });
-
-        // Effet de parallaxe léger
-        document.addEventListener('mousemove', function(e) {
-            const mouseX = e.clientX / window.innerWidth;
-            const mouseY = e.clientY / window.innerHeight;
-            
-            const card = document.querySelector('.login-card');
-            card.style.transform = `perspective(1000px) rotateY(${(mouseX - 0.5) * 5}deg) rotateX(${(mouseY - 0.5) * -5}deg)`;
         });
     </script>
 </body>
