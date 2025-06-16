@@ -8,24 +8,15 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         :root {
-            --primary: #8b7355;
-            --primary-light: #a89480;
-            --primary-ultra-light: #f3e3cc;
-            --secondary: #faf8f5;
-            --accent: #6b8e23;
-            --accent-light: #9acd32;
-            --warm: #cd853f;
-            --warm-light: #deb887;
-            --soft-gray: #f5f0e8;
-            --text-primary: #1e293b;
-            --text-secondary: #64748b;
-            --text-light: #94a3b8;
-            --white: #ffffff;
-            --danger: #ef4444;
-            --success: #10b981;
-            --shadow-soft: 0 4px 20px rgba(139, 115, 85, 0.1);
-            --shadow-medium: 0 8px 30px rgba(139, 115, 85, 0.15);
-            --shadow-strong: 0 20px 40px rgba(0, 0, 0, 0.1);
+            --primary: #8b7355;           /* Au lieu de #6366f1 */
+            --primary-light: #a89480;     /* Au lieu de #a5b4fc */
+            --primary-ultra-light: #f3e3cc; /* Au lieu de #e0e7ff */
+            --secondary: #faf8f5;         /* Au lieu de #f8fafc */
+            --accent: #6b8e23;            /* Au lieu de #10b981 */
+            --accent-light: #9acd32;      /* Au lieu de #6ee7b7 */
+            --warm: #cd853f;              /* Au lieu de #fbbf24 */
+            --warm-light: #deb887;        /* Au lieu de #fde68a */
+            --soft-gray: #f5f0e8;         /* Au lieu de #f1f5f9 */
         }
         
         * {
@@ -33,14 +24,10 @@
             padding: 0;
             box-sizing: border-box;
         }
-
-        html {
-            scroll-behavior: smooth;
-        }
         
         body {
             font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-            background: linear-gradient(135deg, var(--primary-ultra-light) 0%, #e6d7b8 50%, #d4c4a8 100%);
+            background: linear-gradient(135deg, #f3e3cc 0%, #e6d7b8 50%, #d4c4a8 100%);
             color: var(--text-primary);
             line-height: 1.6;
             min-height: 100vh;
@@ -94,7 +81,7 @@
             padding: 3rem 2.5rem 2rem;
             text-align: center;
             background: linear-gradient(135deg, rgba(139, 115, 85, 0.1) 0%, rgba(107, 142, 35, 0.05) 100%);
-            border-bottom: 1px solid rgba(139, 115, 85, 0.1);
+            border-bottom: 1px solid rgba(99, 102, 241, 0.1);
             position: relative;
         }
 
@@ -105,7 +92,7 @@
             right: 0;
             width: 100px;
             height: 100px;
-            background: radial-gradient(circle, rgba(139, 115, 85, 0.1) 0%, transparent 70%);
+            background: radial-gradient(circle, rgba(99, 102, 241, 0.1) 0%, transparent 70%);
             border-radius: 50%;
             transform: translate(30%, -30%);
         }
@@ -220,7 +207,7 @@
             width: 100%;
             padding: 1.25rem 1.5rem;
             padding-left: 3.5rem;
-            border: 2px solid rgba(139, 115, 85, 0.1);
+            border: 2px solid rgba(99, 102, 241, 0.1);
             border-radius: 16px;
             font-size: 1rem;
             transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
@@ -232,7 +219,7 @@
         .form-control:focus {
             outline: none;
             border-color: var(--primary);
-            box-shadow: 0 0 0 4px rgba(139, 115, 85, 0.1);
+            box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.1);
             transform: translateY(-1px);
             background: var(--white);
         }
@@ -391,7 +378,7 @@
             align-items: center;
             justify-content: center;
             gap: 0.75rem;
-            box-shadow: 0 4px 20px rgba(139, 115, 85, 0.3);
+            box-shadow: 0 4px 20px rgba(99, 102, 241, 0.3);
             position: relative;
             overflow: hidden;
             margin-bottom: 1.5rem;
@@ -414,7 +401,7 @@
         
         .btn-signup:hover {
             transform: translateY(-2px);
-            box-shadow: 0 8px 30px rgba(139, 115, 85, 0.4);
+            box-shadow: 0 8px 30px rgba(99, 102, 241, 0.4);
         }
 
         .btn-signup:active {
@@ -450,7 +437,7 @@
             padding: 1.5rem 2.5rem 2.5rem;
             color: var(--text-light);
             font-size: 0.85rem;
-            border-top: 1px solid rgba(139, 115, 85, 0.1);
+            border-top: 1px solid rgba(99, 102, 241, 0.1);
             background: rgba(248, 250, 252, 0.5);
         }
 
@@ -458,3 +445,431 @@
         @media (max-width: 768px) {
             body {
                 padding: 1rem 0;
+            }
+            
+            .signup-container {
+                padding: 0 1rem;
+            }
+            
+            .signup-header, .signup-body {
+                padding: 2rem 1.5rem;
+            }
+            
+            .logo-text {
+                font-size: 1.5rem;
+            }
+            
+            .signup-title {
+                font-size: 1.5rem;
+            }
+
+            .form-row {
+                grid-template-columns: 1fr;
+                gap: 0;
+            }
+        }
+
+        /* Animations d'interaction plus subtiles */
+        .form-group {
+            animation: fadeInUp 0.6s ease-out;
+            animation-fill-mode: both;
+        }
+
+        .form-group:nth-child(1) { animation-delay: 0.1s; }
+        .form-group:nth-child(2) { animation-delay: 0.15s; }
+        .form-group:nth-child(3) { animation-delay: 0.2s; }
+        .form-group:nth-child(4) { animation-delay: 0.25s; }
+        .form-group:nth-child(5) { animation-delay: 0.3s; }
+        .form-group:nth-child(6) { animation-delay: 0.35s; }
+
+        .btn-signup {
+            animation: fadeInUp 0.6s ease-out 0.4s;
+            animation-fill-mode: both;
+        }
+
+        .signin-link {
+            animation: fadeInUp 0.6s ease-out 0.45s;
+            animation-fill-mode: both;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Validation visuelle */
+        .form-control.valid {
+            border-color: var(--accent);
+            box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.1);
+        }
+
+        .form-control.invalid {
+            border-color: var(--danger);
+            box-shadow: 0 0 0 4px rgba(239, 68, 68, 0.1);
+        }
+    </style>
+</head>
+<body>
+    <div class="signup-container">
+        <div class="signup-card">
+            <div class="signup-header">
+                <a href="/" class="back-link">
+                    <i class="fas fa-arrow-left"></i>
+                    Retour
+                </a>
+                
+                <div class="logo">
+                    <div class="logo-icon">
+                        <i class="fab fa-linkedin-in"></i>
+                    </div>
+                    <div class="logo-text">ResoBoost</div>
+                </div>
+                <h1 class="signup-title">Créez votre compte</h1>
+                <p class="signup-subtitle">Rejoignez ResoBoost et transformez votre présence LinkedIn</p>
+            </div>
+            
+            <div class="signup-body">
+                <div id="error-container"></div>
+                
+                <form method="POST" action="/signup" id="signupForm">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="first_name" class="form-label required">Prénom</label>
+                            <input type="text" id="first_name" name="first_name" class="form-control" 
+                                   placeholder="John" required>
+                            <i class="fa-solid fa-user form-icon"></i>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="last_name" class="form-label required">Nom</label>
+                            <input type="text" id="last_name" name="last_name" class="form-control" 
+                                   placeholder="Doe" required>
+                            <i class="fa-solid fa-user form-icon"></i>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="email" class="form-label required">Adresse email</label>
+                        <input type="email" id="email" name="email" class="form-control" 
+                               placeholder="john.doe@exemple.com" required autocomplete="email">
+                        <i class="fa-solid fa-envelope form-icon"></i>
+                        <div class="email-validation" id="emailValidation"></div>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="company" class="form-label">Entreprise</label>
+                            <input type="text" id="company" name="company" class="form-control" 
+                                   placeholder="Mon Entreprise">
+                            <i class="fa-solid fa-building form-icon"></i>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="job_title" class="form-label">Poste</label>
+                            <input type="text" id="job_title" name="job_title" class="form-control" 
+                                   placeholder="Directeur Marketing">
+                            <i class="fa-solid fa-briefcase form-icon"></i>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="password" class="form-label required">Mot de passe</label>
+                        <input type="password" id="password" name="password" class="form-control" 
+                               placeholder="Créez un mot de passe sécurisé" required>
+                        <i class="fa-solid fa-lock form-icon"></i>
+                        <div class="password-strength" id="passwordStrength">
+                            <div class="password-strength-bar"></div>
+                        </div>
+                        <div class="password-requirements">
+                            <div class="requirement" id="req-length">
+                                <div class="requirement-icon">
+                                    <i class="fa-solid fa-times"></i>
+                                </div>
+                                <span>Au moins 8 caractères</span>
+                            </div>
+                            <div class="requirement" id="req-uppercase">
+                                <div class="requirement-icon">
+                                    <i class="fa-solid fa-times"></i>
+                                </div>
+                                <span>Une majuscule</span>
+                            </div>
+                            <div class="requirement" id="req-lowercase">
+                                <div class="requirement-icon">
+                                    <i class="fa-solid fa-times"></i>
+                                </div>
+                                <span>Une minuscule</span>
+                            </div>
+                            <div class="requirement" id="req-number">
+                                <div class="requirement-icon">
+                                    <i class="fa-solid fa-times"></i>
+                                </div>
+                                <span>Un chiffre</span>
+                            </div>
+                            <div class="requirement" id="req-special">
+                                <div class="requirement-icon">
+                                    <i class="fa-solid fa-times"></i>
+                                </div>
+                                <span>Un caractère spécial</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="confirm_password" class="form-label required">Confirmer le mot de passe</label>
+                        <input type="password" id="confirm_password" name="confirm_password" class="form-control" 
+                               placeholder="Confirmez votre mot de passe" required>
+                        <i class="fa-solid fa-lock form-icon"></i>
+                    </div>
+                    
+                    <button type="submit" class="btn-signup" id="signupBtn" disabled>
+                        <i class="fa-solid fa-user-plus"></i>
+                        <span>Créer mon compte gratuitement</span>
+                    </button>
+                </form>
+
+                <div class="signin-link">
+                    Déjà un compte ? <a href="/signin">Connectez-vous</a>
+                </div>
+            </div>
+            
+            <div class="signup-footer">
+                <p>&copy; 2025 ResoBoost - En créant un compte, vous acceptez nos conditions d'utilisation</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Variables globales
+        let emailValid = false;
+        let passwordValid = false;
+        let passwordMatch = false;
+
+        // Validation de l'email en temps réel
+        const emailInput = document.getElementById('email');
+        const emailValidation = document.getElementById('emailValidation');
+        let emailTimeout;
+
+        function validateEmail(email) {
+            const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            return regex.test(email);
+        }
+
+        emailInput.addEventListener('input', function() {
+            const email = this.value;
+            
+            clearTimeout(emailTimeout);
+            
+            if (email && validateEmail(email)) {
+                emailValidation.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i>';
+                emailValidation.className = 'email-validation checking';
+                
+                emailTimeout = setTimeout(() => {
+                    // Simuler une vérification d'API
+                    fetch('/api/check_email', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ email: email })
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.available) {
+                            emailValidation.innerHTML = '<i class="fa-solid fa-check"></i>';
+                            emailValidation.className = 'email-validation available';
+                            emailValid = true;
+                        } else {
+                            emailValidation.innerHTML = '<i class="fa-solid fa-times"></i>';
+                            emailValidation.className = 'email-validation taken';
+                            emailValid = false;
+                        }
+                        updateSubmitButton();
+                    })
+                    .catch(() => {
+                        emailValidation.innerHTML = '';
+                        emailValidation.className = 'email-validation';
+                        emailValid = validateEmail(email);
+                        updateSubmitButton();
+                    });
+                }, 500);
+            } else {
+                emailValidation.innerHTML = '';
+                emailValidation.className = 'email-validation';
+                emailValid = false;
+                updateSubmitButton();
+            }
+        });
+
+        // Validation du mot de passe
+        const passwordInput = document.getElementById('password');
+        const passwordStrength = document.getElementById('passwordStrength');
+
+        function checkPasswordRequirement(password, requirement) {
+            switch(requirement) {
+                case 'length': return password.length >= 8;
+                case 'uppercase': return /[A-Z]/.test(password);
+                case 'lowercase': return /[a-z]/.test(password);
+                case 'number': return /[0-9]/.test(password);
+                case 'special': return /[!@#$%^&*(),.?\":{}|<>]/.test(password);
+                default: return false;
+            }
+        }
+
+        function updatePasswordStrength(password) {
+            const requirements = ['length', 'uppercase', 'lowercase', 'number', 'special'];
+            let score = 0;
+
+            requirements.forEach(req => {
+                const element = document.getElementById(`req-${req}`);
+                const met = checkPasswordRequirement(password, req);
+                
+                if (met) {
+                    element.classList.add('met');
+                    element.querySelector('.requirement-icon i').className = 'fa-solid fa-check';
+                    score++;
+                } else {
+                    element.classList.remove('met');
+                    element.querySelector('.requirement-icon i').className = 'fa-solid fa-times';
+                }
+            });
+
+            // Mettre à jour la barre de force
+            passwordStrength.className = 'password-strength';
+            if (score === 0) {
+                passwordStrength.classList.add('weak');
+            } else if (score <= 2) {
+                passwordStrength.classList.add('weak');
+            } else if (score <= 3) {
+                passwordStrength.classList.add('fair');
+            } else if (score <= 4) {
+                passwordStrength.classList.add('good');
+            } else {
+                passwordStrength.classList.add('strong');
+            }
+
+            passwordValid = score === 5;
+            updateSubmitButton();
+        }
+
+        passwordInput.addEventListener('input', function() {
+            updatePasswordStrength(this.value);
+            checkPasswordMatch();
+        });
+
+        // Vérification de la correspondance des mots de passe
+        const confirmPasswordInput = document.getElementById('confirm_password');
+
+        function checkPasswordMatch() {
+            const password = passwordInput.value;
+            const confirmPassword = confirmPasswordInput.value;
+
+            if (confirmPassword) {
+                if (password === confirmPassword) {
+                    confirmPasswordInput.classList.add('valid');
+                    confirmPasswordInput.classList.remove('invalid');
+                    passwordMatch = true;
+                } else {
+                    confirmPasswordInput.classList.add('invalid');
+                    confirmPasswordInput.classList.remove('valid');
+                    passwordMatch = false;
+                }
+            } else {
+                confirmPasswordInput.classList.remove('valid', 'invalid');
+                passwordMatch = false;
+            }
+            
+            updateSubmitButton();
+        }
+
+        confirmPasswordInput.addEventListener('input', checkPasswordMatch);
+
+        // Mise à jour du bouton de soumission
+        function updateSubmitButton() {
+            const submitBtn = document.getElementById('signupBtn');
+            const firstName = document.getElementById('first_name').value.trim();
+            const lastName = document.getElementById('last_name').value.trim();
+            
+            const allValid = emailValid && passwordValid && passwordMatch && firstName && lastName;
+            
+            submitBtn.disabled = !allValid;
+            
+            if (allValid) {
+                submitBtn.style.opacity = '1';
+                submitBtn.style.cursor = 'pointer';
+            } else {
+                submitBtn.style.opacity = '0.6';
+                submitBtn.style.cursor = 'not-allowed';
+            }
+        }
+
+        // Validation des champs obligatoires
+        document.querySelectorAll('#first_name, #last_name').forEach(input => {
+            input.addEventListener('input', updateSubmitButton);
+        });
+
+        // Animation de soumission du formulaire
+        document.getElementById('signupForm').addEventListener('submit', function(e) {
+            const btn = document.getElementById('signupBtn');
+            const icon = btn.querySelector('i');
+            const text = btn.querySelector('span');
+            
+            if (btn.disabled) {
+                e.preventDefault();
+                return;
+            }
+            
+            // Changer l'état du bouton
+            btn.disabled = true;
+            icon.className = 'fa-solid fa-spinner fa-spin';
+            text.textContent = 'Création en cours...';
+            btn.style.background = 'linear-gradient(135deg, #94a3b8 0%, #64748b 100%)';
+        });
+
+        // Animation des champs de saisie plus subtile
+        document.querySelectorAll('.form-control').forEach(input => {
+            input.addEventListener('focus', function() {
+                this.parentElement.style.transform = 'translateY(-1px)';
+            });
+            
+            input.addEventListener('blur', function() {
+                this.parentElement.style.transform = 'translateY(0)';
+            });
+        });
+
+        // Animation du logo plus subtile
+        document.querySelector('.logo-icon').addEventListener('click', function() {
+            this.style.transform = 'scale(0.95)';
+            setTimeout(() => {
+                this.style.transform = 'scale(1)';
+            }, 150);
+        });
+
+        // Gestion des erreurs
+        function showError(message) {
+            const errorContainer = document.getElementById('error-container');
+            errorContainer.innerHTML = `
+                <div class="error-message">
+                    <div class="error-icon">
+                        <i class="fa-solid fa-exclamation"></i>
+                    </div>
+                    <span>${message}</span>
+                </div>
+            `;
+        }
+
+        // Animation d'entrée
+        document.addEventListener('DOMContentLoaded', function() {
+            document.body.style.opacity = '0';
+            document.body.style.transition = 'opacity 0.5s ease';
+            
+            setTimeout(() => {
+                document.body.style.opacity = '1';
+            }, 100);
+        });
+    </script>
+</body>
+</html>
