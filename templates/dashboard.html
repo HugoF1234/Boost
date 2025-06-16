@@ -1,700 +1,673 @@
-{% extends "base.html" %}
-{% block content %}
-<style>
-    /* Variables pour la nouvelle DA beige/brun cohérente */
-    :root {
-        --primary: #a8956b;
-        --primary-light: #c4b085;
-        --primary-ultra-light: #e8e0d1;
-        --secondary: #f5f3ef;
-        --accent: #b8a082;
-        --accent-light: #d1c4a8;
-        --warm: #d4c4a8;
-        --warm-light: #e2d6bf;
-        --soft-gray: #f0ede7;
-        --beige-main: #f2e8d8;
-        --text-primary: #2d2a24;
-        --text-secondary: #5a5449;
-        --text-light: #8a7d6f;
-        --white: #ffffff;
-        --glass: rgba(255, 255, 255, 0.25);
-        --glass-border: rgba(255, 255, 255, 0.3);
-        --shadow-soft: 0 4px 20px rgba(168, 149, 107, 0.1);
-        --shadow-medium: 0 8px 30px rgba(168, 149, 107, 0.15);
-        --shadow-strong: 0 20px 40px rgba(0, 0, 0, 0.1);
-        --success: #10b981;
-        --warning: #f59e0b;
-        --danger: #ef4444;
-    }
-
-    /* Header avec glassmorphism cohérent */
-    .welcome-header {
-        background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 50%, var(--accent-light) 100%);
-        color: white;
-        padding: 2.5rem;
-        border-radius: 24px;
-        margin-bottom: 2rem;
-        position: relative;
-        overflow: hidden;
-        box-shadow: var(--shadow-strong);
-    }
-
-    .welcome-header::before {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="sparkles" width="20" height="20" patternUnits="userSpaceOnUse"><circle cx="5" cy="5" r="1" fill="%23ffffff" opacity="0.3"><animate attributeName="opacity" values="0.3;0.8;0.3" dur="3s" repeatCount="indefinite"/></circle><circle cx="15" cy="15" r="0.5" fill="%23ffffff" opacity="0.5"><animate attributeName="opacity" values="0.5;1;0.5" dur="2s" repeatCount="indefinite" begin="1s"/></circle></pattern></defs><rect width="100" height="100" fill="url(%23sparkles)"/></svg>') repeat;
-    }
-
-    .welcome-content {
-        position: relative;
-        z-index: 1;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        flex-wrap: wrap;
-        gap: 1.5rem;
-    }
-
-    .welcome-title {
-        font-size: 2.5rem;
-        font-weight: 700;
-        margin-bottom: 0.5rem;
-        text-shadow: 0 2px 4px rgba(0,0,0,0.1);
-        letter-spacing: -0.025em;
-    }
-
-    .welcome-subtitle {
-        opacity: 0.9;
-        font-size: 1.1rem;
-        font-weight: 400;
-    }
-
-    .success-badge {
-        background: var(--glass);
-        backdrop-filter: blur(10px);
-        padding: 0.75rem 1.5rem;
-        border-radius: 50px;
-        font-size: 0.9rem;
-        font-weight: 600;
-        display: flex;
-        align-items: center;
-        gap: 0.5rem;
-        border: 1px solid var(--glass-border);
-        animation: pulse 2s infinite;
-    }
-
-    @keyframes pulse {
-        0%, 100% { transform: scale(1); }
-        50% { transform: scale(1.05); }
-    }
-
-    /* Cartes de contenu */
-    .content-card {
-        background: var(--white);
-        border-radius: 24px;
-        border: 1px solid rgba(168, 149, 107, 0.1);
-        overflow: hidden;
-        transition: all 0.3s ease;
-        margin-bottom: 2rem;
-        box-shadow: var(--shadow-soft);
-    }
-
-    .content-card:hover {
-        transform: translateY(-4px);
-        box-shadow: var(--shadow-medium);
-        border-color: var(--primary-light);
-    }
-
-    .card-header-modern {
-        background: linear-gradient(135deg, var(--soft-gray) 0%, var(--secondary) 100%);
-        padding: 2rem;
-        border-bottom: 1px solid rgba(168, 149, 107, 0.1);
-        position: relative;
-    }
-
-    .card-header-modern::after {
-        content: '';
-        position: absolute;
-        bottom: 0;
-        left: 0;
-        right: 0;
-        height: 1px;
-        background: linear-gradient(90deg, transparent, var(--primary-light), transparent);
-    }
-
-    .card-title-modern {
-        font-size: 1.4rem;
-        font-weight: 600;
-        color: var(--text-primary);
-        margin-bottom: 0.5rem;
-    }
-
-    .card-subtitle-modern {
-        color: var(--text-secondary);
-        font-size: 0.95rem;
-        line-height: 1.5;
-    }
-
-    .card-body-modern {
-        padding: 2rem;
-    }
-
-    /* Inputs modernes */
-    .input-modern {
-        width: 100%;
-        padding: 1rem 1.5rem;
-        border: 2px solid rgba(168, 149, 107, 0.1);
-        border-radius: 16px;
-        font-size: 1rem;
-        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        background: rgba(248, 250, 252, 0.5);
-        backdrop-filter: blur(10px);
-    }
-
-    .input-modern:focus {
-        outline: none;
-        border-color: var(--primary);
-        box-shadow: 0 0 0 4px rgba(168, 149, 107, 0.1);
-        transform: translateY(-2px);
-        background: var(--white);
-    }
-
-    .textarea-modern {
-        width: 100%;
-        min-height: 150px;
-        padding: 1.5rem;
-        border: 2px solid rgba(168, 149, 107, 0.1);
-        border-radius: 16px;
-        font-family: inherit;
-        font-size: 1rem;
-        line-height: 1.7;
-        resize: vertical;
-        transition: all 0.3s ease;
-        background: rgba(248, 250, 252, 0.5);
-        backdrop-filter: blur(10px);
-    }
-
-    .textarea-modern:focus {
-        outline: none;
-        border-color: var(--primary);
-        box-shadow: 0 0 0 4px rgba(168, 149, 107, 0.1);
-        background: var(--white);
-    }
-
-    /* Boutons interactifs */
-    .btn-modern {
-        padding: 1rem 2rem;
-        border-radius: 16px;
-        font-weight: 600;
-        font-size: 0.95rem;
-        border: none;
-        cursor: pointer;
-        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        display: inline-flex;
-        align-items: center;
-        gap: 0.75rem;
-        text-decoration: none;
-        position: relative;
-        overflow: hidden;
-    }
-
-    .btn-modern::before {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: -100%;
-        width: 100%;
-        height: 100%;
-        background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
-        transition: all 0.6s ease;
-    }
-
-    .btn-modern:hover::before {
-        left: 100%;
-    }
-
-    .btn-primary-modern {
-        background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
-        color: white;
-        box-shadow: 0 4px 20px rgba(168, 149, 107, 0.3);
-    }
-
-    .btn-primary-modern:hover {
-        transform: translateY(-3px) scale(1.02);
-        box-shadow: 0 8px 30px rgba(168, 149, 107, 0.4);
-    }
-
-    .btn-secondary-modern {
-        background: var(--white);
-        color: var(--primary);
-        border: 2px solid var(--primary);
-        box-shadow: var(--shadow-soft);
-    }
-
-    .btn-secondary-modern:hover {
-        background: var(--primary);
-        color: white;
-        transform: translateY(-3px);
-        box-shadow: var(--shadow-medium);
-    }
-
-    /* Formulaire en grille */
-    .form-grid-2 {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 1.5rem;
-        margin-bottom: 1.5rem;
-    }
-
-    /* Article sélectionné */
-    .article-preview {
-        padding: 2rem;
-        background: linear-gradient(135deg, var(--primary-ultra-light) 0%, rgba(184, 160, 130, 0.05) 100%);
-        border-radius: 20px;
-        margin-bottom: 1.5rem;
-        border-left: 5px solid var(--primary);
-        transition: all 0.3s ease;
-        position: relative;
-        overflow: hidden;
-    }
-
-    .article-preview::before {
-        content: '';
-        position: absolute;
-        top: 0;
-        right: 0;
-        width: 100px;
-        height: 100px;
-        background: radial-gradient(circle, rgba(168, 149, 107, 0.1) 0%, transparent 70%);
-        border-radius: 50%;
-        transform: translate(30%, -30%);
-    }
-
-    .article-preview:hover {
-        transform: scale(1.01);
-        box-shadow: var(--shadow-medium);
-    }
-
-    /* Lien vers actualités */
-    .news-link {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        padding: 1.5rem;
-        background: linear-gradient(135deg, var(--primary-ultra-light) 0%, rgba(184, 160, 130, 0.1) 100%);
-        border: 2px solid var(--primary-light);
-        color: var(--primary);
-        border-radius: 20px;
-        text-decoration: none;
-        transition: all 0.4s ease;
-        margin-top: 1.5rem;
-    }
-
-    .news-link:hover {
-        background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
-        color: white;
-        transform: translateY(-3px) scale(1.02);
-        box-shadow: var(--shadow-medium);
-    }
-
-    .news-link-content {
-        display: flex;
-        align-items: center;
-        gap: 1rem;
-    }
-
-    .news-link-icon {
-        width: 50px;
-        height: 50px;
-        background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
-        border-radius: 15px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        color: white;
-        font-size: 1.25rem;
-        transition: all 0.3s ease;
-    }
-
-    .news-link:hover .news-link-icon {
-        background: rgba(255, 255, 255, 0.2);
-        transform: scale(1.1);
-    }
-
-    .news-link-text {
-        flex: 1;
-    }
-
-    .news-link-title {
-        font-weight: 600;
-        font-size: 1.1rem;
-        margin-bottom: 0.25rem;
-    }
-
-    .news-link-subtitle {
-        font-size: 0.9rem;
-        opacity: 0.8;
-    }
-
-    .news-link-arrow {
-        display: flex;
-        align-items: center;
-        gap: 0.5rem;
-        font-size: 1.2rem;
-        transition: all 0.3s ease;
-    }
-
-    .news-link:hover .news-link-arrow {
-        transform: translateX(5px);
-    }
-
-    /* Responsive design */
-    @media (max-width: 768px) {
-        .welcome-content {
-            flex-direction: column;
-            text-align: center;
-        }
-
-        .form-grid-2 {
-            grid-template-columns: 1fr;
-        }
-
-        .welcome-title {
-            font-size: 2rem;
-        }
-
-        .news-link {
-            flex-direction: column;
-            text-align: center;
-            gap: 1rem;
-        }
-
-        .news-link-content {
-            flex-direction: column;
-            text-align: center;
-        }
-    }
-
-    /* Animations d'entrée */
-    .fade-in {
-        animation: fadeInUp 0.6s ease-out;
-    }
-
-    @keyframes fadeInUp {
-        from {
-            opacity: 0;
-            transform: translateY(30px);
-        }
-        to {
-            opacity: 1;
-            transform: translateY(0);
-        }
-    }
-
-    .slide-in {
-        animation: slideInRight 0.5s ease-out;
-    }
-
-    @keyframes slideInRight {
-        from {
-            opacity: 0;
-            transform: translateX(30px);
-        }
-        to {
-            opacity: 1;
-            transform: translateX(0);
-        }
-    }
-</style>
-
-<!-- Header de bienvenue -->
-<div class="welcome-header fade-in">
-    <div class="welcome-content">
-        <div>
-            <h1 class="welcome-title">Bienvenue, {{ first_name }} 👋</h1>
-            <p class="welcome-subtitle">{{ name }} | {{ email }}</p>
-        </div>
-        {% if article_success %}
-        <div class="success-badge">
-            <i class="fa-solid fa-check-circle"></i>
-            Article sélectionné avec succès !
-        </div>
-        {% endif %}
-    </div>
-</div>
-
-<!-- Section pour l'article sélectionné -->
-{% if selected_article %}
-<div class="content-card slide-in">
-    <div class="card-header-modern">
-        <h2 class="card-title-modern">📝 Générer un post à partir de l'article sélectionné</h2>
-        <p class="card-subtitle-modern">Créez un contenu personnalisé et engageant basé sur cette actualité</p>
-    </div>
-    
-    <div class="card-body-modern">
-        <div class="article-preview">
-            <h3 style="margin-bottom: 0.75rem; color: var(--primary); font-weight: 600; font-size: 1.2rem;">{{ selected_article.title|clean_html }}</h3>
-            <p style="margin-bottom: 1rem; line-height: 1.7; color: var(--text-secondary);">{{ selected_article.description|clean_html }}</p>
-            <div style="display: flex; justify-content: space-between; align-items: center; font-size: 0.9rem; color: var(--text-light);">
-                <div style="display: flex; align-items: center; gap: 0.5rem;">
-                    <i class="fa-solid fa-globe"></i>
-                    <a href="{{ selected_article.url }}" target="_blank" style="color: var(--primary); text-decoration: none; font-weight: 500;">
-                        {{ selected_article.source.name }}
-                    </a>
-                </div>
-                <div style="display: flex; align-items: center; gap: 0.5rem;">
-                    <i class="fa-regular fa-calendar"></i>
-                    <span>{{ selected_article.formatted_date }}</span>
-                </div>
-            </div>
-        </div>
-        
-        <form method="post">
-            <!-- NOUVEAU: Champ pour le prompt personnalisé -->
-            <div style="margin-bottom: 1.5rem;">
-                <label style="display: block; margin-bottom: 0.75rem; font-weight: 600; color: var(--text-primary); font-size: 1rem;">
-                    <i class="fa-solid fa-magic-wand-sparkles"></i>
-                    Instructions personnalisées (optionnel)
-                </label>
-                <textarea name="custom_instructions" class="textarea-modern" rows="4" 
-                          placeholder="Ex: Écris ce post du point de vue d'un expert en cybersécurité, mets l'accent sur les risques pour les PME, utilise un ton professionnel mais accessible, ajoute des conseils pratiques..."></textarea>
-                <div style="margin-top: 0.75rem; font-size: 0.9rem; color: var(--text-light); display: flex; align-items: center; gap: 0.5rem; padding: 0.75rem; background: var(--primary-ultra-light); border-radius: 12px; border-left: 4px solid var(--primary);">
-                    <i class="fa-solid fa-lightbulb"></i>
-                    <span>Personnalisez votre post avec vos propres instructions. Laissez vide pour utiliser les paramètres par défaut.</span>
-                </div>
-            </div>
-
-            <div class="form-grid-2">
-                <div>
-                    <label style="display: block; margin-bottom: 0.5rem; font-weight: 600; color: var(--text-primary);">Ton du post</label>
-                    <select name="tone" class="input-modern">
-                        <option value="professionnel">Professionnel</option>
-                        <option value="familier">Familier</option>
-                        <option value="inspirant">Inspirant</option>
-                        <option value="humoristique">Humoristique</option>
-                        <option value="factuel">Factuel</option>
-                        <option value="critique">Critique</option>
-                    </select>
-                </div>
-                
-                <div>
-                    <label style="display: block; margin-bottom: 0.5rem; font-weight: 600; color: var(--text-primary);">Perspective</label>
-                    <select name="perspective" class="input-modern">
-                        <option value="neutre">Neutre</option>
-                        <option value="enthousiaste">Enthousiaste</option>
-                        <option value="analytique">Analytique</option>
-                        <option value="innovant">Innovateur</option>
-                        <option value="expert">Expert du domaine</option>
-                    </select>
-                </div>
-            </div>
-
-            <div style="margin-bottom: 1.5rem;">
-                <label style="display: block; margin-bottom: 0.5rem; font-weight: 600; color: var(--text-primary);">Format du post</label>
-                <select name="format" class="input-modern">
-                    <option value="standard">📄 Post standard (analyse classique)</option>
-                    <option value="question">❓ Post question (engagement fort)</option>
-                    <option value="listpoints">📝 Points clés (liste structurée)</option>
-                    <option value="story">📖 Storytelling (narration engageante)</option>
-                </select>
-            </div>
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - ResoBoost</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Palette noble et apaisante */
+        :root {
+            --noble-cream: #faf9f7;
+            --noble-warm: #f5f2ed;
+            --noble-sage: #8b9a7c;
+            --noble-sage-light: #a8b59a;
+            --noble-sage-dark: #6b7865;
+            --noble-stone: #e8e4de;
+            --noble-charcoal: #4a4943;
+            --noble-charcoal-light: #6b6960;
+            --noble-mist: #f0ede8;
+            --noble-accent: #9c8b7a;
+            --noble-accent-light: #b5a495;
             
-            <div style="display: flex; gap: 1rem; justify-content: flex-end; margin-top: 2rem; padding-top: 1.5rem; border-top: 1px solid rgba(168, 149, 107, 0.1);">
-                <button type="submit" name="generate_from_article" class="btn-modern btn-primary-modern">
-                    <i class="fa-solid fa-wand-magic-sparkles"></i>
-                    Générer mon post personnalisé
-                </button>
+            /* Couleurs fonctionnelles douces */
+            --gentle-success: #7c9885;
+            --gentle-warning: #b8a082;
+            --gentle-info: #8ba3b8;
+            
+            /* Ombres très subtiles */
+            --shadow-whisper: 0 2px 12px rgba(139, 154, 124, 0.08);
+            --shadow-gentle: 0 4px 20px rgba(139, 154, 124, 0.12);
+            --shadow-soft: 0 8px 32px rgba(139, 154, 124, 0.16);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--noble-cream);
+            color: var(--noble-charcoal);
+            line-height: 1.7;
+            font-weight: 400;
+        }
+
+        .dashboard-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+            min-height: 100vh;
+        }
+
+        /* Header noble et accueillant */
+        .welcome-section {
+            background: linear-gradient(135deg, var(--noble-warm) 0%, var(--noble-mist) 100%);
+            border-radius: 20px;
+            padding: 2.5rem;
+            margin-bottom: 2rem;
+            border: 1px solid var(--noble-stone);
+            box-shadow: var(--shadow-whisper);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .welcome-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 120px;
+            height: 120px;
+            background: radial-gradient(circle, rgba(139, 154, 124, 0.06) 0%, transparent 70%);
+            border-radius: 50%;
+            transform: translate(30%, -30%);
+        }
+
+        .welcome-content {
+            position: relative;
+            z-index: 1;
+        }
+
+        .greeting {
+            font-size: 1.75rem;
+            font-weight: 600;
+            color: var(--noble-charcoal);
+            margin-bottom: 0.5rem;
+            letter-spacing: -0.02em;
+        }
+
+        .greeting-subtitle {
+            color: var(--noble-charcoal-light);
+            font-size: 1rem;
+            font-weight: 400;
+            margin-bottom: 2rem;
+        }
+
+        .user-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 1.5rem;
+            margin-top: 1.5rem;
+        }
+
+        .stat-item {
+            text-align: center;
+            padding: 1.25rem;
+            background: rgba(255, 255, 255, 0.6);
+            border-radius: 16px;
+            border: 1px solid rgba(139, 154, 124, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        .stat-item:hover {
+            background: rgba(255, 255, 255, 0.8);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-gentle);
+        }
+
+        .stat-number {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: var(--noble-sage);
+            display: block;
+            margin-bottom: 0.25rem;
+        }
+
+        .stat-label {
+            font-size: 0.85rem;
+            color: var(--noble-charcoal-light);
+            font-weight: 500;
+        }
+
+        /* Section principale de création */
+        .creation-section {
+            background: white;
+            border-radius: 20px;
+            padding: 2.5rem;
+            margin-bottom: 2rem;
+            border: 1px solid var(--noble-stone);
+            box-shadow: var(--shadow-whisper);
+        }
+
+        .section-header {
+            margin-bottom: 2rem;
+        }
+
+        .section-title {
+            font-size: 1.4rem;
+            font-weight: 600;
+            color: var(--noble-charcoal);
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .section-subtitle {
+            color: var(--noble-charcoal-light);
+            font-size: 0.95rem;
+            line-height: 1.6;
+        }
+
+        /* Article sélectionné - style très doux */
+        .selected-article {
+            background: linear-gradient(135deg, rgba(139, 154, 124, 0.04) 0%, rgba(156, 139, 122, 0.04) 100%);
+            border: 1px solid rgba(139, 154, 124, 0.15);
+            border-radius: 16px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            position: relative;
+        }
+
+        .selected-article::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 4px;
+            height: 100%;
+            background: linear-gradient(to bottom, var(--noble-sage), var(--noble-accent));
+            border-radius: 2px;
+        }
+
+        .article-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: var(--noble-charcoal);
+            margin-bottom: 1rem;
+            line-height: 1.5;
+        }
+
+        .article-description {
+            color: var(--noble-charcoal-light);
+            line-height: 1.6;
+            margin-bottom: 1.5rem;
+        }
+
+        .article-meta {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 1rem;
+            font-size: 0.9rem;
+            color: var(--noble-charcoal-light);
+        }
+
+        /* Formulaire de génération */
+        .generation-form {
+            display: grid;
+            gap: 1.5rem;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .form-label {
+            font-size: 0.9rem;
+            font-weight: 500;
+            color: var(--noble-charcoal);
+            margin-bottom: 0.75rem;
+        }
+
+        .form-control {
+            padding: 0.875rem 1.125rem;
+            border: 1.5px solid var(--noble-stone);
+            border-radius: 12px;
+            font-size: 0.95rem;
+            background: var(--noble-cream);
+            color: var(--noble-charcoal);
+            transition: all 0.3s ease;
+            font-family: inherit;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: var(--noble-sage);
+            box-shadow: 0 0 0 3px rgba(139, 154, 124, 0.1);
+            background: white;
+        }
+
+        .textarea-control {
+            min-height: 120px;
+            resize: vertical;
+            line-height: 1.6;
+        }
+
+        /* Boutons nobles et doux */
+        .btn {
+            padding: 0.875rem 1.75rem;
+            border-radius: 12px;
+            font-weight: 500;
+            font-size: 0.95rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.625rem;
+            text-decoration: none;
+            border: none;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--noble-sage) 0%, var(--noble-sage-light) 100%);
+            color: white;
+            box-shadow: var(--shadow-whisper);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-1px);
+            box-shadow: var(--shadow-gentle);
+            background: linear-gradient(135deg, var(--noble-sage-dark) 0%, var(--noble-sage) 100%);
+        }
+
+        .btn-secondary {
+            background: white;
+            color: var(--noble-charcoal);
+            border: 1.5px solid var(--noble-stone);
+        }
+
+        .btn-secondary:hover {
+            background: var(--noble-warm);
+            border-color: var(--noble-sage);
+            transform: translateY(-1px);
+        }
+
+        /* Lien vers actualités */
+        .news-invitation {
+            background: linear-gradient(135deg, rgba(156, 139, 122, 0.06) 0%, rgba(139, 154, 124, 0.06) 100%);
+            border: 1px solid rgba(156, 139, 122, 0.15);
+            border-radius: 16px;
+            padding: 1.75rem;
+            margin-top: 2rem;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 1.25rem;
+            transition: all 0.3s ease;
+        }
+
+        .news-invitation:hover {
+            background: linear-gradient(135deg, rgba(156, 139, 122, 0.08) 0%, rgba(139, 154, 124, 0.08) 100%);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-gentle);
+        }
+
+        .news-icon {
+            width: 56px;
+            height: 56px;
+            background: linear-gradient(135deg, var(--noble-accent) 0%, var(--noble-accent-light) 100%);
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            color: white;
+            flex-shrink: 0;
+        }
+
+        .news-content {
+            flex: 1;
+        }
+
+        .news-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--noble-charcoal);
+            margin-bottom: 0.375rem;
+        }
+
+        .news-subtitle {
+            color: var(--noble-charcoal-light);
+            font-size: 0.9rem;
+            line-height: 1.5;
+        }
+
+        /* Section du contenu généré */
+        .generated-content {
+            background: white;
+            border-radius: 20px;
+            padding: 2.5rem;
+            margin-bottom: 2rem;
+            border: 1px solid var(--noble-stone);
+            box-shadow: var(--shadow-whisper);
+        }
+
+        .content-preview {
+            background: var(--noble-warm);
+            border-radius: 16px;
+            padding: 2rem;
+            border-left: 4px solid var(--noble-sage);
+            margin-bottom: 2rem;
+        }
+
+        .content-text {
+            line-height: 1.7;
+            color: var(--noble-charcoal);
+            white-space: pre-wrap;
+            font-size: 1rem;
+        }
+
+        /* Actions de publication */
+        .publish-section {
+            border-top: 1px solid var(--noble-stone);
+            padding-top: 2rem;
+            margin-top: 2rem;
+        }
+
+        .publish-options {
+            display: grid;
+            grid-template-columns: 1fr auto auto;
+            gap: 1.5rem;
+            align-items: end;
+            margin-bottom: 1.5rem;
+        }
+
+        .checkbox-group {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.875rem 1.125rem;
+            background: var(--noble-mist);
+            border-radius: 12px;
+            border: 1px solid var(--noble-stone);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .checkbox-group:hover {
+            background: var(--noble-warm);
+        }
+
+        .checkbox-group input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+            accent-color: var(--noble-sage);
+        }
+
+        .checkbox-label {
+            font-size: 0.9rem;
+            color: var(--noble-charcoal);
+            font-weight: 500;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .dashboard-container {
+                padding: 1rem;
+            }
+
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+
+            .publish-options {
+                grid-template-columns: 1fr;
+            }
+
+            .user-stats {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .news-invitation {
+                flex-direction: column;
+                text-align: center;
+            }
+        }
+
+        /* Animations très douces */
+        .fade-in {
+            animation: gentleFadeIn 0.8s ease-out;
+        }
+
+        @keyframes gentleFadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Icônes avec style noble */
+        .icon-noble {
+            color: var(--noble-sage);
+            font-size: 1.125rem;
+        }
+
+        .success-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: linear-gradient(135deg, rgba(124, 152, 133, 0.1) 0%, rgba(124, 152, 133, 0.05) 100%);
+            color: var(--gentle-success);
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 500;
+            border: 1px solid rgba(124, 152, 133, 0.2);
+        }
+    </style>
+</head>
+<body>
+    <div class="dashboard-container">
+        <!-- Section d'accueil noble -->
+        <div class="welcome-section fade-in">
+            <div class="welcome-content">
+                <h1 class="greeting">Bonjour Marie 🌿</h1>
+                <p class="greeting-subtitle">Créons ensemble du contenu authentique qui résonne avec votre audience</p>
                 
-                <a href="{{ url_for('dashboard', clear='true') }}" class="btn-modern btn-secondary-modern">
-                    <i class="fa-solid fa-times"></i>
-                    Annuler
-                </a>
+                <!-- Badge de succès si article sélectionné -->
+                <div class="success-badge">
+                    <i class="fas fa-check-circle"></i>
+                    Article sélectionné avec succès
+                </div>
+                
+                <div class="user-stats">
+                    <div class="stat-item">
+                        <span class="stat-number">12</span>
+                        <span class="stat-label">Posts publiés</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-number">3</span>
+                        <span class="stat-label">En attente</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-number">1.2k</span>
+                        <span class="stat-label">Vues totales</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-number">89%</span>
+                        <span class="stat-label">Engagement</span>
+                    </div>
+                </div>
             </div>
-        </form>
-    </div>
-</div>
-{% else %}
-<!-- Section de génération de post standard -->
-<div class="content-card slide-in">
-    <div class="card-header-modern">
-        <h2 class="card-title-modern">💬 Générer un nouveau post</h2>
-        <p class="card-subtitle-modern">Utilisez l'IA pour créer rapidement un contenu engageant et viral pour votre audience LinkedIn</p>
-    </div>
-    
-    <div class="card-body-modern">
-        <form method="post">
-            <div style="display: grid; grid-template-columns: 2fr 1fr auto; gap: 1rem; align-items: end; margin-bottom: 1.5rem;">
-                <div>
-                    <input type="text" name="prompt" class="input-modern" placeholder="Ex: Partagez des conseils sur le leadership, Annoncez votre nouvel article..." required>
+        </div>
+
+        <!-- Section article sélectionné -->
+        <div class="creation-section fade-in">
+            <div class="section-header">
+                <h2 class="section-title">
+                    <i class="fas fa-feather-alt icon-noble"></i>
+                    Créer à partir de votre article
+                </h2>
+                <p class="section-subtitle">Transformons cette actualité en contenu engageant qui reflète votre expertise</p>
+            </div>
+
+            <div class="selected-article">
+                <h3 class="article-title">L'intelligence artificielle transforme le secteur de la santé : nouvelles perspectives pour 2025</h3>
+                <p class="article-description">Les récentes avancées en IA générative ouvrent de nouvelles possibilités dans le diagnostic médical et la personnalisation des traitements. Les professionnels de santé adoptent progressivement ces technologies...</p>
+                <div class="article-meta">
+                    <div>
+                        <i class="fas fa-globe icon-noble"></i>
+                        Le Figaro Santé
+                    </div>
+                    <div>
+                        <i class="fas fa-calendar icon-noble"></i>
+                        15 janvier 2025
+                    </div>
                 </div>
-                <div>
-                    <select name="tone" class="input-modern">
-                        <option value="professionnel">Professionnel</option>
-                        <option value="familier">Familier</option>
-                        <option value="inspirant">Inspirant</option>
-                        <option value="humoristique">Humoristique</option>
-                        <option value="factuel">Factuel</option>
-                    </select>
+            </div>
+
+            <form class="generation-form">
+                <div class="form-group">
+                    <label class="form-label">Instructions personnalisées</label>
+                    <textarea class="form-control textarea-control" placeholder="Partagez votre perspective unique sur ce sujet. Par exemple : 'En tant qu'expert en transformation digitale, j'aimerais mettre l'accent sur les défis d'adoption de l'IA dans les PME...'"></textarea>
                 </div>
-                <div>
-                    <button type="submit" class="btn-modern btn-primary-modern">
-                        <i class="fa-solid fa-wand-magic-sparkles"></i>
-                        Générer
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label">Ton de voix</label>
+                        <select class="form-control">
+                            <option>Professionnel bienveillant</option>
+                            <option>Conversationnel</option>
+                            <option>Inspirant</option>
+                            <option>Pédagogique</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Format</label>
+                        <select class="form-control">
+                            <option>Réflexion personnelle</option>
+                            <option>Question ouverte</option>
+                            <option>Points clés</option>
+                            <option>Retour d'expérience</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div style="display: flex; gap: 1rem; justify-content: flex-end; margin-top: 1.5rem;">
+                    <button type="button" class="btn btn-secondary">
+                        <i class="fas fa-times"></i>
+                        Annuler
+                    </button>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-magic"></i>
+                        Créer mon contenu
                     </button>
                 </div>
-            </div>
-        </form>
-        
-        <a href="{{ url_for('news_assistant') }}" class="news-link">
-            <div class="news-link-content">
-                <div class="news-link-icon">
-                    <i class="fa-solid fa-newspaper"></i>
-                </div>
-                <div class="news-link-text">
-                    <div class="news-link-title">Créer un post basé sur l'actualité</div>
-                    <div class="news-link-subtitle">Inspirez-vous des sujets tendances du moment</div>
-                </div>
-            </div>
-            <div class="news-link-arrow">
-                <i class="fa-solid fa-chevron-right"></i>
-            </div>
-        </a>
-    </div>
-</div>
-{% endif %}
-
-{% if draft %}
-<div class="content-card slide-in" style="border: 2px solid var(--accent-light);">
-    <div class="card-header-modern" style="background: linear-gradient(135deg, rgba(184, 160, 130, 0.1) 0%, rgba(212, 196, 168, 0.05) 100%);">
-        <div style="display: flex; justify-content: space-between; align-items: center;">
-            <div>
-                <h2 class="card-title-modern">📝 Éditer et publier votre post</h2>
-                <p class="card-subtitle-modern">Personnalisez votre contenu et programmez sa publication</p>
-            </div>
-            <div class="success-badge" style="background: var(--accent); color: white;">
-                <i class="fa-solid fa-circle-check"></i> 
-                Post généré avec succès
-            </div>
+            </form>
         </div>
-    </div>
-    
-    <div class="card-body-modern">
-        <form method="post" action="{{ url_for('publish') }}" enctype="multipart/form-data">
-            <div style="margin-bottom: 1.5rem;">
-                <label style="display: block; margin-bottom: 0.75rem; font-weight: 600; color: var(--text-primary); font-size: 1.1rem;">Contenu du post</label>
-                <textarea name="post_content" class="textarea-modern mention-editor" rows="8" required>{{ draft }}</textarea>
-                <div style="margin-top: 0.75rem; font-size: 0.9rem; color: var(--text-light); display: flex; align-items: center; gap: 0.5rem; padding: 0.75rem; background: var(--primary-ultra-light); border-radius: 12px; border-left: 4px solid var(--primary);">
-                    <i class="fa-solid fa-at"></i>
-                    <span>Tapez @ pour mentionner une personne ou une entreprise</span>
-                </div>
+
+        <!-- Section contenu généré -->
+        <div class="generated-content fade-in">
+            <div class="section-header">
+                <h2 class="section-title">
+                    <i class="fas fa-edit icon-noble"></i>
+                    Votre contenu personnalisé
+                </h2>
+                <p class="section-subtitle">Relisez et ajustez votre message avant publication</p>
             </div>
-            
-            <div style="display: grid; grid-template-columns: 1fr auto auto; gap: 1.5rem; align-items: end; margin-bottom: 1.5rem;">
-                <div>
-                    <label style="display: block; margin-bottom: 0.5rem; font-weight: 600; color: var(--text-primary);">📅 Date et heure de publication</label>
-                    <input type="datetime-local" name="publish_time" class="input-modern" required>
-                </div>
-                <div style="display: flex; align-items: center; gap: 0.75rem; padding: 1rem; background: var(--soft-gray); border-radius: 12px;">
-                    <input type="checkbox" id="publish-now" name="publish_now" style="width: 20px; height: 20px; accent-color: var(--primary);">
-                    <label for="publish-now" style="font-weight: 500; color: var(--text-primary);">Publier maintenant</label>
-                </div>
-                <div>
-                    <button type="submit" class="btn-modern btn-primary-modern">
-                        <i class="fa-solid fa-paper-plane"></i>
+
+            <div class="content-preview">
+                <div class="content-text">🌟 L'IA en santé : une révolution en douceur
+
+En tant que consultante en transformation digitale, je suis fascinée par l'adoption progressive de l'IA dans nos hôpitaux. 
+
+Ce qui me frappe le plus ? Ce n'est pas la technologie qui est le défi, mais l'humain qui reste au centre.
+
+Les équipes médicales que j'accompagne me rappellent chaque jour que l'innovation réussie, c'est celle qui amplifie l'empathie, pas qui la remplace.
+
+Et vous, comment percevez-vous cette transformation dans votre secteur ?
+
+#IA #Santé #TransformationDigitale #Innovation</div>
+            </div>
+
+            <div class="publish-section">
+                <div class="publish-options">
+                    <div class="form-group">
+                        <label class="form-label">Programmer pour</label>
+                        <input type="datetime-local" class="form-control" value="2025-01-16T09:00">
+                    </div>
+                    <div class="checkbox-group">
+                        <input type="checkbox" id="publish-now">
+                        <label class="checkbox-label" for="publish-now">Publier maintenant</label>
+                    </div>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-paper-plane"></i>
                         Publier
                     </button>
                 </div>
             </div>
-            
-            <div style="margin-bottom: 1.5rem;">
-                <label style="display: block; margin-bottom: 0.75rem; font-weight: 600; color: var(--text-primary);">📎 Ajouter des images (optionnel)</label>
-                <input type="file" name="images[]" id="images" accept="image/*" multiple class="input-modern" style="padding: 1.25rem; border-style: dashed;">
+        </div>
+
+        <!-- Invitation vers les actualités -->
+        <a href="#" class="news-invitation fade-in">
+            <div class="news-icon">
+                <i class="fas fa-newspaper"></i>
             </div>
-            
-            <div style="display: flex; gap: 1rem; justify-content: flex-end; margin-top: 2rem; padding-top: 1.5rem; border-top: 1px solid rgba(168, 149, 107, 0.1);">
-                <a href="{{ url_for('dashboard', clear='true') }}" class="btn-modern btn-secondary-modern">
-                    <i class="fa-solid fa-times"></i>
-                    Annuler
-                </a>
+            <div class="news-content">
+                <h3 class="news-title">Explorer les actualités de votre secteur</h3>
+                <p class="news-subtitle">Découvrez les sujets qui captent l'attention dans votre domaine d'expertise</p>
             </div>
-        </form>
+            <i class="fas fa-arrow-right icon-noble"></i>
+        </a>
     </div>
-</div>
-{% endif %}
 
-<script>
-// Auto-set date/time avec animation
-window.addEventListener('load', function() {
-    const dateInput = document.querySelector('input[type="datetime-local"]');
-    if (dateInput) {
-        const now = new Date();
-        now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
-        now.setMinutes(now.getMinutes() + 30);
-        dateInput.value = now.toISOString().slice(0, 16);
-    }
-});
+    <script>
+        // Animations douces au chargement
+        document.addEventListener('DOMContentLoaded', function() {
+            // Animation progressive des éléments
+            const elements = document.querySelectorAll('.fade-in');
+            elements.forEach((el, index) => {
+                el.style.opacity = '0';
+                el.style.transform = 'translateY(20px)';
+                el.style.transition = 'all 0.8s ease';
+                
+                setTimeout(() => {
+                    el.style.opacity = '1';
+                    el.style.transform = 'translateY(0)';
+                }, index * 200);
+            });
 
-// Animation des éléments au scroll
-const observerOptions = {
-    threshold: 0.1,
-    rootMargin: '0px 0px -50px 0px'
-};
+            // Interactions douces sur les boutons
+            document.querySelectorAll('.btn').forEach(btn => {
+                btn.addEventListener('mouseenter', function() {
+                    this.style.transform = 'translateY(-1px)';
+                });
+                
+                btn.addEventListener('mouseleave', function() {
+                    this.style.transform = 'translateY(0)';
+                });
+            });
 
-const observer = new IntersectionObserver((entries) => {
-    entries.forEach(entry => {
-        if (entry.isIntersecting) {
-            entry.target.style.opacity = '1';
-            entry.target.style.transform = 'translateY(0)';
-        }
-    });
-}, observerOptions);
-
-// Observer tous les éléments avec animation
-document.querySelectorAll('.fade-in, .slide-in').forEach(el => {
-    el.style.opacity = '0';
-    el.style.transform = 'translateY(30px)';
-    el.style.transition = 'all 0.6s cubic-bezier(0.4, 0, 0.2, 1)';
-    observer.observe(el);
-});
-
-// Amélioration des interactions des boutons
-document.querySelectorAll('.btn-modern').forEach(btn => {
-    btn.addEventListener('mouseenter', function() {
-        this.style.transform = 'translateY(-3px) scale(1.02)';
-    });
-    
-    btn.addEventListener('mouseleave', function() {
-        this.style.transform = 'translateY(0) scale(1)';
-    });
-    
-    btn.addEventListener('mousedown', function() {
-        this.style.transform = 'translateY(-1px) scale(0.98)';
-    });
-    
-    btn.addEventListener('mouseup', function() {
-        this.style.transform = 'translateY(-3px) scale(1.02)';
-    });
-});
-
-// Animation du lien actualités
-document.querySelector('.news-link')?.addEventListener('mouseenter', function() {
-    const icon = this.querySelector('.news-link-icon');
-    const arrow = this.querySelector('.news-link-arrow');
-    
-    if (icon) icon.style.transform = 'scale(1.2) rotate(5deg)';
-    if (arrow) arrow.style.transform = 'translateX(8px)';
-});
-
-document.querySelector('.news-link')?.addEventListener('mouseleave', function() {
-    const icon = this.querySelector('.news-link-icon');
-    const arrow = this.querySelector('.news-link-arrow');
-    
-    if (icon) icon.style.transform = 'scale(1) rotate(0deg)';
-    if (arrow) arrow.style.transform = 'translateX(0)';
-});
-</script>
-{% endblock %}
+            // Animation douce sur les statistiques
+            document.querySelectorAll('.stat-item').forEach(item => {
+                item.addEventListener('mouseenter', function() {
+                    this.style.transform = 'translateY(-3px) scale(1.02)';
+                });
+                
+                item.addEventListener('mouseleave', function() {
+                    this.style.transform = 'translateY(0) scale(1)';
+                });
+            });
+        });
+    </script>
+</body>
+</html>
