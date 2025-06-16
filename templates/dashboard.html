@@ -664,15 +664,75 @@
             </div>
         </div>
     </div>
+
+    <!-- Aperçu LinkedIn en temps réel -->
+    <div class="linkedin-preview" id="linkedin-preview">
+        <div class="linkedin-post">
+            <div class="linkedin-header">
+                <div class="linkedin-avatar">
+                    {% if picture %}
+                        <img src="{{ picture }}" alt="Photo de profil">
+                    {% else %}
+                        <div class="avatar-placeholder">
+                            <i class="fas fa-user"></i>
+                        </div>
+                    {% endif %}
+                </div>
+                <div class="linkedin-user-info">
+                    <div class="linkedin-name">{{ first_name }} {{ last_name }}</div>
+                    <div class="linkedin-headline">{{ secteur|title if secteur else 'Professionnel' }} • Propulsé par ResoBoost</div>
+                    <div class="linkedin-time">
+                        <i class="fas fa-globe"></i>
+                        <span>Maintenant</span>
+                    </div>
+                </div>
+                <div class="linkedin-options">
+                    <i class="fas fa-ellipsis-h"></i>
+                </div>
+            </div>
+            
+            <div class="linkedin-content" id="preview-content">
+                {{ draft|nl2br|safe }}
+            </div>
+            
+            <div class="linkedin-images" id="preview-images" style="display: none;">
+                <!-- Les images seront ajoutées ici dynamiquement -->
+            </div>
+            
+            <div class="linkedin-actions">
+                <div class="linkedin-action">
+                    <i class="fas fa-thumbs-up"></i>
+                    <span>J'aime</span>
+                </div>
+                <div class="linkedin-action">
+                    <i class="fas fa-comment"></i>
+                    <span>Commenter</span>
+                </div>
+                <div class="linkedin-action">
+                    <i class="fas fa-share"></i>
+                    <span>Partager</span>
+                </div>
+                <div class="linkedin-action">
+                    <i class="fas fa-paper-plane"></i>
+                    <span>Envoyer</span>
+                </div>
+            </div>
+        </div>
+    </div>
     
     <form method="post" action="{{ url_for('publish') }}" enctype="multipart/form-data">
         <div class="form-group">
             <label class="form-label">Contenu de votre post</label>
-            <textarea name="post_content" class="form-control textarea-control mention-editor" rows="8" required>{{ draft }}</textarea>
+            <textarea name="post_content" class="form-control textarea-control mention-editor" rows="8" required id="post-content-editor">{{ draft }}</textarea>
             <div class="mention-tip">
                 <i class="fas fa-at icon-noble"></i>
                 <span>Tapez @ pour mentionner une personne ou une entreprise</span>
             </div>
+        </div>
+        
+        <div class="form-group">
+            <label class="form-label">📎 Ajouter des images (optionnel)</label>
+            <input type="file" name="images[]" id="images" accept="image/*" multiple class="form-control" style="padding: 1.25rem; border-style: dashed;">
         </div>
         
         <div class="publish-options">
@@ -688,11 +748,6 @@
                 <i class="fas fa-paper-plane"></i>
                 Publier
             </button>
-        </div>
-        
-        <div class="form-group">
-            <label class="form-label">📎 Ajouter des images (optionnel)</label>
-            <input type="file" name="images[]" id="images" accept="image/*" multiple class="form-control" style="padding: 1.25rem; border-style: dashed;">
         </div>
         
         <a href="{{ url_for('dashboard', clear='true') }}" class="btn btn-secondary">
