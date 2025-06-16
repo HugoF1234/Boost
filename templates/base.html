@@ -3,31 +3,34 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{ title or "LinkedBoost" }}</title>
+    <title>{{ title or "ResoBoost" }}</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- Remplacez la section <style> dans votre base.html par celle-ci -->
     <style>
-        /* Variables pour couleurs douces */
+        /* Variables pour la nouvelle DA beige/brun cohérente */
         :root {
-            --primary: #6366f1;
-            --primary-light: #a5b4fc;
-            --primary-ultra-light: #e0e7ff;
-            --secondary: #f8fafc;
-            --accent: #10b981;
-            --accent-light: #6ee7b7;
-            --warm: #fbbf24;
-            --warm-light: #fde68a;
-            --soft-gray: #f1f5f9;
-            --text-primary: #1e293b;
-            --text-secondary: #64748b;
-            --text-light: #94a3b8;
+            --primary: #a8956b;
+            --primary-light: #c4b085;
+            --primary-ultra-light: #e8e0d1;
+            --secondary: #f5f3ef;
+            --accent: #b8a082;
+            --accent-light: #d1c4a8;
+            --warm: #d4c4a8;
+            --warm-light: #e2d6bf;
+            --soft-gray: #f0ede7;
+            --beige-main: #f2e8d8;
+            --text-primary: #2d2a24;
+            --text-secondary: #5a5449;
+            --text-light: #8a7d6f;
             --white: #ffffff;
             --glass: rgba(255, 255, 255, 0.25);
             --glass-border: rgba(255, 255, 255, 0.3);
-            --shadow-soft: 0 4px 20px rgba(99, 102, 241, 0.1);
-            --shadow-medium: 0 8px 30px rgba(99, 102, 241, 0.15);
+            --shadow-soft: 0 4px 20px rgba(168, 149, 107, 0.1);
+            --shadow-medium: 0 8px 30px rgba(168, 149, 107, 0.15);
             --shadow-strong: 0 20px 40px rgba(0, 0, 0, 0.1);
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
         }
     
         * {
@@ -44,17 +47,31 @@
     
         body {
             font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-            background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+            background: linear-gradient(135deg, var(--beige-main) 0%, #e6d7b8 50%, #d4c4a8 100%);
             color: var(--text-primary);
             line-height: 1.6;
+            position: relative;
         }
     
+        /* Effet de particules subtil */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="sparkles" width="20" height="20" patternUnits="userSpaceOnUse"><circle cx="5" cy="5" r="1" fill="%23ffffff" opacity="0.1"><animate attributeName="opacity" values="0.1;0.3;0.1" dur="3s" repeatCount="indefinite"/></circle><circle cx="15" cy="15" r="0.5" fill="%23ffffff" opacity="0.2"><animate attributeName="opacity" values="0.2;0.5;0.2" dur="2s" repeatCount="indefinite" begin="1s"/></circle></pattern></defs><rect width="100" height="100" fill="url(%23sparkles)"/></svg>') repeat;
+            z-index: 1;
+        }
+
         /* Layout principal */
         .app-container {
             display: flex;
             min-height: 100vh;
             width: 100%;
             position: relative;
+            z-index: 2;
         }
     
         /* Sidebar ultra moderne avec gradient cohérent */
@@ -64,7 +81,7 @@
             position: fixed;
             left: 0;
             top: 0;
-            background: linear-gradient(145deg, #6366f1 0%, #a5b4fc 50%, #6ee7b7 100%);
+            background: linear-gradient(145deg, var(--primary) 0%, var(--primary-light) 50%, var(--accent-light) 100%);
             backdrop-filter: blur(20px);
             z-index: 100;
             transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
@@ -107,7 +124,7 @@
             gap: 4px;
             cursor: pointer;
             transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-            box-shadow: 0 4px 20px rgba(99, 102, 241, 0.2);
+            box-shadow: 0 4px 20px rgba(168, 149, 107, 0.2);
             backdrop-filter: blur(10px);
         }
     
@@ -121,7 +138,7 @@
             background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
             border-color: transparent;
             transform: scale(1.1) rotate(180deg);
-            box-shadow: 0 8px 30px rgba(99, 102, 241, 0.4);
+            box-shadow: 0 8px 30px rgba(168, 149, 107, 0.4);
         }
     
         .sidebar-toggle:active {
@@ -423,7 +440,7 @@
                 left: 1.5rem !important;
                 background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
                 border: none;
-                box-shadow: 0 4px 20px rgba(99, 102, 241, 0.3);
+                box-shadow: 0 4px 20px rgba(168, 149, 107, 0.3);
             }
     
             .sidebar-toggle .toggle-line {
@@ -658,13 +675,6 @@
         <div class="toggle-line"></div>
     </button>
 
-    <!-- Bouton toggle pour la sidebar - POSITIONNÉ APRÈS LA SIDEBAR -->
-    <button class="sidebar-toggle" id="sidebar-toggle" onclick="toggleSidebar()">
-        <div class="toggle-line"></div>
-        <div class="toggle-line"></div>
-        <div class="toggle-line"></div>
-    </button>
-
     <div class="app-container">
         <!-- Sidebar moderne -->
         <aside class="sidebar" id="sidebar">
@@ -673,7 +683,7 @@
                     <div class="logo-icon">
                         <i class="fab fa-linkedin-in"></i>
                     </div>
-                    <div class="logo-text">LinkedBoost</div>
+                    <div class="logo-text">ResoBoost</div>
                 </div>
                 <div class="user-info">
                     <div class="user-avatar">
@@ -776,7 +786,7 @@
         </main>
     </div>
 
-    <!-- Scripts pour les fonctionnalités interactives -->
+    <!-- Scripts identiques -->
     <script>
         // Variable pour l'état de la sidebar
         let sidebarCollapsed = false;
@@ -1216,4 +1226,4 @@
         });
     </script>
 </body>
-</html>v
+</html>
