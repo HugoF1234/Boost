@@ -8,7 +8,8 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         :root {
-            --primary: #8b7355;
+            --primary: #8b7355;     /* Remplacez par votre couleur unie */
+            --accent: #cfb18c;
             --primary-light: #a89480;
             --primary-ultra-light: #f3e3cc;
             --secondary: #faf8f5;
@@ -129,7 +130,7 @@
         .logo-icon {
             width: 80px;
             height: 80px;
-            background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+            background: var(--primary); 
             border-radius: 24px;
             display: flex;
             align-items: center;
@@ -244,11 +245,11 @@
         }
 
         .signin-card .auth-icon {
-            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+            background: var(--primary); 
         }
 
         .signup-card .auth-icon {
-            background: linear-gradient(135deg, var(--accent) 0%, var(--accent-light) 100%);
+            background: var(--primary); 
         }
 
         .auth-card:hover .auth-icon {
@@ -325,7 +326,7 @@
         }
 
         .btn-signin {
-            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+            background: var(--primary);  /* Au lieu de linear-gradient */
             color: white;
             box-shadow: 0 4px 20px rgba(139, 115, 85, 0.3);
         }
@@ -335,8 +336,9 @@
             box-shadow: 0 8px 30px rgba(139, 115, 85, 0.4);
         }
 
+
         .btn-signup {
-            background: linear-gradient(135deg, var(--accent) 0%, var(--accent-light) 100%);
+            background: var(--accent);   /* Au lieu de linear-gradient */
             color: white;
             box-shadow: 0 4px 20px rgba(107, 142, 35, 0.3);
         }
@@ -673,7 +675,7 @@
 
         /* Section CTA finale */
         .cta-section {
-            background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+            background: var(--primary);
             border-radius: 24px;
             padding: 4rem 3rem;
             text-align: center;
