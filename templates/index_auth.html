@@ -8,32 +8,43 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         :root {
-            --primary: #8b7355;           /* Au lieu de #6366f1 */
-            --primary-light: #a89480;     /* Au lieu de #a5b4fc */
-            --primary-ultra-light: #f3e3cc; /* Au lieu de #e0e7ff */
-            --secondary: #faf8f5;         /* Au lieu de #f8fafc */
-            --accent: #6b8e23;            /* Au lieu de #10b981 */
-            --accent-light: #9acd32;      /* Au lieu de #6ee7b7 */
-            --warm: #cd853f;              /* Au lieu de #fbbf24 */
-            --warm-light: #deb887;        /* Au lieu de #fde68a */
-            --soft-gray: #f5f0e8;         /* Au lieu de #f1f5f9 */
+            --primary: #8b7355;
+            --primary-light: #a89480;
+            --primary-ultra-light: #f3e3cc;
+            --secondary: #faf8f5;
+            --accent: #6b8e23;
+            --accent-light: #9acd32;
+            --warm: #cd853f;
+            --warm-light: #deb887;
+            --soft-gray: #f5f0e8;
+            --beige-main: #f2e4ce;
+            --text-primary: #1e293b;
+            --text-secondary: #64748b;
+            --text-light: #94a3b8;
+            --white: #ffffff;
+            --shadow-soft: 0 4px 20px rgba(139, 115, 85, 0.1);
+            --shadow-medium: 0 8px 30px rgba(139, 115, 85, 0.15);
+            --shadow-strong: 0 20px 40px rgba(0, 0, 0, 0.1);
         }
+
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
         }
-                
+
+        html {
+            scroll-behavior: smooth;
+        }
+        
         body {
             font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 50%, var(--accent-light) 100%);
+            background: linear-gradient(135deg, var(--beige-main) 0%, #e6d7b8 50%, #d4c4a8 100%);
             color: var(--text-primary);
             line-height: 1.6;
             min-height: 100vh;
-            overflow-y: auto; /* AJOUTER CETTE LIGNE */
-            padding: 2rem 0; /* AJOUTER CETTE LIGNE */
+            overflow-y: auto;
             position: relative;
-            overflow: hidden;
         }
 
         body::before {
@@ -46,13 +57,17 @@
             background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="sparkles" width="20" height="20" patternUnits="userSpaceOnUse"><circle cx="5" cy="5" r="1" fill="%23ffffff" opacity="0.1"><animate attributeName="opacity" values="0.1;0.3;0.1" dur="3s" repeatCount="indefinite"/></circle><circle cx="15" cy="15" r="0.5" fill="%23ffffff" opacity="0.2"><animate attributeName="opacity" values="0.2;0.5;0.2" dur="2s" repeatCount="indefinite" begin="1s"/></circle></pattern></defs><rect width="100" height="100" fill="url(%23sparkles)"/></svg>') repeat;
             z-index: 1;
         }
+
         .main-container {
             position: relative;
             z-index: 2;
             width: 100%;
             max-width: 1200px;
-            margin: 0 auto; /* MODIFIER */
-            padding: 0 2rem; /* AJOUTER */
+            margin: 0 auto;
+            padding: 2rem;
+            display: flex;
+            flex-direction: column;
+            gap: 3rem;
         }
                 
         .hero-card {
@@ -79,8 +94,8 @@
         .hero-header {
             padding: 4rem 3rem 2rem;
             text-align: center;
-            background: linear-gradient(135deg, rgba(99, 102, 241, 0.1) 0%, rgba(16, 185, 129, 0.05) 100%);
-            border-bottom: 1px solid rgba(99, 102, 241, 0.1);
+            background: linear-gradient(135deg, rgba(139, 115, 85, 0.1) 0%, rgba(107, 142, 35, 0.05) 100%);
+            border-bottom: 1px solid rgba(139, 115, 85, 0.1);
             position: relative;
             overflow: hidden;
         }
@@ -92,7 +107,7 @@
             left: -50%;
             width: 200%;
             height: 200%;
-            background: radial-gradient(circle, rgba(99, 102, 241, 0.05) 0%, transparent 70%);
+            background: radial-gradient(circle, rgba(139, 115, 85, 0.05) 0%, transparent 70%);
             animation: float 8s ease-in-out infinite;
         }
 
@@ -168,14 +183,6 @@
             margin-right: auto;
             line-height: 1.5;
         }
-        .main-container {
-            position: relative;
-            z-index: 2;
-            width: 100%;
-            max-width: 1200px;
-            margin: 0 auto 2rem auto; /* Centrer avec margin auto */
-            padding: 0 2rem; /* Ajouter du padding */
-        }
         
         .hero-body {
             padding: 3rem;
@@ -189,15 +196,17 @@
         }
 
         .auth-card {
-            background: linear-gradient(135deg, var(--white) 0%, var(--soft-gray) 100%);
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(10px);
             border-radius: 24px;
             padding: 3rem;
             text-align: center;
-            border: 2px solid rgba(99, 102, 241, 0.1);
+            border: 2px solid rgba(139, 115, 85, 0.1);
             transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
             position: relative;
             overflow: hidden;
             cursor: pointer;
+            box-shadow: var(--shadow-soft);
         }
 
         .auth-card::before {
@@ -207,7 +216,7 @@
             left: -100%;
             width: 100%;
             height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(99, 102, 241, 0.1), transparent);
+            background: linear-gradient(90deg, transparent, rgba(139, 115, 85, 0.1), transparent);
             transition: all 0.8s ease;
         }
 
@@ -318,32 +327,33 @@
         .btn-signin {
             background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
             color: white;
-            box-shadow: 0 4px 20px rgba(99, 102, 241, 0.3);
+            box-shadow: 0 4px 20px rgba(139, 115, 85, 0.3);
         }
 
         .btn-signin:hover {
             transform: translateY(-3px) scale(1.02);
-            box-shadow: 0 8px 30px rgba(99, 102, 241, 0.4);
+            box-shadow: 0 8px 30px rgba(139, 115, 85, 0.4);
         }
 
         .btn-signup {
             background: linear-gradient(135deg, var(--accent) 0%, var(--accent-light) 100%);
             color: white;
-            box-shadow: 0 4px 20px rgba(16, 185, 129, 0.3);
+            box-shadow: 0 4px 20px rgba(107, 142, 35, 0.3);
         }
 
         .btn-signup:hover {
             transform: translateY(-3px) scale(1.02);
-            box-shadow: 0 8px 30px rgba(16, 185, 129, 0.4);
+            box-shadow: 0 8px 30px rgba(107, 142, 35, 0.4);
         }
 
         /* Section des fonctionnalités */
         .features-section {
             padding: 3rem;
-            background: linear-gradient(135deg, var(--primary-ultra-light) 0%, rgba(16, 185, 129, 0.05) 100%);
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(10px);
             border-radius: 24px;
-            margin-bottom: 3rem;
-            border: 1px solid var(--primary-light);
+            border: 1px solid rgba(139, 115, 85, 0.1);
+            box-shadow: var(--shadow-soft);
         }
 
         .features-title {
@@ -367,9 +377,9 @@
         .feature-item {
             text-align: center;
             padding: 2rem;
-            background: var(--white);
+            background: rgba(255, 255, 255, 0.8);
             border-radius: 20px;
-            border: 1px solid rgba(99, 102, 241, 0.1);
+            border: 1px solid rgba(139, 115, 85, 0.1);
             transition: all 0.3s ease;
             cursor: pointer;
         }
@@ -384,7 +394,7 @@
             width: 60px;
             height: 60px;
             margin: 0 auto 1.5rem;
-            background: linear-gradient(135deg, var(--primary-ultra-light) 0%, rgba(16, 185, 129, 0.1) 100%);
+            background: linear-gradient(135deg, var(--primary-ultra-light) 0%, rgba(107, 142, 35, 0.1) 100%);
             border-radius: 16px;
             display: flex;
             align-items: center;
@@ -419,7 +429,7 @@
             padding: 2rem 3rem;
             color: var(--text-light);
             font-size: 0.9rem;
-            border-top: 1px solid rgba(99, 102, 241, 0.1);
+            border-top: 1px solid rgba(139, 115, 85, 0.1);
             background: rgba(248, 250, 252, 0.5);
         }
 
@@ -452,10 +462,11 @@
             transform: translateY(-2px) scale(1.1);
         }
 
-        /* Responsive */
+        /* Responsive pour les nouvelles sections */
         @media (max-width: 768px) {
             .main-container {
-                margin: 1rem;
+                padding: 1rem;
+                gap: 2rem;
             }
             
             .hero-header, .hero-body {
@@ -483,8 +494,31 @@
                 grid-template-columns: 1fr;
             }
 
-            .features-section {
+            .features-section, .testimonials-section {
                 padding: 2rem;
+            }
+
+            .testimonials-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .cta-section {
+                padding: 3rem 2rem;
+            }
+
+            .cta-title {
+                font-size: 2rem;
+            }
+
+            .cta-buttons {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .cta-features {
+                flex-direction: column;
+                align-items: center;
+                gap: 1rem;
             }
         }
 
@@ -530,8 +564,223 @@
             background: var(--accent);
         }
 
-        .floating-particle:nth-child(3n) {
-            background: var(--warm);
+        /* Section témoignages */
+        .testimonials-section {
+            padding: 3rem;
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(10px);
+            border-radius: 24px;
+            border: 1px solid rgba(139, 115, 85, 0.1);
+            box-shadow: var(--shadow-soft);
+        }
+
+        .testimonials-title {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            text-align: center;
+            margin-bottom: 3rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 1rem;
+        }
+
+        .testimonials-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+        }
+
+        .testimonial-card {
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 20px;
+            padding: 2rem;
+            border: 1px solid rgba(139, 115, 85, 0.1);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .testimonial-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, var(--primary), var(--accent));
+            transform: scaleX(0);
+            transition: all 0.6s ease;
+        }
+
+        .testimonial-card:hover::before {
+            transform: scaleX(1);
+        }
+
+        .testimonial-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-medium);
+            border-color: var(--primary-light);
+        }
+
+        .testimonial-content {
+            margin-bottom: 1.5rem;
+        }
+
+        .stars {
+            display: flex;
+            gap: 0.25rem;
+            margin-bottom: 1rem;
+            color: #fbbf24;
+        }
+
+        .testimonial-content p {
+            font-style: italic;
+            color: var(--text-secondary);
+            line-height: 1.6;
+            font-size: 1rem;
+        }
+
+        .testimonial-author {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .author-avatar {
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.2rem;
+        }
+
+        .author-info h4 {
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 0.25rem;
+        }
+
+        .author-info span {
+            font-size: 0.9rem;
+            color: var(--text-light);
+        }
+
+        /* Section CTA finale */
+        .cta-section {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+            border-radius: 24px;
+            padding: 4rem 3rem;
+            text-align: center;
+            color: white;
+            position: relative;
+            overflow: hidden;
+            box-shadow: var(--shadow-strong);
+        }
+
+        .cta-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="ctaPattern" width="30" height="30" patternUnits="userSpaceOnUse"><circle cx="15" cy="15" r="2" fill="%23ffffff" opacity="0.1"><animate attributeName="opacity" values="0.1;0.3;0.1" dur="4s" repeatCount="indefinite"/></circle></pattern></defs><rect width="100" height="100" fill="url(%23ctaPattern)"/></svg>') repeat;
+        }
+
+        .cta-content {
+            position: relative;
+            z-index: 1;
+        }
+
+        .cta-title {
+            font-size: 2.5rem;
+            font-weight: 800;
+            margin-bottom: 1rem;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .cta-subtitle {
+            font-size: 1.2rem;
+            margin-bottom: 2rem;
+            opacity: 0.9;
+        }
+
+        .cta-buttons {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .btn-cta-primary, .btn-cta-secondary {
+            padding: 1.25rem 2rem;
+            border-radius: 16px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.75rem;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-cta-primary {
+            background: white;
+            color: var(--primary);
+            box-shadow: 0 4px 20px rgba(255, 255, 255, 0.3);
+        }
+
+        .btn-cta-primary:hover {
+            transform: translateY(-3px) scale(1.05);
+            box-shadow: 0 8px 30px rgba(255, 255, 255, 0.4);
+        }
+
+        .btn-cta-secondary {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            backdrop-filter: blur(10px);
+        }
+
+        .btn-cta-secondary:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: translateY(-3px);
+        }
+
+        .cta-features {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .cta-feature {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.9rem;
+            opacity: 0.9;
+        }
+
+        .cta-feature i {
+            color: #10b981;
+            background: white;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.7rem;
         }
         
     </style>
@@ -613,46 +862,155 @@
                         </a>
                     </div>
                 </div>
+            </div>
+        </div>
 
-                <div class="features-section">
-                    <h2 class="features-title">
-                        <i class="fa-solid fa-sparkles"></i>
-                        Pourquoi choisir LinkedBoost ?
-                    </h2>
-                    <div class="features-grid">
-                        <div class="feature-item">
-                            <div class="feature-icon">
-                                <i class="fa-solid fa-brain"></i>
-                            </div>
-                            <h3 class="feature-title">IA Générative</h3>
-                            <p class="feature-description">
-                                Notre intelligence artificielle crée du contenu engageant adapté à votre secteur et à votre audience.
-                            </p>
+        <div class="features-section">
+            <h2 class="features-title">
+                <i class="fa-solid fa-sparkles"></i>
+                Pourquoi choisir LinkedBoost ?
+            </h2>
+            <div class="features-grid">
+                <div class="feature-item">
+                    <div class="feature-icon">
+                        <i class="fa-solid fa-brain"></i>
+                    </div>
+                    <h3 class="feature-title">IA Générative</h3>
+                    <p class="feature-description">
+                        Notre intelligence artificielle crée du contenu engageant adapté à votre secteur et à votre audience.
+                    </p>
+                </div>
+
+                <div class="feature-item">
+                    <div class="feature-icon">
+                        <i class="fa-solid fa-newspaper"></i>
+                    </div>
+                    <h3 class="feature-title">Actualités en Temps Réel</h3>
+                    <p class="feature-description">
+                        Restez au fait des tendances de votre secteur et créez du contenu d'actualité viral.
+                    </p>
+                </div>
+
+                <div class="feature-item">
+                    <div class="feature-icon">
+                        <i class="fa-solid fa-calendar-alt"></i>
+                    </div>
+                    <h3 class="feature-title">Programmation Intelligente</h3>
+                    <p class="feature-description">
+                        Planifiez vos publications aux meilleurs moments pour maximiser votre engagement.
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Section témoignages -->
+        <div class="testimonials-section">
+            <h2 class="testimonials-title">
+                <i class="fa-solid fa-quote-left"></i>
+                Ce que disent nos utilisateurs
+            </h2>
+            <div class="testimonials-grid">
+                <div class="testimonial-card">
+                    <div class="testimonial-content">
+                        <div class="stars">
+                            <i class="fa-solid fa-star"></i>
+                            <i class="fa-solid fa-star"></i>
+                            <i class="fa-solid fa-star"></i>
+                            <i class="fa-solid fa-star"></i>
+                            <i class="fa-solid fa-star"></i>
                         </div>
-
-                        <div class="feature-item">
-                            <div class="feature-icon">
-                                <i class="fa-solid fa-newspaper"></i>
-                            </div>
-                            <h3 class="feature-title">Actualités en Temps Réel</h3>
-                            <p class="feature-description">
-                                Restez au fait des tendances de votre secteur et créez du contenu d'actualité viral.
-                            </p>
+                        <p>"LinkedBoost a transformé ma présence LinkedIn. Mes posts génèrent 3x plus d'engagement !"</p>
+                    </div>
+                    <div class="testimonial-author">
+                        <div class="author-avatar">
+                            <i class="fa-solid fa-user"></i>
                         </div>
+                        <div class="author-info">
+                            <h4>Marie L.</h4>
+                            <span>Directrice Marketing</span>
+                        </div>
+                    </div>
+                </div>
 
-                        <div class="feature-item">
-                            <div class="feature-icon">
-                                <i class="fa-solid fa-calendar-alt"></i>
-                            </div>
-                            <h3 class="feature-title">Programmation Intelligente</h3>
-                            <p class="feature-description">
-                                Planifiez vos publications aux meilleurs moments pour maximiser votre engagement.
-                            </p>
+                <div class="testimonial-card">
+                    <div class="testimonial-content">
+                        <div class="stars">
+                            <i class="fa-solid fa-star"></i>
+                            <i class="fa-solid fa-star"></i>
+                            <i class="fa-solid fa-star"></i>
+                            <i class="fa-solid fa-star"></i>
+                            <i class="fa-solid fa-star"></i>
+                        </div>
+                        <p>"L'IA de LinkedBoost crée du contenu parfaitement adapté à mon secteur. Un gain de temps énorme !"</p>
+                    </div>
+                    <div class="testimonial-author">
+                        <div class="author-avatar">
+                            <i class="fa-solid fa-user"></i>
+                        </div>
+                        <div class="author-info">
+                            <h4>Thomas R.</h4>
+                            <span>Consultant IT</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="testimonial-card">
+                    <div class="testimonial-content">
+                        <div class="stars">
+                            <i class="fa-solid fa-star"></i>
+                            <i class="fa-solid fa-star"></i>
+                            <i class="fa-solid fa-star"></i>
+                            <i class="fa-solid fa-star"></i>
+                            <i class="fa-solid fa-star"></i>
+                        </div>
+                        <p>"Grâce à la programmation automatique, je maintiens une présence constante sans effort."</p>
+                    </div>
+                    <div class="testimonial-author">
+                        <div class="author-avatar">
+                            <i class="fa-solid fa-user"></i>
+                        </div>
+                        <div class="author-info">
+                            <h4>Sophie M.</h4>
+                            <span>Entrepreneure</span>
                         </div>
                     </div>
                 </div>
             </div>
-            
+        </div>
+
+        <!-- Section CTA finale -->
+        <div class="cta-section">
+            <div class="cta-content">
+                <h2 class="cta-title">Prêt à transformer votre LinkedIn ?</h2>
+                <p class="cta-subtitle">Rejoignez des milliers de professionnels qui utilisent déjà LinkedBoost</p>
+                <div class="cta-buttons">
+                    <a href="/signup" class="btn-cta-primary">
+                        <i class="fa-solid fa-rocket"></i>
+                        <span>Commencer gratuitement</span>
+                    </a>
+                    <a href="/signin" class="btn-cta-secondary">
+                        <i class="fa-solid fa-sign-in-alt"></i>
+                        <span>J'ai déjà un compte</span>
+                    </a>
+                </div>
+                <div class="cta-features">
+                    <div class="cta-feature">
+                        <i class="fa-solid fa-check"></i>
+                        <span>Gratuit pendant 30 jours</span>
+                    </div>
+                    <div class="cta-feature">
+                        <i class="fa-solid fa-check"></i>
+                        <span>Aucune carte bancaire requise</span>
+                    </div>
+                    <div class="cta-feature">
+                        <i class="fa-solid fa-check"></i>
+                        <span>Annulation à tout moment</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="hero-card">
             <div class="hero-footer">
                 <p>&copy; 2025 LinkedBoost - Développé avec ❤️ pour les professionnels ambitieux</p>
                 <div class="social-links">
@@ -698,13 +1056,24 @@
                 });
             });
 
-            // Animation des feature items
-            document.querySelectorAll('.feature-item').forEach(item => {
-                item.addEventListener('mouseenter', function() {
-                    this.style.transform = 'translateY(-10px) scale(1.02)';
+            // Animation des testimonials et CTA
+            document.querySelectorAll('.testimonial-card').forEach(card => {
+                card.addEventListener('mouseenter', function() {
+                    this.style.transform = 'translateY(-8px) scale(1.02)';
                 });
                 
-                item.addEventListener('mouseleave', function() {
+                card.addEventListener('mouseleave', function() {
+                    this.style.transform = 'translateY(0) scale(1)';
+                });
+            });
+
+            // Animation des boutons CTA
+            document.querySelectorAll('.btn-cta-primary, .btn-cta-secondary').forEach(btn => {
+                btn.addEventListener('mouseenter', function() {
+                    this.style.transform = 'translateY(-3px) scale(1.05)';
+                });
+                
+                btn.addEventListener('mouseleave', function() {
                     this.style.transform = 'translateY(0) scale(1)';
                 });
             });
@@ -775,13 +1144,15 @@
             }
         }
 
-        // Effet de parallaxe léger
-        document.addEventListener('mousemove', function(e) {
-            const mouseX = e.clientX / window.innerWidth;
-            const mouseY = e.clientY / window.innerHeight;
+        // Effet de parallaxe léger au scroll
+        window.addEventListener('scroll', function() {
+            const scrolled = window.pageYOffset;
+            const particles = document.querySelectorAll('.floating-particle');
             
-            const heroCard = document.querySelector('.hero-card');
-            heroCard.style.transform = `perspective(1000px) rotateY(${(mouseX - 0.5) * 2}deg) rotateX(${(mouseY - 0.5) * -2}deg)`;
+            particles.forEach((particle, index) => {
+                const speed = 0.5 + (index % 3) * 0.2;
+                particle.style.transform = `translateY(${scrolled * speed}px)`;
+            });
         });
 
         // Animation au scroll
@@ -800,7 +1171,7 @@
         }, observerOptions);
 
         // Observer les éléments avec animation
-        document.querySelectorAll('.auth-card, .feature-item').forEach(el => {
+        document.querySelectorAll('.auth-card, .feature-item, .testimonial-card, .cta-section').forEach(el => {
             el.style.opacity = '0';
             el.style.transform = 'translateY(30px)';
             el.style.transition = 'all 0.6s cubic-bezier(0.4, 0, 0.2, 1)';
