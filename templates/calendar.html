@@ -603,7 +603,9 @@
         <div class="stat-icon">
             <i class="fas fa-calendar-check"></i>
         </div>
-        <span class="stat-number" id="total-scheduled">{{ posts|length if posts else 0 }}</span>
+        <span class="stat-number" id="total-scheduled">
+            {% if posts %}{{ posts|length }}{% else %}0{% endif %}
+        </span>
         <div class="stat-label">Posts programmés</div>
     </div>
     
@@ -707,18 +709,20 @@
 </div>
 
 <script>
-// Configuration noble
+// Configuration noble avec sécurité
 const config = {
     currentWeekOffset: 0,
     scheduledPosts: [
         {% if posts %}
             {% for post in posts %}
+                {% if post.scheduled and post.published_at %}
                 {
                     id: {{ post.id }},
-                    content: {{ post.content|tojson }},
+                    content: {{ (post.content or '')|tojson }},
                     publishedAt: new Date('{{ post.published_at.isoformat() }}'),
-                    scheduled: {{ post.scheduled|tojson }}
-                },
+                    scheduled: true
+                }{% if not loop.last %},{% endif %}
+                {% endif %}
             {% endfor %}
         {% endif %}
     ]
@@ -759,18 +763,22 @@ function generateCalendar() {
     const weekEnd = new Date(weekStart);
     weekEnd.setDate(weekEnd.getDate() + 13); // 2 semaines
     
-    document.getElementById('week-period').textContent = 
-        `${formatDate(weekStart)} - ${formatDate(weekEnd)}`;
+    const weekPeriodElement = document.getElementById('week-period');
+    if (weekPeriodElement) {
+        weekPeriodElement.textContent = `${formatDate(weekStart)} - ${formatDate(weekEnd)}`;
+    }
     
     // Génération des 14 jours
-    calendarGrid.innerHTML = '';
-    
-    for (let i = 0; i < 14; i++) {
-        const currentDate = new Date(weekStart);
-        currentDate.setDate(weekStart.getDate() + i);
+    if (calendarGrid) {
+        calendarGrid.innerHTML = '';
         
-        const dayElement = createDayElement(currentDate);
-        calendarGrid.appendChild(dayElement);
+        for (let i = 0; i < 14; i++) {
+            const currentDate = new Date(weekStart);
+            currentDate.setDate(weekStart.getDate() + i);
+            
+            const dayElement = createDayElement(currentDate);
+            calendarGrid.appendChild(dayElement);
+        }
     }
     
     updateStats();
@@ -845,9 +853,9 @@ function createPostElement(post) {
         minute: '2-digit'
     });
     
-    const preview = post.content.length > 60 
+    const preview = post.content && post.content.length > 60 
         ? post.content.substring(0, 60) + '...'
-        : post.content;
+        : post.content || 'Post sans contenu';
     
     postDiv.innerHTML = `
         <div class="post-time">
@@ -872,14 +880,16 @@ function navigateWeeks(direction) {
     
     // Animation douce
     const calendarGrid = document.getElementById('calendar-grid');
-    calendarGrid.style.opacity = '0';
-    calendarGrid.style.transform = `translateX(${direction * 20}px)`;
-    
-    setTimeout(() => {
-        generateCalendar();
-        calendarGrid.style.opacity = '1';
-        calendarGrid.style.transform = 'translateX(0)';
-    }, 200);
+    if (calendarGrid) {
+        calendarGrid.style.opacity = '0';
+        calendarGrid.style.transform = `translateX(${direction * 20}px)`;
+        
+        setTimeout(() => {
+            generateCalendar();
+            calendarGrid.style.opacity = '1';
+            calendarGrid.style.transform = 'translateX(0)';
+        }, 200);
+    }
 }
 
 // Mise à jour noble des statistiques
@@ -909,6 +919,8 @@ function updateStats() {
 // Animation noble des nombres
 function animateNumber(elementId, targetValue) {
     const element = document.getElementById(elementId);
+    if (!element) return;
+    
     const currentValue = parseInt(element.textContent) || 0;
     
     if (currentValue === targetValue) return;
@@ -1011,7 +1023,9 @@ function openNewPostDialog(date) {
         overlay.style.opacity = '0';
         dialog.style.transform = 'scale(0.9)';
         setTimeout(() => {
-            document.body.removeChild(overlay);
+            if (overlay.parentNode) {
+                document.body.removeChild(overlay);
+            }
             delete window.closeDialog;
         }, 300);
     };
@@ -1086,16 +1100,16 @@ function openPostDetails(post) {
                 </div>
             </div>
             <div style="color: var(--noble-charcoal); line-height: 1.6; font-size: 0.95rem;">
-                ${post.content}
+                ${post.content || 'Contenu non disponible'}
             </div>
         </div>
         
         <div style="display: flex; gap: 1rem; justify-content: flex-end; flex-wrap: wrap;">
-            <a href="{{ url_for('edit_post', post_id='') }}${post.id}" class="btn-noble" style="background: var(--noble-sage-light); color: white; border: none;">
+            <a href="/edit_post/${post.id}" class="btn-noble" style="background: var(--noble-sage-light); color: white; border: none;">
                 <i class="fas fa-edit"></i>
                 Modifier
             </a>
-            <a href="{{ url_for('delete_post', post_id='') }}${post.id}" class="btn-noble" style="background: #f87171; color: white; border: none;">
+            <a href="/delete_post/${post.id}" class="btn-noble" style="background: #f87171; color: white; border: none;">
                 <i class="fas fa-trash"></i>
                 Supprimer
             </a>
@@ -1126,7 +1140,9 @@ function openPostDetails(post) {
         overlay.style.opacity = '0';
         dialog.style.transform = 'scale(0.9)';
         setTimeout(() => {
-            document.body.removeChild(overlay);
+            if (overlay.parentNode) {
+                document.body.removeChild(overlay);
+            }
             delete window.closePostDialog;
         }, 300);
     };
@@ -1172,7 +1188,9 @@ function generateWeeklyPlan() {
         notification.style.opacity = '0';
         notification.style.transform = 'translateX(100%)';
         setTimeout(() => {
-            document.body.removeChild(notification);
+            if (notification.parentNode) {
+                document.body.removeChild(notification);
+            }
         }, 300);
     }, 3000);
 }
@@ -1246,11 +1264,9 @@ document.addEventListener('DOMContentLoaded', function() {
     // Gestion noble du responsive
     function handleResponsive() {
         const isMobile = window.innerWidth <= 768;
+        const calendarGrid = document.getElementById('calendar-grid');
         
-        if (isMobile) {
-            // Adapter la grille pour mobile
-            const calendarGrid = document.getElementById('calendar-grid');
-            calendarGrid.style.gridTemplateColumns = 'repeat(7, 1fr)';
+        if (calendarGrid && isMobile) {
             calendarGrid.style.fontSize = '0.8rem';
         }
     }
@@ -1260,8 +1276,6 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Rafraîchissement automatique des données
     setInterval(() => {
-        // Ici on pourrait faire un appel AJAX pour récupérer les nouvelles données
-        // Pour l'instant, on met juste à jour les statistiques
         updateStats();
     }, 60000); // Toutes les minutes
     
@@ -1287,104 +1301,10 @@ document.addEventListener('DOMContentLoaded', function() {
         
         // N : nouveau post
         if (e.key.toLowerCase() === 'n' && !e.target.matches('input, textarea')) {
-            window.location.href = '{{ url_for("dashboard") }}';
+            window.location.href = '/dashboard';
         }
     });
 });
-
-// Fonction utilitaire pour créer des animations de particules nobles
-function createNobleParticles(element) {
-    for (let i = 0; i < 5; i++) {
-        const particle = document.createElement('div');
-        particle.style.position = 'absolute';
-        particle.style.width = '4px';
-        particle.style.height = '4px';
-        particle.style.background = 'var(--noble-sage)';
-        particle.style.borderRadius = '50%';
-        particle.style.pointerEvents = 'none';
-        particle.style.zIndex = '1000';
-        
-        const rect = element.getBoundingClientRect();
-        particle.style.left = (rect.left + rect.width/2) + 'px';
-        particle.style.top = (rect.top + rect.height/2) + 'px';
-        
-        document.body.appendChild(particle);
-        
-        const angle = (i / 5) * Math.PI * 2;
-        const distance = 30 + Math.random() * 20;
-        const x = Math.cos(angle) * distance;
-        const y = Math.sin(angle) * distance;
-        
-        particle.animate([
-            { transform: 'translate(0, 0) scale(1)', opacity: 0.8 },
-            { transform: `translate(${x}px, ${y}px) scale(0)`, opacity: 0 }
-        ], {
-            duration: 800,
-            easing: 'cubic-bezier(0.4, 0, 0.2, 1)'
-        }).onfinish = () => {
-            particle.remove();
-        };
-    }
-}
-
-// Animation de confirmation noble pour les actions
-function showNobleConfirmation(message, type = 'success') {
-    const colors = {
-        success: 'var(--gentle-success)',
-        warning: 'var(--gentle-warning)',
-        info: 'var(--gentle-info)'
-    };
-    
-    const notification = document.createElement('div');
-    notification.style.cssText = `
-        position: fixed;
-        bottom: 2rem;
-        right: 2rem;
-        background: ${colors[type]};
-        color: white;
-        padding: 1rem 1.5rem;
-        border-radius: 12px;
-        box-shadow: var(--shadow-gentle);
-        z-index: 1001;
-        display: flex;
-        align-items: center;
-        gap: 0.75rem;
-        opacity: 0;
-        transform: translateY(100%);
-        transition: all 0.3s ease;
-        max-width: 300px;
-    `;
-    
-    const icons = {
-        success: 'fa-check-circle',
-        warning: 'fa-exclamation-triangle',
-        info: 'fa-info-circle'
-    };
-    
-    notification.innerHTML = `
-        <i class="fas ${icons[type]}"></i>
-        <span>${message}</span>
-    `;
-    
-    document.body.appendChild(notification);
-    
-    // Animation d'entrée
-    requestAnimationFrame(() => {
-        notification.style.opacity = '1';
-        notification.style.transform = 'translateY(0)';
-    });
-    
-    // Auto-suppression noble
-    setTimeout(() => {
-        notification.style.opacity = '0';
-        notification.style.transform = 'translateY(100%)';
-        setTimeout(() => {
-            if (notification.parentNode) {
-                document.body.removeChild(notification);
-            }
-        }, 300);
-    }, 4000);
-}
 </script>
 
 {% endblock %}
