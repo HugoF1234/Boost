@@ -1,51 +1,60 @@
 {% extends "base.html" %}
 {% block content %}
 <style>
-    /* Variables pour couleurs douces */
+    /* Variables nobles et apaisantes */
     :root {
-        --primary: #6366f1;
-        --primary-light: #a5b4fc;
-        --primary-ultra-light: #e0e7ff;
-        --secondary: #f8fafc;
-        --accent: #10b981;
-        --accent-light: #6ee7b7;
-        --warm: #fbbf24;
-        --warm-light: #fde68a;
-        --soft-gray: #f1f5f9;
-        --text-primary: #1e293b;
-        --text-secondary: #64748b;
-        --text-light: #94a3b8;
-        --white: #ffffff;
-        --glass: rgba(255, 255, 255, 0.25);
-        --glass-border: rgba(255, 255, 255, 0.3);
-        --shadow-soft: 0 4px 20px rgba(99, 102, 241, 0.1);
-        --shadow-medium: 0 8px 30px rgba(99, 102, 241, 0.15);
-        --shadow-strong: 0 20px 40px rgba(0, 0, 0, 0.1);
-        --success: #10b981;
-        --warning: #f59e0b;
-        --danger: #ef4444;
+        --noble-cream: #faf9f7;
+        --noble-warm: #f5f2ed;
+        --noble-sage: #8b9a7c;
+        --noble-sage-light: #a8b59a;
+        --noble-sage-dark: #6b7865;
+        --noble-stone: #e8e4de;
+        --noble-charcoal: #4a4943;
+        --noble-charcoal-light: #6b6960;
+        --noble-mist: #f0ede8;
+        --noble-accent: #9c8b7a;
+        --noble-accent-light: #b5a495;
+        
+        /* Couleurs fonctionnelles douces */
+        --gentle-success: #7c9885;
+        --gentle-warning: #b8a082;
+        --gentle-info: #8ba3b8;
+        
+        /* Ombres très subtiles */
+        --shadow-whisper: 0 2px 12px rgba(139, 154, 124, 0.08);
+        --shadow-gentle: 0 4px 20px rgba(139, 154, 124, 0.12);
+        --shadow-soft: 0 8px 32px rgba(139, 154, 124, 0.16);
     }
 
-    /* Header de page moderne */
+    body {
+        background: var(--noble-cream);
+        color: var(--noble-charcoal);
+        line-height: 1.7;
+    }
+
+    /* Header noble et accueillant */
     .page-header {
-        background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 50%, var(--accent-light) 100%);
-        color: white;
+        background: linear-gradient(135deg, var(--noble-warm) 0%, var(--noble-mist) 100%);
+        color: var(--noble-charcoal);
         padding: 2.5rem;
-        border-radius: 24px;
+        border-radius: 20px;
         margin-bottom: 2rem;
         position: relative;
         overflow: hidden;
-        box-shadow: var(--shadow-strong);
+        box-shadow: var(--shadow-whisper);
+        border: 1px solid var(--noble-stone);
     }
 
     .page-header::before {
         content: '';
         position: absolute;
         top: 0;
-        left: 0;
         right: 0;
-        bottom: 0;
-        background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="sparkles" width="20" height="20" patternUnits="userSpaceOnUse"><circle cx="5" cy="5" r="1" fill="%23ffffff" opacity="0.3"><animate attributeName="opacity" values="0.3;0.8;0.3" dur="3s" repeatCount="indefinite"/></circle><circle cx="15" cy="15" r="0.5" fill="%23ffffff" opacity="0.5"><animate attributeName="opacity" values="0.5;1;0.5" dur="2s" repeatCount="indefinite" begin="1s"/></circle></pattern></defs><rect width="100" height="100" fill="url(%23sparkles)"/></svg>') repeat;
+        width: 120px;
+        height: 120px;
+        background: radial-gradient(circle, rgba(139, 154, 124, 0.06) 0%, transparent 70%);
+        border-radius: 50%;
+        transform: translate(30%, -30%);
     }
 
     .page-header-content {
@@ -59,102 +68,86 @@
     }
 
     .page-title {
-        font-size: 2.2rem;
-        font-weight: 700;
+        font-size: 2rem;
+        font-weight: 600;
         margin: 0;
-        text-shadow: 0 2px 4px rgba(0,0,0,0.1);
-        letter-spacing: -0.025em;
+        letter-spacing: -0.02em;
         display: flex;
         align-items: center;
         gap: 1rem;
+        color: var(--noble-charcoal);
     }
 
     .page-subtitle {
-        opacity: 0.9;
         font-size: 1rem;
         font-weight: 400;
         margin-top: 0.5rem;
+        color: var(--noble-charcoal-light);
     }
 
-    /* Boutons modernes */
-    .btn-modern {
-        padding: 0.75rem 1.5rem;
-        border-radius: 16px;
-        font-weight: 600;
-        font-size: 0.9rem;
-        border: none;
+    /* Boutons nobles */
+    .btn-noble {
+        padding: 0.875rem 1.75rem;
+        border-radius: 12px;
+        font-weight: 500;
+        font-size: 0.95rem;
         cursor: pointer;
-        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        transition: all 0.3s ease;
         display: inline-flex;
         align-items: center;
-        gap: 0.5rem;
+        gap: 0.625rem;
         text-decoration: none;
+        border: none;
         position: relative;
         overflow: hidden;
     }
 
-    .btn-modern::before {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: -100%;
-        width: 100%;
-        height: 100%;
-        background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
-        transition: all 0.6s ease;
-    }
-
-    .btn-modern:hover::before {
-        left: 100%;
-    }
-
-    .btn-secondary-modern {
-        background: var(--glass);
-        backdrop-filter: blur(10px);
+    .btn-primary-noble {
+        background: linear-gradient(135deg, var(--noble-sage) 0%, var(--noble-sage-light) 100%);
         color: white;
-        border: 1px solid var(--glass-border);
-        box-shadow: var(--shadow-soft);
+        box-shadow: var(--shadow-whisper);
     }
 
-    .btn-secondary-modern:hover {
-        background: rgba(255, 255, 255, 0.4);
-        transform: translateY(-3px);
-        box-shadow: var(--shadow-medium);
+    .btn-primary-noble:hover {
+        transform: translateY(-1px);
+        box-shadow: var(--shadow-gentle);
+        background: linear-gradient(135deg, var(--noble-sage-dark) 0%, var(--noble-sage) 100%);
     }
 
-    .btn-primary-modern {
-        background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
-        color: white;
-        box-shadow: 0 4px 20px rgba(99, 102, 241, 0.3);
+    .btn-secondary-noble {
+        background: white;
+        color: var(--noble-charcoal);
+        border: 1.5px solid var(--noble-stone);
     }
 
-    .btn-primary-modern:hover {
-        transform: translateY(-3px) scale(1.02);
-        box-shadow: 0 8px 30px rgba(99, 102, 241, 0.4);
+    .btn-secondary-noble:hover {
+        background: var(--noble-warm);
+        border-color: var(--noble-sage);
+        transform: translateY(-1px);
     }
 
-    /* Cartes de contenu */
+    /* Cartes de contenu nobles */
     .content-card {
-        background: var(--white);
-        border-radius: 24px;
-        border: 1px solid rgba(99, 102, 241, 0.1);
+        background: white;
+        border-radius: 20px;
+        border: 1px solid var(--noble-stone);
         overflow: hidden;
         transition: all 0.3s ease;
         margin-bottom: 2rem;
-        box-shadow: var(--shadow-soft);
+        box-shadow: var(--shadow-whisper);
     }
 
     .content-card:hover {
-        transform: translateY(-4px);
-        box-shadow: var(--shadow-medium);
-        border-color: var(--primary-light);
+        transform: translateY(-2px);
+        box-shadow: var(--shadow-gentle);
+        border-color: var(--noble-sage-light);
     }
 
     .card-body {
         padding: 2.5rem;
     }
 
-    /* Messages d'état */
+    /* Messages d'état nobles */
     .alert {
         padding: 1.5rem;
         border-radius: 16px;
@@ -178,15 +171,15 @@
     }
 
     .alert-error {
-        background: linear-gradient(135deg, #fef2f2 0%, #fecaca 100%);
-        color: var(--danger);
-        border-color: #fca5a5;
+        background: linear-gradient(135deg, rgba(184, 160, 130, 0.08) 0%, rgba(184, 160, 130, 0.04) 100%);
+        color: var(--gentle-warning);
+        border-color: var(--gentle-warning);
     }
 
     .alert-success {
-        background: linear-gradient(135deg, #dcfce7 0%, #bbf7d0 100%);
-        color: var(--success);
-        border-color: #86efac;
+        background: linear-gradient(135deg, rgba(124, 152, 133, 0.08) 0%, rgba(124, 152, 133, 0.04) 100%);
+        color: var(--gentle-success);
+        border-color: var(--gentle-success);
     }
 
     .alert-icon {
@@ -198,16 +191,15 @@
         justify-content: center;
         font-size: 1.1rem;
         flex-shrink: 0;
+        color: white;
     }
 
     .alert-error .alert-icon {
-        background: var(--danger);
-        color: white;
+        background: var(--gentle-warning);
     }
 
     .alert-success .alert-icon {
-        background: var(--success);
-        color: white;
+        background: var(--gentle-success);
     }
 
     .alert-content {
@@ -220,11 +212,32 @@
     }
 
     .alert-message {
-        font-size: 0.9rem;
+        font-size: 0.95rem;
         opacity: 0.9;
     }
 
-    /* Formulaire de recherche */
+    /* Formulaire de recherche noble */
+    .search-section {
+        margin-bottom: 2rem;
+    }
+
+    .search-title {
+        font-size: 1.4rem;
+        font-weight: 600;
+        color: var(--noble-charcoal);
+        margin-bottom: 0.5rem;
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+    }
+
+    .search-subtitle {
+        color: var(--noble-charcoal-light);
+        font-size: 0.95rem;
+        line-height: 1.6;
+        margin-bottom: 2rem;
+    }
+
     .search-form {
         display: grid;
         grid-template-columns: 2fr 1fr auto;
@@ -239,21 +252,49 @@
 
     .form-control {
         width: 100%;
-        padding: 1rem 1.5rem;
-        border: 2px solid rgba(99, 102, 241, 0.1);
-        border-radius: 16px;
-        font-size: 1rem;
-        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        background: rgba(248, 250, 252, 0.5);
-        backdrop-filter: blur(10px);
+        padding: 0.875rem 1.125rem;
+        border: 1.5px solid var(--noble-stone);
+        border-radius: 12px;
+        font-size: 0.95rem;
+        transition: all 0.3s ease;
+        background: var(--noble-cream);
+        color: var(--noble-charcoal);
+        font-family: inherit;
     }
 
     .form-control:focus {
         outline: none;
-        border-color: var(--primary);
-        box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.1);
-        transform: translateY(-2px);
-        background: var(--white);
+        border-color: var(--noble-sage);
+        box-shadow: 0 0 0 3px rgba(139, 154, 124, 0.1);
+        background: white;
+    }
+
+    .search-tip {
+        margin-top: 1rem;
+        padding: 1rem;
+        background: rgba(139, 154, 124, 0.05);
+        border-radius: 12px;
+        border-left: 3px solid var(--noble-sage);
+    }
+
+    .search-tip p {
+        margin: 0;
+        color: var(--noble-charcoal-light);
+        font-size: 0.9rem;
+    }
+
+    .search-tip strong {
+        color: var(--noble-charcoal);
+    }
+
+    .search-tip a {
+        color: var(--noble-sage);
+        text-decoration: none;
+        font-weight: 500;
+    }
+
+    .search-tip a:hover {
+        text-decoration: underline;
     }
 
     /* Section des résultats */
@@ -269,21 +310,21 @@
     .results-title {
         font-size: 1.4rem;
         font-weight: 600;
-        color: var(--text-primary);
+        color: var(--noble-charcoal);
         margin: 0;
     }
 
     .results-count {
-        background: linear-gradient(135deg, var(--primary-ultra-light) 0%, rgba(16, 185, 129, 0.1) 100%);
-        color: var(--primary);
+        background: linear-gradient(135deg, rgba(139, 154, 124, 0.1) 0%, rgba(156, 139, 122, 0.1) 100%);
+        color: var(--noble-sage);
         padding: 0.5rem 1rem;
         border-radius: 20px;
         font-size: 0.9rem;
-        font-weight: 600;
-        border: 1px solid var(--primary-light);
+        font-weight: 500;
+        border: 1px solid var(--noble-sage-light);
     }
 
-    /* Grille d'articles */
+    /* Grille d'articles noble */
     .articles-grid {
         display: grid !important;
         grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
@@ -293,29 +334,29 @@
     }
 
     .article-card {
-        background: var(--white);
-        border-radius: 20px;
+        background: white;
+        border-radius: 16px;
         overflow: hidden;
-        border: 1px solid rgba(99, 102, 241, 0.1);
-        transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        border: 1px solid var(--noble-stone);
+        transition: all 0.4s ease;
         position: relative;
-        box-shadow: var(--shadow-soft);
+        box-shadow: var(--shadow-whisper);
         display: block !important;
         opacity: 1 !important;
         visibility: visible !important;
     }
 
     .article-card:hover {
-        transform: translateY(-8px) scale(1.02);
-        box-shadow: var(--shadow-strong);
-        border-color: var(--primary-light);
+        transform: translateY(-4px) scale(1.01);
+        box-shadow: var(--shadow-soft);
+        border-color: var(--noble-sage-light);
     }
 
     .article-image {
         height: 200px;
         overflow: hidden;
         position: relative;
-        background: var(--soft-gray);
+        background: var(--noble-mist);
     }
 
     .article-image img {
@@ -326,7 +367,7 @@
     }
 
     .article-card:hover .article-image img {
-        transform: scale(1.1);
+        transform: scale(1.05);
     }
 
     .article-image-placeholder {
@@ -335,9 +376,9 @@
         display: flex;
         align-items: center;
         justify-content: center;
-        color: var(--text-light);
+        color: var(--noble-charcoal-light);
         font-size: 3rem;
-        background: linear-gradient(135deg, var(--soft-gray) 0%, #e2e8f0 100%);
+        background: linear-gradient(135deg, var(--noble-mist) 0%, var(--noble-stone) 100%);
     }
 
     .article-source-badge {
@@ -349,10 +390,10 @@
         padding: 0.5rem 1rem;
         border-radius: 20px;
         font-size: 0.8rem;
-        font-weight: 600;
-        color: var(--text-primary);
-        border: 1px solid rgba(99, 102, 241, 0.2);
-        box-shadow: var(--shadow-soft);
+        font-weight: 500;
+        color: var(--noble-charcoal);
+        border: 1px solid var(--noble-stone);
+        box-shadow: var(--shadow-whisper);
     }
 
     .article-content {
@@ -365,7 +406,7 @@
     .article-title {
         font-size: 1.1rem;
         font-weight: 600;
-        color: var(--text-primary);
+        color: var(--noble-charcoal);
         line-height: 1.4;
         margin-bottom: 1rem;
         display: -webkit-box;
@@ -379,13 +420,13 @@
         align-items: center;
         gap: 0.75rem;
         font-size: 0.8rem;
-        color: var(--text-light);
+        color: var(--noble-charcoal-light);
         margin-bottom: 1rem;
     }
 
     .article-description {
         font-size: 0.9rem;
-        color: var(--text-secondary);
+        color: var(--noble-charcoal-light);
         line-height: 1.6;
         flex: 1;
         display: -webkit-box;
@@ -400,14 +441,14 @@
         gap: 0.75rem;
         margin-top: 1rem;
         padding-top: 1rem;
-        border-top: 1px solid var(--soft-gray);
+        border-top: 1px solid var(--noble-stone);
     }
 
     .btn-article {
         width: 100%;
         padding: 0.75rem 1rem;
         border-radius: 12px;
-        font-weight: 600;
+        font-weight: 500;
         font-size: 0.9rem;
         text-align: center;
         text-decoration: none;
@@ -421,64 +462,62 @@
     }
 
     .btn-use-article {
-        background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+        background: linear-gradient(135deg, var(--noble-sage) 0%, var(--noble-sage-light) 100%);
         color: white;
-        box-shadow: 0 4px 15px rgba(99, 102, 241, 0.3);
+        box-shadow: var(--shadow-whisper);
     }
 
     .btn-use-article:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 6px 20px rgba(99, 102, 241, 0.4);
+        transform: translateY(-1px);
+        box-shadow: var(--shadow-gentle);
     }
 
     .btn-read-more {
-        background: var(--white);
-        color: var(--primary);
-        border: 1px solid var(--primary);
+        background: white;
+        color: var(--noble-sage);
+        border: 1px solid var(--noble-sage);
         font-size: 0.8rem;
         padding: 0.5rem 0.75rem;
     }
 
     .btn-read-more:hover {
-        background: var(--primary);
+        background: var(--noble-sage);
         color: white;
         transform: translateY(-1px);
     }
 
     /* Article sélectionné */
-    .selected-article {
-        background: linear-gradient(135deg, var(--primary-ultra-light) 0%, rgba(16, 185, 129, 0.05) 100%);
-        border: 2px solid var(--primary-light);
-        border-radius: 20px;
+    .selected-article-section {
+        background: linear-gradient(135deg, rgba(139, 154, 124, 0.04) 0%, rgba(156, 139, 122, 0.04) 100%);
+        border: 1px solid rgba(139, 154, 124, 0.15);
+        border-radius: 16px;
         padding: 2rem;
         margin-bottom: 2rem;
         position: relative;
-        overflow: hidden;
     }
 
-    .selected-article::before {
+    .selected-article-section::before {
         content: '';
         position: absolute;
         top: 0;
-        right: 0;
-        width: 100px;
-        height: 100px;
-        background: radial-gradient(circle, rgba(99, 102, 241, 0.1) 0%, transparent 70%);
-        border-radius: 50%;
-        transform: translate(30%, -30%);
+        left: 0;
+        width: 4px;
+        height: 100%;
+        background: linear-gradient(to bottom, var(--noble-sage), var(--noble-accent));
+        border-radius: 2px;
     }
 
     .selected-article-title {
         font-size: 1.3rem;
         font-weight: 600;
-        color: var(--primary);
+        color: var(--noble-sage);
         margin-bottom: 1rem;
         position: relative;
         z-index: 1;
     }
 
     .selected-article-content {
-        color: var(--text-secondary);
+        color: var(--noble-charcoal-light);
         line-height: 1.6;
         margin-bottom: 1.5rem;
         position: relative;
@@ -490,9 +529,11 @@
         justify-content: space-between;
         align-items: center;
         font-size: 0.9rem;
-        color: var(--text-light);
+        color: var(--noble-charcoal-light);
         position: relative;
         z-index: 1;
+        flex-wrap: wrap;
+        gap: 1rem;
     }
 
     .selected-article-actions {
@@ -502,29 +543,57 @@
         flex-wrap: wrap;
     }
 
-    /* État vide */
+    /* État vide noble */
     .empty-state {
         text-align: center;
         padding: 4rem 2rem;
-        color: var(--text-light);
+        color: var(--noble-charcoal-light);
     }
 
     .empty-state-icon {
         font-size: 4rem;
         margin-bottom: 1.5rem;
         opacity: 0.5;
+        color: var(--noble-sage);
     }
 
     .empty-state h3 {
         font-size: 1.5rem;
         margin-bottom: 0.75rem;
-        color: var(--text-primary);
+        color: var(--noble-charcoal);
+        font-weight: 600;
     }
 
     .empty-state p {
         font-size: 1rem;
         margin-bottom: 2rem;
         line-height: 1.6;
+    }
+
+    /* CSS pour forcer l'affichage */
+    #news-results-section {
+        display: block !important;
+        opacity: 1 !important;
+        visibility: visible !important;
+    }
+
+    .articles-grid {
+        display: grid !important;
+        opacity: 1 !important;
+        visibility: visible !important;
+    }
+
+    .article-card {
+        display: block !important;
+        opacity: 1 !important;
+        visibility: visible !important;
+    }
+
+    /* Animation de sélection */
+    .article-card.selecting {
+        transform: scale(0.98) !important;
+        border: 2px solid var(--noble-sage) !important;
+        box-shadow: 0 0 20px rgba(139, 154, 124, 0.3) !important;
     }
 
     /* Responsive */
@@ -555,43 +624,21 @@
         .selected-article-actions {
             flex-direction: column;
         }
+
+        .card-body {
+            padding: 1.5rem;
+        }
     }
 
-    /* CSS pour forcer l'affichage */
-    #news-results-section {
-        display: block !important;
-        opacity: 1 !important;
-        visibility: visible !important;
-    }
-
-    .articles-grid {
-        display: grid !important;
-        opacity: 1 !important;
-        visibility: visible !important;
-    }
-
-    .article-card {
-        display: block !important;
-        opacity: 1 !important;
-        visibility: visible !important;
-    }
-
-    /* Animation de sélection */
-    .article-card.selecting {
-        transform: scale(0.95) !important;
-        border: 2px solid var(--primary) !important;
-        box-shadow: 0 0 20px rgba(99, 102, 241, 0.3) !important;
-    }
-
-    /* Animations */
+    /* Animations nobles */
     .fade-in {
-        animation: fadeInUp 0.6s ease-out;
+        animation: gentleFadeIn 0.8s ease-out;
     }
 
-    @keyframes fadeInUp {
+    @keyframes gentleFadeIn {
         from {
             opacity: 0;
-            transform: translateY(30px);
+            transform: translateY(20px);
         }
         to {
             opacity: 1;
@@ -600,33 +647,39 @@
     }
 
     .slide-in {
-        animation: slideInRight 0.5s ease-out;
+        animation: gentleSlideIn 0.6s ease-out;
     }
 
-    @keyframes slideInRight {
+    @keyframes gentleSlideIn {
         from {
             opacity: 0;
-            transform: translateX(30px);
+            transform: translateX(20px);
         }
         to {
             opacity: 1;
             transform: translateX(0);
         }
     }
+
+    /* Icônes nobles */
+    .icon-noble {
+        color: var(--noble-sage);
+        font-size: 1.125rem;
+    }
 </style>
 
-<!-- Header de page -->
+<!-- Header de page noble -->
 <div class="page-header fade-in">
     <div class="page-header-content">
         <div>
             <h1 class="page-title">
-                <i class="fa-solid fa-newspaper"></i>
+                <i class="fas fa-newspaper icon-noble"></i>
                 Assistant d'actualité
             </h1>
             <p class="page-subtitle">Trouvez les sujets qui intéressent votre audience et créez des posts LinkedIn percutants</p>
         </div>
-        <a href="{{ url_for('dashboard') }}" class="btn-modern btn-secondary-modern">
-            <i class="fa-solid fa-arrow-left"></i>
+        <a href="{{ url_for('dashboard') }}" class="btn-noble btn-secondary-noble">
+            <i class="fas fa-arrow-left"></i>
             Retour au dashboard
         </a>
     </div>
@@ -636,7 +689,7 @@
 {% if error %}
 <div class="alert alert-error">
     <div class="alert-icon">
-        <i class="fa-solid fa-triangle-exclamation"></i>
+        <i class="fas fa-triangle-exclamation"></i>
     </div>
     <div class="alert-content">
         <div class="alert-title">Une erreur s'est produite</div>
@@ -648,7 +701,7 @@
 {% if success %}
 <div class="alert alert-success">
     <div class="alert-icon">
-        <i class="fa-solid fa-circle-check"></i>
+        <i class="fas fa-circle-check"></i>
     </div>
     <div class="alert-content">
         <div class="alert-title">Succès</div>
@@ -660,44 +713,47 @@
 <!-- Formulaire de recherche -->
 <div class="content-card slide-in">
     <div class="card-body">
-        <h2 style="margin-bottom: 1.5rem; color: var(--text-primary); display: flex; align-items: center; gap: 0.75rem;">
-            <i class="fas fa-search"></i>
-            Rechercher l'actualité
-        </h2>
-        
-        <form method="get" action="{{ url_for('news_assistant') }}" id="search-form">
-            <div class="search-form">
-                <div class="form-group">
-                    <input type="text" name="keyword" class="form-control" 
-                           placeholder="Ex: Intelligence artificielle, crypto-monnaies, télétravail..." 
-                           value="{{ keyword }}"
-                           id="keyword-input">
+        <div class="search-section">
+            <h2 class="search-title">
+                <i class="fas fa-search icon-noble"></i>
+                Rechercher l'actualité
+            </h2>
+            <p class="search-subtitle">Explorez les dernières actualités de votre secteur ou recherchez des sujets spécifiques pour créer du contenu engageant</p>
+            
+            <form method="get" action="{{ url_for('news_assistant') }}" id="search-form">
+                <div class="search-form">
+                    <div class="form-group">
+                        <input type="text" name="keyword" class="form-control" 
+                               placeholder="Ex: Intelligence artificielle, crypto-monnaies, télétravail..." 
+                               value="{{ keyword }}"
+                               id="keyword-input">
+                    </div>
+                    <div class="form-group">
+                        <select name="language" class="form-control">
+                            <option value="fr" {% if language == 'fr' %}selected{% endif %}>🇫🇷 Français</option>
+                            <option value="en" {% if language == 'en' %}selected{% endif %}>🇺🇸 Anglais</option>
+                        </select>
+                    </div>
+                    <div>
+                        <button type="submit" class="btn-noble btn-primary-noble" id="search-btn">
+                            <i class="fas fa-search"></i>
+                            <span>Rechercher</span>
+                        </button>
+                    </div>
                 </div>
-                <div class="form-group">
-                    <select name="language" class="form-control">
-                        <option value="fr" {% if language == 'fr' %}selected{% endif %}>🇫🇷 Français</option>
-                        <option value="en" {% if language == 'en' %}selected{% endif %}>🇺🇸 Anglais</option>
-                    </select>
-                </div>
-                <div>
-                    <button type="submit" class="btn-modern btn-primary-modern" id="search-btn">
-                        <i class="fa-solid fa-search"></i>
-                        <span>Rechercher</span>
-                    </button>
-                </div>
+            </form>
+            
+            <div class="search-tip">
+                <p>
+                    <i class="fas fa-info-circle icon-noble"></i>
+                    <strong>Astuce :</strong> 
+                    {% if keyword %}
+                        Recherche personnalisée active. <a href="{{ url_for('news_assistant') }}">Revenir aux actualités de votre secteur</a>
+                    {% else %}
+                        Actualités du secteur {{ secteur|title if secteur else 'général' }}. Utilisez la recherche pour explorer d'autres sujets.
+                    {% endif %}
+                </p>
             </div>
-        </form>
-        
-        <div style="margin-top: 1rem; padding: 1rem; background: var(--primary-ultra-light); border-radius: 12px; border-left: 4px solid var(--primary);">
-            <p style="margin: 0; color: var(--text-secondary); font-size: 0.9rem;">
-                <i class="fa-solid fa-info-circle"></i>
-                <strong>Astuce :</strong> 
-                {% if keyword %}
-                    Recherche personnalisée active. <a href="{{ url_for('news_assistant') }}" style="color: var(--primary);">Revenir aux actualités de votre secteur</a>
-                {% else %}
-                    Actualités du secteur {{ secteur|title if secteur else 'général' }}. Utilisez la recherche pour explorer d'autres sujets.
-                {% endif %}
-            </p>
         </div>
     </div>
 </div>
@@ -708,39 +764,39 @@
     <div class="card-body">
         <div class="alert alert-success">
             <div class="alert-icon">
-                <i class="fa-solid fa-check-circle"></i>
+                <i class="fas fa-check-circle"></i>
             </div>
             <div class="alert-content">
-                <div class="alert-title">Article sélectionné avec succès!</div>
+                <div class="alert-title">Article sélectionné avec succès !</div>
                 <div class="alert-message">Vous pouvez maintenant personnaliser votre post basé sur cet article.</div>
             </div>
         </div>
         
-        <div class="selected-article">
+        <div class="selected-article-section">
             <h3 class="selected-article-title">{{ selected.title|clean_html }}</h3>
             <p class="selected-article-content">{{ selected.description|clean_html }}</p>
             <div class="selected-article-meta">
                 <div style="display: flex; align-items: center; gap: 0.5rem;">
-                    <i class="fa-solid fa-globe"></i>
-                    <a href="{{ selected.url }}" target="_blank" style="color: var(--primary); text-decoration: none; font-weight: 500;">
+                    <i class="fas fa-globe icon-noble"></i>
+                    <a href="{{ selected.url }}" target="_blank" style="color: var(--noble-sage); text-decoration: none; font-weight: 500;">
                         {{ selected.source.name }}
                     </a>
                 </div>
                 <div style="display: flex; align-items: center; gap: 0.5rem;">
-                    <i class="fa-regular fa-calendar"></i>
+                    <i class="fas fa-calendar icon-noble"></i>
                     <span>{{ selected.formatted_date }}</span>
                 </div>
             </div>
         </div>
         
         <div class="selected-article-actions">
-            <a href="{{ url_for('dashboard') }}" class="btn-modern btn-primary-modern">
-                <i class="fa-solid fa-pen-to-square"></i>
+            <a href="{{ url_for('dashboard') }}" class="btn-noble btn-primary-noble">
+                <i class="fas fa-pen-to-square"></i>
                 Créer mon post sur le dashboard
             </a>
             
-            <a href="{{ url_for('news_assistant') }}" class="btn-modern btn-secondary-modern" style="color: var(--primary); border: 2px solid var(--primary);">
-                <i class="fa-solid fa-arrow-rotate-left"></i>
+            <a href="{{ url_for('news_assistant') }}" class="btn-noble btn-secondary-noble">
+                <i class="fas fa-arrow-rotate-left"></i>
                 Choisir un autre article
             </a>
         </div>
@@ -775,7 +831,7 @@
                                 <img src="{{ article.urlToImage }}" alt="{{ article.title }}" loading="lazy">
                             {% else %}
                                 <div class="article-image-placeholder">
-                                    <i class="fa-solid fa-newspaper"></i>
+                                    <i class="fas fa-newspaper"></i>
                                 </div>
                             {% endif %}
                             
@@ -790,11 +846,11 @@
                             
                             <div class="article-meta">
                                 <span>
-                                    <i class="fa-regular fa-calendar"></i>
+                                    <i class="fas fa-calendar icon-noble"></i>
                                     {{ article.formatted_date }}
                                 </span>
                                 <span>
-                                    <i class="fa-solid fa-eye"></i>
+                                    <i class="fas fa-eye icon-noble"></i>
                                     {{ article.source.name }}
                                 </span>
                             </div>
@@ -804,17 +860,16 @@
                         
                         <!-- Actions de l'article -->
                         <div class="article-actions">
-                            <!-- SIMPLIFIÉ: Bouton direct qui redirige vers le dashboard -->
                             <button type="button" 
                                     class="btn-article btn-use-article"
                                     onclick="selectArticle({{ loop.index0 }})"
                                     id="btn-{{ loop.index0 }}">
-                                <i class="fa-solid fa-pen-to-square"></i>
+                                <i class="fas fa-pen-to-square"></i>
                                 <span class="btn-text">Utiliser cet article</span>
                             </button>
                             
                             <a href="{{ article.url }}" target="_blank" class="btn-article btn-read-more">
-                                <i class="fa-solid fa-external-link"></i>
+                                <i class="fas fa-external-link"></i>
                                 Lire l'article complet
                             </a>
                         </div>
@@ -836,7 +891,7 @@
         {% else %}
             <div class="empty-state" id="empty-news-state">
                 <div class="empty-state-icon">
-                    <i class="fa-regular fa-newspaper"></i>
+                    <i class="fas fa-newspaper"></i>
                 </div>
                 <h3>Aucune actualité trouvée</h3>
                 <p>
@@ -850,8 +905,6 @@
         {% endif %}
     </div>
 </div>
-
-<!-- Ajoutez ceci à la fin du fichier templates/news_assistant.html, juste avant </document_content> -->
 
 <script>
 // Script pour gérer la sélection d'articles
@@ -880,14 +933,15 @@ function selectArticle(index) {
         return;
     }
     
-    // Animation de sélection
+    // Animation de sélection noble
     articleCard.classList.add('selecting');
     
-    // Changer le texte du bouton
+    // Changer le texte du bouton avec style noble
     const button = document.getElementById(`btn-${index}`);
     if (button) {
-        button.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Sélection en cours...';
+        button.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Sélection en cours...';
         button.disabled = true;
+        button.style.background = 'linear-gradient(135deg, var(--noble-accent) 0%, var(--noble-accent-light) 100%)';
     }
     
     // Envoyer la sélection au serveur
@@ -901,27 +955,37 @@ function selectArticle(index) {
     .then(response => response.json())
     .then(data => {
         if (data.success) {
-            // Rediriger vers le dashboard
-            window.location.href = data.redirect;
+            // Animation de succès avant redirection
+            if (button) {
+                button.innerHTML = '<i class="fas fa-check"></i> Article sélectionné !';
+                button.style.background = 'linear-gradient(135deg, var(--gentle-success) 0%, #a8b59a 100%)';
+            }
+            
+            // Redirection avec délai pour voir l'animation
+            setTimeout(() => {
+                window.location.href = data.redirect;
+            }, 800);
         } else {
             console.error('Erreur:', data.error);
             // Réinitialiser le bouton
-            if (button) {
-                button.innerHTML = '<i class="fa-solid fa-pen-to-square"></i> <span class="btn-text">Utiliser cet article</span>';
-                button.disabled = false;
-            }
+            resetButton(button, index);
             articleCard.classList.remove('selecting');
         }
     })
     .catch(error => {
         console.error('Erreur réseau:', error);
         // Réinitialiser le bouton
-        if (button) {
-            button.innerHTML = '<i class="fa-solid fa-pen-to-square"></i> <span class="btn-text">Utiliser cet article</span>';
-            button.disabled = false;
-        }
+        resetButton(button, index);
         articleCard.classList.remove('selecting');
     });
+}
+
+function resetButton(button, index) {
+    if (button) {
+        button.innerHTML = '<i class="fas fa-pen-to-square"></i> <span class="btn-text">Utiliser cet article</span>';
+        button.disabled = false;
+        button.style.background = '';
+    }
 }
 
 // Animation du bouton de recherche
@@ -929,8 +993,11 @@ document.getElementById('search-btn')?.addEventListener('click', function() {
     const icon = this.querySelector('i');
     const text = this.querySelector('span');
     
-    icon.className = 'fa-solid fa-spinner fa-spin';
-    text.textContent = 'Recherche...';
+    if (icon && text) {
+        icon.className = 'fas fa-spinner fa-spin';
+        text.textContent = 'Recherche...';
+        this.style.background = 'linear-gradient(135deg, var(--noble-accent) 0%, var(--noble-accent-light) 100%)';
+    }
 });
 
 // Validation du formulaire
@@ -938,24 +1005,299 @@ document.getElementById('search-form')?.addEventListener('submit', function(e) {
     const keywordInput = document.getElementById('keyword-input');
     if (keywordInput && keywordInput.value.trim().length < 2 && keywordInput.value.trim().length > 0) {
         e.preventDefault();
-        alert('Veuillez entrer au moins 2 caractères pour votre recherche');
+        
+        // Message d'erreur noble
+        const searchTip = document.querySelector('.search-tip p');
+        if (searchTip) {
+            searchTip.innerHTML = '<i class="fas fa-exclamation-triangle" style="color: var(--gentle-warning);"></i> <strong>Attention :</strong> Veuillez entrer au moins 2 caractères pour votre recherche.';
+            searchTip.style.color = 'var(--gentle-warning)';
+            
+            // Retour à la normale après 3 secondes
+            setTimeout(() => {
+                location.reload();
+            }, 3000);
+        }
     }
 });
 
-// Animation des cartes d'articles au chargement
+// Animations nobles au chargement
 document.addEventListener('DOMContentLoaded', function() {
+    // Animation progressive des éléments
+    const fadeElements = document.querySelectorAll('.fade-in');
+    fadeElements.forEach((el, index) => {
+        el.style.opacity = '0';
+        el.style.transform = 'translateY(20px)';
+        el.style.transition = 'all 0.8s ease';
+        
+        setTimeout(() => {
+            el.style.opacity = '1';
+            el.style.transform = 'translateY(0)';
+        }, index * 200);
+    });
+
+    // Animation des cartes d'articles au chargement
     const articleCards = document.querySelectorAll('.article-card');
     articleCards.forEach((card, index) => {
         card.style.opacity = '0';
-        card.style.transform = 'translateY(30px)';
+        card.style.transform = 'translateY(30px) scale(0.95)';
         card.style.transition = 'all 0.6s cubic-bezier(0.4, 0, 0.2, 1)';
         
         setTimeout(() => {
             card.style.opacity = '1';
-            card.style.transform = 'translateY(0)';
+            card.style.transform = 'translateY(0) scale(1)';
         }, index * 100);
     });
+
+    // Interactions nobles sur les boutons
+    document.querySelectorAll('.btn-noble').forEach(btn => {
+        btn.addEventListener('mouseenter', function() {
+            this.style.transform = 'translateY(-1px)';
+        });
+        
+        btn.addEventListener('mouseleave', function() {
+            this.style.transform = 'translateY(0)';
+        });
+
+        btn.addEventListener('mousedown', function() {
+            this.style.transform = 'translateY(0) scale(0.98)';
+        });
+
+        btn.addEventListener('mouseup', function() {
+            this.style.transform = 'translateY(-1px) scale(1)';
+        });
+    });
+
+    // Animation noble des cartes d'articles
+    document.querySelectorAll('.article-card').forEach(card => {
+        card.addEventListener('mouseenter', function() {
+            const image = this.querySelector('.article-image img');
+            if (image) {
+                image.style.transform = 'scale(1.08)';
+            }
+            
+            const badge = this.querySelector('.article-source-badge');
+            if (badge) {
+                badge.style.transform = 'scale(1.05)';
+                badge.style.background = 'rgba(139, 154, 124, 0.95)';
+                badge.style.color = 'white';
+            }
+        });
+        
+        card.addEventListener('mouseleave', function() {
+            const image = this.querySelector('.article-image img');
+            if (image) {
+                image.style.transform = 'scale(1)';
+            }
+            
+            const badge = this.querySelector('.article-source-badge');
+            if (badge) {
+                badge.style.transform = 'scale(1)';
+                badge.style.background = '';
+                badge.style.color = '';
+            }
+        });
+    });
+
+    // Animation noble des boutons d'articles
+    document.querySelectorAll('.btn-article').forEach(btn => {
+        btn.addEventListener('mouseenter', function() {
+            this.style.transform = 'translateY(-2px)';
+            
+            if (this.classList.contains('btn-use-article')) {
+                this.style.boxShadow = 'var(--shadow-gentle)';
+            }
+        });
+        
+        btn.addEventListener('mouseleave', function() {
+            this.style.transform = 'translateY(0)';
+            this.style.boxShadow = '';
+        });
+    });
+
+    // Animation noble du formulaire de recherche
+    const searchInput = document.getElementById('keyword-input');
+    if (searchInput) {
+        searchInput.addEventListener('focus', function() {
+            this.style.transform = 'translateY(-1px)';
+            this.style.boxShadow = '0 0 0 3px rgba(139, 154, 124, 0.15)';
+        });
+        
+        searchInput.addEventListener('blur', function() {
+            this.style.transform = 'translateY(0)';
+            this.style.boxShadow = '';
+        });
+
+        // Effet de typing noble
+        let typingTimeout;
+        searchInput.addEventListener('input', function() {
+            const searchTip = document.querySelector('.search-tip');
+            if (searchTip) {
+                searchTip.style.borderLeftColor = 'var(--noble-sage)';
+                searchTip.style.background = 'rgba(139, 154, 124, 0.08)';
+                
+                clearTimeout(typingTimeout);
+                typingTimeout = setTimeout(() => {
+                    searchTip.style.borderLeftColor = '';
+                    searchTip.style.background = '';
+                }, 1000);
+            }
+        });
+    }
+
+    // Animation des alertes
+    document.querySelectorAll('.alert').forEach((alert, index) => {
+        alert.style.opacity = '0';
+        alert.style.transform = 'translateX(-20px)';
+        alert.style.transition = 'all 0.5s ease';
+        
+        setTimeout(() => {
+            alert.style.opacity = '1';
+            alert.style.transform = 'translateX(0)';
+        }, index * 200);
+    });
+
+    // Animation de l'état vide
+    const emptyState = document.getElementById('empty-news-state');
+    if (emptyState) {
+        const icon = emptyState.querySelector('.empty-state-icon');
+        if (icon) {
+            // Animation de pulsation douce
+            setInterval(() => {
+                icon.style.transform = 'scale(1.05)';
+                setTimeout(() => {
+                    icon.style.transform = 'scale(1)';
+                }, 500);
+            }, 3000);
+        }
+    }
+
+    // Effet de particules nobles sur les actions importantes
+    function createNobleParticles(element) {
+        for (let i = 0; i < 4; i++) {
+            const particle = document.createElement('div');
+            particle.style.position = 'absolute';
+            particle.style.width = '4px';
+            particle.style.height = '4px';
+            particle.style.background = 'var(--noble-sage)';
+            particle.style.borderRadius = '50%';
+            particle.style.pointerEvents = 'none';
+            particle.style.zIndex = '1000';
+            
+            const rect = element.getBoundingClientRect();
+            particle.style.left = (rect.left + rect.width/2) + 'px';
+            particle.style.top = (rect.top + rect.height/2) + 'px';
+            
+            document.body.appendChild(particle);
+            
+            const angle = (i / 4) * Math.PI * 2;
+            const distance = 25 + Math.random() * 15;
+            const x = Math.cos(angle) * distance;
+            const y = Math.sin(angle) * distance;
+            
+            particle.animate([
+                { transform: 'translate(0, 0) scale(1)', opacity: 0.8 },
+                { transform: `translate(${x}px, ${y}px) scale(0)`, opacity: 0 }
+            ], {
+                duration: 600,
+                easing: 'cubic-bezier(0.4, 0, 0.2, 1)'
+            }).onfinish = () => {
+                particle.remove();
+            };
+        }
+    }
+
+    // Ajouter l'effet de particules sur les boutons principaux
+    document.querySelectorAll('.btn-use-article').forEach(btn => {
+        btn.addEventListener('click', function() {
+            createNobleParticles(this);
+        });
+    });
+
+    // Animation douce de scroll vers les résultats
+    const resultsSection = document.getElementById('news-results-section');
+    if (resultsSection && window.location.search.includes('keyword=')) {
+        setTimeout(() => {
+            resultsSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }, 500);
+    }
+
+    // Gestion noble du responsive
+    function handleResponsive() {
+        const isMobile = window.innerWidth <= 768;
+        const searchForm = document.querySelector('.search-form');
+        
+        if (searchForm && isMobile) {
+            searchForm.style.gridTemplateColumns = '1fr';
+            searchForm.style.gap = '1rem';
+        } else if (searchForm) {
+            searchForm.style.gridTemplateColumns = '2fr 1fr auto';
+            searchForm.style.gap = '1rem';
+        }
+    }
+
+    // Écouter les changements de taille
+    window.addEventListener('resize', handleResponsive);
+    handleResponsive(); // Appel initial
+});
+
+// Amélioration de l'accessibilité noble
+document.addEventListener('keydown', function(e) {
+    // Navigation au clavier pour les cartes d'articles
+    if (e.key === 'Enter' || e.key === ' ') {
+        const focused = document.activeElement;
+        if (focused && focused.classList.contains('article-card')) {
+            const button = focused.querySelector('.btn-use-article');
+            if (button) {
+                e.preventDefault();
+                button.click();
+            }
+        }
+    }
+});
+
+// Gestion noble des erreurs réseau
+window.addEventListener('online', function() {
+    const alerts = document.querySelectorAll('.alert-error');
+    alerts.forEach(alert => {
+        alert.style.opacity = '0.7';
+        const message = alert.querySelector('.alert-message');
+        if (message) {
+            message.textContent = 'Connexion rétablie. Vous pouvez réessayer.';
+        }
+    });
+});
+
+window.addEventListener('offline', function() {
+    // Créer une alerte noble pour la perte de connexion
+    const offlineAlert = document.createElement('div');
+    offlineAlert.className = 'alert alert-error';
+    offlineAlert.style.position = 'fixed';
+    offlineAlert.style.top = '20px';
+    offlineAlert.style.right = '20px';
+    offlineAlert.style.zIndex = '9999';
+    offlineAlert.style.maxWidth = '400px';
+    
+    offlineAlert.innerHTML = `
+        <div class="alert-icon">
+            <i class="fas fa-wifi"></i>
+        </div>
+        <div class="alert-content">
+            <div class="alert-title">Connexion perdue</div>
+            <div class="alert-message">Vérifiez votre connexion internet.</div>
+        </div>
+    `;
+    
+    document.body.appendChild(offlineAlert);
+    
+    // Retirer l'alerte quand la connexion revient
+    window.addEventListener('online', function() {
+        if (offlineAlert.parentNode) {
+            offlineAlert.style.transform = 'translateX(100%)';
+            setTimeout(() => {
+                offlineAlert.remove();
+            }, 300);
+        }
+    }, { once: true });
 });
 </script>
-
 {% endblock %}
