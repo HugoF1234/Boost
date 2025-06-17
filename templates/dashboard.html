@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% block content %}
 <style>
-    /* Palette noble et apaisante */
+    /* Variables nobles et apaisantes */
     :root {
         --noble-cream: #faf9f7;
         --noble-warm: #f5f2ed;
@@ -209,56 +209,100 @@
         font-size: 0.9rem;
         color: var(--noble-charcoal-light);
     }
+
+    /* Aperçu LinkedIn amélioré */
     .linkedin-post {
-    background: white;
-    border: 1px solid #ddd;
-    border-radius: 12px;
-    padding: 1rem 1.25rem;
-    max-width: 600px;
-    margin: 2rem auto;
-    font-family: 'Segoe UI', Tahoma, sans-serif;
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+        background: white;
+        border: 1px solid #ddd;
+        border-radius: 16px;
+        padding: 1.5rem;
+        max-width: 600px;
+        margin: 2rem auto;
+        font-family: 'Segoe UI', Tahoma, sans-serif;
+        box-shadow: var(--shadow-gentle);
+        transition: all 0.3s ease;
     }
-    
+
+    .linkedin-post:hover {
+        transform: translateY(-2px);
+        box-shadow: var(--shadow-soft);
+    }
+
     .linkedin-header {
         display: flex;
         align-items: center;
         gap: 1rem;
         margin-bottom: 1rem;
     }
-    
+
     .linkedin-avatar {
-        width: 48px;
-        height: 48px;
+        width: 52px;
+        height: 52px;
         border-radius: 50%;
         object-fit: cover;
-        border: 1px solid #ccc;
+        border: 2px solid var(--noble-sage-light);
+        transition: all 0.3s ease;
     }
-    
+
+    .linkedin-avatar:hover {
+        transform: scale(1.05);
+    }
+
+    .linkedin-avatar-placeholder {
+        width: 52px;
+        height: 52px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, var(--noble-sage) 0%, var(--noble-accent) 100%);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-size: 1.2rem;
+        font-weight: 600;
+        border: 2px solid var(--noble-sage-light);
+    }
+
+    .linkedin-user-info {
+        flex: 1;
+    }
+
     .linkedin-name {
         font-weight: 600;
         font-size: 1rem;
         color: #0a66c2;
+        margin-bottom: 0.25rem;
     }
-    
+
     .linkedin-subline {
         font-size: 0.875rem;
         color: #555;
+        margin-bottom: 0.25rem;
     }
-    
+
     .linkedin-date {
         font-size: 0.75rem;
         color: #888;
+        display: flex;
+        align-items: center;
+        gap: 0.25rem;
     }
-    
+
     .linkedin-text {
         font-size: 1rem;
         color: #222;
         line-height: 1.5;
         margin-bottom: 1rem;
         white-space: pre-wrap;
+        word-wrap: break-word;
+        min-height: 60px;
+        transition: all 0.3s ease;
     }
-    
+
+    .linkedin-text.empty {
+        color: #999;
+        font-style: italic;
+    }
+
     .linkedin-actions {
         display: flex;
         justify-content: space-around;
@@ -266,6 +310,21 @@
         color: #666;
         border-top: 1px solid #eee;
         padding-top: 0.75rem;
+    }
+
+    .linkedin-action {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.5rem 1rem;
+        border-radius: 8px;
+        transition: all 0.3s ease;
+        cursor: pointer;
+    }
+
+    .linkedin-action:hover {
+        background: var(--noble-mist);
+        color: var(--noble-sage);
     }
 
     /* Formulaire de génération */
@@ -722,29 +781,68 @@
             </div>
         </div>
     </div>
-    <div class="linkedin-post">
+    
+    <!-- Aperçu LinkedIn dynamique -->
+    <div class="linkedin-post" id="linkedin-preview">
         <div class="linkedin-header">
-            <img src="{{ user_avatar_url }}" alt="Photo de profil" class="linkedin-avatar">
-            <div>
-                <div class="linkedin-name">{{ user_fullname }}</div>
-                <div class="linkedin-subline">{{ user_role }} · {{ user_company }}</div>
-                <div class="linkedin-date">il y a quelques jours · <i class="fas fa-globe-europe"></i></div>
+            {% if picture %}
+                <img src="{{ picture }}" alt="Photo de profil" class="linkedin-avatar" id="preview-avatar">
+            {% else %}
+                <div class="linkedin-avatar-placeholder" id="preview-avatar">
+                    {{ first_name[0]|upper if first_name else 'U' }}
+                </div>
+            {% endif %}
+            
+            <div class="linkedin-user-info">
+                <div class="linkedin-name" id="preview-name">
+                    {% if first_name and last_name %}
+                        {{ first_name }} {{ last_name }}
+                    {% elif name %}
+                        {{ name }}
+                    {% else %}
+                        Utilisateur ResoBoost
+                    {% endif %}
+                </div>
+                <div class="linkedin-subline" id="preview-role">
+                    {% if secteur %}
+                        {{ secteur|title }} • ResoBoost
+                    {% else %}
+                        Professionnel LinkedIn • ResoBoost
+                    {% endif %}
+                </div>
+                <div class="linkedin-date">
+                    <i class="fas fa-globe-europe"></i>
+                    il y a quelques instants
+                </div>
             </div>
         </div>
-        <div class="linkedin-text">
-            {{ draft | safe }}
-        </div>
+        
+        <div class="linkedin-text" id="preview-text">{{ draft | safe }}</div>
+        
         <div class="linkedin-actions">
-            <span><i class="far fa-thumbs-up"></i> J’aime</span>
-            <span><i class="far fa-comment"></i> Commenter</span>
-            <span><i class="fas fa-share"></i> Partager</span>
+            <div class="linkedin-action">
+                <i class="far fa-thumbs-up"></i>
+                <span>J'aime</span>
+            </div>
+            <div class="linkedin-action">
+                <i class="far fa-comment"></i>
+                <span>Commenter</span>
+            </div>
+            <div class="linkedin-action">
+                <i class="fas fa-share"></i>
+                <span>Partager</span>
+            </div>
+            <div class="linkedin-action">
+                <i class="fas fa-paper-plane"></i>
+                <span>Envoyer</span>
+            </div>
         </div>
     </div>
 
     <form method="post" action="{{ url_for('publish') }}" enctype="multipart/form-data">
         <div class="form-group">
             <label class="form-label">Contenu de votre post</label>
-            <textarea name="post_content" class="form-control textarea-control mention-editor" rows="8" required>{{ draft }}</textarea>
+            <textarea name="post_content" class="form-control textarea-control mention-editor" rows="8" required id="post-content">{{ draft }}</textarea>
             <div class="mention-tip">
                 <i class="fas fa-at icon-noble"></i>
                 <span>Tapez @ pour mentionner une personne ou une entreprise</span>
@@ -791,9 +889,54 @@ window.addEventListener('load', function() {
     }
 });
 
-// Animations douces au chargement
+// Mise à jour dynamique de l'aperçu LinkedIn
 document.addEventListener('DOMContentLoaded', function() {
-    // Animation progressive des éléments
+    const postContentTextarea = document.getElementById('post-content');
+    const previewText = document.getElementById('preview-text');
+    
+    if (postContentTextarea && previewText) {
+        // Fonction pour mettre à jour l'aperçu
+        function updatePreview() {
+            const content = postContentTextarea.value.trim();
+            
+            if (content) {
+                previewText.textContent = content;
+                previewText.classList.remove('empty');
+            } else {
+                previewText.textContent = 'Votre contenu apparaîtra ici...';
+                previewText.classList.add('empty');
+            }
+        }
+        
+        // Mettre à jour l'aperçu en temps réel
+        postContentTextarea.addEventListener('input', updatePreview);
+        postContentTextarea.addEventListener('paste', function() {
+            // Petit délai pour que le contenu collé soit pris en compte
+            setTimeout(updatePreview, 10);
+        });
+        
+        // Initialiser l'aperçu
+        updatePreview();
+        
+        // Animation sur focus/blur du textarea
+        postContentTextarea.addEventListener('focus', function() {
+            const linkedinPreview = document.getElementById('linkedin-preview');
+            if (linkedinPreview) {
+                linkedinPreview.style.transform = 'scale(1.02)';
+                linkedinPreview.style.boxShadow = 'var(--shadow-soft)';
+            }
+        });
+        
+        postContentTextarea.addEventListener('blur', function() {
+            const linkedinPreview = document.getElementById('linkedin-preview');
+            if (linkedinPreview) {
+                linkedinPreview.style.transform = 'scale(1)';
+                linkedinPreview.style.boxShadow = 'var(--shadow-gentle)';
+            }
+        });
+    }
+    
+    // Animations douces au chargement
     const elements = document.querySelectorAll('.fade-in');
     elements.forEach((el, index) => {
         el.style.opacity = '0';
@@ -847,6 +990,116 @@ document.addEventListener('DOMContentLoaded', function() {
             if (arrow) arrow.style.transform = 'translateX(0)';
         });
     }
+    
+    // Animation de l'avatar LinkedIn au clic
+    const avatar = document.getElementById('preview-avatar');
+    if (avatar) {
+        avatar.addEventListener('click', function() {
+            this.style.transform = 'scale(0.95) rotate(5deg)';
+            setTimeout(() => {
+                this.style.transform = 'scale(1) rotate(0deg)';
+            }, 200);
+        });
+    }
+    
+    // Animation des actions LinkedIn
+    document.querySelectorAll('.linkedin-action').forEach(action => {
+        action.addEventListener('click', function(e) {
+            e.preventDefault();
+            
+            // Animation de clic
+            this.style.transform = 'scale(0.95)';
+            this.style.background = 'var(--noble-sage-light)';
+            this.style.color = 'white';
+            
+            setTimeout(() => {
+                this.style.transform = 'scale(1)';
+                this.style.background = '';
+                this.style.color = '';
+            }, 150);
+            
+            // Effet de particules pour le like
+            if (this.querySelector('.fa-thumbs-up')) {
+                createLikeParticles(this);
+            }
+        });
+    });
+    
+    // Fonction pour créer des particules de like
+    function createLikeParticles(element) {
+        for (let i = 0; i < 3; i++) {
+            const particle = document.createElement('div');
+            particle.style.position = 'absolute';
+            particle.style.width = '8px';
+            particle.style.height = '8px';
+            particle.style.background = 'var(--noble-sage)';
+            particle.style.borderRadius = '50%';
+            particle.style.pointerEvents = 'none';
+            particle.style.zIndex = '1000';
+            
+            const rect = element.getBoundingClientRect();
+            particle.style.left = (rect.left + rect.width/2) + 'px';
+            particle.style.top = (rect.top + rect.height/2) + 'px';
+            
+            document.body.appendChild(particle);
+            
+            const angle = (i / 3) * Math.PI * 2;
+            const distance = 20 + Math.random() * 15;
+            const x = Math.cos(angle) * distance;
+            const y = Math.sin(angle) * distance - 20;
+            
+            particle.animate([
+                { transform: 'translate(0, 0) scale(1)', opacity: 1 },
+                { transform: `translate(${x}px, ${y}px) scale(0)`, opacity: 0 }
+            ], {
+                duration: 800,
+                easing: 'cubic-bezier(0.4, 0, 0.2, 1)'
+            }).onfinish = () => {
+                particle.remove();
+            };
+        }
+    }
+    
+    // Effet de typing sur l'aperçu quand on tape
+    let typingTimeout;
+    if (postContentTextarea) {
+        postContentTextarea.addEventListener('input', function() {
+            const linkedinPreview = document.getElementById('linkedin-preview');
+            if (linkedinPreview) {
+                linkedinPreview.style.borderColor = 'var(--noble-sage)';
+                
+                clearTimeout(typingTimeout);
+                typingTimeout = setTimeout(() => {
+                    linkedinPreview.style.borderColor = '#ddd';
+                }, 1000);
+            }
+        });
+    }
+    
+    // Animation de l'indicateur de succès de l'article
+    const successBadge = document.querySelector('.success-badge');
+    if (successBadge) {
+        // Animation d'entrée retardée
+        setTimeout(() => {
+            successBadge.style.transform = 'scale(1.05)';
+            setTimeout(() => {
+                successBadge.style.transform = 'scale(1)';
+            }, 300);
+        }, 1000);
+    }
+    
+    // Amélioration de l'interaction avec les formulaires
+    document.querySelectorAll('.form-control').forEach(input => {
+        input.addEventListener('focus', function() {
+            this.style.transform = 'translateY(-1px)';
+            this.style.boxShadow = '0 0 0 3px rgba(139, 154, 124, 0.15)';
+        });
+        
+        input.addEventListener('blur', function() {
+            this.style.transform = 'translateY(0)';
+            this.style.boxShadow = '';
+        });
+    });
 });
 </script>
 {% endblock %}
