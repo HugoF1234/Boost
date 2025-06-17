@@ -1,54 +1,63 @@
 {% extends "base.html" %}
 {% block content %}
 <style>
-    /* Variables pour couleurs douces */
+    /* Variables nobles et apaisantes */
     :root {
-        --primary: #6366f1;
-        --primary-light: #a5b4fc;
-        --primary-ultra-light: #e0e7ff;
-        --secondary: #f8fafc;
-        --accent: #10b981;
-        --accent-light: #6ee7b7;
-        --warm: #fbbf24;
-        --warm-light: #fde68a;
-        --soft-gray: #f1f5f9;
-        --text-primary: #1e293b;
-        --text-secondary: #64748b;
-        --text-light: #94a3b8;
-        --white: #ffffff;
-        --glass: rgba(255, 255, 255, 0.25);
-        --glass-border: rgba(255, 255, 255, 0.3);
-        --shadow-soft: 0 4px 20px rgba(99, 102, 241, 0.1);
-        --shadow-medium: 0 8px 30px rgba(99, 102, 241, 0.15);
-        --shadow-strong: 0 20px 40px rgba(0, 0, 0, 0.1);
-        --success: #10b981;
-        --warning: #f59e0b;
-        --danger: #ef4444;
+        --noble-cream: #faf9f7;
+        --noble-warm: #f5f2ed;
+        --noble-sage: #8b9a7c;
+        --noble-sage-light: #a8b59a;
+        --noble-sage-dark: #6b7865;
+        --noble-stone: #e8e4de;
+        --noble-charcoal: #4a4943;
+        --noble-charcoal-light: #6b6960;
+        --noble-mist: #f0ede8;
+        --noble-accent: #9c8b7a;
+        --noble-accent-light: #b5a495;
+        
+        /* Couleurs fonctionnelles douces */
+        --gentle-success: #7c9885;
+        --gentle-warning: #b8a082;
+        --gentle-info: #8ba3b8;
+        
+        /* Ombres très subtiles */
+        --shadow-whisper: 0 2px 12px rgba(139, 154, 124, 0.08);
+        --shadow-gentle: 0 4px 20px rgba(139, 154, 124, 0.12);
+        --shadow-soft: 0 8px 32px rgba(139, 154, 124, 0.16);
     }
 
-    /* Header de page moderne */
-    .page-header {
-        background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 50%, var(--accent-light) 100%);
-        color: white;
+    body {
+        background: var(--noble-cream);
+        color: var(--noble-charcoal);
+        line-height: 1.7;
+    }
+
+    /* Header noble et accueillant */
+    .calendar-header {
+        background: linear-gradient(135deg, var(--noble-warm) 0%, var(--noble-mist) 100%);
+        color: var(--noble-charcoal);
         padding: 2.5rem;
-        border-radius: 24px;
+        border-radius: 20px;
         margin-bottom: 2rem;
         position: relative;
         overflow: hidden;
-        box-shadow: var(--shadow-strong);
+        box-shadow: var(--shadow-whisper);
+        border: 1px solid var(--noble-stone);
     }
 
-    .page-header::before {
+    .calendar-header::before {
         content: '';
         position: absolute;
         top: 0;
-        left: 0;
         right: 0;
-        bottom: 0;
-        background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="sparkles" width="20" height="20" patternUnits="userSpaceOnUse"><circle cx="5" cy="5" r="1" fill="%23ffffff" opacity="0.3"><animate attributeName="opacity" values="0.3;0.8;0.3" dur="3s" repeatCount="indefinite"/></circle><circle cx="15" cy="15" r="0.5" fill="%23ffffff" opacity="0.5"><animate attributeName="opacity" values="0.5;1;0.5" dur="2s" repeatCount="indefinite" begin="1s"/></circle></pattern></defs><rect width="100" height="100" fill="url(%23sparkles)"/></svg>') repeat;
+        width: 120px;
+        height: 120px;
+        background: radial-gradient(circle, rgba(139, 154, 124, 0.06) 0%, transparent 70%);
+        border-radius: 50%;
+        transform: translate(30%, -30%);
     }
 
-    .page-header-content {
+    .header-content {
         position: relative;
         z-index: 1;
         display: flex;
@@ -58,22 +67,299 @@
         gap: 1.5rem;
     }
 
-    .page-title {
-        font-size: 2.2rem;
-        font-weight: 700;
+    .calendar-title {
+        font-size: 2rem;
+        font-weight: 600;
         margin: 0;
-        text-shadow: 0 2px 4px rgba(0,0,0,0.1);
-        letter-spacing: -0.025em;
+        letter-spacing: -0.02em;
         display: flex;
         align-items: center;
         gap: 1rem;
+        color: var(--noble-charcoal);
     }
 
-    .page-subtitle {
-        opacity: 0.9;
+    .calendar-subtitle {
         font-size: 1rem;
         font-weight: 400;
         margin-top: 0.5rem;
+        color: var(--noble-charcoal-light);
+    }
+
+    .calendar-nav {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        position: relative;
+        z-index: 1;
+    }
+
+    .nav-button {
+        padding: 0.75rem 1rem;
+        border-radius: 12px;
+        border: 1.5px solid var(--noble-stone);
+        background: white;
+        color: var(--noble-charcoal);
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        text-decoration: none;
+    }
+
+    .nav-button:hover {
+        background: var(--noble-sage);
+        color: white;
+        border-color: var(--noble-sage);
+        transform: translateY(-1px);
+        box-shadow: var(--shadow-gentle);
+    }
+
+    .week-period {
+        font-size: 0.9rem;
+        color: var(--noble-charcoal-light);
+        font-weight: 500;
+        padding: 0.5rem 1rem;
+        background: rgba(255, 255, 255, 0.7);
+        border-radius: 10px;
+        border: 1px solid var(--noble-stone);
+    }
+
+    /* Boutons nobles */
+    .btn-noble {
+        padding: 0.875rem 1.75rem;
+        border-radius: 12px;
+        font-weight: 500;
+        font-size: 0.95rem;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.625rem;
+        text-decoration: none;
+        border: none;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .btn-primary-noble {
+        background: linear-gradient(135deg, var(--noble-sage) 0%, var(--noble-sage-light) 100%);
+        color: white;
+        box-shadow: var(--shadow-whisper);
+    }
+
+    .btn-primary-noble:hover {
+        transform: translateY(-1px);
+        box-shadow: var(--shadow-gentle);
+        background: linear-gradient(135deg, var(--noble-sage-dark) 0%, var(--noble-sage) 100%);
+    }
+
+    /* Grille de calendrier innovante */
+    .calendar-grid {
+        display: grid;
+        grid-template-columns: repeat(7, 1fr);
+        gap: 1px;
+        background: var(--noble-stone);
+        border-radius: 16px;
+        overflow: hidden;
+        box-shadow: var(--shadow-whisper);
+        margin-bottom: 2rem;
+    }
+
+    .calendar-day {
+        background: white;
+        min-height: 180px;
+        position: relative;
+        transition: all 0.3s ease;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .calendar-day:hover {
+        background: var(--noble-mist);
+        transform: scale(1.02);
+        box-shadow: var(--shadow-gentle);
+        z-index: 10;
+    }
+
+    .day-header {
+        padding: 1rem;
+        border-bottom: 1px solid var(--noble-stone);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        background: var(--noble-warm);
+        position: relative;
+    }
+
+    .day-number {
+        font-weight: 600;
+        font-size: 1.1rem;
+        color: var(--noble-charcoal);
+    }
+
+    .day-name {
+        font-size: 0.8rem;
+        color: var(--noble-charcoal-light);
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        font-weight: 500;
+    }
+
+    .day-today {
+        background: linear-gradient(135deg, var(--noble-sage) 0%, var(--noble-sage-light) 100%);
+        color: white;
+    }
+
+    .day-today .day-number,
+    .day-today .day-name {
+        color: white;
+    }
+
+    .day-other-month {
+        opacity: 0.4;
+        background: var(--noble-mist);
+    }
+
+    .day-content {
+        flex: 1;
+        padding: 0.5rem;
+        overflow-y: auto;
+        display: flex;
+        flex-direction: column;
+        gap: 0.25rem;
+    }
+
+    /* Posts planifiés */
+    .scheduled-post {
+        background: linear-gradient(135deg, rgba(139, 154, 124, 0.1) 0%, rgba(156, 139, 122, 0.1) 100%);
+        border: 1px solid var(--noble-sage-light);
+        border-radius: 8px;
+        padding: 0.5rem;
+        font-size: 0.75rem;
+        line-height: 1.3;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .scheduled-post::before {
+        content: '';
+        position: absolute;
+        left: 0;
+        top: 0;
+        bottom: 0;
+        width: 3px;
+        background: var(--noble-sage);
+        border-radius: 1px;
+    }
+
+    .scheduled-post:hover {
+        background: linear-gradient(135deg, var(--noble-sage-light) 0%, var(--noble-accent-light) 100%);
+        transform: translateY(-1px);
+        box-shadow: var(--shadow-gentle);
+        border-color: var(--noble-sage);
+    }
+
+    .post-time {
+        font-weight: 600;
+        color: var(--noble-sage);
+        margin-bottom: 0.25rem;
+        display: flex;
+        align-items: center;
+        gap: 0.25rem;
+    }
+
+    .post-preview {
+        color: var(--noble-charcoal);
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+    }
+
+    .post-indicator {
+        position: absolute;
+        top: 0.5rem;
+        right: 0.5rem;
+        width: 8px;
+        height: 8px;
+        background: var(--noble-sage);
+        border-radius: 50%;
+        opacity: 0.7;
+    }
+
+    /* En-têtes des jours de la semaine */
+    .calendar-header-row {
+        display: grid;
+        grid-template-columns: repeat(7, 1fr);
+        gap: 1px;
+        background: var(--noble-stone);
+        border-radius: 16px 16px 0 0;
+        overflow: hidden;
+        margin-bottom: 1px;
+    }
+
+    .day-header-cell {
+        background: var(--noble-sage);
+        color: white;
+        padding: 1rem;
+        text-align: center;
+        font-weight: 600;
+        font-size: 0.9rem;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    /* Légende du calendrier */
+    .calendar-legend {
+        background: white;
+        border-radius: 16px;
+        padding: 1.5rem;
+        margin-bottom: 2rem;
+        border: 1px solid var(--noble-stone);
+        box-shadow: var(--shadow-whisper);
+    }
+
+    .legend-title {
+        font-size: 1.1rem;
+        font-weight: 600;
+        color: var(--noble-charcoal);
+        margin-bottom: 1rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .legend-items {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 1.5rem;
+    }
+
+    .legend-item {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        font-size: 0.9rem;
+        color: var(--noble-charcoal-light);
+    }
+
+    .legend-dot {
+        width: 12px;
+        height: 12px;
+        border-radius: 50%;
+        flex-shrink: 0;
+    }
+
+    .legend-planned {
+        background: var(--noble-sage);
+    }
+
+    .legend-today {
+        background: var(--noble-accent);
     }
 
     /* Statistiques du calendrier */
@@ -85,16 +371,16 @@
     }
 
     .stat-card {
-        background: var(--white);
+        background: white;
         padding: 2rem;
-        border-radius: 20px;
+        border-radius: 16px;
         text-align: center;
-        border: 1px solid rgba(99, 102, 241, 0.1);
-        transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        border: 1px solid var(--noble-stone);
+        transition: all 0.3s ease;
         position: relative;
         overflow: hidden;
         cursor: pointer;
-        box-shadow: var(--shadow-soft);
+        box-shadow: var(--shadow-whisper);
     }
 
     .stat-card::before {
@@ -104,7 +390,7 @@
         left: -100%;
         width: 100%;
         height: 3px;
-        background: linear-gradient(90deg, var(--primary), var(--accent));
+        background: linear-gradient(90deg, var(--noble-sage), var(--noble-accent));
         transition: all 0.6s ease;
     }
 
@@ -113,21 +399,21 @@
     }
 
     .stat-card:hover {
-        transform: translateY(-8px) scale(1.02);
-        box-shadow: var(--shadow-strong);
-        border-color: var(--primary-light);
+        transform: translateY(-4px);
+        box-shadow: var(--shadow-gentle);
+        border-color: var(--noble-sage-light);
     }
 
     .stat-icon {
-        width: 60px;
-        height: 60px;
+        width: 50px;
+        height: 50px;
         margin: 0 auto 1rem;
-        background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+        background: linear-gradient(135deg, var(--noble-sage) 0%, var(--noble-accent) 100%);
         border-radius: 50%;
         display: flex;
         align-items: center;
         justify-content: center;
-        font-size: 1.5rem;
+        font-size: 1.3rem;
         color: white;
         transition: all 0.3s ease;
     }
@@ -137,535 +423,131 @@
     }
 
     .stat-number {
-        font-size: 2rem;
-        font-weight: 700;
-        color: var(--primary);
+        font-size: 1.8rem;
+        font-weight: 600;
+        color: var(--noble-sage);
         margin-bottom: 0.5rem;
         display: block;
     }
 
     .stat-label {
-        color: var(--text-secondary);
+        color: var(--noble-charcoal-light);
         font-weight: 500;
         font-size: 0.9rem;
     }
 
-    /* Boutons modernes */
-    .btn-modern {
-        padding: 0.75rem 1.5rem;
+    /* Actions rapides */
+    .quick-actions {
+        background: white;
         border-radius: 16px;
-        font-weight: 600;
-        font-size: 0.9rem;
-        border: none;
-        cursor: pointer;
-        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        display: inline-flex;
-        align-items: center;
-        gap: 0.5rem;
-        text-decoration: none;
-        position: relative;
-        overflow: hidden;
-    }
-
-    .btn-modern::before {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: -100%;
-        width: 100%;
-        height: 100%;
-        background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
-        transition: all 0.6s ease;
-    }
-
-    .btn-modern:hover::before {
-        left: 100%;
-    }
-
-    .btn-primary-modern {
-        background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
-        color: white;
-        box-shadow: 0 4px 20px rgba(99, 102, 241, 0.3);
-    }
-
-    .btn-primary-modern:hover {
-        transform: translateY(-3px) scale(1.02);
-        box-shadow: 0 8px 30px rgba(99, 102, 241, 0.4);
-    }
-
-    .btn-secondary-modern {
-        background: var(--glass);
-        backdrop-filter: blur(10px);
-        color: white;
-        border: 1px solid var(--glass-border);
-        box-shadow: var(--shadow-soft);
-    }
-
-    .btn-secondary-modern:hover {
-        background: rgba(255, 255, 255, 0.4);
-        transform: translateY(-3px);
-        box-shadow: var(--shadow-medium);
-    }
-
-    /* Cartes de contenu */
-    .content-card {
-        background: var(--white);
-        border-radius: 24px;
-        border: 1px solid rgba(99, 102, 241, 0.1);
-        overflow: hidden;
-        transition: all 0.3s ease;
-        margin-bottom: 2rem;
-        box-shadow: var(--shadow-soft);
-    }
-
-    .content-card:hover {
-        transform: translateY(-4px);
-        box-shadow: var(--shadow-medium);
-        border-color: var(--primary-light);
-    }
-
-    .card-body {
-        padding: 2.5rem;
-    }
-
-    /* Timeline moderne des posts */
-    .posts-timeline {
-        position: relative;
-    }
-
-    .posts-timeline::before {
-        content: '';
-        position: absolute;
-        left: 2rem;
-        top: 0;
-        bottom: 0;
-        width: 2px;
-        background: linear-gradient(to bottom, var(--primary), var(--accent));
-        border-radius: 2px;
-    }
-
-    .timeline-item {
-        position: relative;
-        margin-bottom: 2rem;
-        padding-left: 5rem;
-    }
-
-    .timeline-item::before {
-        content: '';
-        position: absolute;
-        left: 1.25rem;
-        top: 1rem;
-        width: 1.5rem;
-        height: 1.5rem;
-        background: var(--white);
-        border: 3px solid var(--primary);
-        border-radius: 50%;
-        z-index: 2;
-        transition: all 0.3s ease;
-    }
-
-    .timeline-item:hover::before {
-        transform: scale(1.3);
-        border-color: var(--accent);
-        box-shadow: 0 0 0 6px rgba(99, 102, 241, 0.2);
-    }
-
-    .post-card {
-        background: var(--white);
-        border-radius: 20px;
         padding: 2rem;
-        border: 1px solid var(--soft-gray);
-        transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-        position: relative;
-        overflow: hidden;
-        box-shadow: var(--shadow-soft);
-    }
-
-    .post-card::before {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: -100%;
-        width: 100%;
-        height: 100%;
-        background: linear-gradient(90deg, transparent, rgba(99, 102, 241, 0.05), transparent);
-        transition: all 0.8s ease;
-    }
-
-    .post-card:hover::before {
-        left: 100%;
-    }
-
-    .post-card:hover {
-        transform: translateY(-6px) scale(1.02);
-        box-shadow: var(--shadow-strong);
-        border-color: var(--primary-light);
-    }
-
-    .post-header {
-        display: flex;
-        justify-content: space-between;
-        align-items: flex-start;
-        margin-bottom: 1.5rem;
-        flex-wrap: wrap;
-        gap: 1rem;
-    }
-
-    .post-date-badge {
-        display: flex;
-        align-items: center;
-        gap: 1rem;
-        background: linear-gradient(135deg, var(--primary-ultra-light) 0%, rgba(16, 185, 129, 0.1) 100%);
-        padding: 1rem 1.5rem;
-        border-radius: 16px;
-        border: 1px solid var(--primary-light);
-        flex: 1;
-        min-width: 250px;
-    }
-
-    .date-icon {
-        width: 50px;
-        height: 50px;
-        background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
-        border-radius: 12px;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        color: white;
-        font-weight: 700;
-        position: relative;
-        overflow: hidden;
-    }
-
-    .date-icon::before {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: -100%;
-        width: 100%;
-        height: 100%;
-        background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
-        transition: all 0.8s ease;
-    }
-
-    .post-card:hover .date-icon::before {
-        left: 100%;
-    }
-
-    .date-day {
-        font-size: 1.2rem;
-        line-height: 1;
-    }
-
-    .date-month {
-        font-size: 0.7rem;
-        text-transform: uppercase;
-        letter-spacing: 0.5px;
-    }
-
-    .date-details {
-        flex: 1;
-    }
-
-    .date-full {
-        font-weight: 600;
-        color: var(--text-primary);
-        font-size: 1.1rem;
-        margin-bottom: 0.25rem;
-    }
-
-    .date-time {
-        display: flex;
-        align-items: center;
-        gap: 0.5rem;
-        color: var(--text-secondary);
-        font-size: 0.9rem;
-    }
-
-    .countdown-badge {
-        background: linear-gradient(135deg, var(--warm) 0%, var(--warm-light) 100%);
-        color: var(--text-primary);
-        padding: 0.5rem 1rem;
-        border-radius: 20px;
-        font-size: 0.8rem;
-        font-weight: 600;
-        display: flex;
-        align-items: center;
-        gap: 0.5rem;
-        border: 1px solid var(--warm);
-        animation: pulse 2s infinite;
-    }
-
-    @keyframes pulse {
-        0%, 100% { transform: scale(1); }
-        50% { transform: scale(1.05); }
-    }
-
-    .post-content {
-        background: var(--soft-gray);
-        padding: 1.5rem;
-        border-radius: 16px;
-        margin-bottom: 1.5rem;
-        border-left: 4px solid var(--primary);
-        line-height: 1.7;
-        color: var(--text-primary);
-        position: relative;
-        overflow: hidden;
-    }
-
-    .post-content::before {
-        content: '';
-        position: absolute;
-        top: 0;
-        right: 0;
-        width: 80px;
-        height: 80px;
-        background: radial-gradient(circle, rgba(99, 102, 241, 0.1) 0%, transparent 70%);
-        border-radius: 50%;
-        transform: translate(25%, -25%);
-    }
-
-    .post-actions {
-        display: flex;
-        gap: 1rem;
-        flex-wrap: wrap;
-    }
-
-    .btn-action {
-        padding: 0.75rem 1.25rem;
-        border-radius: 12px;
-        font-size: 0.85rem;
-        font-weight: 600;
-        text-decoration: none;
-        display: inline-flex;
-        align-items: center;
-        gap: 0.5rem;
-        transition: all 0.3s ease;
-        border: 1px solid;
-        position: relative;
-        overflow: hidden;
-    }
-
-    .btn-action::before {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: -100%;
-        width: 100%;
-        height: 100%;
-        background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
-        transition: all 0.6s ease;
-    }
-
-    .btn-action:hover::before {
-        left: 100%;
-    }
-
-    .btn-edit {
-        background: var(--primary-ultra-light);
-        color: var(--primary);
-        border-color: var(--primary-light);
-    }
-
-    .btn-edit:hover {
-        background: var(--primary);
-        color: white;
-        transform: translateY(-2px);
-        box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
-    }
-
-    .btn-delete {
-        background: #fef2f2;
-        color: var(--danger);
-        border-color: #fca5a5;
-    }
-
-    .btn-delete:hover {
-        background: var(--danger);
-        color: white;
-        transform: translateY(-2px);
-        box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
-    }
-
-    /* État vide */
-    .empty-state {
-        text-align: center;
-        padding: 4rem 2rem;
-        color: var(--text-light);
-    }
-
-    .empty-state-icon {
-        width: 120px;
-        height: 120px;
-        margin: 0 auto 2rem;
-        background: linear-gradient(135deg, var(--soft-gray) 0%, #e2e8f0 100%);
-        border-radius: 50%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 3rem;
-        color: var(--text-light);
-        position: relative;
-        overflow: hidden;
-    }
-
-    .empty-state-icon::before {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: -100%;
-        width: 100%;
-        height: 100%;
-        background: linear-gradient(90deg, transparent, rgba(99, 102, 241, 0.1), transparent);
-        animation: shimmer 2s infinite;
-    }
-
-    @keyframes shimmer {
-        0% { left: -100%; }
-        100% { left: 100%; }
-    }
-
-    .empty-state h3 {
-        font-size: 1.8rem;
-        margin-bottom: 1rem;
-        color: var(--text-primary);
-        font-weight: 600;
-    }
-
-    .empty-state p {
-        font-size: 1rem;
+        border: 1px solid var(--noble-stone);
+        box-shadow: var(--shadow-whisper);
         margin-bottom: 2rem;
-        line-height: 1.6;
-        max-width: 500px;
-        margin-left: auto;
-        margin-right: auto;
     }
 
-    /* Conseils de programmation */
-    .tips-grid {
+    .actions-title {
+        font-size: 1.2rem;
+        font-weight: 600;
+        color: var(--noble-charcoal);
+        margin-bottom: 1.5rem;
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+    }
+
+    .actions-grid {
         display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-        gap: 1.5rem;
-        margin-top: 2rem;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 1rem;
     }
 
-    .tip-card {
-        background: var(--white);
-        border-radius: 20px;
-        padding: 2rem;
-        border: 1px solid var(--soft-gray);
-        transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-        position: relative;
-        overflow: hidden;
-        box-shadow: var(--shadow-soft);
+    .action-button {
+        padding: 1rem 1.5rem;
+        background: var(--noble-warm);
+        border: 1px solid var(--noble-stone);
+        border-radius: 12px;
+        color: var(--noble-charcoal);
+        text-decoration: none;
+        transition: all 0.3s ease;
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        font-weight: 500;
+        font-size: 0.9rem;
     }
 
-    .tip-card::before {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: 0;
-        right: 0;
-        height: 3px;
-        background: linear-gradient(90deg, var(--primary), var(--accent), var(--warm));
-        transform: scaleX(0);
-        transition: all 0.6s ease;
+    .action-button:hover {
+        background: var(--noble-sage);
+        color: white;
+        transform: translateY(-2px);
+        box-shadow: var(--shadow-gentle);
     }
 
-    .tip-card:hover::before {
-        transform: scaleX(1);
-    }
-
-    .tip-card:hover {
-        transform: translateY(-6px);
-        box-shadow: var(--shadow-strong);
-        border-color: var(--primary-light);
-    }
-
-    .tip-icon {
-        width: 60px;
-        height: 60px;
-        margin-bottom: 1.5rem;
-        background: linear-gradient(135deg, var(--primary-ultra-light) 0%, rgba(16, 185, 129, 0.1) 100%);
-        border-radius: 16px;
+    .action-icon {
+        width: 30px;
+        height: 30px;
+        background: var(--noble-sage);
+        color: white;
+        border-radius: 8px;
         display: flex;
         align-items: center;
         justify-content: center;
-        font-size: 1.5rem;
-        color: var(--primary);
+        font-size: 0.9rem;
         transition: all 0.3s ease;
     }
 
-    .tip-card:hover .tip-icon {
-        transform: scale(1.1) rotate(5deg);
-        background: var(--primary);
-        color: white;
-    }
-
-    .tip-title {
-        font-size: 1.2rem;
-        font-weight: 600;
-        color: var(--text-primary);
-        margin-bottom: 1rem;
-    }
-
-    .tip-description {
-        color: var(--text-secondary);
-        line-height: 1.6;
-        font-size: 0.95rem;
+    .action-button:hover .action-icon {
+        background: white;
+        color: var(--noble-sage);
     }
 
     /* Responsive */
     @media (max-width: 768px) {
-        .page-header-content {
+        .header-content {
             flex-direction: column;
             text-align: center;
         }
 
-        .page-title {
-            font-size: 1.8rem;
+        .calendar-grid {
+            font-size: 0.8rem;
+        }
+
+        .calendar-day {
+            min-height: 120px;
+        }
+
+        .day-header {
+            padding: 0.5rem;
+        }
+
+        .day-content {
+            padding: 0.25rem;
+        }
+
+        .scheduled-post {
+            font-size: 0.7rem;
+            padding: 0.375rem;
         }
 
         .calendar-stats {
-            grid-template-columns: 1fr;
+            grid-template-columns: repeat(2, 1fr);
         }
 
-        .timeline-item {
-            padding-left: 3rem;
-        }
-
-        .posts-timeline::before {
-            left: 1rem;
-        }
-
-        .timeline-item::before {
-            left: 0.25rem;
-        }
-
-        .post-header {
-            flex-direction: column;
-            align-items: stretch;
-        }
-
-        .post-actions {
-            justify-content: center;
-        }
-
-        .tips-grid {
+        .actions-grid {
             grid-template-columns: 1fr;
         }
     }
 
-    /* Animations */
+    /* Animations nobles */
     .fade-in {
-        animation: fadeInUp 0.6s ease-out;
+        animation: gentleFadeIn 0.8s ease-out;
     }
 
-    @keyframes fadeInUp {
+    @keyframes gentleFadeIn {
         from {
             opacity: 0;
-            transform: translateY(30px);
+            transform: translateY(20px);
         }
         to {
             opacity: 1;
@@ -674,13 +556,13 @@
     }
 
     .slide-in {
-        animation: slideInRight 0.5s ease-out;
+        animation: gentleSlideIn 0.6s ease-out;
     }
 
-    @keyframes slideInRight {
+    @keyframes gentleSlideIn {
         from {
             opacity: 0;
-            transform: translateX(30px);
+            transform: translateX(20px);
         }
         to {
             opacity: 1;
@@ -689,299 +571,735 @@
     }
 </style>
 
-<!-- Header de page -->
-<div class="page-header fade-in">
-    <div class="page-header-content">
+<!-- Header noble -->
+<div class="calendar-header fade-in">
+    <div class="header-content">
         <div>
-            <h1 class="page-title">
-                <i class="fas fa-calendar-alt"></i>
-                Calendrier des publications
+            <h1 class="calendar-title">
+                <i class="fas fa-calendar-week" style="color: var(--noble-sage);"></i>
+                Calendrier éditorial
             </h1>
-            <p class="page-subtitle">Gérez et suivez vos publications LinkedIn programmées</p>
+            <p class="calendar-subtitle">Visualisez et gérez vos publications LinkedIn sur les 2 prochaines semaines</p>
         </div>
-        <a href="{{ url_for('dashboard') }}" class="btn-modern btn-secondary-modern">
-            <i class="fa-solid fa-plus"></i>
-            Nouveau post
-        </a>
+        <div class="calendar-nav">
+            <button class="nav-button" onclick="navigateWeeks(-1)">
+                <i class="fas fa-chevron-left"></i>
+                Semaine précédente
+            </button>
+            <div class="week-period" id="week-period">
+                <!-- Période dynamique -->
+            </div>
+            <button class="nav-button" onclick="navigateWeeks(1)">
+                Semaine suivante
+                <i class="fas fa-chevron-right"></i>
+            </button>
+        </div>
     </div>
 </div>
 
-<!-- Statistiques du calendrier -->
+<!-- Statistiques nobles -->
 <div class="calendar-stats fade-in">
     <div class="stat-card">
         <div class="stat-icon">
-            <i class="fas fa-clock"></i>
+            <i class="fas fa-calendar-check"></i>
         </div>
-        <span class="stat-number">{{ posts|length }}</span>
+        <span class="stat-number" id="total-scheduled">{{ posts|length if posts else 0 }}</span>
         <div class="stat-label">Posts programmés</div>
     </div>
     
     <div class="stat-card">
         <div class="stat-icon">
-            <i class="fas fa-calendar-week"></i>
+            <i class="fas fa-clock"></i>
         </div>
-        <span class="stat-number">{{ (posts|selectattr('published_at')|list|length) if posts else 0 }}</span>
+        <span class="stat-number" id="this-week">0</span>
         <div class="stat-label">Cette semaine</div>
+    </div>
+    
+    <div class="stat-card">
+        <div class="stat-icon">
+            <i class="fas fa-calendar-day"></i>
+        </div>
+        <span class="stat-number" id="today-posts">0</span>
+        <div class="stat-label">Aujourd'hui</div>
     </div>
     
     <div class="stat-card">
         <div class="stat-icon">
             <i class="fas fa-chart-line"></i>
         </div>
-        <span class="stat-number">100%</span>
-        <div class="stat-label">Taux de réussite</div>
+        <span class="stat-number">2-3</span>
+        <div class="stat-label">Fréquence/semaine</div>
     </div>
 </div>
 
-<!-- Contenu principal -->
-<div class="content-card slide-in">
-    <div class="card-body">
-        {% if posts and posts|length > 0 %}
-            <div style="margin-bottom: 2rem;">
-                <h3 style="color: var(--text-primary); margin-bottom: 0.5rem; display: flex; align-items: center; gap: 0.75rem;">
-                    <i class="fas fa-list"></i>
-                    Posts à venir
-                </h3>
-                <p style="color: var(--text-secondary);">Vos publications programmées apparaîtront automatiquement sur votre profil LinkedIn aux dates indiquées.</p>
-            </div>
-            
-            <div class="posts-timeline">
-                {% for post in posts %}
-                    <div class="timeline-item">
-                        <div class="post-card">
-                            <div class="post-header">
-                                <div class="post-date-badge">
-                                    <div class="date-icon">
-                                        <div class="date-day">{{ post.published_at.strftime("%d") }}</div>
-                                        <div class="date-month">{{ post.published_at.strftime("%b") }}</div>
-                                    </div>
-                                    
-                                    <div class="date-details">
-                                        <div class="date-full">{{ post.published_at.strftime("%A %d %B %Y") }}</div>
-                                        <div class="date-time">
-                                            <i class="fa-regular fa-clock"></i>
-                                            <span>{{ post.published_at.strftime("%H:%M") }}</span>
-                                        </div>
-                                    </div>
-                                </div>
-                                
-                                {% set time_diff = (post.published_at - now).total_seconds() if now is defined else 0 %}
-                                {% if time_diff > 0 %}
-                                    <div class="countdown-badge">
-                                        <i class="fa-solid fa-hourglass-half"></i>
-                                        <span>
-                                            {% if time_diff < 3600 %}
-                                                Dans {{ (time_diff / 60)|int }} min
-                                            {% elif time_diff < 86400 %}
-                                                Dans {{ (time_diff / 3600)|int }}h
-                                            {% else %}
-                                                Dans {{ (time_diff / 86400)|int }}j
-                                            {% endif %}
-                                        </span>
-                                    </div>
-                                {% endif %}
-                            </div>
-                            
-                            <div class="post-content">
-                                {{ post.content|truncate(200) }}
-                            </div>
-                            
-                            <div class="post-actions">
-                                <a href="{{ url_for('edit_post', post_id=post.id) }}" class="btn-action btn-edit">
-                                    <i class="fa-solid fa-pen"></i>
-                                    Éditer
-                                </a>
-                                <a href="{{ url_for('delete_post', post_id=post.id) }}" class="btn-action btn-delete">
-                                    <i class="fa-solid fa-trash"></i>
-                                    Supprimer
-                                </a>
-                            </div>
-                        </div>
-                    </div>
-                {% endfor %}
-            </div>
-        {% else %}
-            <!-- État vide -->
-            <div class="empty-state">
-                <div class="empty-state-icon">
-                    <i class="fa-regular fa-calendar"></i>
-                </div>
-                <h3>Aucun post programmé</h3>
-                <p>Vous n'avez pas encore programmé de publications pour les jours à venir. Commencez dès maintenant à planifier votre contenu LinkedIn pour maintenir une présence régulière et engageante.</p>
-                <a href="{{ url_for('dashboard') }}" class="btn-modern btn-primary-modern">
-                    <i class="fa-solid fa-calendar-plus"></i>
-                    Programmer mon premier post
-                </a>
-            </div>
-        {% endif %}
-    </div>
-</div>
-
-<!-- Conseils de programmation -->
-<div class="content-card slide-in">
-    <div class="card-body">
-        <h2 style="color: var(--text-primary); margin-bottom: 1rem; display: flex; align-items: center; gap: 0.75rem;">
-            <i class="fas fa-lightbulb"></i>
-            Conseils de programmation
-        </h2>
-        <p style="color: var(--text-secondary); margin-bottom: 2rem;">Optimisez votre stratégie de contenu avec ces bonnes pratiques éprouvées.</p>
-        
-        <div class="tips-grid">
-            <div class="tip-card">
-                <div class="tip-icon">
-                    <i class="fa-solid fa-clock"></i>
-                </div>
-                <h3 class="tip-title">Meilleurs moments</h3>
-                <p class="tip-description">Publiez en semaine entre 8h et 10h du matin pour un engagement optimal. Les mardis, mercredis et jeudis sont particulièrement efficaces.</p>
-            </div>
-            
-            <div class="tip-card">
-                <div class="tip-icon">
-                    <i class="fa-solid fa-chart-line"></i>
-                </div>
-                <h3 class="tip-title">Régularité</h3>
-                <p class="tip-description">Maintenez un calendrier régulier de 2-3 posts par semaine pour une présence constante. La cohérence est plus importante que la quantité.</p>
-            </div>
-            
-            <div class="tip-card">
-                <div class="tip-icon">
-                    <i class="fa-solid fa-bullhorn"></i>
-                </div>
-                <h3 class="tip-title">Événements</h3>
-                <p class="tip-description">Planifiez vos publications autour des événements importants de votre secteur et des tendances actuelles pour maximiser la pertinence.</p>
-            </div>
+<!-- Légende noble -->
+<div class="calendar-legend slide-in">
+    <h3 class="legend-title">
+        <i class="fas fa-info-circle" style="color: var(--noble-sage);"></i>
+        Légende
+    </h3>
+    <div class="legend-items">
+        <div class="legend-item">
+            <div class="legend-dot legend-planned"></div>
+            <span>Publication programmée</span>
+        </div>
+        <div class="legend-item">
+            <div class="legend-dot legend-today"></div>
+            <span>Aujourd'hui</span>
+        </div>
+        <div class="legend-item">
+            <i class="fas fa-circle" style="color: var(--noble-sage); font-size: 8px;"></i>
+            <span>Contenu planifié</span>
         </div>
     </div>
 </div>
 
+<!-- Grille de calendrier innovante -->
+<div class="calendar-header-row">
+    <div class="day-header-cell">Lun</div>
+    <div class="day-header-cell">Mar</div>
+    <div class="day-header-cell">Mer</div>
+    <div class="day-header-cell">Jeu</div>
+    <div class="day-header-cell">Ven</div>
+    <div class="day-header-cell">Sam</div>
+    <div class="day-header-cell">Dim</div>
+</div>
+
+<div class="calendar-grid slide-in" id="calendar-grid">
+    <!-- Généré dynamiquement par JavaScript -->
+</div>
+
+<!-- Actions rapides nobles -->
+<div class="quick-actions fade-in">
+    <h3 class="actions-title">
+        <i class="fas fa-lightning-bolt" style="color: var(--noble-sage);"></i>
+        Actions rapides
+    </h3>
+    <div class="actions-grid">
+        <a href="{{ url_for('dashboard') }}" class="action-button">
+            <div class="action-icon">
+                <i class="fas fa-plus"></i>
+            </div>
+            <span>Nouveau post</span>
+        </a>
+        
+        <a href="{{ url_for('news_assistant') }}" class="action-button">
+            <div class="action-icon">
+                <i class="fas fa-newspaper"></i>
+            </div>
+            <span>Actualités tendance</span>
+        </a>
+        
+        <a href="{{ url_for('historique') }}" class="action-button">
+            <div class="action-icon">
+                <i class="fas fa-history"></i>
+            </div>
+            <span>Historique</span>
+        </a>
+        
+        <button class="action-button" onclick="generateWeeklyPlan()">
+            <div class="action-icon">
+                <i class="fas fa-magic"></i>
+            </div>
+            <span>Plan hebdomadaire IA</span>
+        </button>
+    </div>
+</div>
+
 <script>
-// Animation des éléments au scroll
-const observerOptions = {
-    threshold: 0.1,
-    rootMargin: '0px 0px -50px 0px'
+// Configuration noble
+const config = {
+    currentWeekOffset: 0,
+    scheduledPosts: [
+        {% if posts %}
+            {% for post in posts %}
+                {
+                    id: {{ post.id }},
+                    content: {{ post.content|tojson }},
+                    publishedAt: new Date('{{ post.published_at.isoformat() }}'),
+                    scheduled: {{ post.scheduled|tojson }}
+                },
+            {% endfor %}
+        {% endif %}
+    ]
 };
 
-const observer = new IntersectionObserver((entries) => {
-    entries.forEach(entry => {
-        if (entry.isIntersecting) {
-            entry.target.style.opacity = '1';
-            entry.target.style.transform = 'translateY(0)';
-        }
-    });
-}, observerOptions);
+// Utilitaires nobles
+function getWeekStart(date, offset = 0) {
+    const d = new Date(date);
+    d.setDate(d.getDate() + (offset * 7));
+    const day = d.getDay();
+    const diff = d.getDate() - day + (day === 0 ? -6 : 1);
+    return new Date(d.setDate(diff));
+}
 
-// Observer tous les éléments avec animation
-document.querySelectorAll('.fade-in, .slide-in').forEach(el => {
-    el.style.opacity = '0';
-    el.style.transform = 'translateY(30px)';
-    el.style.transition = 'all 0.6s cubic-bezier(0.4, 0, 0.2, 1)';
-    observer.observe(el);
-});
-
-// Animation des cartes statistiques
-document.querySelectorAll('.stat-card').forEach((card, index) => {
-    card.style.opacity = '0';
-    card.style.transform = 'translateY(50px) scale(0.9)';
-    card.style.transition = 'all 0.6s cubic-bezier(0.4, 0, 0.2, 1)';
-    
-    setTimeout(() => {
-        card.style.opacity = '1';
-        card.style.transform = 'translateY(0) scale(1)';
-    }, index * 150);
-});
-
-// Animation des timeline items
-document.querySelectorAll('.timeline-item').forEach((item, index) => {
-    item.style.opacity = '0';
-    item.style.transform = 'translateX(-50px)';
-    item.style.transition = 'all 0.8s cubic-bezier(0.4, 0, 0.2, 1)';
-    
-    setTimeout(() => {
-        item.style.opacity = '1';
-        item.style.transform = 'translateX(0)';
-    }, index * 200);
-});
-
-// Animation des tip cards
-document.querySelectorAll('.tip-card').forEach((card, index) => {
-    card.style.opacity = '0';
-    card.style.transform = 'translateY(30px) scale(0.95)';
-    card.style.transition = 'all 0.6s cubic-bezier(0.4, 0, 0.2, 1)';
-    
-    setTimeout(() => {
-        card.style.opacity = '1';
-        card.style.transform = 'translateY(0) scale(1)';
-    }, index * 100);
-});
-
-// Amélioration des interactions des boutons
-document.querySelectorAll('.btn-modern, .btn-action').forEach(btn => {
-    btn.addEventListener('mouseenter', function() {
-        this.style.transform = 'translateY(-3px) scale(1.02)';
-    });
-    
-    btn.addEventListener('mouseleave', function() {
-        this.style.transform = 'translateY(0) scale(1)';
-    });
-    
-    btn.addEventListener('mousedown', function() {
-        this.style.transform = 'translateY(-1px) scale(0.98)';
-    });
-    
-    btn.addEventListener('mouseup', function() {
-        this.style.transform = 'translateY(-3px) scale(1.02)';
-    });
-});
-
-// Animation des post cards au hover
-document.querySelectorAll('.post-card').forEach(card => {
-    card.addEventListener('mouseenter', function() {
-        const icon = this.querySelector('.date-icon');
-        if (icon) {
-            icon.style.transform = 'scale(1.1) rotate(5deg)';
-        }
-    });
-    
-    card.addEventListener('mouseleave', function() {
-        const icon = this.querySelector('.date-icon');
-        if (icon) {
-            icon.style.transform = 'scale(1) rotate(0deg)';
-        }
-    });
-});
-
-// Animation des stat cards avec effet de compteur
-function animateCounters() {
-    document.querySelectorAll('.stat-number').forEach(stat => {
-        const target = parseInt(stat.textContent.replace(/[^\d]/g, ''));
-        if (isNaN(target)) return;
-        
-        let current = 0;
-        const increment = target / 60;
-        
-        const timer = setInterval(() => {
-            current += increment;
-            if (current >= target) {
-                stat.textContent = target + (stat.textContent.includes('%') ? '%' : '');
-                clearInterval(timer);
-            } else {
-                stat.textContent = Math.floor(current) + (stat.textContent.includes('%') ? '%' : '');
-            }
-        }, 16);
+function formatDate(date) {
+    return date.toLocaleDateString('fr-FR', { 
+        day: '2-digit', 
+        month: 'long',
+        year: 'numeric'
     });
 }
 
-// Lancer l'animation des compteurs après un délai
-setTimeout(animateCounters, 1000);
+function isSameDay(date1, date2) {
+    return date1.toDateString() === date2.toDateString();
+}
 
-// Fonction pour créer des particules lors du clic sur les cartes
-function createParticles(element) {
-    for (let i = 0; i < 6; i++) {
+function isToday(date) {
+    return isSameDay(date, new Date());
+}
+
+// Génération noble du calendrier
+function generateCalendar() {
+    const calendarGrid = document.getElementById('calendar-grid');
+    const today = new Date();
+    const weekStart = getWeekStart(today, config.currentWeekOffset);
+    
+    // Mise à jour de la période affichée
+    const weekEnd = new Date(weekStart);
+    weekEnd.setDate(weekEnd.getDate() + 13); // 2 semaines
+    
+    document.getElementById('week-period').textContent = 
+        `${formatDate(weekStart)} - ${formatDate(weekEnd)}`;
+    
+    // Génération des 14 jours
+    calendarGrid.innerHTML = '';
+    
+    for (let i = 0; i < 14; i++) {
+        const currentDate = new Date(weekStart);
+        currentDate.setDate(weekStart.getDate() + i);
+        
+        const dayElement = createDayElement(currentDate);
+        calendarGrid.appendChild(dayElement);
+    }
+    
+    updateStats();
+}
+
+// Création noble d'un élément jour
+function createDayElement(date) {
+    const dayDiv = document.createElement('div');
+    dayDiv.className = 'calendar-day';
+    
+    if (isToday(date)) {
+        dayDiv.classList.add('day-today');
+    }
+    
+    // En-tête du jour
+    const headerDiv = document.createElement('div');
+    headerDiv.className = 'day-header';
+    
+    const dayInfo = document.createElement('div');
+    dayInfo.innerHTML = `
+        <div class="day-number">${date.getDate()}</div>
+        <div class="day-name">${date.toLocaleDateString('fr-FR', { weekday: 'short' })}</div>
+    `;
+    
+    headerDiv.appendChild(dayInfo);
+    
+    // Contenu du jour
+    const contentDiv = document.createElement('div');
+    contentDiv.className = 'day-content';
+    
+    // Filtrer les posts pour ce jour
+    const dayPosts = config.scheduledPosts.filter(post => 
+        post.scheduled && isSameDay(post.publishedAt, date)
+    );
+    
+    // Trier par heure
+    dayPosts.sort((a, b) => a.publishedAt.getTime() - b.publishedAt.getTime());
+    
+    // Ajouter les posts
+    dayPosts.forEach(post => {
+        const postElement = createPostElement(post);
+        contentDiv.appendChild(postElement);
+    });
+    
+    // Indicateur s'il y a des posts
+    if (dayPosts.length > 0) {
+        const indicator = document.createElement('div');
+        indicator.className = 'post-indicator';
+        headerDiv.appendChild(indicator);
+    }
+    
+    dayDiv.appendChild(headerDiv);
+    dayDiv.appendChild(contentDiv);
+    
+    // Interaction noble pour ajouter un post
+    dayDiv.addEventListener('click', (e) => {
+        if (!e.target.closest('.scheduled-post')) {
+            openNewPostDialog(date);
+        }
+    });
+    
+    return dayDiv;
+}
+
+// Création noble d'un élément post
+function createPostElement(post) {
+    const postDiv = document.createElement('div');
+    postDiv.className = 'scheduled-post';
+    
+    const timeFormatted = post.publishedAt.toLocaleTimeString('fr-FR', {
+        hour: '2-digit',
+        minute: '2-digit'
+    });
+    
+    const preview = post.content.length > 60 
+        ? post.content.substring(0, 60) + '...'
+        : post.content;
+    
+    postDiv.innerHTML = `
+        <div class="post-time">
+            <i class="fas fa-clock" style="font-size: 0.7rem;"></i>
+            ${timeFormatted}
+        </div>
+        <div class="post-preview">${preview}</div>
+    `;
+    
+    // Interaction noble
+    postDiv.addEventListener('click', (e) => {
+        e.stopPropagation();
+        openPostDetails(post);
+    });
+    
+    return postDiv;
+}
+
+// Navigation noble entre les semaines
+function navigateWeeks(direction) {
+    config.currentWeekOffset += direction;
+    
+    // Animation douce
+    const calendarGrid = document.getElementById('calendar-grid');
+    calendarGrid.style.opacity = '0';
+    calendarGrid.style.transform = `translateX(${direction * 20}px)`;
+    
+    setTimeout(() => {
+        generateCalendar();
+        calendarGrid.style.opacity = '1';
+        calendarGrid.style.transform = 'translateX(0)';
+    }, 200);
+}
+
+// Mise à jour noble des statistiques
+function updateStats() {
+    const today = new Date();
+    const weekStart = getWeekStart(today, config.currentWeekOffset);
+    const weekEnd = new Date(weekStart);
+    weekEnd.setDate(weekEnd.getDate() + 6);
+    
+    // Posts cette semaine
+    const thisWeekPosts = config.scheduledPosts.filter(post => 
+        post.scheduled && 
+        post.publishedAt >= weekStart && 
+        post.publishedAt <= weekEnd
+    );
+    
+    // Posts aujourd'hui
+    const todayPosts = config.scheduledPosts.filter(post => 
+        post.scheduled && isSameDay(post.publishedAt, today)
+    );
+    
+    // Mise à jour avec animation
+    animateNumber('this-week', thisWeekPosts.length);
+    animateNumber('today-posts', todayPosts.length);
+}
+
+// Animation noble des nombres
+function animateNumber(elementId, targetValue) {
+    const element = document.getElementById(elementId);
+    const currentValue = parseInt(element.textContent) || 0;
+    
+    if (currentValue === targetValue) return;
+    
+    const increment = targetValue > currentValue ? 1 : -1;
+    let current = currentValue;
+    
+    const timer = setInterval(() => {
+        current += increment;
+        element.textContent = current;
+        
+        if (current === targetValue) {
+            clearInterval(timer);
+            // Effet de mise en évidence
+            element.style.transform = 'scale(1.1)';
+            setTimeout(() => {
+                element.style.transform = 'scale(1)';
+            }, 200);
+        }
+    }, 50);
+}
+
+// Dialogue noble pour nouveau post
+function openNewPostDialog(date) {
+    const formattedDate = date.toLocaleDateString('fr-FR', {
+        weekday: 'long',
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric'
+    });
+    
+    // Créer un overlay noble
+    const overlay = document.createElement('div');
+    overlay.style.cssText = `
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(139, 154, 124, 0.3);
+        backdrop-filter: blur(5px);
+        z-index: 1000;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        opacity: 0;
+        transition: all 0.3s ease;
+    `;
+    
+    const dialog = document.createElement('div');
+    dialog.style.cssText = `
+        background: white;
+        border-radius: 20px;
+        padding: 2rem;
+        max-width: 400px;
+        width: 90%;
+        box-shadow: var(--shadow-soft);
+        border: 1px solid var(--noble-stone);
+        transform: scale(0.9);
+        transition: all 0.3s ease;
+    `;
+    
+    dialog.innerHTML = `
+        <h3 style="color: var(--noble-charcoal); margin-bottom: 1rem; display: flex; align-items: center; gap: 0.75rem;">
+            <i class="fas fa-plus-circle" style="color: var(--noble-sage);"></i>
+            Nouveau post
+        </h3>
+        <p style="color: var(--noble-charcoal-light); margin-bottom: 1.5rem; font-size: 0.95rem;">
+            Programmer un post pour le <strong>${formattedDate}</strong>
+        </p>
+        <div style="display: flex; gap: 1rem; justify-content: flex-end;">
+            <button onclick="closeDialog()" class="btn-noble" style="background: var(--noble-warm); color: var(--noble-charcoal); border: 1px solid var(--noble-stone);">
+                Annuler
+            </button>
+            <a href="{{ url_for('dashboard') }}" class="btn-noble btn-primary-noble">
+                <i class="fas fa-pen-to-square"></i>
+                Créer un post
+            </a>
+        </div>
+    `;
+    
+    overlay.appendChild(dialog);
+    document.body.appendChild(overlay);
+    
+    // Animation d'entrée
+    requestAnimationFrame(() => {
+        overlay.style.opacity = '1';
+        dialog.style.transform = 'scale(1)';
+    });
+    
+    // Fermeture au clic sur l'overlay
+    overlay.addEventListener('click', (e) => {
+        if (e.target === overlay) {
+            closeDialog();
+        }
+    });
+    
+    // Fonction globale de fermeture
+    window.closeDialog = () => {
+        overlay.style.opacity = '0';
+        dialog.style.transform = 'scale(0.9)';
+        setTimeout(() => {
+            document.body.removeChild(overlay);
+            delete window.closeDialog;
+        }, 300);
+    };
+}
+
+// Détails noble d'un post
+function openPostDetails(post) {
+    const formattedDate = post.publishedAt.toLocaleDateString('fr-FR', {
+        weekday: 'long',
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric'
+    });
+    
+    const formattedTime = post.publishedAt.toLocaleTimeString('fr-FR', {
+        hour: '2-digit',
+        minute: '2-digit'
+    });
+    
+    // Créer un overlay noble
+    const overlay = document.createElement('div');
+    overlay.style.cssText = `
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(139, 154, 124, 0.3);
+        backdrop-filter: blur(5px);
+        z-index: 1000;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        opacity: 0;
+        transition: all 0.3s ease;
+    `;
+    
+    const dialog = document.createElement('div');
+    dialog.style.cssText = `
+        background: white;
+        border-radius: 20px;
+        padding: 2.5rem;
+        max-width: 600px;
+        width: 90%;
+        max-height: 80vh;
+        overflow-y: auto;
+        box-shadow: var(--shadow-soft);
+        border: 1px solid var(--noble-stone);
+        transform: scale(0.9);
+        transition: all 0.3s ease;
+    `;
+    
+    dialog.innerHTML = `
+        <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 1.5rem;">
+            <h3 style="color: var(--noble-charcoal); margin: 0; display: flex; align-items: center; gap: 0.75rem;">
+                <i class="fas fa-calendar-check" style="color: var(--noble-sage);"></i>
+                Post programmé
+            </h3>
+            <button onclick="closePostDialog()" style="background: none; border: none; color: var(--noble-charcoal-light); font-size: 1.2rem; cursor: pointer; padding: 0.25rem;">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        
+        <div style="background: var(--noble-warm); border-radius: 12px; padding: 1.5rem; margin-bottom: 1.5rem; border-left: 4px solid var(--noble-sage);">
+            <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1rem;">
+                <div style="background: var(--noble-sage); color: white; padding: 0.5rem 1rem; border-radius: 8px; font-weight: 500; font-size: 0.9rem;">
+                    <i class="fas fa-clock"></i>
+                    ${formattedTime}
+                </div>
+                <div style="color: var(--noble-charcoal-light); font-size: 0.9rem;">
+                    ${formattedDate}
+                </div>
+            </div>
+            <div style="color: var(--noble-charcoal); line-height: 1.6; font-size: 0.95rem;">
+                ${post.content}
+            </div>
+        </div>
+        
+        <div style="display: flex; gap: 1rem; justify-content: flex-end; flex-wrap: wrap;">
+            <a href="{{ url_for('edit_post', post_id='') }}${post.id}" class="btn-noble" style="background: var(--noble-sage-light); color: white; border: none;">
+                <i class="fas fa-edit"></i>
+                Modifier
+            </a>
+            <a href="{{ url_for('delete_post', post_id='') }}${post.id}" class="btn-noble" style="background: #f87171; color: white; border: none;">
+                <i class="fas fa-trash"></i>
+                Supprimer
+            </a>
+            <button onclick="closePostDialog()" class="btn-noble" style="background: var(--noble-warm); color: var(--noble-charcoal); border: 1px solid var(--noble-stone);">
+                Fermer
+            </button>
+        </div>
+    `;
+    
+    overlay.appendChild(dialog);
+    document.body.appendChild(overlay);
+    
+    // Animation d'entrée
+    requestAnimationFrame(() => {
+        overlay.style.opacity = '1';
+        dialog.style.transform = 'scale(1)';
+    });
+    
+    // Fermeture au clic sur l'overlay
+    overlay.addEventListener('click', (e) => {
+        if (e.target === overlay) {
+            closePostDialog();
+        }
+    });
+    
+    // Fonction globale de fermeture
+    window.closePostDialog = () => {
+        overlay.style.opacity = '0';
+        dialog.style.transform = 'scale(0.9)';
+        setTimeout(() => {
+            document.body.removeChild(overlay);
+            delete window.closePostDialog;
+        }, 300);
+    };
+}
+
+// Plan hebdomadaire IA noble
+function generateWeeklyPlan() {
+    // Créer une notification noble
+    const notification = document.createElement('div');
+    notification.style.cssText = `
+        position: fixed;
+        top: 2rem;
+        right: 2rem;
+        background: linear-gradient(135deg, var(--noble-sage) 0%, var(--noble-sage-light) 100%);
+        color: white;
+        padding: 1rem 1.5rem;
+        border-radius: 12px;
+        box-shadow: var(--shadow-gentle);
+        z-index: 1001;
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        opacity: 0;
+        transform: translateX(100%);
+        transition: all 0.3s ease;
+    `;
+    
+    notification.innerHTML = `
+        <i class="fas fa-magic"></i>
+        <span>Fonctionnalité en développement...</span>
+    `;
+    
+    document.body.appendChild(notification);
+    
+    // Animation d'entrée
+    requestAnimationFrame(() => {
+        notification.style.opacity = '1';
+        notification.style.transform = 'translateX(0)';
+    });
+    
+    // Auto-suppression
+    setTimeout(() => {
+        notification.style.opacity = '0';
+        notification.style.transform = 'translateX(100%)';
+        setTimeout(() => {
+            document.body.removeChild(notification);
+        }, 300);
+    }, 3000);
+}
+
+// Initialisation noble
+document.addEventListener('DOMContentLoaded', function() {
+    // Génération initiale du calendrier
+    generateCalendar();
+    
+    // Animations progressives des éléments
+    const elements = document.querySelectorAll('.fade-in, .slide-in');
+    elements.forEach((el, index) => {
+        el.style.opacity = '0';
+        el.style.transform = 'translateY(20px)';
+        el.style.transition = 'all 0.8s ease';
+        
+        setTimeout(() => {
+            el.style.opacity = '1';
+            el.style.transform = 'translateY(0)';
+        }, index * 200);
+    });
+    
+    // Animation des cartes statistiques
+    document.querySelectorAll('.stat-card').forEach((card, index) => {
+        card.style.opacity = '0';
+        card.style.transform = 'translateY(30px) scale(0.95)';
+        card.style.transition = 'all 0.6s cubic-bezier(0.4, 0, 0.2, 1)';
+        
+        setTimeout(() => {
+            card.style.opacity = '1';
+            card.style.transform = 'translateY(0) scale(1)';
+        }, index * 150);
+    });
+    
+    // Interactions nobles sur les boutons
+    document.querySelectorAll('.btn-noble, .nav-button, .action-button').forEach(btn => {
+        btn.addEventListener('mouseenter', function() {
+            this.style.transform = 'translateY(-1px)';
+        });
+        
+        btn.addEventListener('mouseleave', function() {
+            this.style.transform = 'translateY(0)';
+        });
+        
+        btn.addEventListener('mousedown', function() {
+            this.style.transform = 'translateY(0) scale(0.98)';
+        });
+        
+        btn.addEventListener('mouseup', function() {
+            this.style.transform = 'translateY(-1px) scale(1)';
+        });
+    });
+    
+    // Animation des cartes de statistiques au hover
+    document.querySelectorAll('.stat-card').forEach(card => {
+        card.addEventListener('mouseenter', function() {
+            const icon = this.querySelector('.stat-icon');
+            if (icon) {
+                icon.style.transform = 'scale(1.15) rotate(15deg)';
+            }
+        });
+        
+        card.addEventListener('mouseleave', function() {
+            const icon = this.querySelector('.stat-icon');
+            if (icon) {
+                icon.style.transform = 'scale(1) rotate(0deg)';
+            }
+        });
+    });
+    
+    // Gestion noble du responsive
+    function handleResponsive() {
+        const isMobile = window.innerWidth <= 768;
+        
+        if (isMobile) {
+            // Adapter la grille pour mobile
+            const calendarGrid = document.getElementById('calendar-grid');
+            calendarGrid.style.gridTemplateColumns = 'repeat(7, 1fr)';
+            calendarGrid.style.fontSize = '0.8rem';
+        }
+    }
+    
+    window.addEventListener('resize', handleResponsive);
+    handleResponsive();
+    
+    // Rafraîchissement automatique des données
+    setInterval(() => {
+        // Ici on pourrait faire un appel AJAX pour récupérer les nouvelles données
+        // Pour l'instant, on met juste à jour les statistiques
+        updateStats();
+    }, 60000); // Toutes les minutes
+    
+    // Gestion noble des raccourcis clavier
+    document.addEventListener('keydown', function(e) {
+        // Flèche gauche : semaine précédente
+        if (e.key === 'ArrowLeft' && !e.target.matches('input, textarea')) {
+            e.preventDefault();
+            navigateWeeks(-1);
+        }
+        
+        // Flèche droite : semaine suivante
+        if (e.key === 'ArrowRight' && !e.target.matches('input, textarea')) {
+            e.preventDefault();
+            navigateWeeks(1);
+        }
+        
+        // Echap : fermer les dialogues
+        if (e.key === 'Escape') {
+            if (window.closeDialog) window.closeDialog();
+            if (window.closePostDialog) window.closePostDialog();
+        }
+        
+        // N : nouveau post
+        if (e.key.toLowerCase() === 'n' && !e.target.matches('input, textarea')) {
+            window.location.href = '{{ url_for("dashboard") }}';
+        }
+    });
+});
+
+// Fonction utilitaire pour créer des animations de particules nobles
+function createNobleParticles(element) {
+    for (let i = 0; i < 5; i++) {
         const particle = document.createElement('div');
         particle.style.position = 'absolute';
         particle.style.width = '4px';
         particle.style.height = '4px';
-        particle.style.background = 'var(--primary)';
+        particle.style.background = 'var(--noble-sage)';
         particle.style.borderRadius = '50%';
         particle.style.pointerEvents = 'none';
         particle.style.zIndex = '1000';
@@ -992,16 +1310,16 @@ function createParticles(element) {
         
         document.body.appendChild(particle);
         
-        const angle = (i / 6) * Math.PI * 2;
+        const angle = (i / 5) * Math.PI * 2;
         const distance = 30 + Math.random() * 20;
         const x = Math.cos(angle) * distance;
         const y = Math.sin(angle) * distance;
         
         particle.animate([
-            { transform: 'translate(0, 0) scale(1)', opacity: 1 },
+            { transform: 'translate(0, 0) scale(1)', opacity: 0.8 },
             { transform: `translate(${x}px, ${y}px) scale(0)`, opacity: 0 }
         ], {
-            duration: 600,
+            duration: 800,
             easing: 'cubic-bezier(0.4, 0, 0.2, 1)'
         }).onfinish = () => {
             particle.remove();
@@ -1009,11 +1327,64 @@ function createParticles(element) {
     }
 }
 
-// Ajouter l'effet de particules aux cartes statistiques
-document.querySelectorAll('.stat-card').forEach(card => {
-    card.addEventListener('click', function() {
-        createParticles(this);
+// Animation de confirmation noble pour les actions
+function showNobleConfirmation(message, type = 'success') {
+    const colors = {
+        success: 'var(--gentle-success)',
+        warning: 'var(--gentle-warning)',
+        info: 'var(--gentle-info)'
+    };
+    
+    const notification = document.createElement('div');
+    notification.style.cssText = `
+        position: fixed;
+        bottom: 2rem;
+        right: 2rem;
+        background: ${colors[type]};
+        color: white;
+        padding: 1rem 1.5rem;
+        border-radius: 12px;
+        box-shadow: var(--shadow-gentle);
+        z-index: 1001;
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        opacity: 0;
+        transform: translateY(100%);
+        transition: all 0.3s ease;
+        max-width: 300px;
+    `;
+    
+    const icons = {
+        success: 'fa-check-circle',
+        warning: 'fa-exclamation-triangle',
+        info: 'fa-info-circle'
+    };
+    
+    notification.innerHTML = `
+        <i class="fas ${icons[type]}"></i>
+        <span>${message}</span>
+    `;
+    
+    document.body.appendChild(notification);
+    
+    // Animation d'entrée
+    requestAnimationFrame(() => {
+        notification.style.opacity = '1';
+        notification.style.transform = 'translateY(0)';
     });
-});
+    
+    // Auto-suppression noble
+    setTimeout(() => {
+        notification.style.opacity = '0';
+        notification.style.transform = 'translateY(100%)';
+        setTimeout(() => {
+            if (notification.parentNode) {
+                document.body.removeChild(notification);
+            }
+        }, 300);
+    }, 4000);
+}
 </script>
+
 {% endblock %}
