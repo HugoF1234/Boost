@@ -1,196 +1,223 @@
 {% extends "base.html" %}
 {% block content %}
 <style>
-    /* Variables pour couleurs douces */
+    /* Variables nobles et apaisantes identiques au dashboard */
     :root {
-        --primary: #6366f1;
-        --primary-light: #a5b4fc;
-        --primary-ultra-light: #e0e7ff;
-        --secondary: #f8fafc;
-        --accent: #10b981;
-        --accent-light: #6ee7b7;
-        --warm: #fbbf24;
-        --warm-light: #fde68a;
-        --soft-gray: #f1f5f9;
-        --text-primary: #1e293b;
-        --text-secondary: #64748b;
-        --text-light: #94a3b8;
-        --white: #ffffff;
-        --glass: rgba(255, 255, 255, 0.25);
-        --glass-border: rgba(255, 255, 255, 0.3);
-        --shadow-soft: 0 4px 20px rgba(99, 102, 241, 0.1);
-        --shadow-medium: 0 8px 30px rgba(99, 102, 241, 0.15);
-        --shadow-strong: 0 20px 40px rgba(0, 0, 0, 0.1);
-        --success: #10b981;
-        --warning: #f59e0b;
-        --danger: #ef4444;
+        --noble-cream: #faf9f7;
+        --noble-warm: #f5f2ed;
+        --noble-sage: #8b9a7c;
+        --noble-sage-light: #a8b59a;
+        --noble-sage-dark: #6b7865;
+        --noble-stone: #e8e4de;
+        --noble-charcoal: #4a4943;
+        --noble-charcoal-light: #6b6960;
+        --noble-mist: #f0ede8;
+        --noble-accent: #9c8b7a;
+        --noble-accent-light: #b5a495;
+        
+        --gentle-success: #7c9885;
+        --gentle-warning: #b8a082;
+        --gentle-info: #8ba3b8;
+        
+        --shadow-whisper: 0 2px 12px rgba(139, 154, 124, 0.08);
+        --shadow-gentle: 0 4px 20px rgba(139, 154, 124, 0.12);
+        --shadow-soft: 0 8px 32px rgba(139, 154, 124, 0.16);
     }
 
-    /* Header de page moderne */
-    .page-header {
-        background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 50%, var(--accent-light) 100%);
-        color: white;
+    body {
+        background: var(--noble-cream);
+        color: var(--noble-charcoal);
+        line-height: 1.7;
+    }
+
+    /* Header noble et accueillant identique au dashboard */
+    .welcome-section {
+        background: linear-gradient(135deg, var(--noble-warm) 0%, var(--noble-mist) 100%);
+        border-radius: 20px;
         padding: 2.5rem;
-        border-radius: 24px;
         margin-bottom: 2rem;
+        border: 1px solid var(--noble-stone);
+        box-shadow: var(--shadow-whisper);
         position: relative;
         overflow: hidden;
-        box-shadow: var(--shadow-strong);
     }
 
-    .page-header::before {
+    .welcome-section::before {
         content: '';
         position: absolute;
         top: 0;
-        left: 0;
         right: 0;
-        bottom: 0;
-        background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="sparkles" width="20" height="20" patternUnits="userSpaceOnUse"><circle cx="5" cy="5" r="1" fill="%23ffffff" opacity="0.3"><animate attributeName="opacity" values="0.3;0.8;0.3" dur="3s" repeatCount="indefinite"/></circle><circle cx="15" cy="15" r="0.5" fill="%23ffffff" opacity="0.5"><animate attributeName="opacity" values="0.5;1;0.5" dur="2s" repeatCount="indefinite" begin="1s"/></circle></pattern></defs><rect width="100" height="100" fill="url(%23sparkles)"/></svg>') repeat;
+        width: 120px;
+        height: 120px;
+        background: radial-gradient(circle, rgba(139, 154, 124, 0.06) 0%, transparent 70%);
+        border-radius: 50%;
+        transform: translate(30%, -30%);
     }
 
-    .page-title {
-        font-size: 2.2rem;
-        font-weight: 700;
-        margin: 0;
-        text-shadow: 0 2px 4px rgba(0,0,0,0.1);
-        letter-spacing: -0.025em;
-        display: flex;
-        align-items: center;
-        gap: 1rem;
-    }
-
-    /* Cartes de contenu */
-    .content-card {
-        background: var(--white);
-        border-radius: 24px;
-        border: 1px solid rgba(99, 102, 241, 0.1);
-        overflow: hidden;
-        transition: all 0.3s ease;
-        margin-bottom: 2rem;
-        box-shadow: var(--shadow-soft);
-    }
-
-    .content-card:hover {
-        transform: translateY(-4px);
-        box-shadow: var(--shadow-medium);
-        border-color: var(--primary-light);
-    }
-
-    .card-header {
-        padding: 2rem 2.5rem 1rem;
-        background: linear-gradient(135deg, var(--soft-gray) 0%, #f8fafc 100%);
-        border-bottom: 1px solid rgba(99, 102, 241, 0.1);
+    .welcome-content {
         position: relative;
+        z-index: 1;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 1.5rem;
     }
 
-    .card-header::after {
-        content: '';
-        position: absolute;
-        bottom: 0;
-        left: 0;
-        right: 0;
-        height: 1px;
-        background: linear-gradient(90deg, transparent, var(--primary-light), transparent);
+    .greeting {
+        font-size: 1.75rem;
+        font-weight: 600;
+        color: var(--noble-charcoal);
+        margin-bottom: 0.5rem;
+        letter-spacing: -0.02em;
     }
 
-    .card-title {
+    .greeting-subtitle {
+        color: var(--noble-charcoal-light);
+        font-size: 1rem;
+        font-weight: 400;
+    }
+
+    /* Section principale identique au dashboard */
+    .creation-section {
+        background: white;
+        border-radius: 20px;
+        padding: 2.5rem;
+        margin-bottom: 2rem;
+        border: 1px solid var(--noble-stone);
+        box-shadow: var(--shadow-whisper);
+    }
+
+    .section-header {
+        margin-bottom: 2rem;
+    }
+
+    .section-title {
         font-size: 1.4rem;
         font-weight: 600;
-        color: var(--text-primary);
-        margin: 0;
+        color: var(--noble-charcoal);
+        margin-bottom: 0.5rem;
         display: flex;
         align-items: center;
         gap: 0.75rem;
     }
 
-    .card-subtitle {
-        color: var(--text-secondary);
+    .section-subtitle {
+        color: var(--noble-charcoal-light);
         font-size: 0.95rem;
-        line-height: 1.5;
-        margin-top: 0.5rem;
+        line-height: 1.6;
     }
 
-    .card-body {
-        padding: 2.5rem;
-    }
-
-    /* Formulaires modernes */
-    .form-group {
-        margin-bottom: 1.5rem;
+    /* Informations de compte */
+    .account-info {
+        background: linear-gradient(135deg, rgba(139, 154, 124, 0.04) 0%, rgba(156, 139, 122, 0.04) 100%);
+        border: 1px solid rgba(139, 154, 124, 0.15);
+        border-radius: 16px;
+        padding: 2rem;
+        margin-bottom: 2rem;
         position: relative;
     }
 
-    .form-label {
-        display: block;
-        margin-bottom: 0.75rem;
-        font-weight: 600;
-        color: var(--text-primary);
-        font-size: 0.95rem;
+    .account-info::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 4px;
+        height: 100%;
+        background: linear-gradient(to bottom, var(--noble-sage), var(--noble-accent));
+        border-radius: 2px;
     }
 
-    .form-control {
-        width: 100%;
-        padding: 1rem 1.5rem;
-        border: 2px solid rgba(99, 102, 241, 0.1);
-        border-radius: 16px;
-        font-size: 1rem;
-        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        background: rgba(248, 250, 252, 0.5);
-        backdrop-filter: blur(10px);
-    }
-
-    .form-control:focus {
-        outline: none;
-        border-color: var(--primary);
-        box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.1);
-        transform: translateY(-2px);
-        background: var(--white);
-    }
-
-    .form-control:disabled {
-        background: var(--soft-gray);
-        color: var(--text-light);
-        cursor: not-allowed;
-        opacity: 0.6;
-    }
-
-    /* Groupes de contrôles */
-    .control-group {
+    .account-header {
         display: flex;
         align-items: center;
-        gap: 1rem;
-        padding: 1rem;
-        background: var(--soft-gray);
-        border-radius: 12px;
-        transition: all 0.3s ease;
-        margin-bottom: 1rem;
+        gap: 1.5rem;
+        margin-bottom: 1.5rem;
     }
 
-    .control-group:hover {
-        background: var(--primary-ultra-light);
-        transform: translateX(4px);
-    }
-
-    .control-group input[type="checkbox"] {
-        width: 20px;
-        height: 20px;
-        accent-color: var(--primary);
-        cursor: pointer;
-    }
-
-    .control-group label {
-        flex: 1;
-        font-weight: 500;
-        color: var(--text-primary);
-        cursor: pointer;
-        user-select: none;
-    }
-
-    /* Intégrations */
-    .integration-list {
-        border-radius: 16px;
+    .account-avatar {
+        width: 60px;
+        height: 60px;
+        border-radius: 50%;
+        border: 2px solid var(--noble-sage-light);
         overflow: hidden;
-        border: 1px solid var(--soft-gray);
+        flex-shrink: 0;
+    }
+
+    .account-avatar img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    .account-placeholder {
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(135deg, var(--noble-sage) 0%, var(--noble-accent) 100%);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.5rem;
+        color: white;
+        font-weight: 600;
+    }
+
+    .account-details h3 {
+        font-size: 1.2rem;
+        font-weight: 600;
+        color: var(--noble-charcoal);
+        margin-bottom: 0.25rem;
+    }
+
+    .account-details p {
+        color: var(--noble-charcoal-light);
+        font-size: 0.9rem;
+    }
+
+    .account-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 1.5rem;
+    }
+
+    .account-item {
+        padding: 1.5rem;
+        background: white;
+        border-radius: 12px;
+        border: 1px solid var(--noble-stone);
+        transition: all 0.3s ease;
+    }
+
+    .account-item:hover {
+        background: var(--noble-mist);
+        border-color: var(--noble-sage-light);
+        transform: translateY(-2px);
+    }
+
+    .account-item h4 {
+        font-size: 0.9rem;
+        color: var(--noble-charcoal-light);
+        margin-bottom: 0.5rem;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        font-weight: 500;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .account-item p {
+        font-weight: 600;
+        color: var(--noble-charcoal);
+        font-size: 1rem;
+    }
+
+    /* Intégrations - style noble */
+    .integration-list {
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
     }
 
     .integration-item {
@@ -198,18 +225,16 @@
         align-items: center;
         justify-content: space-between;
         padding: 1.5rem;
-        border-bottom: 1px solid var(--soft-gray);
+        background: var(--noble-warm);
+        border: 1px solid var(--noble-stone);
+        border-radius: 16px;
         transition: all 0.3s ease;
-        background: var(--white);
-    }
-
-    .integration-item:last-child {
-        border-bottom: none;
     }
 
     .integration-item:hover {
-        background: var(--primary-ultra-light);
-        transform: translateX(8px);
+        background: var(--noble-mist);
+        border-color: var(--noble-sage-light);
+        transform: translateY(-1px);
     }
 
     .integration-info {
@@ -226,25 +251,9 @@
         display: flex;
         align-items: center;
         justify-content: center;
-        font-size: 1.5rem;
+        font-size: 1.3rem;
         color: white;
-        position: relative;
-        overflow: hidden;
-    }
-
-    .integration-icon::before {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: -100%;
-        width: 100%;
-        height: 100%;
-        background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
-        transition: all 0.8s ease;
-    }
-
-    .integration-item:hover .integration-icon::before {
-        left: 100%;
+        transition: all 0.3s ease;
     }
 
     .linkedin-icon {
@@ -265,20 +274,14 @@
 
     .integration-name {
         font-weight: 600;
-        font-size: 1.1rem;
-        color: var(--text-primary);
+        font-size: 1rem;
+        color: var(--noble-charcoal);
         margin-bottom: 0.25rem;
     }
 
     .integration-description {
-        color: var(--text-secondary);
-        font-size: 0.9rem;
-    }
-
-    .integration-status {
-        display: flex;
-        align-items: center;
-        gap: 1rem;
+        color: var(--noble-charcoal-light);
+        font-size: 0.85rem;
     }
 
     .status-badge {
@@ -288,116 +291,110 @@
         padding: 0.5rem 1rem;
         border-radius: 20px;
         font-size: 0.8rem;
-        font-weight: 600;
+        font-weight: 500;
         text-transform: uppercase;
-        letter-spacing: 0.05em;
+        letter-spacing: 0.5px;
     }
 
     .status-connected {
-        background: linear-gradient(135deg, #dcfce7 0%, #bbf7d0 100%);
-        color: var(--success);
-        border: 1px solid #86efac;
+        background: linear-gradient(135deg, rgba(124, 152, 133, 0.1) 0%, rgba(124, 152, 133, 0.05) 100%);
+        color: var(--gentle-success);
+        border: 1px solid var(--gentle-success);
     }
 
-    .status-disconnected {
-        background: linear-gradient(135deg, #fef2f2 0%, #fecaca 100%);
-        color: var(--danger);
-        border: 1px solid #fca5a5;
+    .status-soon {
+        background: linear-gradient(135deg, rgba(184, 160, 130, 0.1) 0%, rgba(184, 160, 130, 0.05) 100%);
+        color: var(--gentle-warning);
+        border: 1px solid var(--gentle-warning);
     }
 
-    /* Boutons modernes */
-    .btn-modern {
-        padding: 0.75rem 1.5rem;
-        border-radius: 16px;
-        font-weight: 600;
-        font-size: 0.9rem;
-        border: none;
+    /* Boutons nobles identiques au dashboard */
+    .btn {
+        padding: 0.875rem 1.75rem;
+        border-radius: 12px;
+        font-weight: 500;
+        font-size: 0.95rem;
         cursor: pointer;
-        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        transition: all 0.3s ease;
         display: inline-flex;
         align-items: center;
-        gap: 0.5rem;
+        gap: 0.625rem;
         text-decoration: none;
+        border: none;
         position: relative;
         overflow: hidden;
     }
 
-    .btn-modern::before {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: -100%;
-        width: 100%;
-        height: 100%;
-        background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
-        transition: all 0.6s ease;
-    }
-
-    .btn-modern:hover::before {
-        left: 100%;
-    }
-
-    .btn-primary-modern {
-        background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+    .btn-primary {
+        background: linear-gradient(135deg, var(--noble-sage) 0%, var(--noble-sage-light) 100%);
         color: white;
-        box-shadow: 0 4px 20px rgba(99, 102, 241, 0.3);
+        box-shadow: var(--shadow-whisper);
     }
 
-    .btn-primary-modern:hover {
-        transform: translateY(-3px) scale(1.02);
-        box-shadow: 0 8px 30px rgba(99, 102, 241, 0.4);
+    .btn-primary:hover {
+        transform: translateY(-1px);
+        box-shadow: var(--shadow-gentle);
+        background: linear-gradient(135deg, var(--noble-sage-dark) 0%, var(--noble-sage) 100%);
     }
 
-    .btn-secondary-modern {
-        background: var(--white);
-        color: var(--primary);
-        border: 2px solid var(--primary);
-        box-shadow: var(--shadow-soft);
+    .btn-secondary {
+        background: white;
+        color: var(--noble-charcoal);
+        border: 1.5px solid var(--noble-stone);
     }
 
-    .btn-secondary-modern:hover {
-        background: var(--primary);
+    .btn-secondary:hover {
+        background: var(--noble-warm);
+        border-color: var(--noble-sage);
+        transform: translateY(-1px);
+    }
+
+    .btn-danger {
+        background: linear-gradient(135deg, var(--gentle-warning) 0%, #d4a574 100%);
         color: white;
-        transform: translateY(-3px);
-        box-shadow: var(--shadow-medium);
+        box-shadow: var(--shadow-whisper);
     }
 
-    .btn-danger-modern {
-        background: linear-gradient(135deg, var(--danger) 0%, #dc2626 100%);
-        color: white;
-        box-shadow: 0 4px 20px rgba(239, 68, 68, 0.3);
+    .btn-danger:hover {
+        transform: translateY(-1px);
+        box-shadow: var(--shadow-gentle);
+        background: linear-gradient(135deg, #a68660 0%, var(--gentle-warning) 100%);
     }
 
-    .btn-danger-modern:hover {
-        transform: translateY(-3px) scale(1.02);
-        box-shadow: 0 8px 30px rgba(239, 68, 68, 0.4);
-    }
-
-    .btn-modern:disabled {
+    .btn:disabled {
         opacity: 0.6;
         cursor: not-allowed;
         transform: none !important;
-        box-shadow: none !important;
     }
 
-    /* Notice d'information */
+    /* Notice d'information noble */
     .info-notice {
+        margin-top: 1.5rem;
+        padding: 1.5rem;
+        background: linear-gradient(135deg, rgba(139, 154, 124, 0.05) 0%, rgba(156, 139, 122, 0.05) 100%);
+        border: 1px solid rgba(139, 154, 124, 0.15);
+        border-radius: 16px;
         display: flex;
         align-items: center;
         gap: 1rem;
-        padding: 1.5rem;
-        background: linear-gradient(135deg, var(--primary-ultra-light) 0%, rgba(16, 185, 129, 0.05) 100%);
-        border: 1px solid var(--primary-light);
-        border-radius: 16px;
-        margin-top: 1.5rem;
-        font-size: 0.9rem;
-        color: var(--text-secondary);
+        position: relative;
+    }
+
+    .info-notice::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 4px;
+        height: 100%;
+        background: var(--noble-sage);
+        border-radius: 2px;
     }
 
     .info-icon {
         width: 40px;
         height: 40px;
-        background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+        background: linear-gradient(135deg, var(--noble-sage) 0%, var(--noble-accent) 100%);
         border-radius: 50%;
         display: flex;
         align-items: center;
@@ -407,37 +404,92 @@
         flex-shrink: 0;
     }
 
+    .info-content {
+        flex: 1;
+        color: var(--noble-charcoal-light);
+        font-size: 0.9rem;
+        line-height: 1.5;
+    }
+
+    /* Section de sécurité */
+    .security-items {
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+    }
+
+    .security-item {
+        padding: 1.5rem;
+        background: var(--noble-warm);
+        border: 1px solid var(--noble-stone);
+        border-radius: 16px;
+        position: relative;
+    }
+
+    .security-item::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 4px;
+        height: 100%;
+        border-radius: 2px;
+    }
+
+    .security-item.security { border-left-color: var(--gentle-success); }
+    .security-item.security::before { background: var(--gentle-success); }
+
+    .security-item.data { border-left-color: var(--gentle-info); }
+    .security-item.data::before { background: var(--gentle-info); }
+
+    .security-item h4 {
+        font-size: 1rem;
+        font-weight: 600;
+        color: var(--noble-charcoal);
+        margin-bottom: 0.5rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .security-item p {
+        color: var(--noble-charcoal-light);
+        font-size: 0.9rem;
+        line-height: 1.5;
+        margin: 0;
+    }
+
     /* Responsive */
     @media (max-width: 768px) {
-        .page-title {
-            font-size: 1.8rem;
+        .welcome-content {
+            flex-direction: column;
+            text-align: center;
         }
 
-        .card-body {
-            padding: 1.5rem;
+        .account-header {
+            flex-direction: column;
+            text-align: center;
+        }
+
+        .account-grid {
+            grid-template-columns: 1fr;
         }
 
         .integration-item {
             flex-direction: column;
-            align-items: flex-start;
             gap: 1rem;
         }
-
-        .integration-status {
-            width: 100%;
-            justify-content: space-between;
-        }
     }
 
-    /* Animations */
+    /* Animations nobles */
     .fade-in {
-        animation: fadeInUp 0.6s ease-out;
+        animation: gentleFadeIn 0.8s ease-out;
     }
 
-    @keyframes fadeInUp {
+    @keyframes gentleFadeIn {
         from {
             opacity: 0;
-            transform: translateY(30px);
+            transform: translateY(20px);
         }
         to {
             opacity: 1;
@@ -445,297 +497,282 @@
         }
     }
 
-    .slide-in {
-        animation: slideInRight 0.5s ease-out;
-    }
-
-    @keyframes slideInRight {
-        from {
-            opacity: 0;
-            transform: translateX(30px);
-        }
-        to {
-            opacity: 1;
-            transform: translateX(0);
-        }
+    /* Icônes nobles */
+    .icon-noble {
+        color: var(--noble-sage);
+        font-size: 1.125rem;
     }
 </style>
 
-<!-- Header de page -->
-<div class="page-header fade-in">
-    <h1 class="page-title">
-        <i class="fas fa-cogs"></i>
-        Paramètres
-    </h1>
+<!-- Section d'accueil noble -->
+<div class="welcome-section fade-in">
+    <div class="welcome-content">
+        <div>
+            <h1 class="greeting">Paramètres 🌿</h1>
+            <p class="greeting-subtitle">Gérez votre compte et vos préférences</p>
+        </div>
+    </div>
 </div>
 
-<!-- Préférences de publication -->
-<div class="content-card slide-in">
-    <div class="card-header">
-        <h2 class="card-title">
-            <i class="fas fa-sliders-h"></i>
-            Préférences de publication
+<!-- Informations du compte -->
+<div class="creation-section fade-in">
+    <div class="section-header">
+        <h2 class="section-title">
+            <i class="fas fa-user-cog icon-noble"></i>
+            Mon compte
         </h2>
-        <p class="card-subtitle">
-            Personnalisez vos options de publication et définissez les paramètres par défaut pour vos posts LinkedIn.
-        </p>
+        <p class="section-subtitle">Informations de votre compte ResoBoost et LinkedIn</p>
     </div>
-    
-    <div class="card-body">
-        <form>
-            <div class="form-group">
-                <label class="form-label">Ton par défaut</label>
-                <select class="form-control">
-                    <option value="professionnel">🎯 Professionnel</option>
-                    <option value="familier">😊 Familier</option>
-                    <option value="inspirant">✨ Inspirant</option>
-                    <option value="humoristique">😄 Humoristique</option>
-                    <option value="factuel">📊 Factuel</option>
-                </select>
-            </div>
-            
-            <div class="form-group">
-                <label class="form-label">Longueur de contenu</label>
-                <select class="form-control">
-                    <option>📝 Court (moins de 100 mots)</option>
-                    <option selected>📄 Moyen (100-200 mots)</option>
-                    <option>📋 Long (plus de 200 mots)</option>
-                </select>
-            </div>
-            
-            <div class="form-group">
-                <label class="form-label">Hashtags automatiques</label>
-                <div style="display: flex; align-items: center; gap: 1rem;">
-                    <input type="number" class="form-control" min="0" max="10" value="3" style="flex: 0 0 100px;">
-                    <span style="color: var(--text-secondary);">hashtags à ajouter automatiquement</span>
-                </div>
-            </div>
-            
-            <div class="control-group">
-                <input type="checkbox" id="publish-confirm" checked>
-                <label for="publish-confirm">🔒 Demander confirmation avant publication</label>
-            </div>
-            
-            <div class="control-group">
-                <input type="checkbox" id="save-history">
-                <label for="save-history">💾 Conserver l'historique des brouillons</label>
-            </div>
-            
-            <div style="margin-top: 2rem;">
-                <button type="submit" class="btn-modern btn-primary-modern" disabled>
-                    <i class="fa-solid fa-save"></i>
-                    Enregistrer les préférences
-                </button>
-                <div class="info-notice">
-                    <div class="info-icon">
-                        <i class="fa-solid fa-info"></i>
+
+    <div class="account-info">
+        <div class="account-header">
+            <div class="account-avatar">
+                {% if picture %}
+                    <img src="{{ picture }}" alt="Photo de profil">
+                {% else %}
+                    <div class="account-placeholder">
+                        {{ first_name[0]|upper if first_name else 'U' }}
                     </div>
-                    <span>Ces fonctionnalités avancées seront bientôt disponibles dans une mise à jour future.</span>
-                </div>
+                {% endif %}
             </div>
-        </form>
+            
+            <div class="account-details">
+                <h3>{{ first_name }} {{ last_name }}</h3>
+                <p>{{ email }}</p>
+            </div>
+        </div>
+        
+        <div class="account-grid">
+            <div class="account-item">
+                <h4>
+                    <i class="fas fa-globe icon-noble"></i>
+                    Pays
+                </h4>
+                <p>{{ country or 'Non renseigné' }}</p>
+            </div>
+            
+            <div class="account-item">
+                <h4>
+                    <i class="fas fa-language icon-noble"></i>
+                    Langue
+                </h4>
+                <p>{{ language or 'Non renseigné' }}</p>
+            </div>
+            
+            <div class="account-item">
+                <h4>
+                    <i class="fas fa-shield-alt icon-noble"></i>
+                    Email vérifié
+                </h4>
+                <p>{{ 'Oui' if email_verified else 'Non' }}</p>
+            </div>
+            
+            <div class="account-item">
+                <h4>
+                    <i class="fab fa-linkedin icon-noble"></i>
+                    LinkedIn ID
+                </h4>
+                <p>{{ sub.split('_')[-1] if sub else 'Non disponible' }}</p>
+            </div>
+        </div>
     </div>
 </div>
 
 <!-- Intégrations -->
-<div class="content-card slide-in">
-    <div class="card-header">
-        <h2 class="card-title">
-            <i class="fas fa-plug"></i>
+<div class="creation-section fade-in">
+    <div class="section-header">
+        <h2 class="section-title">
+            <i class="fas fa-plug icon-noble"></i>
             Intégrations
         </h2>
-        <p class="card-subtitle">
-            Connectez votre compte à d'autres plateformes pour étendre les fonctionnalités et automatiser vos publications.
-        </p>
+        <p class="section-subtitle">Connectez votre compte à d'autres plateformes pour étendre les fonctionnalités</p>
     </div>
     
-    <div class="card-body">
-        <div class="integration-list">
-            <div class="integration-item">
-                <div class="integration-info">
-                    <div class="integration-icon linkedin-icon">
-                        <i class="fa-brands fa-linkedin-in"></i>
-                    </div>
-                    <div class="integration-details">
-                        <div class="integration-name">LinkedIn</div>
-                        <div class="integration-description">Connecté en tant que {{ first_name }} {{ last_name }}</div>
-                    </div>
+    <div class="integration-list">
+        <div class="integration-item">
+            <div class="integration-info">
+                <div class="integration-icon linkedin-icon">
+                    <i class="fab fa-linkedin-in"></i>
                 </div>
-                <div class="integration-status">
-                    <div class="status-badge status-connected">
-                        <i class="fa-solid fa-circle-check"></i>
-                        Connecté
-                    </div>
+                <div class="integration-details">
+                    <div class="integration-name">LinkedIn</div>
+                    <div class="integration-description">Connecté en tant que {{ first_name }} {{ last_name }}</div>
                 </div>
             </div>
-            
-            <div class="integration-item">
-                <div class="integration-info">
-                    <div class="integration-icon twitter-icon">
-                        <i class="fa-brands fa-twitter"></i>
-                    </div>
-                    <div class="integration-details">
-                        <div class="integration-name">Twitter / X</div>
-                        <div class="integration-description">Publiez simultanément sur Twitter pour maximiser votre portée</div>
-                    </div>
-                </div>
-                <div class="integration-status">
-                    <button class="btn-modern btn-secondary-modern" disabled>
-                        <i class="fa-solid fa-plug"></i>
-                        Connecter
-                    </button>
-                </div>
-            </div>
-            
-            <div class="integration-item">
-                <div class="integration-info">
-                    <div class="integration-icon slack-icon">
-                        <i class="fa-brands fa-slack"></i>
-                    </div>
-                    <div class="integration-details">
-                        <div class="integration-name">Slack</div>
-                        <div class="integration-description">Recevez des notifications de vos publications dans Slack</div>
-                    </div>
-                </div>
-                <div class="integration-status">
-                    <button class="btn-modern btn-secondary-modern" disabled>
-                        <i class="fa-solid fa-plug"></i>
-                        Connecter
-                    </button>
-                </div>
+            <div class="status-badge status-connected">
+                <i class="fas fa-check-circle"></i>
+                Connecté
             </div>
         </div>
         
-        <div class="info-notice">
-            <div class="info-icon">
-                <i class="fa-solid fa-rocket"></i>
+        <div class="integration-item">
+            <div class="integration-info">
+                <div class="integration-icon twitter-icon">
+                    <i class="fab fa-twitter"></i>
+                </div>
+                <div class="integration-details">
+                    <div class="integration-name">Twitter / X</div>
+                    <div class="integration-description">Publiez simultanément sur Twitter pour maximiser votre portée</div>
+                </div>
             </div>
-            <span>Ces intégrations seront disponibles dans une version future pour automatiser votre workflow social media.</span>
+            <div class="status-badge status-soon">
+                <i class="fas fa-clock"></i>
+                Bientôt
+            </div>
+        </div>
+        
+        <div class="integration-item">
+            <div class="integration-info">
+                <div class="integration-icon slack-icon">
+                    <i class="fab fa-slack"></i>
+                </div>
+                <div class="integration-details">
+                    <div class="integration-name">Slack</div>
+                    <div class="integration-description">Recevez des notifications de vos publications dans Slack</div>
+                </div>
+            </div>
+            <div class="status-badge status-soon">
+                <i class="fas fa-clock"></i>
+                Bientôt
+            </div>
+        </div>
+    </div>
+    
+    <div class="info-notice">
+        <div class="info-icon">
+            <i class="fas fa-rocket"></i>
+        </div>
+        <div class="info-content">
+            Ces intégrations seront disponibles dans une version future pour automatiser votre workflow social media et vous faire gagner encore plus de temps.
         </div>
     </div>
 </div>
 
-<!-- Gestion du compte -->
-<div class="content-card slide-in">
-    <div class="card-header">
-        <h2 class="card-title">
-            <i class="fas fa-user-cog"></i>
-            Gestion du compte
+<!-- Sécurité et confidentialité -->
+<div class="creation-section fade-in">
+    <div class="section-header">
+        <h2 class="section-title">
+            <i class="fas fa-shield-halved icon-noble"></i>
+            Sécurité et confidentialité
         </h2>
-        <p class="card-subtitle">
-            Gérez les paramètres de votre compte et vos préférences de confidentialité.
-        </p>
+        <p class="section-subtitle">Gérez les paramètres de sécurité de votre compte</p>
     </div>
     
-    <div class="card-body">
-        <div style="display: flex; flex-direction: column; gap: 1.5rem;">
-            <div style="padding: 1.5rem; background: var(--soft-gray); border-radius: 16px; border-left: 4px solid var(--primary);">
-                <h4 style="margin: 0 0 0.5rem; color: var(--text-primary); display: flex; align-items: center; gap: 0.5rem;">
-                    <i class="fa-solid fa-shield-halved"></i>
-                    Sécurité du compte
-                </h4>
-                <p style="margin: 0; color: var(--text-secondary); font-size: 0.9rem;">
-                    Votre compte est sécurisé via l'authentification LinkedIn OAuth 2.0.
-                </p>
-            </div>
-            
-            <div style="padding: 1.5rem; background: var(--soft-gray); border-radius: 16px; border-left: 4px solid var(--accent);">
-                <h4 style="margin: 0 0 0.5rem; color: var(--text-primary); display: flex; align-items: center; gap: 0.5rem;">
-                    <i class="fa-solid fa-database"></i>
-                    Données personnelles
-                </h4>
-                <p style="margin: 0; color: var(--text-secondary); font-size: 0.9rem;">
-                    Vos données sont stockées de manière sécurisée et ne sont jamais partagées avec des tiers.
-                </p>
-            </div>
-            
-            <div style="margin-top: 1rem;">
-                <a href="{{ url_for('logout') }}" class="btn-modern btn-danger-modern">
-                    <i class="fa-solid fa-sign-out-alt"></i>
-                    Se déconnecter
-                </a>
-            </div>
+    <div class="security-items">
+        <div class="security-item security">
+            <h4>
+                <i class="fas fa-lock"></i>
+                Sécurité du compte
+            </h4>
+            <p>
+                Votre compte est sécurisé via l'authentification LinkedIn OAuth 2.0. 
+                Vos données de connexion sont protégées par les standards de sécurité les plus élevés.
+            </p>
         </div>
+        
+        <div class="security-item data">
+            <h4>
+                <i class="fas fa-database"></i>
+                Protection des données
+            </h4>
+            <p>
+                Vos données personnelles sont stockées de manière sécurisée et chiffrée. 
+                Nous ne partageons jamais vos informations avec des tiers sans votre consentement explicite.
+            </p>
+        </div>
+    </div>
+    
+    <div style="margin-top: 2rem; text-align: center;">
+        <a href="{{ url_for('logout') }}" class="btn btn-danger">
+            <i class="fas fa-sign-out-alt"></i>
+            Se déconnecter
+        </a>
     </div>
 </div>
 
 <script>
-// Animation des éléments au scroll
-const observerOptions = {
-    threshold: 0.1,
-    rootMargin: '0px 0px -50px 0px'
-};
-
-const observer = new IntersectionObserver((entries) => {
-    entries.forEach(entry => {
-        if (entry.isIntersecting) {
-            entry.target.style.opacity = '1';
-            entry.target.style.transform = 'translateY(0)';
-        }
+// Animations nobles au chargement
+document.addEventListener('DOMContentLoaded', function() {
+    // Animation progressive des éléments
+    const elements = document.querySelectorAll('.fade-in');
+    elements.forEach((el, index) => {
+        el.style.opacity = '0';
+        el.style.transform = 'translateY(20px)';
+        el.style.transition = 'all 0.8s ease';
+        
+        setTimeout(() => {
+            el.style.opacity = '1';
+            el.style.transform = 'translateY(0)';
+        }, index * 200);
     });
-}, observerOptions);
 
-// Observer tous les éléments avec animation
-document.querySelectorAll('.fade-in, .slide-in').forEach(el => {
-    el.style.opacity = '0';
-    el.style.transform = 'translateY(30px)';
-    el.style.transition = 'all 0.6s cubic-bezier(0.4, 0, 0.2, 1)';
-    observer.observe(el);
-});
+    // Animation des items de compte
+    document.querySelectorAll('.account-item').forEach((item, index) => {
+        item.style.opacity = '0';
+        item.style.transform = 'translateY(20px)';
+        item.style.transition = 'all 0.6s ease';
+        
+        setTimeout(() => {
+            item.style.opacity = '1';
+            item.style.transform = 'translateY(0)';
+        }, index * 100);
+    });
 
-// Animation des integration items
-document.querySelectorAll('.integration-item').forEach((item, index) => {
-    item.style.opacity = '0';
-    item.style.transform = 'translateX(-20px)';
-    item.style.transition = 'all 0.5s cubic-bezier(0.4, 0, 0.2, 1)';
-    
-    setTimeout(() => {
-        item.style.opacity = '1';
-        item.style.transform = 'translateX(0)';
-    }, index * 100);
-});
+    // Animation des intégrations
+    document.querySelectorAll('.integration-item').forEach((item, index) => {
+        item.style.opacity = '0';
+        item.style.transform = 'translateX(-20px)';
+        item.style.transition = 'all 0.6s ease';
+        
+        setTimeout(() => {
+            item.style.opacity = '1';
+            item.style.transform = 'translateX(0)';
+        }, index * 150);
+    });
 
-// Amélioration des interactions des boutons
-document.querySelectorAll('.btn-modern').forEach(btn => {
-    if (!btn.disabled) {
+    // Animation des items de sécurité
+    document.querySelectorAll('.security-item').forEach((item, index) => {
+        item.style.opacity = '0';
+        item.style.transform = 'translateY(20px)';
+        item.style.transition = 'all 0.6s ease';
+        
+        setTimeout(() => {
+            item.style.opacity = '1';
+            item.style.transform = 'translateY(0)';
+        }, 800 + (index * 100));
+    });
+
+    // Interactions nobles sur les boutons
+    document.querySelectorAll('.btn').forEach(btn => {
         btn.addEventListener('mouseenter', function() {
-            this.style.transform = 'translateY(-3px) scale(1.02)';
+            this.style.transform = 'translateY(-1px)';
         });
         
         btn.addEventListener('mouseleave', function() {
-            this.style.transform = 'translateY(0) scale(1)';
+            this.style.transform = 'translateY(0)';
         });
-        
-        btn.addEventListener('mousedown', function() {
-            this.style.transform = 'translateY(-1px) scale(0.98)';
-        });
-        
-        btn.addEventListener('mouseup', function() {
-            this.style.transform = 'translateY(-3px) scale(1.02)';
+    });
+
+    // Animation de l'avatar
+    const avatar = document.querySelector('.account-avatar');
+    if (avatar) {
+        avatar.addEventListener('click', function() {
+            this.style.transform = 'scale(0.95) rotate(5deg)';
+            setTimeout(() => {
+                this.style.transform = 'scale(1) rotate(0deg)';
+            }, 200);
         });
     }
-});
 
-// Animation des control groups
-document.querySelectorAll('.control-group').forEach((group, index) => {
-    group.style.opacity = '0';
-    group.style.transform = 'translateY(20px)';
-    group.style.transition = 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)';
-    
-    setTimeout(() => {
-        group.style.opacity = '1';
-        group.style.transform = 'translateY(0)';
-    }, index * 100);
-});
-
-// Animation des icônes d'intégration
-document.querySelectorAll('.integration-icon').forEach(icon => {
-    icon.addEventListener('mouseenter', function() {
-        this.style.transform = 'scale(1.1) rotate(5deg)';
-    });
-    
-    icon.addEventListener('mouseleave', function() {
-        this.style.transform = 'scale(1) rotate(0deg)';
+    // Animation des icônes d'intégration
+    document.querySelectorAll('.integration-icon').forEach(icon => {
+        icon.addEventListener('mouseenter', function() {
+            this.style.transform = 'scale(1.1) rotate(5deg)';
+        });
+        
+        icon.addEventListener('mouseleave', function() {
+            this.style.transform = 'scale(1) rotate(0deg)';
+        });
     });
 });
 </script>
