@@ -1,244 +1,101 @@
 {% extends "base.html" %}
 {% block content %}
 <style>
-    /* Variables pour couleurs douces */
+    /* Variables nobles et apaisantes identiques au dashboard */
     :root {
-        --primary: #6366f1;
-        --primary-light: #a5b4fc;
-        --primary-ultra-light: #e0e7ff;
-        --secondary: #f8fafc;
-        --accent: #10b981;
-        --accent-light: #6ee7b7;
-        --warm: #fbbf24;
-        --warm-light: #fde68a;
-        --soft-gray: #f1f5f9;
-        --text-primary: #1e293b;
-        --text-secondary: #64748b;
-        --text-light: #94a3b8;
-        --white: #ffffff;
-        --glass: rgba(255, 255, 255, 0.25);
-        --glass-border: rgba(255, 255, 255, 0.3);
-        --shadow-soft: 0 4px 20px rgba(99, 102, 241, 0.1);
-        --shadow-medium: 0 8px 30px rgba(99, 102, 241, 0.15);
-        --shadow-strong: 0 20px 40px rgba(0, 0, 0, 0.1);
-        --success: #10b981;
-        --warning: #f59e0b;
-        --danger: #ef4444;
+        --noble-cream: #faf9f7;
+        --noble-warm: #f5f2ed;
+        --noble-sage: #8b9a7c;
+        --noble-sage-light: #a8b59a;
+        --noble-sage-dark: #6b7865;
+        --noble-stone: #e8e4de;
+        --noble-charcoal: #4a4943;
+        --noble-charcoal-light: #6b6960;
+        --noble-mist: #f0ede8;
+        --noble-accent: #9c8b7a;
+        --noble-accent-light: #b5a495;
+        
+        --gentle-success: #7c9885;
+        --gentle-warning: #b8a082;
+        --gentle-info: #8ba3b8;
+        
+        --shadow-whisper: 0 2px 12px rgba(139, 154, 124, 0.08);
+        --shadow-gentle: 0 4px 20px rgba(139, 154, 124, 0.12);
+        --shadow-soft: 0 8px 32px rgba(139, 154, 124, 0.16);
     }
 
-    /* Header de page moderne */
-    .page-header {
-        background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 50%, var(--accent-light) 100%);
-        color: white;
-        padding: 2.5rem;
-        border-radius: 24px;
-        margin-bottom: 2rem;
-        position: relative;
-        overflow: hidden;
-        box-shadow: var(--shadow-strong);
+    body {
+        background: var(--noble-cream);
+        color: var(--noble-charcoal);
+        line-height: 1.7;
     }
 
-    .page-header::before {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="sparkles" width="20" height="20" patternUnits="userSpaceOnUse"><circle cx="5" cy="5" r="1" fill="%23ffffff" opacity="0.3"><animate attributeName="opacity" values="0.3;0.8;0.3" dur="3s" repeatCount="indefinite"/></circle><circle cx="15" cy="15" r="0.5" fill="%23ffffff" opacity="0.5"><animate attributeName="opacity" values="0.5;1;0.5" dur="2s" repeatCount="indefinite" begin="1s"/></circle></pattern></defs><rect width="100" height="100" fill="url(%23sparkles)"/></svg>') repeat;
-    }
-
-    .page-title {
-        font-size: 2.2rem;
-        font-weight: 700;
-        margin: 0;
-        text-shadow: 0 2px 4px rgba(0,0,0,0.1);
-        letter-spacing: -0.025em;
-        display: flex;
-        align-items: center;
-        gap: 1rem;
-    }
-
-    /* Cartes de contenu */
-    .content-card {
-        background: var(--white);
-        border-radius: 24px;
-        border: 1px solid rgba(99, 102, 241, 0.1);
-        overflow: hidden;
-        transition: all 0.3s ease;
-        margin-bottom: 2rem;
-        box-shadow: var(--shadow-soft);
-    }
-
-    .content-card:hover {
-        transform: translateY(-4px);
-        box-shadow: var(--shadow-medium);
-        border-color: var(--primary-light);
-    }
-
-    .card-body {
-        padding: 2.5rem;
-    }
-
-    /* Profil utilisateur */
-    .profile-section {
-        display: flex;
-        align-items: center;
-        gap: 2rem;
-        margin-bottom: 2rem;
-        padding: 2rem;
-        background: linear-gradient(135deg, var(--primary-ultra-light) 0%, rgba(16, 185, 129, 0.05) 100%);
+    /* Header noble et accueillant identique au dashboard */
+    .welcome-section {
+        background: linear-gradient(135deg, var(--noble-warm) 0%, var(--noble-mist) 100%);
         border-radius: 20px;
-        border-left: 5px solid var(--primary);
+        padding: 2.5rem;
+        margin-bottom: 2rem;
+        border: 1px solid var(--noble-stone);
+        box-shadow: var(--shadow-whisper);
         position: relative;
         overflow: hidden;
     }
 
-    .profile-section::before {
+    .welcome-section::before {
         content: '';
         position: absolute;
         top: 0;
         right: 0;
-        width: 100px;
-        height: 100px;
-        background: radial-gradient(circle, rgba(99, 102, 241, 0.1) 0%, transparent 70%);
+        width: 120px;
+        height: 120px;
+        background: radial-gradient(circle, rgba(139, 154, 124, 0.06) 0%, transparent 70%);
         border-radius: 50%;
         transform: translate(30%, -30%);
     }
 
-    .profile-avatar {
-        width: 100px;
-        height: 100px;
-        border-radius: 50%;
-        border: 4px solid var(--primary-light);
-        box-shadow: var(--shadow-medium);
-        transition: all 0.3s ease;
+    .welcome-content {
         position: relative;
         z-index: 1;
-    }
-
-    .profile-avatar:hover {
-        transform: scale(1.05);
-        box-shadow: var(--shadow-strong);
-    }
-
-    .profile-avatar img {
-        width: 100%;
-        height: 100%;
-        border-radius: 50%;
-        object-fit: cover;
-    }
-
-    .profile-placeholder {
-        width: 100%;
-        height: 100%;
-        background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
-        border-radius: 50%;
         display: flex;
+        justify-content: space-between;
         align-items: center;
-        justify-content: center;
-        font-size: 2.5rem;
-        color: white;
-    }
-
-    .profile-info {
-        flex: 1;
-        position: relative;
-        z-index: 1;
-    }
-
-    .profile-name {
-        font-size: 1.8rem;
-        font-weight: 700;
-        color: var(--text-primary);
-        margin-bottom: 0.5rem;
-    }
-
-    .profile-email {
-        display: flex;
-        align-items: center;
-        gap: 0.75rem;
-        color: var(--text-secondary);
-        font-size: 1rem;
-        margin-bottom: 1rem;
-    }
-
-    .verified-badge {
-        display: inline-flex;
-        align-items: center;
-        gap: 0.25rem;
-        background: linear-gradient(135deg, #dcfce7 0%, #bbf7d0 100%);
-        color: var(--success);
-        padding: 0.25rem 0.75rem;
-        border-radius: 12px;
-        font-size: 0.8rem;
-        font-weight: 600;
-        border: 1px solid #86efac;
-    }
-
-    .profile-details {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        flex-wrap: wrap;
         gap: 1.5rem;
-        margin-top: 1.5rem;
     }
 
-    .detail-item {
-        display: flex;
-        align-items: center;
-        gap: 0.75rem;
-        padding: 1rem;
-        background: var(--white);
-        border-radius: 12px;
-        border: 1px solid var(--soft-gray);
-        transition: all 0.3s ease;
-    }
-
-    .detail-item:hover {
-        background: var(--primary-ultra-light);
-        border-color: var(--primary-light);
-        transform: translateY(-2px);
-    }
-
-    .detail-icon {
-        width: 40px;
-        height: 40px;
-        background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
-        border-radius: 10px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        color: white;
-        font-size: 1.1rem;
-    }
-
-    .detail-content {
-        flex: 1;
-    }
-
-    .detail-label {
-        font-size: 0.8rem;
-        color: var(--text-light);
-        text-transform: uppercase;
-        letter-spacing: 0.05em;
+    .greeting {
+        font-size: 1.75rem;
         font-weight: 600;
-        margin-bottom: 0.25rem;
+        color: var(--noble-charcoal);
+        margin-bottom: 0.5rem;
+        letter-spacing: -0.02em;
     }
 
-    .detail-value {
-        font-weight: 600;
-        color: var(--text-primary);
+    .greeting-subtitle {
+        color: var(--noble-charcoal-light);
+        font-size: 1rem;
+        font-weight: 400;
     }
 
-    /* Formulaire moderne */
-    .form-section {
-        margin-top: 2rem;
+    /* Section principale de profil */
+    .creation-section {
+        background: white;
+        border-radius: 20px;
+        padding: 2.5rem;
+        margin-bottom: 2rem;
+        border: 1px solid var(--noble-stone);
+        box-shadow: var(--shadow-whisper);
+    }
+
+    .section-header {
+        margin-bottom: 2rem;
     }
 
     .section-title {
         font-size: 1.4rem;
         font-weight: 600;
-        color: var(--text-primary);
+        color: var(--noble-charcoal);
         margin-bottom: 0.5rem;
         display: flex;
         align-items: center;
@@ -246,201 +103,276 @@
     }
 
     .section-subtitle {
-        color: var(--text-secondary);
+        color: var(--noble-charcoal-light);
         font-size: 0.95rem;
-        line-height: 1.5;
-        margin-bottom: 2rem;
+        line-height: 1.6;
     }
 
-    .form-grid {
-        display: grid;
-        grid-template-columns: 1fr;
-        gap: 1.5rem;
+    /* Profil utilisateur */
+    .profile-display {
+        background: linear-gradient(135deg, rgba(139, 154, 124, 0.04) 0%, rgba(156, 139, 122, 0.04) 100%);
+        border: 1px solid rgba(139, 154, 124, 0.15);
+        border-radius: 16px;
+        padding: 2rem;
         margin-bottom: 2rem;
-    }
-
-    .form-group {
         position: relative;
     }
 
-    .form-label {
-        display: block;
-        margin-bottom: 0.75rem;
+    .profile-display::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 4px;
+        height: 100%;
+        background: linear-gradient(to bottom, var(--noble-sage), var(--noble-accent));
+        border-radius: 2px;
+    }
+
+    .profile-info {
+        display: flex;
+        align-items: center;
+        gap: 2rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .profile-avatar {
+        width: 80px;
+        height: 80px;
+        border-radius: 50%;
+        border: 3px solid var(--noble-sage-light);
+        overflow: hidden;
+        flex-shrink: 0;
+        transition: all 0.3s ease;
+    }
+
+    .profile-avatar:hover {
+        transform: scale(1.05);
+        box-shadow: var(--shadow-gentle);
+    }
+
+    .profile-avatar img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    .profile-placeholder {
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(135deg, var(--noble-sage) 0%, var(--noble-accent) 100%);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 2rem;
+        color: white;
         font-weight: 600;
-        color: var(--text-primary);
-        font-size: 0.95rem;
+    }
+
+    .profile-details {
+        flex: 1;
+    }
+
+    .profile-name {
+        font-size: 1.3rem;
+        font-weight: 600;
+        color: var(--noble-charcoal);
+        margin-bottom: 0.5rem;
+    }
+
+    .profile-email {
+        color: var(--noble-charcoal-light);
+        margin-bottom: 0.5rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .profile-meta {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+        gap: 1rem;
+        margin-top: 1.5rem;
+    }
+
+    .meta-item {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        font-size: 0.9rem;
+        color: var(--noble-charcoal-light);
+    }
+
+    /* Formulaires nobles */
+    .form-group {
+        margin-bottom: 1.5rem;
+    }
+
+    .form-label {
+        font-size: 0.9rem;
+        font-weight: 500;
+        color: var(--noble-charcoal);
+        margin-bottom: 0.75rem;
+        display: block;
     }
 
     .form-control {
         width: 100%;
-        padding: 1rem 1.5rem;
-        border: 2px solid rgba(99, 102, 241, 0.1);
-        border-radius: 16px;
-        font-size: 1rem;
-        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        background: rgba(248, 250, 252, 0.5);
-        backdrop-filter: blur(10px);
+        padding: 0.875rem 1.125rem;
+        border: 1.5px solid var(--noble-stone);
+        border-radius: 12px;
+        font-size: 0.95rem;
+        background: var(--noble-cream);
+        color: var(--noble-charcoal);
+        transition: all 0.3s ease;
+        font-family: inherit;
     }
 
     .form-control:focus {
         outline: none;
-        border-color: var(--primary);
-        box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.1);
-        transform: translateY(-2px);
-        background: var(--white);
+        border-color: var(--noble-sage);
+        box-shadow: 0 0 0 3px rgba(139, 154, 124, 0.1);
+        background: white;
     }
 
-    /* Checkboxes grid */
-    .checkbox-grid {
+    /* Checkboxes nobles pour les intérêts */
+    .interests-grid {
         display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
         gap: 1rem;
         margin-top: 1rem;
     }
 
-    .checkbox-item {
+    .interest-item {
         display: flex;
         align-items: center;
         gap: 0.75rem;
-        padding: 1rem;
-        background: var(--soft-gray);
+        padding: 0.875rem 1rem;
+        background: var(--noble-warm);
+        border: 1px solid var(--noble-stone);
         border-radius: 12px;
+        cursor: pointer;
         transition: all 0.3s ease;
-        cursor: pointer;
-        border: 2px solid transparent;
     }
 
-    .checkbox-item:hover {
-        background: var(--primary-ultra-light);
-        border-color: var(--primary-light);
-        transform: scale(1.02);
+    .interest-item:hover {
+        background: var(--noble-mist);
+        border-color: var(--noble-sage-light);
+        transform: translateY(-1px);
     }
 
-    .checkbox-item input[type="checkbox"] {
-        width: 20px;
-        height: 20px;
-        accent-color: var(--primary);
-        cursor: pointer;
+    .interest-item input[type="checkbox"] {
+        width: 18px;
+        height: 18px;
+        accent-color: var(--noble-sage);
     }
 
-    .checkbox-item label {
-        user-select: none;
-        cursor: pointer;
+    .interest-item label {
+        font-size: 0.9rem;
+        color: var(--noble-charcoal);
         font-weight: 500;
-        color: var(--text-primary);
+        cursor: pointer;
+        flex: 1;
     }
 
-    /* Boutons modernes */
-    .btn-modern {
-        padding: 1rem 2rem;
-        border-radius: 16px;
-        font-weight: 600;
+    /* Boutons nobles identiques au dashboard */
+    .btn {
+        padding: 0.875rem 1.75rem;
+        border-radius: 12px;
+        font-weight: 500;
         font-size: 0.95rem;
-        border: none;
         cursor: pointer;
-        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        transition: all 0.3s ease;
         display: inline-flex;
         align-items: center;
-        gap: 0.75rem;
+        gap: 0.625rem;
         text-decoration: none;
+        border: none;
         position: relative;
         overflow: hidden;
     }
 
-    .btn-modern::before {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: -100%;
-        width: 100%;
-        height: 100%;
-        background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
-        transition: all 0.6s ease;
-    }
-
-    .btn-modern:hover::before {
-        left: 100%;
-    }
-
-    .btn-primary-modern {
-        background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+    .btn-primary {
+        background: linear-gradient(135deg, var(--noble-sage) 0%, var(--noble-sage-light) 100%);
         color: white;
-        box-shadow: 0 4px 20px rgba(99, 102, 241, 0.3);
+        box-shadow: var(--shadow-whisper);
     }
 
-    .btn-primary-modern:hover {
-        transform: translateY(-3px) scale(1.02);
-        box-shadow: 0 8px 30px rgba(99, 102, 241, 0.4);
+    .btn-primary:hover {
+        transform: translateY(-1px);
+        box-shadow: var(--shadow-gentle);
+        background: linear-gradient(135deg, var(--noble-sage-dark) 0%, var(--noble-sage) 100%);
     }
 
-    /* Tags de profil */
-    .profile-tags {
-        margin-top: 2rem;
-        padding-top: 2rem;
-        border-top: 1px solid var(--soft-gray);
+    .btn-secondary {
+        background: white;
+        color: var(--noble-charcoal);
+        border: 1.5px solid var(--noble-stone);
     }
 
-    .tags-container {
+    .btn-secondary:hover {
+        background: var(--noble-warm);
+        border-color: var(--noble-sage);
+        transform: translateY(-1px);
+    }
+
+    /* Tags d'intérêts actuels */
+    .current-interests {
+        margin-top: 1.5rem;
+        padding-top: 1.5rem;
+        border-top: 1px solid var(--noble-stone);
+    }
+
+    .interests-tags {
         display: flex;
         flex-wrap: wrap;
-        gap: 1rem;
+        gap: 0.75rem;
         margin-top: 1rem;
     }
 
-    .profile-tag {
-        display: inline-flex;
+    .interest-tag {
+        background: linear-gradient(135deg, rgba(139, 154, 124, 0.1) 0%, rgba(156, 139, 122, 0.1) 100%);
+        color: var(--noble-sage);
+        padding: 0.5rem 1rem;
+        border-radius: 20px;
+        font-size: 0.85rem;
+        font-weight: 500;
+        border: 1px solid var(--noble-sage-light);
+        display: flex;
         align-items: center;
         gap: 0.5rem;
-        background: linear-gradient(135deg, var(--primary-ultra-light) 0%, rgba(16, 185, 129, 0.1) 100%);
-        color: var(--primary);
-        padding: 0.75rem 1.25rem;
-        border-radius: 20px;
-        font-size: 0.9rem;
-        font-weight: 600;
-        border: 1px solid var(--primary-light);
-        transition: all 0.3s ease;
-    }
-
-    .profile-tag:hover {
-        background: var(--primary);
-        color: white;
-        transform: scale(1.05) rotate(2deg);
-        box-shadow: var(--shadow-soft);
-    }
-
-    .tag-icon {
-        font-size: 1rem;
     }
 
     /* Responsive */
     @media (max-width: 768px) {
-        .profile-section {
+        .welcome-content {
             flex-direction: column;
             text-align: center;
         }
 
-        .profile-details {
+        .profile-info {
+            flex-direction: column;
+            text-align: center;
+        }
+
+        .profile-meta {
             grid-template-columns: 1fr;
         }
 
-        .checkbox-grid {
+        .interests-grid {
             grid-template-columns: 1fr;
-        }
-
-        .page-title {
-            font-size: 1.8rem;
         }
     }
 
-    /* Animations */
+    /* Animations nobles */
     .fade-in {
-        animation: fadeInUp 0.6s ease-out;
+        animation: gentleFadeIn 0.8s ease-out;
     }
 
-    @keyframes fadeInUp {
+    @keyframes gentleFadeIn {
         from {
             opacity: 0;
-            transform: translateY(30px);
+            transform: translateY(20px);
         }
         to {
             opacity: 1;
@@ -448,262 +380,222 @@
         }
     }
 
-    .slide-in {
-        animation: slideInRight 0.5s ease-out;
-    }
-
-    @keyframes slideInRight {
-        from {
-            opacity: 0;
-            transform: translateX(30px);
-        }
-        to {
-            opacity: 1;
-            transform: translateX(0);
-        }
+    /* Icônes nobles */
+    .icon-noble {
+        color: var(--noble-sage);
+        font-size: 1.125rem;
     }
 </style>
 
-<!-- Header de page -->
-<div class="page-header fade-in">
-    <h1 class="page-title">
-        <i class="fas fa-user-circle"></i>
-        Mon Profil
-    </h1>
+<!-- Section d'accueil noble -->
+<div class="welcome-section fade-in">
+    <div class="welcome-content">
+        <div>
+            <h1 class="greeting">Mon Profil 🌿</h1>
+            <p class="greeting-subtitle">Gérez vos informations personnelles et préférences</p>
+        </div>
+    </div>
 </div>
 
-<!-- Informations du profil -->
-<div class="content-card slide-in">
-    <div class="card-body">
-        <div class="profile-section">
+<!-- Affichage du profil actuel -->
+<div class="creation-section fade-in">
+    <div class="section-header">
+        <h2 class="section-title">
+            <i class="fas fa-user-circle icon-noble"></i>
+            Informations personnelles
+        </h2>
+        <p class="section-subtitle">Vos informations LinkedIn synchronisées automatiquement</p>
+    </div>
+
+    <div class="profile-display">
+        <div class="profile-info">
             <div class="profile-avatar">
                 {% if picture %}
                     <img src="{{ picture }}" alt="Photo de profil">
                 {% else %}
                     <div class="profile-placeholder">
-                        <i class="fas fa-user"></i>
+                        {{ first_name[0]|upper if first_name else 'U' }}
                     </div>
                 {% endif %}
             </div>
             
-            <div class="profile-info">
-                <h2 class="profile-name">{{ first_name }} {{ last_name }}</h2>
+            <div class="profile-details">
+                <h3 class="profile-name">
+                    {{ first_name }} {{ last_name }} {% if name and name != (first_name + ' ' + last_name) %}({{ name }}){% endif %}
+                </h3>
                 <div class="profile-email">
-                    <i class="fa-solid fa-envelope"></i>
+                    <i class="fas fa-envelope icon-noble"></i>
                     {{ email }}
                     {% if email_verified %}
-                        <span class="verified-badge">
-                            <i class="fa-solid fa-circle-check"></i>
-                            Vérifié
+                        <span style="color: var(--gentle-success); font-size: 0.8rem;">
+                            <i class="fas fa-check-circle"></i> Vérifié
                         </span>
                     {% endif %}
                 </div>
             </div>
         </div>
         
-        <div class="profile-details">
-            <div class="detail-item">
-                <div class="detail-icon">
-                    <i class="fa-solid fa-globe"></i>
-                </div>
-                <div class="detail-content">
-                    <div class="detail-label">Pays</div>
-                    <div class="detail-value">{{ country or 'Non renseigné' }}</div>
-                </div>
+        <div class="profile-meta">
+            <div class="meta-item">
+                <i class="fas fa-globe icon-noble"></i>
+                <span>{{ country or 'Non renseigné' }}</span>
             </div>
-            
-            <div class="detail-item">
-                <div class="detail-icon">
-                    <i class="fa-solid fa-language"></i>
-                </div>
-                <div class="detail-content">
-                    <div class="detail-label">Langue</div>
-                    <div class="detail-value">{{ language or 'Non renseigné' }}</div>
-                </div>
+            <div class="meta-item">
+                <i class="fas fa-language icon-noble"></i>
+                <span>{{ language or 'Non renseigné' }}</span>
             </div>
-            
-            <div class="detail-item">
-                <div class="detail-icon">
-                    <i class="fa-brands fa-linkedin"></i>
-                </div>
-                <div class="detail-content">
-                    <div class="detail-label">ID LinkedIn</div>
-                    <div class="detail-value">{{ sub.split('_')[-1] if sub else 'Non disponible' }}</div>
-                </div>
+            <div class="meta-item">
+                <i class="fab fa-linkedin icon-noble"></i>
+                <span>Connecté</span>
             </div>
         </div>
     </div>
 </div>
 
 <!-- Préférences de contenu -->
-<div class="content-card slide-in">
-    <div class="card-body">
-        <div class="form-section">
-            <h2 class="section-title">
-                <i class="fas fa-cogs"></i>
-                Préférences de contenu
-            </h2>
-            <p class="section-subtitle">
-                Personnalisez votre expérience en définissant votre secteur d'activité et vos centres d'intérêt pour des suggestions de contenu plus pertinentes.
-            </p>
-            
-            <form method="POST">
-                <div class="form-grid">
-                    <div class="form-group">
-                        <label for="secteur" class="form-label">Secteur d'activité</label>
-                        <select name="secteur" id="secteur" class="form-control" required>
-                            <option value="">-- Sélectionner votre secteur --</option>
-                            <option value="tech" {% if secteur == 'tech' %}selected{% endif %}>🖥️ Technologie & Informatique</option>
-                            <option value="marketing" {% if secteur == 'marketing' %}selected{% endif %}>📢 Marketing & Communication</option>
-                            <option value="finance" {% if secteur == 'finance' %}selected{% endif %}>💰 Finance & Banque</option>
-                            <option value="sante" {% if secteur == 'sante' %}selected{% endif %}>🏥 Santé & Médecine</option>
-                            <option value="education" {% if secteur == 'education' %}selected{% endif %}>🎓 Éducation & Formation</option>
-                            <option value="rh" {% if secteur == 'rh' %}selected{% endif %}>👥 Ressources Humaines</option>
-                            <option value="consulting" {% if secteur == 'consulting' %}selected{% endif %}>💼 Conseil & Stratégie</option>
-                            <option value="retail" {% if secteur == 'retail' %}selected{% endif %}>🛍️ Commerce & Distribution</option>
-                        </select>
-                    </div>
-                </div>
-                
-                <div class="form-group">
-                    <label class="form-label">Centres d'intérêt</label>
-                    <div class="checkbox-grid">
-                        {% set options = [
-                            ('IA', 'fa-brain'),
-                            ('Développement', 'fa-code'),
-                            ('Design', 'fa-palette'),
-                            ('Sport', 'fa-dumbbell'),
-                            ('Musique', 'fa-music'),
-                            ('Entreprenariat', 'fa-rocket'),
-                            ('Leadership', 'fa-crown'),
-                            ('Marketing Digital', 'fa-chart-line'),
-                            ('Innovation', 'fa-lightbulb'),
-                            ('E-commerce', 'fa-shopping-cart')
-                        ] %}
-                        {% for option, icon in options %}
-                            <div class="checkbox-item">
-                                <input type="checkbox" id="interet-{{ loop.index }}" name="interets" value="{{ option }}" 
-                                    {% if interets and option in interets %}checked{% endif %}>
-                                <i class="fas {{ icon }}"></i>
-                                <label for="interet-{{ loop.index }}">{{ option }}</label>
-                            </div>
-                        {% endfor %}
-                    </div>
-                </div>
-                
-                <div style="margin-top: 2rem;">
-                    <button type="submit" class="btn-modern btn-primary-modern">
-                        <i class="fa-solid fa-save"></i>
-                        Enregistrer mes préférences
-                    </button>
-                </div>
-            </form>
-        </div>
-
-        {% if secteur or interets %}
-            <div class="profile-tags">
-                <h3 style="color: var(--text-primary); margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem;">
-                    <i class="fas fa-tags"></i>
-                    Mon profil enrichi
-                </h3>
-                <div class="tags-container">
-                    {% if secteur %}
-                        <div class="profile-tag">
-                            <i class="fa-solid fa-briefcase tag-icon"></i>
-                            <span>{{ secteur|title }}</span>
-                        </div>
-                    {% endif %}
-                    
-                    {% if interets %}
-                        {% for interet in interets %}
-                            <div class="profile-tag">
-                                <i class="fa-solid fa-hashtag tag-icon"></i>
-                                <span>{{ interet }}</span>
-                            </div>
-                        {% endfor %}
-                    {% endif %}
-                </div>
-            </div>
-        {% endif %}
+<div class="creation-section fade-in">
+    <div class="section-header">
+        <h2 class="section-title">
+            <i class="fas fa-cogs icon-noble"></i>
+            Préférences de contenu
+        </h2>
+        <p class="section-subtitle">Personnalisez votre expérience pour des suggestions de contenu plus pertinentes</p>
     </div>
+    
+    <form method="POST">
+        <div class="form-group">
+            <label for="secteur" class="form-label">
+                <i class="fas fa-briefcase icon-noble"></i>
+                Secteur d'activité
+            </label>
+            <select name="secteur" id="secteur" class="form-control" required>
+                <option value="">-- Sélectionner votre secteur --</option>
+                <option value="tech" {% if secteur == 'tech' %}selected{% endif %}>🖥️ Technologie & Informatique</option>
+                <option value="marketing" {% if secteur == 'marketing' %}selected{% endif %}>📢 Marketing & Communication</option>
+                <option value="finance" {% if secteur == 'finance' %}selected{% endif %}>💰 Finance & Banque</option>
+                <option value="sante" {% if secteur == 'sante' %}selected{% endif %}>🏥 Santé & Médecine</option>
+                <option value="education" {% if secteur == 'education' %}selected{% endif %}>🎓 Éducation & Formation</option>
+                <option value="rh" {% if secteur == 'rh' %}selected{% endif %}>👥 Ressources Humaines</option>
+                <option value="consulting" {% if secteur == 'consulting' %}selected{% endif %}>💼 Conseil & Stratégie</option>
+                <option value="retail" {% if secteur == 'retail' %}selected{% endif %}>🛍️ Commerce & Distribution</option>
+            </select>
+        </div>
+        
+        <div class="form-group">
+            <label class="form-label">
+                <i class="fas fa-heart icon-noble"></i>
+                Centres d'intérêt
+            </label>
+            <div class="interests-grid">
+                {% set options = [
+                    ('Intelligence Artificielle', 'fa-brain'),
+                    ('Développement', 'fa-code'),
+                    ('Design', 'fa-palette'),
+                    ('Sport', 'fa-dumbbell'),
+                    ('Musique', 'fa-music'),
+                    ('Entrepreneuriat', 'fa-rocket'),
+                    ('Leadership', 'fa-crown'),
+                    ('Marketing Digital', 'fa-chart-line'),
+                    ('Innovation', 'fa-lightbulb'),
+                    ('E-commerce', 'fa-shopping-cart'),
+                    ('Blockchain', 'fa-link'),
+                    ('Durabilité', 'fa-leaf')
+                ] %}
+                {% for option, icon in options %}
+                    <div class="interest-item">
+                        <input type="checkbox" id="interet-{{ loop.index }}" name="interets" value="{{ option }}" 
+                            {% if interets and option in interets %}checked{% endif %}>
+                        <i class="fas {{ icon }} icon-noble"></i>
+                        <label for="interet-{{ loop.index }}">{{ option }}</label>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+        
+        <div style="margin-top: 2rem;">
+            <button type="submit" class="btn btn-primary">
+                <i class="fas fa-save"></i>
+                Enregistrer mes préférences
+            </button>
+        </div>
+    </form>
+
+    {% if secteur or interets %}
+        <div class="current-interests">
+            <h3 style="color: var(--noble-charcoal); margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem;">
+                <i class="fas fa-tags icon-noble"></i>
+                Mon profil actuel
+            </h3>
+            <div class="interests-tags">
+                {% if secteur %}
+                    <div class="interest-tag">
+                        <i class="fas fa-briefcase"></i>
+                        <span>{{ secteur|title }}</span>
+                    </div>
+                {% endif %}
+                
+                {% if interets %}
+                    {% for interet in interets %}
+                        <div class="interest-tag">
+                            <i class="fas fa-heart"></i>
+                            <span>{{ interet }}</span>
+                        </div>
+                    {% endfor %}
+                {% endif %}
+            </div>
+        </div>
+    {% endif %}
 </div>
 
 <script>
-// Animation des éléments au scroll
-const observerOptions = {
-    threshold: 0.1,
-    rootMargin: '0px 0px -50px 0px'
-};
-
-const observer = new IntersectionObserver((entries) => {
-    entries.forEach(entry => {
-        if (entry.isIntersecting) {
-            entry.target.style.opacity = '1';
-            entry.target.style.transform = 'translateY(0)';
-        }
+// Animations nobles au chargement
+document.addEventListener('DOMContentLoaded', function() {
+    // Animation progressive des éléments
+    const elements = document.querySelectorAll('.fade-in');
+    elements.forEach((el, index) => {
+        el.style.opacity = '0';
+        el.style.transform = 'translateY(20px)';
+        el.style.transition = 'all 0.8s ease';
+        
+        setTimeout(() => {
+            el.style.opacity = '1';
+            el.style.transform = 'translateY(0)';
+        }, index * 200);
     });
-}, observerOptions);
 
-// Observer tous les éléments avec animation
-document.querySelectorAll('.fade-in, .slide-in').forEach(el => {
-    el.style.opacity = '0';
-    el.style.transform = 'translateY(30px)';
-    el.style.transition = 'all 0.6s cubic-bezier(0.4, 0, 0.2, 1)';
-    observer.observe(el);
-});
-
-// Animation des detail items
-document.querySelectorAll('.detail-item').forEach((item, index) => {
-    item.style.opacity = '0';
-    item.style.transform = 'translateY(20px)';
-    item.style.transition = 'all 0.5s cubic-bezier(0.4, 0, 0.2, 1)';
-    
-    setTimeout(() => {
-        item.style.opacity = '1';
-        item.style.transform = 'translateY(0)';
-    }, index * 100);
-});
-
-// Animation des checkbox items
-document.querySelectorAll('.checkbox-item').forEach((item, index) => {
-    item.style.opacity = '0';
-    item.style.transform = 'scale(0.9)';
-    item.style.transition = 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)';
-    
-    setTimeout(() => {
-        item.style.opacity = '1';
-        item.style.transform = 'scale(1)';
-    }, index * 50);
-});
-
-// Amélioration des interactions
-document.querySelectorAll('.btn-modern').forEach(btn => {
-    btn.addEventListener('mouseenter', function() {
-        this.style.transform = 'translateY(-3px) scale(1.02)';
+    // Interactions nobles sur les boutons
+    document.querySelectorAll('.btn').forEach(btn => {
+        btn.addEventListener('mouseenter', function() {
+            this.style.transform = 'translateY(-1px)';
+        });
+        
+        btn.addEventListener('mouseleave', function() {
+            this.style.transform = 'translateY(0)';
+        });
     });
-    
-    btn.addEventListener('mouseleave', function() {
-        this.style.transform = 'translateY(0) scale(1)';
-    });
-});
 
-// Animation des tags de profil
-document.querySelectorAll('.profile-tag').forEach(tag => {
-    tag.addEventListener('mouseenter', function() {
-        this.style.transform = 'scale(1.1) rotate(3deg)';
+    // Animation des items d'intérêts
+    document.querySelectorAll('.interest-item').forEach((item, index) => {
+        item.style.opacity = '0';
+        item.style.transform = 'translateY(20px)';
+        item.style.transition = 'all 0.6s ease';
+        
+        setTimeout(() => {
+            item.style.opacity = '1';
+            item.style.transform = 'translateY(0)';
+        }, index * 100);
     });
-    
-    tag.addEventListener('mouseleave', function() {
-        this.style.transform = 'scale(1) rotate(0deg)';
-    });
-});
 
-// Animation de l'avatar
-document.querySelector('.profile-avatar')?.addEventListener('click', function() {
-    this.style.transform = 'scale(0.95) rotate(360deg)';
-    setTimeout(() => {
-        this.style.transform = 'scale(1) rotate(0deg)';
-    }, 500);
+    // Animation de l'avatar
+    const avatar = document.querySelector('.profile-avatar');
+    if (avatar) {
+        avatar.addEventListener('click', function() {
+            this.style.transform = 'scale(0.95) rotate(5deg)';
+            setTimeout(() => {
+                this.style.transform = 'scale(1) rotate(0deg)';
+            }, 200);
+        });
+    }
 });
 </script>
 {% endblock %}
