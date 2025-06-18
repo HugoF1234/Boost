@@ -1,276 +1,193 @@
 {% extends "base.html" %}
 {% block content %}
 <style>
-    /* Variables pour couleurs douces */
+    /* Variables nobles et apaisantes */
     :root {
-        --primary: #6366f1;
-        --primary-light: #a5b4fc;
-        --primary-ultra-light: #e0e7ff;
-        --secondary: #f8fafc;
-        --accent: #10b981;
-        --accent-light: #6ee7b7;
-        --warm: #fbbf24;
-        --warm-light: #fde68a;
-        --soft-gray: #f1f5f9;
-        --text-primary: #1e293b;
-        --text-secondary: #64748b;
-        --text-light: #94a3b8;
-        --white: #ffffff;
-        --glass: rgba(255, 255, 255, 0.25);
-        --glass-border: rgba(255, 255, 255, 0.3);
-        --shadow-soft: 0 4px 20px rgba(99, 102, 241, 0.1);
-        --shadow-medium: 0 8px 30px rgba(99, 102, 241, 0.15);
-        --shadow-strong: 0 20px 40px rgba(0, 0, 0, 0.1);
-        --success: #10b981;
-        --warning: #f59e0b;
-        --danger: #ef4444;
+        --noble-cream: #faf9f7;
+        --noble-warm: #f5f2ed;
+        --noble-sage: #8b9a7c;
+        --noble-sage-light: #a8b59a;
+        --noble-sage-dark: #6b7865;
+        --noble-stone: #e8e4de;
+        --noble-charcoal: #4a4943;
+        --noble-charcoal-light: #6b6960;
+        --noble-mist: #f0ede8;
+        --noble-accent: #9c8b7a;
+        --noble-accent-light: #b5a495;
+        
+        --gentle-success: #7c9885;
+        --gentle-warning: #b8a082;
+        --gentle-info: #8ba3b8;
+        --gentle-error: #c49090;
+        
+        --shadow-whisper: 0 2px 12px rgba(139, 154, 124, 0.08);
+        --shadow-gentle: 0 4px 20px rgba(139, 154, 124, 0.12);
+        --shadow-soft: 0 8px 32px rgba(139, 154, 124, 0.16);
     }
 
-    /* Header de page moderne */
-    .page-header {
-        background: linear-gradient(135deg, var(--danger) 0%, #dc2626 50%, #b91c1c 100%);
-        color: white;
-        padding: 2.5rem;
-        border-radius: 24px;
-        margin-bottom: 2rem;
-        position: relative;
-        overflow: hidden;
-        box-shadow: var(--shadow-strong);
+    body {
+        background: var(--noble-cream);
+        color: var(--noble-charcoal);
+        line-height: 1.7;
     }
 
-    .page-header::before {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="sparkles" width="20" height="20" patternUnits="userSpaceOnUse"><circle cx="5" cy="5" r="1" fill="%23ffffff" opacity="0.3"><animate attributeName="opacity" values="0.3;0.8;0.3" dur="3s" repeatCount="indefinite"/></circle><circle cx="15" cy="15" r="0.5" fill="%23ffffff" opacity="0.5"><animate attributeName="opacity" values="0.5;1;0.5" dur="2s" repeatCount="indefinite" begin="1s"/></circle></pattern></defs><rect width="100" height="100" fill="url(%23sparkles)"/></svg>') repeat;
-    }
-
-    .page-header-content {
-        position: relative;
-        z-index: 1;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        flex-wrap: wrap;
-        gap: 1.5rem;
-    }
-
-    .page-title {
-        font-size: 2.2rem;
-        font-weight: 700;
-        margin: 0;
-        text-shadow: 0 2px 4px rgba(0,0,0,0.1);
-        letter-spacing: -0.025em;
-        display: flex;
-        align-items: center;
-        gap: 1rem;
-    }
-
-    /* Boutons modernes */
-    .btn-modern {
-        padding: 0.75rem 1.5rem;
-        border-radius: 16px;
-        font-weight: 600;
-        font-size: 0.9rem;
-        border: none;
-        cursor: pointer;
-        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        display: inline-flex;
-        align-items: center;
-        gap: 0.5rem;
-        text-decoration: none;
-        position: relative;
-        overflow: hidden;
-    }
-
-    .btn-modern::before {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: -100%;
-        width: 100%;
-        height: 100%;
-        background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
-        transition: all 0.6s ease;
-    }
-
-    .btn-modern:hover::before {
-        left: 100%;
-    }
-
-    .btn-danger-modern {
-        background: linear-gradient(135deg, var(--danger) 0%, #dc2626 100%);
-        color: white;
-        box-shadow: 0 4px 20px rgba(239, 68, 68, 0.3);
-    }
-
-    .btn-danger-modern:hover {
-        transform: translateY(-3px) scale(1.02);
-        box-shadow: 0 8px 30px rgba(239, 68, 68, 0.4);
-    }
-
-    .btn-secondary-modern {
-        background: var(--glass);
-        backdrop-filter: blur(10px);
-        color: white;
-        border: 1px solid var(--glass-border);
-        box-shadow: var(--shadow-soft);
-    }
-
-    .btn-secondary-modern:hover {
-        background: rgba(255, 255, 255, 0.4);
-        transform: translateY(-3px);
-        box-shadow: var(--shadow-medium);
-    }
-
-    .btn-outline-modern {
-        background: var(--white);
-        color: var(--text-primary);
-        border: 2px solid var(--soft-gray);
-        box-shadow: var(--shadow-soft);
-    }
-
-    .btn-outline-modern:hover {
-        background: var(--soft-gray);
-        border-color: var(--primary-light);
-        transform: translateY(-3px);
-        box-shadow: var(--shadow-medium);
-    }
-
-    /* Cartes de contenu */
-    .content-card {
-        background: var(--white);
-        border-radius: 24px;
-        border: 1px solid rgba(99, 102, 241, 0.1);
-        overflow: hidden;
-        transition: all 0.3s ease;
-        margin-bottom: 2rem;
-        box-shadow: var(--shadow-soft);
-    }
-
-    .content-card:hover {
-        transform: translateY(-4px);
-        box-shadow: var(--shadow-medium);
-        border-color: var(--primary-light);
-    }
-
-    .card-body {
-        padding: 2.5rem;
-    }
-
-    /* Zone de danger */
-    .danger-zone {
-        text-align: center;
-        padding: 3rem 2rem;
-    }
-
-    .danger-icon {
-        width: 120px;
-        height: 120px;
-        margin: 0 auto 2rem;
-        background: linear-gradient(135deg, #fef2f2 0%, #fecaca 100%);
-        border-radius: 50%;
+    /* Conteneur centré pour la confirmation */
+    .delete-container {
         display: flex;
         align-items: center;
         justify-content: center;
-        font-size: 3rem;
-        color: var(--danger);
-        border: 4px solid #fca5a5;
-        position: relative;
-        overflow: hidden;
-    }
-
-    .danger-icon::before {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: -100%;
-        width: 100%;
-        height: 100%;
-        background: linear-gradient(90deg, transparent, rgba(239, 68, 68, 0.1), transparent);
-        animation: shimmer 2s infinite;
-    }
-
-    @keyframes shimmer {
-        0% { left: -100%; }
-        100% { left: 100%; }
-    }
-
-    .danger-title {
-        font-size: 1.8rem;
-        font-weight: 700;
-        color: var(--danger);
-        margin-bottom: 1rem;
-    }
-
-    .danger-subtitle {
-        font-size: 1rem;
-        color: var(--text-secondary);
-        line-height: 1.6;
-        margin-bottom: 2rem;
-    }
-
-    /* Preview du post à supprimer */
-    .post-preview {
-        background: linear-gradient(135deg, #fef2f2 0%, rgba(239, 68, 68, 0.05) 100%);
-        border: 2px solid #fca5a5;
-        border-radius: 20px;
+        min-height: 80vh;
         padding: 2rem;
-        margin: 2rem 0;
-        position: relative;
-        overflow: hidden;
-        text-align: left;
     }
 
-    .post-preview::before {
+    /* Carte de confirmation noble */
+    .delete-card {
+        background: white;
+        border-radius: 24px;
+        box-shadow: var(--shadow-soft);
+        border: 1px solid var(--noble-stone);
+        max-width: 500px;
+        width: 100%;
+        text-align: center;
+        overflow: hidden;
+        animation: gentleSlideIn 0.6s ease-out;
+    }
+
+    @keyframes gentleSlideIn {
+        from {
+            opacity: 0;
+            transform: translateY(30px) scale(0.95);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0) scale(1);
+        }
+    }
+
+    /* Header avec icône d'avertissement */
+    .delete-header {
+        background: linear-gradient(135deg, rgba(196, 144, 144, 0.08) 0%, rgba(184, 160, 130, 0.08) 100%);
+        padding: 3rem 2rem 2rem;
+        border-bottom: 1px solid var(--noble-stone);
+        position: relative;
+    }
+
+    .delete-header::before {
         content: '';
         position: absolute;
         top: 0;
         right: 0;
         width: 80px;
         height: 80px;
-        background: radial-gradient(circle, rgba(239, 68, 68, 0.1) 0%, transparent 70%);
+        background: radial-gradient(circle, rgba(196, 144, 144, 0.1) 0%, transparent 70%);
         border-radius: 50%;
-        transform: translate(25%, -25%);
+        transform: translate(30%, -30%);
+    }
+
+    .warning-icon {
+        width: 80px;
+        height: 80px;
+        background: linear-gradient(135deg, var(--gentle-error) 0%, var(--gentle-warning) 100%);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 2.5rem;
+        color: white;
+        margin: 0 auto 1.5rem;
+        border: 3px solid rgba(255, 255, 255, 0.8);
+        animation: gentlePulse 2s infinite;
+        position: relative;
+        z-index: 2;
+    }
+
+    @keyframes gentlePulse {
+        0%, 100% { 
+            transform: scale(1); 
+            box-shadow: 0 0 0 0 rgba(196, 144, 144, 0.4);
+        }
+        50% { 
+            transform: scale(1.05); 
+            box-shadow: 0 0 0 10px rgba(196, 144, 144, 0);
+        }
+    }
+
+    .delete-title {
+        font-size: 1.8rem;
+        font-weight: 600;
+        color: var(--noble-charcoal);
+        margin-bottom: 0.75rem;
+        position: relative;
+        z-index: 2;
+    }
+
+    .delete-subtitle {
+        color: var(--noble-charcoal-light);
+        font-size: 1rem;
+        line-height: 1.6;
+        position: relative;
+        z-index: 2;
+    }
+
+    /* Corps de la carte */
+    .delete-body {
+        padding: 2rem;
+    }
+
+    /* Aperçu du post à supprimer */
+    .post-preview {
+        background: linear-gradient(135deg, rgba(196, 144, 144, 0.05) 0%, rgba(184, 160, 130, 0.05) 100%);
+        border: 1px solid rgba(196, 144, 144, 0.2);
+        border-radius: 16px;
+        padding: 1.5rem;
+        margin-bottom: 2rem;
+        text-align: left;
+        position: relative;
+    }
+
+    .post-preview::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 4px;
+        height: 100%;
+        background: var(--gentle-error);
+        border-radius: 2px;
     }
 
     .post-preview-title {
-        font-size: 1rem;
+        font-size: 0.9rem;
         font-weight: 600;
-        color: var(--danger);
+        color: var(--gentle-error);
         margin-bottom: 1rem;
-        position: relative;
-        z-index: 1;
         display: flex;
         align-items: center;
         gap: 0.5rem;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
     }
 
-    .post-preview-content {
-        background: var(--white);
-        padding: 1.5rem;
-        border-radius: 16px;
-        border-left: 4px solid var(--danger);
-        line-height: 1.7;
-        color: var(--text-primary);
-        position: relative;
-        z-index: 1;
+    .post-content {
+        background: white;
+        padding: 1.25rem;
+        border-radius: 12px;
+        color: var(--noble-charcoal);
+        line-height: 1.6;
         margin-bottom: 1rem;
         white-space: pre-wrap;
         word-wrap: break-word;
+        max-height: 120px;
+        overflow-y: auto;
+        border-left: 3px solid var(--gentle-error);
     }
 
     .post-meta {
         display: flex;
         align-items: center;
         gap: 1rem;
-        font-size: 0.9rem;
-        color: var(--text-light);
-        position: relative;
-        z-index: 1;
+        font-size: 0.85rem;
+        color: var(--noble-charcoal-light);
         flex-wrap: wrap;
     }
 
@@ -278,138 +195,170 @@
         display: flex;
         align-items: center;
         gap: 0.5rem;
-        padding: 0.5rem 1rem;
-        background: var(--white);
+        background: white;
+        padding: 0.5rem 0.75rem;
         border-radius: 12px;
-        border: 1px solid #fca5a5;
+        border: 1px solid var(--noble-stone);
     }
 
-    /* Actions de confirmation */
-    .confirmation-actions {
-        display: flex;
-        gap: 1.5rem;
-        justify-content: center;
-        margin-top: 2rem;
-        flex-wrap: wrap;
-    }
-
-    /* Alerte de confirmation */
-    .confirmation-alert {
-        background: linear-gradient(135deg, #fef2f2 0%, #fecaca 100%);
-        border: 2px solid #fca5a5;
-        border-radius: 16px;
-        padding: 1.5rem;
-        margin: 2rem 0;
+    /* Alerte d'avertissement */
+    .warning-alert {
+        background: linear-gradient(135deg, rgba(196, 144, 144, 0.08) 0%, rgba(184, 160, 130, 0.08) 100%);
+        border: 1px solid var(--gentle-error);
+        border-radius: 12px;
+        padding: 1.25rem;
+        margin-bottom: 2rem;
         display: flex;
         align-items: center;
         gap: 1rem;
     }
 
     .alert-icon {
-        width: 40px;
-        height: 40px;
-        background: var(--danger);
+        width: 30px;
+        height: 30px;
+        background: var(--gentle-error);
         border-radius: 50%;
         display: flex;
         align-items: center;
         justify-content: center;
         color: white;
-        font-size: 1.1rem;
+        font-size: 0.9rem;
         flex-shrink: 0;
     }
 
     .alert-content {
         flex: 1;
+        text-align: left;
     }
 
     .alert-title {
         font-weight: 600;
-        color: var(--danger);
-        margin-bottom: 0.5rem;
+        color: var(--gentle-error);
+        margin-bottom: 0.25rem;
+        font-size: 0.95rem;
     }
 
     .alert-message {
+        color: var(--noble-charcoal-light);
         font-size: 0.9rem;
-        color: var(--text-secondary);
         line-height: 1.5;
     }
 
-    /* Points d'attention */
-    .warning-points {
-        background: var(--soft-gray);
-        border-radius: 16px;
-        padding: 1.5rem;
-        margin: 2rem 0;
-        border-left: 4px solid var(--warning);
-    }
-
-    .warning-points h4 {
-        color: var(--warning);
-        margin-bottom: 1rem;
+    /* Boutons d'action */
+    .action-buttons {
         display: flex;
+        gap: 1rem;
+        justify-content: center;
+        flex-wrap: wrap;
+    }
+
+    .btn-noble {
+        padding: 0.875rem 1.75rem;
+        border-radius: 12px;
+        font-weight: 500;
+        font-size: 0.95rem;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        display: inline-flex;
         align-items: center;
-        gap: 0.5rem;
+        gap: 0.625rem;
+        text-decoration: none;
+        border: none;
+        position: relative;
+        overflow: hidden;
+        min-width: 140px;
+        justify-content: center;
     }
 
-    .warning-points ul {
-        list-style: none;
-        padding: 0;
-        margin: 0;
+    .btn-danger-noble {
+        background: linear-gradient(135deg, var(--gentle-error) 0%, #d4a574 100%);
+        color: white;
+        box-shadow: var(--shadow-whisper);
     }
 
-    .warning-points li {
-        padding: 0.5rem 0;
-        display: flex;
-        align-items: center;
-        gap: 0.75rem;
-        color: var(--text-secondary);
-        font-size: 0.9rem;
+    .btn-danger-noble:hover {
+        transform: translateY(-2px);
+        box-shadow: var(--shadow-gentle);
+        background: linear-gradient(135deg, #b57a7a 0%, var(--gentle-error) 100%);
     }
 
-    .warning-points li i {
-        color: var(--warning);
-        width: 16px;
+    .btn-secondary-noble {
+        background: white;
+        color: var(--noble-charcoal);
+        border: 1.5px solid var(--noble-stone);
+    }
+
+    .btn-secondary-noble:hover {
+        background: var(--noble-sage);
+        color: white;
+        border-color: var(--noble-sage);
+        transform: translateY(-2px);
+    }
+
+    /* Footer simple */
+    .delete-footer {
+        padding: 1.5rem 2rem;
+        background: var(--noble-mist);
+        border-top: 1px solid var(--noble-stone);
+        font-size: 0.85rem;
+        color: var(--noble-charcoal-light);
     }
 
     /* Responsive */
     @media (max-width: 768px) {
-        .page-header-content {
-            flex-direction: column;
-            text-align: center;
+        .delete-container {
+            padding: 1rem;
+            min-height: 70vh;
         }
 
-        .page-title {
-            font-size: 1.8rem;
+        .delete-card {
+            max-width: 100%;
         }
 
-        .card-body {
+        .delete-header {
+            padding: 2rem 1.5rem 1.5rem;
+        }
+
+        .delete-body {
             padding: 1.5rem;
         }
 
-        .confirmation-actions {
-            flex-direction: column;
-            align-items: stretch;
+        .delete-title {
+            font-size: 1.5rem;
         }
 
-        .danger-zone {
-            padding: 2rem 1rem;
+        .action-buttons {
+            flex-direction: column;
+            align-items: stretch;
         }
 
         .post-meta {
             flex-direction: column;
             align-items: stretch;
+            gap: 0.5rem;
         }
     }
 
-    /* Animations */
-    .fade-in {
-        animation: fadeInUp 0.6s ease-out;
+    /* Animation shake pour les interactions critiques */
+    .shake {
+        animation: shake 0.5s ease-in-out;
     }
 
-    @keyframes fadeInUp {
+    @keyframes shake {
+        0%, 100% { transform: translateX(0); }
+        25% { transform: translateX(-3px); }
+        75% { transform: translateX(3px); }
+    }
+
+    /* Animations nobles */
+    .fade-in {
+        animation: gentleFadeIn 0.8s ease-out;
+    }
+
+    @keyframes gentleFadeIn {
         from {
             opacity: 0;
-            transform: translateY(30px);
+            transform: translateY(20px);
         }
         to {
             opacity: 1;
@@ -417,310 +366,253 @@
         }
     }
 
-    .slide-in {
-        animation: slideInRight 0.5s ease-out;
-    }
-
-    @keyframes slideInRight {
-        from {
-            opacity: 0;
-            transform: translateX(30px);
-        }
-        to {
-            opacity: 1;
-            transform: translateX(0);
-        }
-    }
-
-    .shake {
-        animation: shake 0.5s ease-in-out;
-    }
-
-    @keyframes shake {
-        0%, 100% { transform: translateX(0); }
-        25% { transform: translateX(-5px); }
-        75% { transform: translateX(5px); }
+    /* Icônes nobles */
+    .icon-noble {
+        color: var(--noble-sage);
+        font-size: 1.125rem;
     }
 </style>
 
-<!-- Header de page -->
-<div class="page-header fade-in">
-    <div class="page-header-content">
-        <div>
-            <h1 class="page-title">
-                <i class="fas fa-trash-alt"></i>
-                Supprimer le post
-            </h1>
-        </div>
-        <a href="{{ url_for('calendar') if post.scheduled else url_for('historique') }}" class="btn-modern btn-secondary-modern">
-            <i class="fa-solid fa-arrow-left"></i>
-            Retour
-        </a>
-    </div>
-</div>
-
-<!-- Zone de danger principale -->
-<div class="content-card slide-in">
-    <div class="card-body">
-        <div class="danger-zone">
-            <div class="danger-icon">
+<div class="delete-container fade-in">
+    <div class="delete-card">
+        <!-- Header avec avertissement -->
+        <div class="delete-header">
+            <div class="warning-icon">
                 <i class="fas fa-exclamation-triangle"></i>
             </div>
-            
-            <h2 class="danger-title">⚠️ Action irréversible</h2>
-            <p class="danger-subtitle">
-                Êtes-vous absolument certain de vouloir supprimer ce post ?<br>
-                Cette action est <strong>définitive</strong> et ne peut pas être annulée.
+            <h1 class="delete-title">Action irréversible</h1>
+            <p class="delete-subtitle">
+                Êtes-vous certain de vouloir supprimer ce post ?<br>
+                Cette action ne peut pas être annulée.
             </p>
         </div>
-        
-        <!-- Preview du post à supprimer -->
-        <div class="post-preview">
-            <h3 class="post-preview-title">
-                <i class="fa-solid fa-file-text"></i>
-                Contenu qui sera supprimé :
-            </h3>
-            
-            <div class="post-preview-content">{{ post.content }}</div>
-            
-            <div class="post-meta">
-                <div class="meta-item">
-                    <i class="fa-solid fa-calendar"></i>
-                    <span>
-                        {% if post.scheduled %}
-                            Programmé pour le {{ post.published_at.strftime("%d/%m/%Y à %H:%M") }}
-                        {% else %}
-                            Publié le {{ post.published_at.strftime("%d/%m/%Y à %H:%M") }}
-                        {% endif %}
-                    </span>
+
+        <!-- Corps de la confirmation -->
+        <div class="delete-body">
+            <!-- Aperçu du post à supprimer -->
+            <div class="post-preview">
+                <div class="post-preview-title">
+                    <i class="fas fa-file-text"></i>
+                    Post qui sera supprimé
                 </div>
                 
-                <div class="meta-item">
-                    <i class="fa-solid {% if post.scheduled %}fa-clock{% else %}fa-check-circle{% endif %}"></i>
-                    <span>
+                <div class="post-content">{{ post.content }}</div>
+                
+                <div class="post-meta">
+                    <div class="meta-item">
+                        <i class="fas fa-calendar icon-noble"></i>
+                        <span>
+                            {% if post.scheduled %}
+                                Programmé pour le {{ post.published_at.strftime("%d/%m/%Y à %H:%M") }}
+                            {% else %}
+                                Publié le {{ post.published_at.strftime("%d/%m/%Y à %H:%M") }}
+                            {% endif %}
+                        </span>
+                    </div>
+                    
+                    <div class="meta-item">
+                        <i class="fas {% if post.scheduled %}fa-clock{% else %}fa-check-circle{% endif %} icon-noble"></i>
+                        <span>
+                            {% if post.scheduled %}
+                                Post programmé
+                            {% else %}
+                                Post publié
+                            {% endif %}
+                        </span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Alerte d'avertissement -->
+            <div class="warning-alert">
+                <div class="alert-icon">
+                    <i class="fas fa-exclamation"></i>
+                </div>
+                <div class="alert-content">
+                    <div class="alert-title">⚠️ Attention - Suppression définitive</div>
+                    <div class="alert-message">
+                        Une fois supprimé, ce post ne pourra plus être récupéré. 
                         {% if post.scheduled %}
-                            Post programmé
+                            La programmation sera annulée et le post ne sera jamais publié.
                         {% else %}
-                            Post publié
+                            Le post restera visible sur LinkedIn mais ne sera plus géré par ResoBoost.
                         {% endif %}
-                    </span>
+                    </div>
                 </div>
             </div>
-        </div>
-        
-        <!-- Alerte de confirmation -->
-        <div class="confirmation-alert">
-            <div class="alert-icon">
-                <i class="fa-solid fa-exclamation"></i>
+
+            <!-- Boutons d'action -->
+            <div class="action-buttons">
+                <form method="post" action="{{ url_for('delete_post', post_id=post.id) }}" id="delete-form">
+                    <button type="submit" class="btn-noble btn-danger-noble" id="confirm-delete">
+                        <i class="fas fa-trash"></i>
+                        Oui, supprimer définitivement
+                    </button>
+                </form>
+                
+                <a href="{{ url_for('calendar') if post.scheduled else url_for('historique') }}" 
+                   class="btn-noble btn-secondary-noble" id="cancel-delete">
+                    <i class="fas fa-shield-halved"></i>
+                    Non, garder ce post
+                </a>
             </div>
-            <div class="alert-content">
-                <div class="alert-title">🚨 Attention - Suppression définitive</div>
-                <div class="alert-message">
-                    Une fois supprimé, ce post ne pourra plus être récupéré. Toutes les données associées seront perdues.
-                </div>
-            </div>
         </div>
-        
-        <!-- Points d'attention -->
-        <div class="warning-points">
-            <h4>
-                <i class="fa-solid fa-info-circle"></i>
-                Points importants à retenir :
-            </h4>
-            <ul>
-                <li>
-                    <i class="fa-solid fa-times-circle"></i>
-                    Le contenu du post sera définitivement supprimé
-                </li>
-                <li>
-                    <i class="fa-solid fa-clock"></i>
-                    {% if post.scheduled %}
-                        La programmation sera annulée et le post ne sera jamais publié
-                    {% else %}
-                        Le post restera visible sur LinkedIn mais ne sera plus géré par LinkedBoost
-                    {% endif %}
-                </li>
-                <li>
-                    <i class="fa-solid fa-chart-line"></i>
-                    Les statistiques associées seront perdues
-                </li>
-                <li>
-                    <i class="fa-solid fa-undo"></i>
-                    Aucune possibilité de récupération après suppression
-                </li>
-            </ul>
-        </div>
-        
-        <!-- Actions de confirmation -->
-        <div class="confirmation-actions">
-            <form method="post" action="{{ url_for('delete_post', post_id=post.id) }}" id="delete-form">
-                <button type="submit" class="btn-modern btn-danger-modern" id="confirm-delete">
-                    <i class="fa-solid fa-trash"></i>
-                    Oui, supprimer définitivement
-                </button>
-            </form>
-            
-            <a href="{{ url_for('calendar') if post.scheduled else url_for('historique') }}" 
-               class="btn-modern btn-outline-modern" id="cancel-delete">
-                <i class="fa-solid fa-shield-halved"></i>
-                Non, garder ce post
-            </a>
+
+        <!-- Footer discret -->
+        <div class="delete-footer">
+            <p>💡 <strong>Conseil :</strong> Vous pouvez aussi modifier ce post au lieu de le supprimer</p>
         </div>
     </div>
 </div>
 
 <script>
-// Animation des éléments au scroll
-const observerOptions = {
-    threshold: 0.1,
-    rootMargin: '0px 0px -50px 0px'
-};
-
-const observer = new IntersectionObserver((entries) => {
-    entries.forEach(entry => {
-        if (entry.isIntersecting) {
-            entry.target.style.opacity = '1';
-            entry.target.style.transform = 'translateY(0)';
-        }
-    });
-}, observerOptions);
-
-// Observer tous les éléments avec animation
-document.querySelectorAll('.fade-in, .slide-in').forEach(el => {
-    el.style.opacity = '0';
-    el.style.transform = 'translateY(30px)';
-    el.style.transition = 'all 0.6s cubic-bezier(0.4, 0, 0.2, 1)';
-    observer.observe(el);
-});
-
-// Amélioration des interactions des boutons
-document.querySelectorAll('.btn-modern').forEach(btn => {
-    btn.addEventListener('mouseenter', function() {
-        this.style.transform = 'translateY(-3px) scale(1.02)';
-    });
-    
-    btn.addEventListener('mouseleave', function() {
-        this.style.transform = 'translateY(0) scale(1)';
-    });
-    
-    btn.addEventListener('mousedown', function() {
-        this.style.transform = 'translateY(-1px) scale(0.98)';
-    });
-    
-    btn.addEventListener('mouseup', function() {
-        this.style.transform = 'translateY(-3px) scale(1.02)';
-    });
-});
-
-// Animation spéciale pour le bouton de suppression
-const deleteBtn = document.getElementById('confirm-delete');
-if (deleteBtn) {
-    deleteBtn.addEventListener('mouseenter', function() {
-        this.style.transform = 'translateY(-3px) scale(1.05)';
-        this.style.boxShadow = '0 12px 40px rgba(239, 68, 68, 0.5)';
-    });
-    
-    deleteBtn.addEventListener('mouseleave', function() {
-        this.style.transform = 'translateY(0) scale(1)';
-        this.style.boxShadow = '0 4px 20px rgba(239, 68, 68, 0.3)';
-    });
-}
-
-// Animation pour le bouton d'annulation
-const cancelBtn = document.getElementById('cancel-delete');
-if (cancelBtn) {
-    cancelBtn.addEventListener('mouseenter', function() {
-        this.style.background = 'var(--accent)';
-        this.style.color = 'white';
-        this.style.borderColor = 'var(--accent)';
-    });
-    
-    cancelBtn.addEventListener('mouseleave', function() {
-        this.style.background = 'var(--white)';
-        this.style.color = 'var(--text-primary)';
-        this.style.borderColor = 'var(--soft-gray)';
-    });
-}
-
-// Confirmation avant suppression avec animation
-const deleteForm = document.getElementById('delete-form');
-if (deleteForm) {
-    deleteForm.addEventListener('submit', function(e) {
-        e.preventDefault();
-        
-        // Animation de shake sur la card
-        const card = document.querySelector('.content-card');
-        card.classList.add('shake');
+// Animation au chargement
+document.addEventListener('DOMContentLoaded', function() {
+    // Animation progressive des éléments
+    const elements = document.querySelectorAll('.fade-in');
+    elements.forEach((el, index) => {
+        el.style.opacity = '0';
+        el.style.transform = 'translateY(30px)';
+        el.style.transition = 'all 0.8s cubic-bezier(0.4, 0, 0.2, 1)';
         
         setTimeout(() => {
-            const confirmed = confirm('🚨 DERNIÈRE CHANCE !\n\nÊtes-vous ABSOLUMENT CERTAIN de vouloir supprimer ce post ?\n\nCette action est IRRÉVERSIBLE !');
+            el.style.opacity = '1';
+            el.style.transform = 'translateY(0)';
+        }, index * 200);
+    });
+
+    // Interactions nobles sur les boutons
+    document.querySelectorAll('.btn-noble').forEach(btn => {
+        btn.addEventListener('mouseenter', function() {
+            this.style.transform = 'translateY(-2px) scale(1.02)';
+        });
+        
+        btn.addEventListener('mouseleave', function() {
+            this.style.transform = 'translateY(0) scale(1)';
+        });
+
+        btn.addEventListener('mousedown', function() {
+            this.style.transform = 'translateY(0) scale(0.98)';
+        });
+
+        btn.addEventListener('mouseup', function() {
+            this.style.transform = 'translateY(-2px) scale(1.02)';
+        });
+    });
+
+    // Animation spéciale pour le bouton de suppression
+    const deleteBtn = document.getElementById('confirm-delete');
+    if (deleteBtn) {
+        deleteBtn.addEventListener('mouseenter', function() {
+            this.style.transform = 'translateY(-2px) scale(1.05)';
+            this.style.boxShadow = '0 12px 40px rgba(196, 144, 144, 0.4)';
+        });
+        
+        deleteBtn.addEventListener('mouseleave', function() {
+            this.style.transform = 'translateY(0) scale(1)';
+            this.style.boxShadow = '';
+        });
+    }
+
+    // Animation pour le bouton d'annulation
+    const cancelBtn = document.getElementById('cancel-delete');
+    if (cancelBtn) {
+        cancelBtn.addEventListener('mouseenter', function() {
+            this.style.background = 'var(--gentle-success)';
+            this.style.borderColor = 'var(--gentle-success)';
+        });
+        
+        cancelBtn.addEventListener('mouseleave', function() {
+            this.style.background = '';
+            this.style.borderColor = '';
+        });
+    }
+
+    // Confirmation avant suppression avec animation
+    const deleteForm = document.getElementById('delete-form');
+    if (deleteForm) {
+        deleteForm.addEventListener('submit', function(e) {
+            e.preventDefault();
             
-            if (confirmed) {
-                // Animation de disparition
-                card.style.transition = 'all 0.8s cubic-bezier(0.4, 0, 0.2, 1)';
-                card.style.transform = 'scale(0.8) translateY(50px)';
-                card.style.opacity = '0';
+            // Animation de shake sur la carte
+            const card = document.querySelector('.delete-card');
+            card.classList.add('shake');
+            
+            setTimeout(() => {
+                const confirmed = confirm('🚨 DERNIÈRE CHANCE !\n\nÊtes-vous ABSOLUMENT CERTAIN de vouloir supprimer ce post ?\n\nCette action est IRRÉVERSIBLE !');
                 
-                setTimeout(() => {
-                    this.submit();
-                }, 800);
-            }
-            
-            card.classList.remove('shake');
-        }, 500);
-    });
-}
+                if (confirmed) {
+                    // Animation de suppression
+                    deleteBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Suppression...';
+                    deleteBtn.disabled = true;
+                    deleteBtn.style.background = 'linear-gradient(135deg, #94a3b8 0%, #64748b 100%)';
+                    
+                    // Animation de disparition de la carte
+                    setTimeout(() => {
+                        card.style.transition = 'all 0.8s cubic-bezier(0.4, 0, 0.2, 1)';
+                        card.style.transform = 'scale(0.8) translateY(50px)';
+                        card.style.opacity = '0';
+                        
+                        setTimeout(() => {
+                            this.submit();
+                        }, 800);
+                    }, 300);
+                }
+                
+                card.classList.remove('shake');
+            }, 500);
+        });
+    }
 
-// Animation de l'icône de danger
-const dangerIcon = document.querySelector('.danger-icon');
-if (dangerIcon) {
-    dangerIcon.addEventListener('mouseenter', function() {
-        this.style.transform = 'scale(1.1) rotate(5deg)';
-        this.style.boxShadow = '0 8px 30px rgba(239, 68, 68, 0.3)';
-    });
-    
-    dangerIcon.addEventListener('mouseleave', function() {
-        this.style.transform = 'scale(1) rotate(0deg)';
-        this.style.boxShadow = 'none';
-    });
-}
+    // Animation de l'icône d'avertissement
+    const warningIcon = document.querySelector('.warning-icon');
+    if (warningIcon) {
+        warningIcon.addEventListener('mouseenter', function() {
+            this.style.transform = 'scale(1.1) rotate(5deg)';
+        });
+        
+        warningIcon.addEventListener('mouseleave', function() {
+            this.style.transform = 'scale(1) rotate(0deg)';
+        });
+    }
 
-// Animation de la preview du post
-const postPreview = document.querySelector('.post-preview');
-if (postPreview) {
-    postPreview.addEventListener('mouseenter', function() {
-        this.style.transform = 'scale(1.02)';
-        this.style.borderColor = 'var(--danger)';
-    });
-    
-    postPreview.addEventListener('mouseleave', function() {
-        this.style.transform = 'scale(1)';
-        this.style.borderColor = '#fca5a5';
-    });
-}
+    // Animation de la preview du post
+    const postPreview = document.querySelector('.post-preview');
+    if (postPreview) {
+        postPreview.addEventListener('mouseenter', function() {
+            this.style.transform = 'scale(1.02)';
+            this.style.borderColor = 'var(--gentle-error)';
+        });
+        
+        postPreview.addEventListener('mouseleave', function() {
+            this.style.transform = 'scale(1)';
+            this.style.borderColor = '';
+        });
+    }
 
-// Animation des éléments meta
-document.querySelectorAll('.meta-item').forEach((item, index) => {
-    item.style.opacity = '0';
-    item.style.transform = 'translateX(-20px)';
-    item.style.transition = 'all 0.5s cubic-bezier(0.4, 0, 0.2, 1)';
-    
-    setTimeout(() => {
-        item.style.opacity = '1';
-        item.style.transform = 'translateX(0)';
-    }, 200 + (index * 100));
-});
+    // Gestion des raccourcis clavier
+    document.addEventListener('keydown', function(e) {
+        // Escape pour annuler
+        if (e.key === 'Escape') {
+            window.location.href = cancelBtn.href;
+        }
+        
+        // Enter pour confirmer (avec précaution)
+        if (e.key === 'Enter' && e.ctrlKey) {
+            deleteForm.submit();
+        }
+    });
 
-// Animation des points d'attention
-document.querySelectorAll('.warning-points li').forEach((item, index) => {
-    item.style.opacity = '0';
-    item.style.transform = 'translateX(-20px)';
-    item.style.transition = 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)';
-    
-    setTimeout(() => {
-        item.style.opacity = '1';
-        item.style.transform = 'translateX(0)';
-    }, 300 + (index * 100));
+    // Animation douce de l'alerte
+    const warningAlert = document.querySelector('.warning-alert');
+    if (warningAlert) {
+        setTimeout(() => {
+            warningAlert.style.transform = 'scale(1.02)';
+            setTimeout(() => {
+                warningAlert.style.transform = 'scale(1)';
+            }, 200);
+        }, 1000);
+    }
 });
 </script>
 {% endblock %}
