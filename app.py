@@ -2055,6 +2055,15 @@ def test_db():
         <pre>{str(e)}</pre>
         <p><a href="/">Retour à l'accueil</a></p>
         """, 500
+        
+@app.route("/fix-schema")
+def fix_schema():
+    try:
+        db.session.execute('ALTER TABLE posts ADD COLUMN linkedin_post_urn VARCHAR(100);')
+        db.session.commit()
+        return "✅ Colonne ajoutée avec succès."
+    except Exception as e:
+        return f"❌ Erreur : {e}"
 
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 5000))
