@@ -88,17 +88,37 @@
             z-index: 100;
             transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
             box-shadow: var(--shadow-soft);
-            overflow-y: auto;
+            overflow-y: hidden;
             display: flex;
             flex-direction: column;
             border-right: 1px solid rgba(139, 154, 124, 0.1);
         }
 
-        /* État collapsed de la sidebar */
+        .sidebar-header {
+            display: flex;
+            align-items: center;
+            justify-content: flex-start;
+            padding: 2rem 1rem;
+            min-height: 80px;
+            background: rgba(255, 255, 255, 0.4);
+            backdrop-filter: blur(10px);
+            position: relative;
+            overflow: hidden;
+            flex-shrink: 0;
+            border-bottom: 1px solid rgba(139, 154, 124, 0.1);
+        }
+
         .sidebar.collapsed {
             width: 80px;
         }
-
+        .sidebar.collapsed .sidebar-header {
+            padding: 2rem 0;
+            justify-content: center;
+        }
+        .sidebar.collapsed .logo-container {
+            justify-content: center;
+            gap: 0;
+        }
         .sidebar.collapsed .nav-text,
         .sidebar.collapsed .logo-text,
         .sidebar.collapsed .user-name,
@@ -107,31 +127,23 @@
             opacity: 0 !important;
             visibility: hidden !important;
             width: 0 !important;
-            height: 0 !important;
+            min-width: 0 !important;
+            max-width: 0 !important;
+            height: auto !important;
             margin: 0 !important;
             padding: 0 !important;
             pointer-events: none !important;
             transition: all 0.3s;
-        }
-        .sidebar.collapsed .sidebar-header {
-            padding: 2rem 1rem;
-            min-height: 80px;
-        }
-        .sidebar.collapsed .logo-container {
-            justify-content: center;
+            display: inline-block !important;
         }
         .sidebar.collapsed .nav-link {
             justify-content: center;
             padding: 0.875rem;
+            min-height: 48px;
+            height: 48px;
         }
         .sidebar.collapsed .nav-icon {
             margin: 0;
-        }
-        .sidebar.collapsed .nav-item {
-            margin: 0.25rem 0.5rem;
-        }
-        .sidebar.collapsed .sidebar-header {
-            min-height: 60px;
         }
         .sidebar.collapsed .user-info {
             padding: 0;
@@ -231,11 +243,17 @@
             gap: 1rem;
             position: relative;
             z-index: 2;
+            justify-content: flex-start;
+            width: 100%;
         }
 
         .logo-icon {
             width: 42px;
             height: 42px;
+            min-width: 42px;
+            min-height: 42px;
+            max-width: 42px;
+            max-height: 42px;
             background: var(--noble-sage);
             border-radius: 12px;
             display: flex;
@@ -325,8 +343,11 @@
         }
 
         .nav-item {
-            margin: 0.25rem 1rem;
-            position: relative;
+            margin: 0.25rem 0;
+        }
+
+        .sidebar.collapsed .nav-item {
+            margin: 0.25rem 0;
         }
 
         .nav-link {
@@ -342,11 +363,15 @@
             transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
             position: relative;
             overflow: hidden;
+            min-height: 48px;
+            height: 48px;
         }
 
         .sidebar.collapsed .nav-link {
             justify-content: center;
             padding: 0.875rem;
+            min-height: 48px;
+            height: 48px;
         }
 
         .nav-text {
@@ -405,6 +430,10 @@
         .nav-icon {
             font-size: 1.1rem;
             width: 20px;
+            min-width: 20px;
+            min-height: 20px;
+            max-width: 20px;
+            max-height: 20px;
             text-align: center;
             transition: all 0.3s ease;
         }
