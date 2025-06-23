@@ -273,6 +273,8 @@ NEWS_API_URL = "https://newsapi.org/v2/everything"
 # -----------------------
 # ROUTES FLASK
 # -----------------------
+PEXELS_API_KEY = os.getenv("PEXELS_API_KEY", "GRfBXoBp4ZxiaHejhH03WWpuSm07btLzWxyBq6Q9dnVFPr6BrJ8xpFlg")  # À remplacer par votre vraie clé
+PEXELS_API_URL = "https://api.pexels.com/v1"
 
 import json
 import os
@@ -286,8 +288,11 @@ if not os.path.exists(cache_dir):
 from datetime import datetime
 import html
 import re
-import re
-import html
+import requests
+
+import tempfile
+import os
+from urllib.parse import urlparse
 
 def search_pexels_photos(query, per_page=12, page=1):
     """
