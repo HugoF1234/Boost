@@ -765,6 +765,7 @@
     <script>
         // Variable pour l'état de la sidebar
         let sidebarCollapsed = false;
+        let lastWindowWidth = window.innerWidth;
 
         // Fonction pour basculer la sidebar
         function toggleSidebar() {
@@ -772,11 +773,10 @@
             const mainContent = document.getElementById('main-content');
             const sidebarToggle = document.getElementById('sidebar-toggle');
             const overlay = document.getElementById('sidebar-overlay');
-            
+
             if (window.innerWidth <= 768) {
                 // Mode mobile - sidebar overlay
                 const isOpen = sidebar.classList.contains('open');
-                
                 if (isOpen) {
                     sidebar.classList.remove('open');
                     overlay.classList.remove('active');
@@ -789,7 +789,6 @@
             } else {
                 // Mode desktop - sidebar rétractable
                 sidebarCollapsed = !sidebarCollapsed;
-                
                 if (sidebarCollapsed) {
                     sidebar.classList.add('collapsed');
                     mainContent.classList.add('expanded');
@@ -804,15 +803,14 @@
             }
         }
 
-        // Fermer la sidebar mobile en cliquant à l'extérieur
+        // Fermer la sidebar mobile en cliquant à l'extérieur ou sur overlay
         document.addEventListener('click', function(e) {
             const sidebar = document.getElementById('sidebar');
             const sidebarToggle = document.getElementById('sidebar-toggle');
             const overlay = document.getElementById('sidebar-overlay');
-            
-            if (window.innerWidth <= 768 && 
-                !sidebar.contains(e.target) && 
-                !sidebarToggle.contains(e.target) && 
+            if (window.innerWidth <= 768 &&
+                !sidebar.contains(e.target) &&
+                !sidebarToggle.contains(e.target) &&
                 sidebar.classList.contains('open')) {
                 sidebar.classList.remove('open');
                 overlay.classList.remove('active');
@@ -826,33 +824,32 @@
             const mainContent = document.getElementById('main-content');
             const overlay = document.getElementById('sidebar-overlay');
             const sidebarToggle = document.getElementById('sidebar-toggle');
-            
-            if (window.innerWidth > 768) {
+            const isMobile = window.innerWidth <= 768;
+            const wasMobile = lastWindowWidth <= 768;
+            lastWindowWidth = window.innerWidth;
+
+            if (!isMobile) {
                 // Mode desktop
-                sidebar.classList.remove('open');
                 overlay.classList.remove('active');
-                
+                sidebar.classList.remove('open');
+                sidebarToggle.classList.remove('active');
                 if (sidebarCollapsed) {
                     sidebar.classList.add('collapsed');
                     mainContent.classList.add('expanded');
                     sidebarToggle.classList.add('collapsed');
-                    sidebarToggle.classList.add('active');
                 } else {
                     sidebar.classList.remove('collapsed');
                     mainContent.classList.remove('expanded');
                     sidebarToggle.classList.remove('collapsed');
-                    sidebarToggle.classList.remove('active');
                 }
             } else {
-                // Mode mobile - réinitialiser l'état desktop
+                // Mode mobile
                 sidebar.classList.remove('collapsed');
                 mainContent.classList.remove('expanded');
                 sidebarToggle.classList.remove('collapsed');
-                sidebarCollapsed = false;
-                
-                // Garder l'état mobile si la sidebar était ouverte
-                if (!sidebarToggle.classList.contains('active')) {
-                    sidebarToggle.classList.remove('active');
+                // Réinitialiser l'état desktop si on vient de desktop
+                if (!wasMobile) {
+                    sidebarCollapsed = false;
                 }
             }
         });
