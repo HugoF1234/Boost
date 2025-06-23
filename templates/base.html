@@ -76,7 +76,7 @@
             z-index: 2;
         }
 
-        /* Sidebar noble et raffinée avec transition fluide */
+        /* Sidebar noble et raffinée */
         .sidebar {
             width: 280px;
             height: 100vh;
@@ -86,16 +86,27 @@
             background: linear-gradient(145deg, var(--noble-warm) 0%, var(--noble-mist) 100%);
             backdrop-filter: blur(20px);
             z-index: 100;
-            transition: width 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
             box-shadow: var(--shadow-soft);
-            overflow: hidden;
+            overflow-y: auto;
             display: flex;
             flex-direction: column;
             border-right: 1px solid rgba(139, 154, 124, 0.1);
         }
 
+        /* État collapsed de la sidebar */
         .sidebar.collapsed {
             width: 80px;
+        }
+
+        .sidebar.collapsed .nav-text,
+        .sidebar.collapsed .logo-text,
+        .sidebar.collapsed .user-name,
+        .sidebar.collapsed .user-role {
+            opacity: 0;
+            visibility: hidden;
+            transform: translateX(-20px);
+            pointer-events: none;
         }
 
         /* Bouton toggle élégant */
@@ -115,11 +126,12 @@
             justify-content: center;
             gap: 3px;
             cursor: pointer;
-            transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            transition: all 0.3s ease;
             box-shadow: var(--shadow-gentle);
         }
 
-        .sidebar.collapsed + .sidebar-toggle {
+        /* Position du toggle quand la sidebar est collapsed */
+        .sidebar-toggle.collapsed {
             left: 100px;
         }
 
@@ -159,11 +171,6 @@
             overflow: hidden;
             flex-shrink: 0;
             border-bottom: 1px solid rgba(139, 154, 124, 0.1);
-            transition: all 0.4s ease;
-        }
-
-        .sidebar.collapsed .sidebar-header {
-            padding: 1.5rem 1rem;
         }
 
         .sidebar-header::before {
@@ -188,11 +195,6 @@
             gap: 1rem;
             position: relative;
             z-index: 2;
-            transition: all 0.4s ease;
-        }
-
-        .sidebar.collapsed .logo-container {
-            justify-content: center;
         }
 
         .logo-icon {
@@ -208,7 +210,6 @@
             border: 1px solid rgba(255, 255, 255, 0.2);
             transition: all 0.3s ease;
             cursor: pointer;
-            flex-shrink: 0;
         }
 
         .logo-icon:hover {
@@ -222,15 +223,7 @@
             font-size: 1.4rem;
             font-weight: 600;
             letter-spacing: -0.02em;
-            transition: all 0.4s ease;
-            white-space: nowrap;
-            opacity: 1;
-        }
-
-        .sidebar.collapsed .logo-text {
-            opacity: 0;
-            width: 0;
-            overflow: hidden;
+            transition: all 0.3s ease;
         }
 
         .user-info {
@@ -239,13 +232,6 @@
             border-top: 1px solid rgba(139, 154, 124, 0.15);
             position: relative;
             z-index: 2;
-            transition: all 0.4s ease;
-            text-align: center;
-        }
-
-        .sidebar.collapsed .user-info {
-            padding-top: 1rem;
-            margin-top: 1rem;
         }
 
         .user-avatar {
@@ -256,7 +242,7 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            margin: 0 auto 0.75rem;
+            margin-bottom: 0.75rem;
             border: 2px solid rgba(255, 255, 255, 0.3);
             transition: all 0.3s ease;
             cursor: pointer;
@@ -274,32 +260,14 @@
             color: var(--noble-charcoal);
             font-weight: 500;
             font-size: 0.9rem;
-            transition: all 0.4s ease;
-            white-space: nowrap;
-            opacity: 1;
-        }
-
-        .sidebar.collapsed .user-name {
-            opacity: 0;
-            height: 0;
-            margin: 0;
-            overflow: hidden;
+            transition: all 0.3s ease;
         }
 
         .user-role {
             color: var(--noble-charcoal-light);
             font-size: 0.75rem;
             margin-top: 0.25rem;
-            transition: all 0.4s ease;
-            white-space: nowrap;
-            opacity: 1;
-        }
-
-        .sidebar.collapsed .user-role {
-            opacity: 0;
-            height: 0;
-            margin: 0;
-            overflow: hidden;
+            transition: all 0.3s ease;
         }
 
         /* Navigation raffinée */
@@ -308,7 +276,6 @@
             display: flex;
             flex-direction: column;
             padding: 1.5rem 0;
-            overflow-y: auto;
         }
 
         .nav-main {
@@ -324,10 +291,6 @@
         .nav-item {
             margin: 0.25rem 1rem;
             position: relative;
-        }
-
-        .sidebar.collapsed .nav-item {
-            margin: 0.25rem 0.5rem;
         }
 
         .nav-link {
@@ -351,15 +314,8 @@
         }
 
         .nav-text {
-            transition: all 0.4s ease;
+            transition: all 0.3s ease;
             white-space: nowrap;
-            opacity: 1;
-        }
-
-        .sidebar.collapsed .nav-text {
-            opacity: 0;
-            width: 0;
-            overflow: hidden;
         }
 
         .nav-link::before {
@@ -415,7 +371,6 @@
             width: 20px;
             text-align: center;
             transition: all 0.3s ease;
-            flex-shrink: 0;
         }
 
         .nav-link:hover .nav-icon {
@@ -432,41 +387,6 @@
             transform: translateX(4px);
         }
 
-        .sidebar.collapsed .nav-link.danger:hover {
-            transform: translateX(0) scale(1.05);
-        }
-
-        /* Tooltip pour les icônes en mode collapsed */
-        .nav-link {
-            position: relative;
-        }
-
-        .nav-link::after {
-            content: attr(data-tooltip);
-            position: absolute;
-            left: 100%;
-            top: 50%;
-            transform: translateY(-50%);
-            background: var(--noble-charcoal);
-            color: white;
-            padding: 0.5rem 0.75rem;
-            border-radius: 8px;
-            font-size: 0.8rem;
-            white-space: nowrap;
-            opacity: 0;
-            visibility: hidden;
-            transition: all 0.3s ease;
-            margin-left: 1rem;
-            z-index: 1000;
-            pointer-events: none;
-        }
-
-        .sidebar.collapsed .nav-link:hover::after {
-            opacity: 1;
-            visibility: visible;
-            margin-left: 0.5rem;
-        }
-
         /* Contenu principal */
         .main-content {
             flex: 1;
@@ -480,7 +400,7 @@
             background: var(--noble-cream);
         }
 
-        .sidebar.collapsed ~ .main-content {
+        .main-content.expanded {
             margin-left: 80px;
             width: calc(100% - 80px);
         }
@@ -495,20 +415,15 @@
         @media (max-width: 768px) {
             .sidebar {
                 transform: translateX(-280px);
-                width: 280px !important;
             }
 
             .sidebar.open {
                 transform: translateX(0);
             }
 
-            .sidebar.collapsed {
-                transform: translateX(-280px);
-            }
-
             .main-content {
-                margin-left: 0 !important;
-                width: 100% !important;
+                margin-left: 0;
+                width: 100%;
                 padding: 1rem;
             }
 
@@ -528,32 +443,37 @@
                 background: var(--noble-sage-dark);
             }
 
-            /* Reset des styles collapsed pour mobile */
-            .sidebar .logo-text,
-            .sidebar .nav-text,
-            .sidebar .user-name,
-            .sidebar .user-role {
-                opacity: 1 !important;
-                width: auto !important;
-                height: auto !important;
-                overflow: visible !important;
+            .sidebar-toggle.collapsed {
+                left: 1rem !important;
+            }
+        }
+
+        /* Tablette responsive */
+        @media (min-width: 769px) and (max-width: 1024px) {
+            .sidebar {
+                width: 240px;
             }
 
-            .sidebar .logo-container {
-                justify-content: flex-start !important;
+            .sidebar.collapsed {
+                width: 70px;
             }
 
-            .sidebar .nav-link {
-                justify-content: flex-start !important;
-                padding: 0.875rem 1.25rem !important;
+            .main-content {
+                margin-left: 240px;
+                width: calc(100% - 240px);
             }
 
-            .sidebar .user-info {
-                text-align: left !important;
+            .main-content.expanded {
+                margin-left: 70px;
+                width: calc(100% - 70px);
             }
 
-            .sidebar .nav-item {
-                margin: 0.25rem 1rem !important;
+            .sidebar-toggle {
+                left: 260px;
+            }
+
+            .sidebar-toggle.collapsed {
+                left: 90px;
             }
         }
 
@@ -581,26 +501,6 @@
             .sidebar-overlay.active {
                 display: block;
             }
-        }
-
-        /* Scrollbar personnalisée discrète */
-        .nav-menu::-webkit-scrollbar {
-            width: 4px;
-        }
-
-        .nav-menu::-webkit-scrollbar-track {
-            background: rgba(139, 154, 124, 0.05);
-            border-radius: 2px;
-        }
-
-        .nav-menu::-webkit-scrollbar-thumb {
-            background: rgba(139, 154, 124, 0.2);
-            border-radius: 2px;
-            transition: all 0.3s ease;
-        }
-
-        .nav-menu::-webkit-scrollbar-thumb:hover {
-            background: rgba(139, 154, 124, 0.35);
         }
 
         /* Animations globales plus douces */
@@ -632,6 +532,26 @@
                 opacity: 1;
                 transform: translateX(0);
             }
+        }
+
+        /* Scrollbar personnalisée discrète */
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: rgba(139, 154, 124, 0.05);
+            border-radius: 3px;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: rgba(139, 154, 124, 0.2);
+            border-radius: 3px;
+            transition: all 0.3s ease;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: rgba(139, 154, 124, 0.35);
         }
 
         /* Styles pour les mentions LinkedIn */
@@ -779,48 +699,42 @@
                 <div class="nav-main">
                     <div class="nav-item">
                         <a href="{{ url_for('dashboard') }}" 
-                           class="nav-link {% if request.endpoint == 'dashboard' %}active{% endif %}"
-                           data-tooltip="Accueil">
+                           class="nav-link {% if request.endpoint == 'dashboard' %}active{% endif %}">
                             <i class="fas fa-home nav-icon"></i>
                             <span class="nav-text">Accueil</span>
                         </a>
                     </div>
                     <div class="nav-item">
                         <a href="{{ url_for('news_assistant') }}" 
-                           class="nav-link {% if request.endpoint == 'news_assistant' %}active{% endif %}"
-                           data-tooltip="Actualités">
+                           class="nav-link {% if request.endpoint == 'news_assistant' %}active{% endif %}">
                             <i class="fas fa-newspaper nav-icon"></i>
                             <span class="nav-text">Actualités</span>
                         </a>
                     </div>
                     <div class="nav-item">
                         <a href="{{ url_for('calendar') }}" 
-                           class="nav-link {% if request.endpoint == 'calendar' %}active{% endif %}"
-                           data-tooltip="Calendrier">
+                           class="nav-link {% if request.endpoint == 'calendar' %}active{% endif %}">
                             <i class="fas fa-calendar-alt nav-icon"></i>
                             <span class="nav-text">Calendrier</span>
                         </a>
                     </div>
                     <div class="nav-item">
                         <a href="{{ url_for('historique') }}" 
-                           class="nav-link {% if request.endpoint == 'historique' %}active{% endif %}"
-                           data-tooltip="Historique">
+                           class="nav-link {% if request.endpoint == 'historique' %}active{% endif %}">
                             <i class="fas fa-archive nav-icon"></i>
                             <span class="nav-text">Historique</span>
                         </a>
                     </div>
                     <div class="nav-item">
                         <a href="{{ url_for('profil') }}" 
-                           class="nav-link {% if request.endpoint == 'profil' %}active{% endif %}"
-                           data-tooltip="Profil">
+                           class="nav-link {% if request.endpoint == 'profil' %}active{% endif %}">
                             <i class="fas fa-user-circle nav-icon"></i>
                             <span class="nav-text">Profil</span>
                         </a>
                     </div>
                     <div class="nav-item">
                         <a href="{{ url_for('parametres') }}" 
-                           class="nav-link {% if request.endpoint == 'parametres' %}active{% endif %}"
-                           data-tooltip="Paramètres">
+                           class="nav-link {% if request.endpoint == 'parametres' %}active{% endif %}">
                             <i class="fas fa-cog nav-icon"></i>
                             <span class="nav-text">Paramètres</span>
                         </a>
@@ -830,7 +744,7 @@
                 <!-- Section déconnexion en bas -->
                 <div class="nav-bottom">
                     <div class="nav-item">
-                        <a href="{{ url_for('logout') }}" class="nav-link danger" data-tooltip="Déconnexion">
+                        <a href="{{ url_for('logout') }}" class="nav-link danger">
                             <i class="fas fa-sign-out-alt nav-icon"></i>
                             <span class="nav-text">Déconnexion</span>
                         </a>
@@ -846,496 +760,440 @@
             </div>
         </main>
     </div>
-    <!-- Scripts identiques mais optimisés -->
+
+    <!-- Scripts corrigés -->
     <script>
-    // Variables globales pour l'état de la sidebar
-    let sidebarCollapsed = false;
-    let isMobile = window.innerWidth <= 768;
-    
-    // Fonction pour mettre à jour l'état mobile
-    function updateMobileState() {
-        const newIsMobile = window.innerWidth <= 768;
-        if (newIsMobile !== isMobile) {
-            isMobile = newIsMobile;
-            resetSidebarState();
-        }
-    }
-    
-    // Fonction pour réinitialiser l'état de la sidebar
-    function resetSidebarState() {
-        const sidebar = document.getElementById('sidebar');
-        const mainContent = document.getElementById('main-content');
-        const sidebarToggle = document.getElementById('sidebar-toggle');
-        const overlay = document.getElementById('sidebar-overlay');
-        
-        if (!sidebar || !mainContent || !sidebarToggle) return;
-        
-        // Nettoyer toutes les classes et styles
-        sidebar.classList.remove('collapsed', 'open');
-        mainContent.classList.remove('expanded');
-        sidebarToggle.classList.remove('active');
-        if (overlay) overlay.classList.remove('active');
-        
-        // Réinitialiser les styles
-        sidebar.style.transform = '';
-        sidebarToggle.style.left = '';
-        
-        if (isMobile) {
-            // Mode mobile : sidebar en overlay
-            sidebarToggle.style.left = '1rem';
-            sidebarCollapsed = false;
-        } else {
-            // Mode desktop : sidebar normale
-            sidebarToggle.style.left = '300px';
-            sidebarCollapsed = false;
-        }
-    }
-    
-    // Fonction principale pour basculer la sidebar
-    function toggleSidebar() {
-        const sidebar = document.getElementById('sidebar');
-        const mainContent = document.getElementById('main-content');
-        const sidebarToggle = document.getElementById('sidebar-toggle');
-        const overlay = document.getElementById('sidebar-overlay');
-        
-        if (!sidebar || !mainContent || !sidebarToggle) {
-            console.error('Éléments de sidebar manquants');
-            return;
-        }
-        
-        if (isMobile) {
-            // Mode mobile - sidebar overlay
-            const isOpen = sidebar.classList.contains('open');
+        // Variable pour l'état de la sidebar
+        let sidebarCollapsed = false;
+
+        // Fonction pour basculer la sidebar
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const mainContent = document.getElementById('main-content');
+            const sidebarToggle = document.getElementById('sidebar-toggle');
+            const overlay = document.getElementById('sidebar-overlay');
             
-            if (isOpen) {
-                // Fermer la sidebar
-                sidebar.classList.remove('open');
-                sidebarToggle.classList.remove('active');
-                if (overlay) overlay.classList.remove('active');
-            } else {
-                // Ouvrir la sidebar
-                sidebar.classList.add('open');
-                sidebarToggle.classList.add('active');
-                if (overlay) overlay.classList.add('active');
-            }
-        } else {
-            // Mode desktop - sidebar rétractable
-            if (sidebarCollapsed) {
-                // Étendre la sidebar
-                sidebar.classList.remove('collapsed');
-                mainContent.classList.remove('expanded');
-                sidebarToggle.classList.remove('active');
-                sidebarToggle.style.left = '300px';
-                sidebarCollapsed = false;
-            } else {
-                // Rétracter la sidebar
-                sidebar.classList.add('collapsed');
-                mainContent.classList.add('expanded');
-                sidebarToggle.classList.add('active');
-                sidebarToggle.style.left = '100px';
-                sidebarCollapsed = true;
-            }
-        }
-    }
-    
-    // Fermer la sidebar mobile en cliquant à l'extérieur
-    function closeMobileSidebar(e) {
-        if (!isMobile) return;
-        
-        const sidebar = document.getElementById('sidebar');
-        const sidebarToggle = document.getElementById('sidebar-toggle');
-        const overlay = document.getElementById('sidebar-overlay');
-        
-        if (!sidebar || !sidebarToggle) return;
-        
-        const isClickInSidebar = sidebar.contains(e.target);
-        const isClickOnToggle = sidebarToggle.contains(e.target);
-        const isSidebarOpen = sidebar.classList.contains('open');
-        
-        if (isSidebarOpen && !isClickInSidebar && !isClickOnToggle) {
-            sidebar.classList.remove('open');
-            sidebarToggle.classList.remove('active');
-            if (overlay) overlay.classList.remove('active');
-        }
-    }
-    
-    // Fermer la sidebar mobile sur clic overlay
-    function handleOverlayClick() {
-        if (!isMobile) return;
-        
-        const sidebar = document.getElementById('sidebar');
-        const sidebarToggle = document.getElementById('sidebar-toggle');
-        const overlay = document.getElementById('sidebar-overlay');
-        
-        if (sidebar && sidebarToggle) {
-            sidebar.classList.remove('open');
-            sidebarToggle.classList.remove('active');
-            if (overlay) overlay.classList.remove('active');
-        }
-    }
-    
-    // Gestion du redimensionnement de la fenêtre
-    function handleWindowResize() {
-        updateMobileState();
-    }
-    
-    // Fermer la sidebar mobile au clic sur un lien
-    function handleNavLinkClick() {
-        if (!isMobile) return;
-        
-        const sidebar = document.getElementById('sidebar');
-        const sidebarToggle = document.getElementById('sidebar-toggle');
-        const overlay = document.getElementById('sidebar-overlay');
-        
-        if (sidebar && sidebarToggle) {
-            sidebar.classList.remove('open');
-            sidebarToggle.classList.remove('active');
-            if (overlay) overlay.classList.remove('active');
-        }
-    }
-    
-    // Script de gestion des mentions LinkedIn
-    function initMentionEditor(editorElement) {
-        const editor = editorElement;
-        let mentionDropdown = null;
-        let currentMentionSearch = "";
-        let mentionSearchActive = false;
-        let mentionStartPosition = 0;
-        let debounceTimeout = null;
-        
-        // Créer le menu déroulant des mentions
-        function createMentionDropdown() {
-            mentionDropdown = document.createElement('div');
-            mentionDropdown.className = 'mention-dropdown';
-            mentionDropdown.style.display = 'none';
-            mentionDropdown.style.position = 'absolute';
-            mentionDropdown.style.zIndex = '1000';
-            document.body.appendChild(mentionDropdown);
-            return mentionDropdown;
-        }
-        
-        // Positionner le menu déroulant
-        function positionMentionDropdown(textarea) {
-            if (!mentionDropdown) return;
-            
-            const rect = textarea.getBoundingClientRect();
-            const text = textarea.value;
-            const subtext = text.substring(0, textarea.selectionStart);
-            const lines = subtext.split('\n');
-            const lineHeight = parseInt(window.getComputedStyle(textarea).lineHeight) || 24;
-            const lineCount = lines.length;
-            
-            const top = rect.top + (lineCount * lineHeight) - textarea.scrollTop + 25;
-            const left = rect.left + 20;
-            
-            mentionDropdown.style.top = `${Math.min(top, window.innerHeight - 200)}px`;
-            mentionDropdown.style.left = `${Math.min(left, window.innerWidth - 370)}px`;
-        }
-        
-        // Rechercher des utilisateurs LinkedIn
-        function searchLinkedInUsers(query) {
-            fetch('/search_linkedin_users', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ query }),
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.results && data.results.length > 0) {
-                    displayMentionSuggestions(data.results);
+            if (window.innerWidth <= 768) {
+                // Mode mobile - sidebar overlay
+                const isOpen = sidebar.classList.contains('open');
+                
+                if (isOpen) {
+                    sidebar.classList.remove('open');
+                    overlay.classList.remove('active');
+                    sidebarToggle.classList.remove('active');
                 } else {
-                    hideMentionDropdown();
-                }
-            })
-            .catch(error => {
-                console.error('Erreur de recherche:', error);
-                hideMentionDropdown();
-            });
-        }
-        
-        // Afficher les suggestions de mentions
-        function displayMentionSuggestions(users) {
-            if (!mentionDropdown) {
-                mentionDropdown = createMentionDropdown();
-            }
-            
-            mentionDropdown.innerHTML = '';
-            
-            users.forEach((user, index) => {
-                const suggestionItem = document.createElement('div');
-                suggestionItem.className = 'mention-suggestion';
-                
-                // Avatar ou placeholder
-                let avatarHtml;
-                if (user.image_url) {
-                    avatarHtml = `<img src="${user.image_url}" alt="${user.name}">`;
-                } else {
-                    const initial = user.name.charAt(0).toUpperCase();
-                    avatarHtml = `<div class="mention-avatar">${initial}</div>`;
-                }
-                
-                // Contenu de la suggestion
-                suggestionItem.innerHTML = `
-                    ${avatarHtml}
-                    <div style="flex: 1;">
-                        <div style="font-weight: 500; color: var(--noble-charcoal);">${user.name}</div>
-                        <div style="font-size: 0.8rem; color: var(--noble-charcoal-light);">${user.headline || 'Professionnel LinkedIn'}</div>
-                    </div>
-                    <div style="opacity: 0.6;">
-                        <i class="fab fa-linkedin" style="color: var(--noble-sage);"></i>
-                    </div>
-                `;
-                
-                // Gérer la sélection
-                suggestionItem.addEventListener('click', () => {
-                    insertMention(user);
-                    hideMentionDropdown();
-                });
-                
-                mentionDropdown.appendChild(suggestionItem);
-            });
-            
-            mentionDropdown.style.display = 'block';
-            positionMentionDropdown(editor);
-        }
-        
-        // Cacher le menu déroulant des mentions
-        function hideMentionDropdown() {
-            if (mentionDropdown) {
-                mentionDropdown.style.display = 'none';
-            }
-            mentionSearchActive = false;
-        }
-        
-        // Insérer une mention dans l'éditeur
-        function insertMention(user) {
-            const cursorPos = editor.selectionStart;
-            const text = editor.value;
-            
-            const textBefore = text.substring(0, mentionStartPosition);
-            const textAfter = text.substring(cursorPos);
-            
-            const mention = `@[${user.name}](${user.profile_url}) `;
-            
-            editor.value = textBefore + mention + textAfter;
-            editor.selectionStart = editor.selectionEnd = textBefore.length + mention.length;
-            
-            editor.focus();
-            
-            // Déclencher l'événement de changement
-            const event = new Event('input', { bubbles: true });
-            editor.dispatchEvent(event);
-        }
-        
-        // Gestionnaires d'événements pour les mentions
-        editor.addEventListener('keyup', function(e) {
-            if (['ArrowUp', 'ArrowDown', 'Enter', 'Escape'].includes(e.key)) {
-                return;
-            }
-            
-            const cursorPos = this.selectionStart;
-            const text = this.value;
-            
-            if (!mentionSearchActive) {
-                const lastAtPos = text.lastIndexOf('@', cursorPos - 1);
-                
-                if (lastAtPos >= 0 && (lastAtPos === 0 || /\s/.test(text[lastAtPos - 1]))) {
-                    const textBetween = text.substring(lastAtPos + 1, cursorPos);
-                    if (!/\s/.test(textBetween)) {
-                        mentionStartPosition = lastAtPos;
-                        currentMentionSearch = textBetween;
-                        mentionSearchActive = true;
-                    }
+                    sidebar.classList.add('open');
+                    overlay.classList.add('active');
+                    sidebarToggle.classList.add('active');
                 }
             } else {
-                if (cursorPos <= mentionStartPosition) {
-                    mentionSearchActive = false;
-                    hideMentionDropdown();
+                // Mode desktop - sidebar rétractable
+                sidebarCollapsed = !sidebarCollapsed;
+                
+                if (sidebarCollapsed) {
+                    sidebar.classList.add('collapsed');
+                    mainContent.classList.add('expanded');
+                    sidebarToggle.classList.add('collapsed');
+                    sidebarToggle.classList.add('active');
                 } else {
-                    const textBetween = text.substring(mentionStartPosition + 1, cursorPos);
-                    if (/\s/.test(textBetween)) {
-                        mentionSearchActive = false;
-                        hideMentionDropdown();
-                    } else {
-                        currentMentionSearch = textBetween;
-                    }
+                    sidebar.classList.remove('collapsed');
+                    mainContent.classList.remove('expanded');
+                    sidebarToggle.classList.remove('collapsed');
+                    sidebarToggle.classList.remove('active');
                 }
             }
-            
-            if (mentionSearchActive && currentMentionSearch.length >= 2) {
-                clearTimeout(debounceTimeout);
-                debounceTimeout = setTimeout(() => {
-                    searchLinkedInUsers(currentMentionSearch);
-                }, 300);
-            } else if (mentionSearchActive && currentMentionSearch.length < 2) {
-                hideMentionDropdown();
-            }
-        });
-        
-        // Gestion des touches de navigation
-        editor.addEventListener('keydown', function(e) {
-            if (!mentionSearchActive || !mentionDropdown || mentionDropdown.style.display === 'none') {
-                return;
-            }
-            
-            const items = mentionDropdown.querySelectorAll('.mention-suggestion');
-            const activeItem = mentionDropdown.querySelector('.mention-suggestion.active');
-            let activeIndex = Array.from(items).indexOf(activeItem);
-            
-            switch (e.key) {
-                case 'ArrowDown':
-                    e.preventDefault();
-                    activeIndex = activeIndex < 0 || activeIndex >= items.length - 1 ? 0 : activeIndex + 1;
-                    break;
-                    
-                case 'ArrowUp':
-                    e.preventDefault();
-                    activeIndex = activeIndex <= 0 ? items.length - 1 : activeIndex - 1;
-                    break;
-                    
-                case 'Enter':
-                    e.preventDefault();
-                    if (activeItem) {
-                        activeItem.click();
-                    } else if (items.length > 0) {
-                        items[0].click();
-                    }
-                    return;
-                    
-                case 'Escape':
-                    e.preventDefault();
-                    hideMentionDropdown();
-                    return;
-                    
-                default:
-                    return;
-            }
-            
-            items.forEach(item => item.classList.remove('active'));
-            if (items[activeIndex]) {
-                items[activeIndex].classList.add('active');
-                items[activeIndex].scrollIntoView({ block: 'nearest' });
-            }
-        });
-        
-        // Fermer le dropdown en cliquant ailleurs
+        }
+
+        // Fermer la sidebar mobile en cliquant à l'extérieur
         document.addEventListener('click', function(e) {
-            if (mentionDropdown && !mentionDropdown.contains(e.target) && e.target !== editor) {
-                hideMentionDropdown();
-            }
-        });
-        
-        return {
-            cleanup: function() {
-                if (mentionDropdown && mentionDropdown.parentNode) {
-                    mentionDropdown.parentNode.removeChild(mentionDropdown);
-                }
-            }
-        };
-    }
-    
-    // Initialisation au chargement du DOM
-    document.addEventListener('DOMContentLoaded', function() {
-        // Initialiser l'état de la sidebar
-        updateMobileState();
-        resetSidebarState();
-        
-        // Écouteurs d'événements pour la sidebar
-        window.addEventListener('resize', handleWindowResize);
-        document.addEventListener('click', closeMobileSidebar);
-        
-        // Gestionnaire pour l'overlay
-        const overlay = document.getElementById('sidebar-overlay');
-        if (overlay) {
-            overlay.addEventListener('click', handleOverlayClick);
-        }
-        
-        // Initialiser les éditeurs de mentions
-        const editors = document.querySelectorAll('.mention-editor');
-        editors.forEach(editor => {
-            const mentionEditor = initMentionEditor(editor);
-            editor.mentionEditor = mentionEditor;
-        });
-        
-        // Convertir les mentions pour l'affichage
-        function renderMentions(container) {
-            const mentionRegex = /@\[(.*?)\]\((.*?)\)/g;
-            const elements = container.querySelectorAll('.convert-mentions');
-            
-            elements.forEach(element => {
-                const html = element.innerHTML.replace(mentionRegex, '<a href="$2" class="mention" target="_blank">@$1</a>');
-                element.innerHTML = html;
-            });
-        }
-        
-        renderMentions(document);
-        
-        // Interactions nobles sur les liens de navigation
-        const navLinks = document.querySelectorAll('.nav-link');
-        navLinks.forEach(link => {
-            link.addEventListener('mouseenter', function() {
-                const icon = this.querySelector('.nav-icon');
-                if (icon) {
-                    icon.style.transform = 'scale(1.1)';
-                }
-            });
-            
-            link.addEventListener('mouseleave', function() {
-                const icon = this.querySelector('.nav-icon');
-                if (icon) {
-                    icon.style.transform = 'scale(1)';
-                }
-            });
-            
-            // Fermer la sidebar mobile au clic sur un lien
-            link.addEventListener('click', handleNavLinkClick);
-        });
-        
-        // Animation du logo
-        const logoIcon = document.querySelector('.logo-icon');
-        if (logoIcon) {
-            logoIcon.addEventListener('click', function() {
-                this.style.transform = 'scale(0.95) rotate(5deg)';
-                setTimeout(() => {
-                    this.style.transform = 'scale(1) rotate(0deg)';
-                }, 200);
-            });
-        }
-    });
-    
-    // Raccourcis clavier globaux
-    document.addEventListener('keydown', function(e) {
-        // Ctrl/Cmd + B pour toggle sidebar
-        if ((e.ctrlKey || e.metaKey) && e.key === 'b') {
-            e.preventDefault();
-            toggleSidebar();
-        }
-        
-        // Escape pour fermer la sidebar mobile
-        if (e.key === 'Escape' && isMobile) {
             const sidebar = document.getElementById('sidebar');
             const sidebarToggle = document.getElementById('sidebar-toggle');
             const overlay = document.getElementById('sidebar-overlay');
             
-            if (sidebar && sidebar.classList.contains('open')) {
+            if (window.innerWidth <= 768 && 
+                !sidebar.contains(e.target) && 
+                !sidebarToggle.contains(e.target) && 
+                sidebar.classList.contains('open')) {
                 sidebar.classList.remove('open');
-                if (sidebarToggle) sidebarToggle.classList.remove('active');
-                if (overlay) overlay.classList.remove('active');
+                overlay.classList.remove('active');
+                sidebarToggle.classList.remove('active');
             }
+        });
+
+        // Gestion du redimensionnement de la fenêtre
+        window.addEventListener('resize', function() {
+            const sidebar = document.getElementById('sidebar');
+            const mainContent = document.getElementById('main-content');
+            const overlay = document.getElementById('sidebar-overlay');
+            const sidebarToggle = document.getElementById('sidebar-toggle');
+            
+            if (window.innerWidth > 768) {
+                // Mode desktop
+                sidebar.classList.remove('open');
+                overlay.classList.remove('active');
+                
+                if (sidebarCollapsed) {
+                    sidebar.classList.add('collapsed');
+                    mainContent.classList.add('expanded');
+                    sidebarToggle.classList.add('collapsed');
+                    sidebarToggle.classList.add('active');
+                } else {
+                    sidebar.classList.remove('collapsed');
+                    mainContent.classList.remove('expanded');
+                    sidebarToggle.classList.remove('collapsed');
+                    sidebarToggle.classList.remove('active');
+                }
+            } else {
+                // Mode mobile - réinitialiser l'état desktop
+                sidebar.classList.remove('collapsed');
+                mainContent.classList.remove('expanded');
+                sidebarToggle.classList.remove('collapsed');
+                sidebarCollapsed = false;
+                
+                // Garder l'état mobile si la sidebar était ouverte
+                if (!sidebarToggle.classList.contains('active')) {
+                    sidebarToggle.classList.remove('active');
+                }
+            }
+        });
+
+        // Script de gestion des mentions LinkedIn
+        function initMentionEditor(editorElement) {
+            const editor = editorElement;
+            let mentionDropdown = null;
+            let currentMentionSearch = "";
+            let mentionSearchActive = false;
+            let mentionStartPosition = 0;
+            let debounceTimeout = null;
+            
+            // Créer le menu déroulant des mentions
+            function createMentionDropdown() {
+                mentionDropdown = document.createElement('div');
+                mentionDropdown.className = 'mention-dropdown';
+                mentionDropdown.style.display = 'none';
+                mentionDropdown.style.position = 'absolute';
+                mentionDropdown.style.zIndex = '1000';
+                document.body.appendChild(mentionDropdown);
+                return mentionDropdown;
+            }
+            
+            // Positionner le menu déroulant
+            function positionMentionDropdown(textarea) {
+                if (!mentionDropdown) return;
+                
+                const rect = textarea.getBoundingClientRect();
+                const text = textarea.value;
+                const subtext = text.substring(0, textarea.selectionStart);
+                const lines = subtext.split('\n');
+                const lineHeight = parseInt(window.getComputedStyle(textarea).lineHeight) || 24;
+                const lineCount = lines.length;
+                
+                const top = rect.top + (lineCount * lineHeight) - textarea.scrollTop + 25;
+                const left = rect.left + 20;
+                
+                mentionDropdown.style.top = `${Math.min(top, window.innerHeight - 200)}px`;
+                mentionDropdown.style.left = `${Math.min(left, window.innerWidth - 370)}px`;
+            }
+            
+            // Rechercher des utilisateurs LinkedIn
+            function searchLinkedInUsers(query) {
+                fetch('/search_linkedin_users', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ query }),
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.results && data.results.length > 0) {
+                        displayMentionSuggestions(data.results);
+                    } else {
+                        hideMentionDropdown();
+                    }
+                })
+                .catch(error => {
+                    console.error('Erreur de recherche:', error);
+                    hideMentionDropdown();
+                });
+            }
+            
+            // Afficher les suggestions de mentions
+            function displayMentionSuggestions(users) {
+                if (!mentionDropdown) {
+                    mentionDropdown = createMentionDropdown();
+                }
+                
+                mentionDropdown.innerHTML = '';
+                
+                users.forEach((user, index) => {
+                    const suggestionItem = document.createElement('div');
+                    suggestionItem.className = 'mention-suggestion';
+                    
+                    // Avatar ou placeholder
+                    let avatarHtml;
+                    if (user.image_url) {
+                        avatarHtml = `<img src="${user.image_url}" alt="${user.name}">`;
+                    } else {
+                        const initial = user.name.charAt(0).toUpperCase();
+                        avatarHtml = `<div class="mention-avatar">${initial}</div>`;
+                    }
+                    
+                    // Contenu de la suggestion
+                    suggestionItem.innerHTML = `
+                        ${avatarHtml}
+                        <div style="flex: 1;">
+                            <div style="font-weight: 500; color: var(--noble-charcoal);">${user.name}</div>
+                            <div style="font-size: 0.8rem; color: var(--noble-charcoal-light);">${user.headline || 'Professionnel LinkedIn'}</div>
+                        </div>
+                        <div style="opacity: 0.6;">
+                            <i class="fab fa-linkedin" style="color: var(--noble-sage);"></i>
+                        </div>
+                    `;
+                    
+                    // Gérer la sélection
+                    suggestionItem.addEventListener('click', () => {
+                        insertMention(user);
+                        hideMentionDropdown();
+                    });
+                    
+                    mentionDropdown.appendChild(suggestionItem);
+                });
+                
+                mentionDropdown.style.display = 'block';
+                positionMentionDropdown(editor);
+            }
+            
+            // Cacher le menu déroulant des mentions
+            function hideMentionDropdown() {
+                if (mentionDropdown) {
+                    mentionDropdown.style.display = 'none';
+                }
+                mentionSearchActive = false;
+            }
+            
+            // Insérer une mention dans l'éditeur
+            function insertMention(user) {
+                const cursorPos = editor.selectionStart;
+                const text = editor.value;
+                
+                const textBefore = text.substring(0, mentionStartPosition);
+                const textAfter = text.substring(cursorPos);
+                
+                const mention = `@[${user.name}](${user.profile_url}) `;
+                
+                editor.value = textBefore + mention + textAfter;
+                editor.selectionStart = editor.selectionEnd = textBefore.length + mention.length;
+                
+                editor.focus();
+                
+                // Déclencher l'événement de changement
+                const event = new Event('input', { bubbles: true });
+                editor.dispatchEvent(event);
+            }
+            
+            // Gestionnaires d'événements pour les mentions
+            editor.addEventListener('keyup', function(e) {
+                if (['ArrowUp', 'ArrowDown', 'Enter', 'Escape'].includes(e.key)) {
+                    return;
+                }
+                
+                const cursorPos = this.selectionStart;
+                const text = this.value;
+                
+                if (!mentionSearchActive) {
+                    const lastAtPos = text.lastIndexOf('@', cursorPos - 1);
+                    
+                    if (lastAtPos >= 0 && (lastAtPos === 0 || /\s/.test(text[lastAtPos - 1]))) {
+                        const textBetween = text.substring(lastAtPos + 1, cursorPos);
+                        if (!/\s/.test(textBetween)) {
+                            mentionStartPosition = lastAtPos;
+                            currentMentionSearch = textBetween;
+                            mentionSearchActive = true;
+                        }
+                    }
+                } else {
+                    if (cursorPos <= mentionStartPosition) {
+                        mentionSearchActive = false;
+                        hideMentionDropdown();
+                    } else {
+                        const textBetween = text.substring(mentionStartPosition + 1, cursorPos);
+                        if (/\s/.test(textBetween)) {
+                            mentionSearchActive = false;
+                            hideMentionDropdown();
+                        } else {
+                            currentMentionSearch = textBetween;
+                        }
+                    }
+                }
+                
+                if (mentionSearchActive && currentMentionSearch.length >= 2) {
+                    clearTimeout(debounceTimeout);
+                    debounceTimeout = setTimeout(() => {
+                        searchLinkedInUsers(currentMentionSearch);
+                    }, 300);
+                } else if (mentionSearchActive && currentMentionSearch.length < 2) {
+                    hideMentionDropdown();
+                }
+            });
+            
+            // Gestion des touches de navigation
+            editor.addEventListener('keydown', function(e) {
+                if (!mentionSearchActive || !mentionDropdown || mentionDropdown.style.display === 'none') {
+                    return;
+                }
+                
+                const items = mentionDropdown.querySelectorAll('.mention-suggestion');
+                const activeItem = mentionDropdown.querySelector('.mention-suggestion.active');
+                let activeIndex = Array.from(items).indexOf(activeItem);
+                
+                switch (e.key) {
+                    case 'ArrowDown':
+                        e.preventDefault();
+                        activeIndex = activeIndex < 0 || activeIndex >= items.length - 1 ? 0 : activeIndex + 1;
+                        break;
+                        
+                    case 'ArrowUp':
+                        e.preventDefault();
+                        activeIndex = activeIndex <= 0 ? items.length - 1 : activeIndex - 1;
+                        break;
+                        
+                    case 'Enter':
+                        e.preventDefault();
+                        if (activeItem) {
+                            activeItem.click();
+                        } else if (items.length > 0) {
+                            items[0].click();
+                        }
+                        return;
+                        
+                    case 'Escape':
+                        e.preventDefault();
+                        hideMentionDropdown();
+                        return;
+                        
+                    default:
+                        return;
+                }
+                
+                items.forEach(item => item.classList.remove('active'));
+                if (items[activeIndex]) {
+                    items[activeIndex].classList.add('active');
+                    items[activeIndex].scrollIntoView({ block: 'nearest' });
+                }
+            });
+            
+            // Fermer le dropdown en cliquant ailleurs
+            document.addEventListener('click', function(e) {
+                if (mentionDropdown && !mentionDropdown.contains(e.target) && e.target !== editor) {
+                    hideMentionDropdown();
+                }
+            });
+            
+            return {
+                cleanup: function() {
+                    if (mentionDropdown && mentionDropdown.parentNode) {
+                        mentionDropdown.parentNode.removeChild(mentionDropdown);
+                    }
+                }
+            };
         }
-    });
-    
-    // Animation de chargement de la page
-    window.addEventListener('load', function() {
-        document.body.style.opacity = '0';
-        document.body.style.transition = 'opacity 0.5s ease';
-        
-        setTimeout(() => {
-            document.body.style.opacity = '1';
-        }, 100);
-    });
+
+        // Initialiser les éditeurs de mentions au chargement
+        document.addEventListener('DOMContentLoaded', function() {
+            const editors = document.querySelectorAll('.mention-editor');
+            editors.forEach(editor => {
+                const mentionEditor = initMentionEditor(editor);
+                editor.mentionEditor = mentionEditor;
+            });
+            
+            // Convertir les mentions pour l'affichage
+            function renderMentions(container) {
+                const mentionRegex = /@\[(.*?)\]\((.*?)\)/g;
+                const elements = container.querySelectorAll('.convert-mentions');
+                
+                elements.forEach(element => {
+                    const html = element.innerHTML.replace(mentionRegex, '<a href="$2" class="mention" target="_blank">@$1</a>');
+                    element.innerHTML = html;
+                });
+            }
+            
+            renderMentions(document);
+            
+            // Améliorer les interactions de la sidebar
+            const navLinks = document.querySelectorAll('.nav-link');
+            navLinks.forEach(link => {
+                link.addEventListener('mouseenter', function() {
+                    const icon = this.querySelector('.nav-icon');
+                    if (icon) {
+                        icon.style.transform = 'scale(1.1)';
+                    }
+                });
+                
+                link.addEventListener('mouseleave', function() {
+                    const icon = this.querySelector('.nav-icon');
+                    if (icon) {
+                        icon.style.transform = 'scale(1)';
+                    }
+                });
+                
+                // Fermer la sidebar mobile au clic sur un lien
+                link.addEventListener('click', function() {
+                    if (window.innerWidth <= 768) {
+                        const sidebar = document.getElementById('sidebar');
+                        const overlay = document.getElementById('sidebar-overlay');
+                        const sidebarToggle = document.getElementById('sidebar-toggle');
+                        
+                        sidebar.classList.remove('open');
+                        overlay.classList.remove('active');
+                        sidebarToggle.classList.remove('active');
+                    }
+                });
+            });
+            
+            // Animation du logo
+            const logoIcon = document.querySelector('.logo-icon');
+            if (logoIcon) {
+                logoIcon.addEventListener('click', function() {
+                    this.style.transform = 'scale(0.95) rotate(5deg)';
+                    setTimeout(() => {
+                        this.style.transform = 'scale(1) rotate(0deg)';
+                    }, 200);
+                });
+            }
+        });
+
+        // Raccourcis clavier globaux
+        document.addEventListener('keydown', function(e) {
+            // Ctrl/Cmd + B pour toggle sidebar
+            if ((e.ctrlKey || e.metaKey) && e.key === 'b') {
+                e.preventDefault();
+                toggleSidebar();
+            }
+            
+            // Escape pour fermer la sidebar mobile
+            if (e.key === 'Escape' && window.innerWidth <= 768) {
+                const sidebar = document.getElementById('sidebar');
+                const overlay = document.getElementById('sidebar-overlay');
+                const sidebarToggle = document.getElementById('sidebar-toggle');
+                
+                if (sidebar.classList.contains('open')) {
+                    sidebar.classList.remove('open');
+                    overlay.classList.remove('active');
+                    sidebarToggle.classList.remove('active');
+                }
+            }
+        });
+
+        // Animation de chargement de la page plus douce
+        window.addEventListener('load', function() {
+            document.body.style.opacity = '0';
+            document.body.style.transition = 'opacity 0.5s ease';
+            
+            setTimeout(() => {
+                document.body.style.opacity = '1';
+            }, 100);
+        });
     </script>
 </body>
 </html>
