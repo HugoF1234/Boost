@@ -12,7 +12,7 @@ services:
           name: linkedboost-db
           property: connectionString
       - key: RENDER
-        value: "true"  # 👈 Pour détecter l'environnement Render
+        value: "true"
       - key: FLASK_ENV
         value: "production"
       - key: FLASK_DEBUG
@@ -25,6 +25,8 @@ services:
         value: https://linkedinboost.onrender.com/callback
       - key: GEMINI_API_KEY
         value: AIzaSyB434P__wR_o_rr5Q3PjOULqyKhMANRtgk
+      - key: PEXELS_API_KEY
+        value: GRfBXoBp4ZxiaHejhH03WWpuSm07btLzWxyBq6Q9dnVFPr6BrJ8xpFlg
 
 databases:
   - name: linkedboost-db
