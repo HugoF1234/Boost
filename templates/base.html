@@ -102,11 +102,43 @@
         .sidebar.collapsed .nav-text,
         .sidebar.collapsed .logo-text,
         .sidebar.collapsed .user-name,
-        .sidebar.collapsed .user-role {
-            opacity: 0;
-            visibility: hidden;
-            transform: translateX(-20px);
-            pointer-events: none;
+        .sidebar.collapsed .user-role,
+        .sidebar.collapsed .user-avatar {
+            opacity: 0 !important;
+            visibility: hidden !important;
+            width: 0 !important;
+            height: 0 !important;
+            margin: 0 !important;
+            padding: 0 !important;
+            pointer-events: none !important;
+            transition: all 0.3s;
+        }
+        .sidebar.collapsed .sidebar-header {
+            padding: 1rem 0.5rem 1rem 0.5rem;
+        }
+        .sidebar.collapsed .logo-container {
+            justify-content: center;
+        }
+        .sidebar.collapsed .nav-link {
+            justify-content: center;
+            padding: 0.875rem;
+        }
+        .sidebar.collapsed .nav-icon {
+            margin: 0;
+        }
+        .sidebar.collapsed .nav-item {
+            margin: 0.25rem 0.5rem;
+        }
+        .sidebar.collapsed .sidebar-header {
+            min-height: 60px;
+        }
+        .sidebar.collapsed .user-info {
+            padding: 0;
+            margin: 0;
+            border: none;
+        }
+        .sidebar.collapsed .logo-icon {
+            margin: 0 auto;
         }
 
         /* Bouton toggle élégant */
