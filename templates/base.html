@@ -92,12 +92,13 @@
             display: flex;
             flex-direction: column;
             border-right: 1px solid rgba(139, 154, 124, 0.1);
+            transform: translateX(0); /* Position normale par défaut */
         }
-
         .sidebar.collapsed {
             width: 80px;
         }
-
+        
+        /* Animation des textes lors de la rétraction */
         .sidebar.collapsed .nav-text,
         .sidebar.collapsed .logo-text,
         .sidebar.collapsed .user-name,
@@ -106,13 +107,14 @@
             visibility: hidden;
             transform: translateX(-20px);
             pointer-events: none;
+            transition: all 0.3s ease;
         }
-
-        /* Bouton toggle élégant */
+        
+        /* Bouton toggle élégant - VERSION CORRIGÉE */
         .sidebar-toggle {
             position: fixed;
             top: 1.5rem;
-            left: 300px;
+            left: 300px; /* Position par défaut */
             z-index: 1001;
             background: var(--noble-cream);
             border: 1px solid rgba(139, 154, 124, 0.2);
@@ -128,17 +130,13 @@
             transition: all 0.3s ease;
             box-shadow: var(--shadow-gentle);
         }
-
-        body:has(.sidebar.collapsed) .sidebar-toggle {
-            left: 100px;
-        }
-
+        
         .sidebar-toggle:hover {
             background: var(--noble-sage-light);
             border-color: var(--noble-sage);
             transform: scale(1.05);
         }
-
+        
         .toggle-line {
             width: 18px;
             height: 2px;
@@ -146,40 +144,220 @@
             border-radius: 2px;
             transition: all 0.3s ease;
         }
-
+        
+        /* Animation du bouton toggle quand actif */
         .sidebar-toggle.active .toggle-line:nth-child(1) {
             transform: rotate(45deg) translate(5px, 5px);
         }
-
+        
         .sidebar-toggle.active .toggle-line:nth-child(2) {
             opacity: 0;
             transform: scale(0);
         }
-
+        
         .sidebar-toggle.active .toggle-line:nth-child(3) {
             transform: rotate(-45deg) translate(7px, -6px);
         }
-
-        /* Header de la sidebar */
-        .sidebar-header {
+        
+        /* Contenu principal - VERSION CORRIGÉE */
+        .main-content {
+            flex: 1;
+            margin-left: 280px; /* Marge par défaut */
+            min-height: 100vh;
+            width: calc(100% - 280px);
+            transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            display: flex;
+            justify-content: center;
             padding: 2rem;
-            background: rgba(255, 255, 255, 0.4);
-            backdrop-filter: blur(10px);
+            background: var(--noble-cream);
+        }
+        
+        /* État étendu quand sidebar rétractée */
+        .main-content.expanded {
+            margin-left: 80px;
+            width: calc(100% - 80px);
+        }
+        
+        /* Navigation raffinée */
+        .nav-menu {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            padding: 1.5rem 0;
+        }
+        
+        .nav-main {
+            flex: 1;
+        }
+        
+        .nav-bottom {
+            margin-top: auto;
+            padding-top: 1.5rem;
+            border-top: 1px solid rgba(139, 154, 124, 0.1);
+        }
+        
+        .nav-item {
+            margin: 0.25rem 1rem;
+            position: relative;
+        }
+        
+        .nav-link {
+            display: flex;
+            align-items: center;
+            gap: 0.875rem;
+            padding: 0.875rem 1.25rem;
+            color: var(--noble-charcoal-light);
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 0.9rem;
+            border-radius: 12px;
+            transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
             position: relative;
             overflow: hidden;
-            flex-shrink: 0;
-            border-bottom: 1px solid rgba(139, 154, 124, 0.1);
         }
-
-        .sidebar-header::before {
+        
+        /* Centrer les icônes quand sidebar rétractée */
+        .sidebar.collapsed .nav-link {
+            justify-content: center;
+            padding: 0.875rem;
+        }
+        
+        .nav-text {
+            transition: all 0.3s ease;
+            white-space: nowrap;
+        }
+        
+        .nav-link::before {
             content: '';
             position: absolute;
-            top: -50%;
-            right: -50%;
-            width: 200%;
-            height: 200%;
-            background: radial-gradient(circle, rgba(139, 154, 124, 0.05) 0%, transparent 70%);
-            animation: gentle-float 8s ease-in-out infinite;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(139, 154, 124, 0.1), transparent);
+            transition: all 0.6s ease;
+        }
+        
+        .nav-link:hover::before {
+            left: 100%;
+        }
+        
+        .nav-link:hover {
+            background: rgba(139, 154, 124, 0.08);
+            color: var(--noble-sage-dark);
+            transform: translateX(4px);
+        }
+        
+        .sidebar.collapsed .nav-link:hover {
+            transform: translateX(0) scale(1.05);
+        }
+        
+        .nav-link.active {
+            background: var(--noble-sage);
+            color: white;
+            transform: translateX(2px);
+            box-shadow: var(--shadow-gentle);
+        }
+        
+        .sidebar.collapsed .nav-link.active {
+            transform: translateX(0);
+        }
+        
+        .nav-icon {
+            font-size: 1.1rem;
+            width: 20px;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+        
+        /* Overlay pour mobile - VERSION CORRIGÉE */
+        .sidebar-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(139, 154, 124, 0.3);
+            backdrop-filter: blur(5px);
+            z-index: 99;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            pointer-events: none;
+        }
+        
+        .sidebar-overlay.active {
+            display: block;
+            opacity: 1;
+            pointer-events: all;
+        }
+        
+        /* RESPONSIVE MOBILE - VERSION CORRIGÉE */
+        @media (max-width: 768px) {
+            /* Sidebar en mode overlay sur mobile */
+            .sidebar {
+                transform: translateX(-100%); /* Cachée par défaut sur mobile */
+                transition: transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            }
+        
+            /* Sidebar ouverte sur mobile */
+            .sidebar.open {
+                transform: translateX(0);
+            }
+        
+            /* Main content prend toute la largeur sur mobile */
+            .main-content {
+                margin-left: 0;
+                width: 100%;
+                padding: 1rem;
+            }
+        
+            /* Bouton toggle repositionné sur mobile */
+            .sidebar-toggle {
+                left: 1rem !important;
+                background: var(--noble-sage);
+                border: none;
+                box-shadow: var(--shadow-gentle);
+            }
+        
+            .sidebar-toggle .toggle-line {
+                background: white;
+            }
+        
+            .sidebar-toggle:hover {
+                transform: scale(1.05);
+                background: var(--noble-sage-dark);
+            }
+        
+            /* Overlay actif sur mobile */
+            .sidebar-overlay.active {
+                display: block;
+            }
+        }
+        
+        /* Tablette responsive */
+        @media (min-width: 769px) and (max-width: 1024px) {
+            .sidebar {
+                width: 240px;
+            }
+        
+            .sidebar.collapsed {
+                width: 70px;
+            }
+        
+            .main-content {
+                margin-left: 240px;
+                width: calc(100% - 240px);
+            }
+        
+            .main-content.expanded {
+                margin-left: 70px;
+                width: calc(100% - 70px);
+            }
+        
+            .sidebar-toggle {
+                left: 260px;
+            }
         }
 
         @keyframes gentle-float {
@@ -757,419 +935,494 @@
 
     <!-- Scripts identiques mais optimisés -->
     <script>
-        // Variable pour l'état de la sidebar
-        let sidebarCollapsed = false;
-
-        // Fonction pour basculer la sidebar
-        function toggleSidebar() {
-            const sidebar = document.getElementById('sidebar');
-            const mainContent = document.getElementById('main-content');
-            const sidebarToggle = document.getElementById('sidebar-toggle');
-            const overlay = document.getElementById('sidebar-overlay');
-            
-            if (window.innerWidth <= 768) {
-                // Mode mobile - sidebar overlay
-                sidebar.classList.toggle('open');
-                overlay.classList.toggle('active');
-                sidebarToggle.classList.toggle('active');
-            } else {
-                // Mode desktop - sidebar rétractable
-                sidebarCollapsed = !sidebarCollapsed;
-                
-                if (sidebarCollapsed) {
-                    sidebar.classList.add('collapsed');
-                    mainContent.classList.add('expanded');
-                    sidebarToggle.classList.add('active');
-                    sidebarToggle.style.left = '100px';
-                } else {
-                    sidebar.classList.remove('collapsed');
-                    mainContent.classList.remove('expanded');
-                    sidebarToggle.classList.remove('active');
-                    sidebarToggle.style.left = '300px';
-                }
-            }
+    // Variables globales pour l'état de la sidebar
+    let sidebarCollapsed = false;
+    let isMobile = window.innerWidth <= 768;
+    
+    // Fonction pour mettre à jour l'état mobile
+    function updateMobileState() {
+        const newIsMobile = window.innerWidth <= 768;
+        if (newIsMobile !== isMobile) {
+            isMobile = newIsMobile;
+            resetSidebarState();
         }
-
-        // Fermer la sidebar mobile en cliquant à l'extérieur
-        document.addEventListener('click', function(e) {
-            const sidebar = document.getElementById('sidebar');
-            const sidebarToggle = document.getElementById('sidebar-toggle');
-            const overlay = document.getElementById('sidebar-overlay');
+    }
+    
+    // Fonction pour réinitialiser l'état de la sidebar
+    function resetSidebarState() {
+        const sidebar = document.getElementById('sidebar');
+        const mainContent = document.getElementById('main-content');
+        const sidebarToggle = document.getElementById('sidebar-toggle');
+        const overlay = document.getElementById('sidebar-overlay');
+        
+        if (!sidebar || !mainContent || !sidebarToggle) return;
+        
+        // Nettoyer toutes les classes et styles
+        sidebar.classList.remove('collapsed', 'open');
+        mainContent.classList.remove('expanded');
+        sidebarToggle.classList.remove('active');
+        if (overlay) overlay.classList.remove('active');
+        
+        // Réinitialiser les styles
+        sidebar.style.transform = '';
+        sidebarToggle.style.left = '';
+        
+        if (isMobile) {
+            // Mode mobile : sidebar en overlay
+            sidebarToggle.style.left = '1rem';
+            sidebarCollapsed = false;
+        } else {
+            // Mode desktop : sidebar normale
+            sidebarToggle.style.left = '300px';
+            sidebarCollapsed = false;
+        }
+    }
+    
+    // Fonction principale pour basculer la sidebar
+    function toggleSidebar() {
+        const sidebar = document.getElementById('sidebar');
+        const mainContent = document.getElementById('main-content');
+        const sidebarToggle = document.getElementById('sidebar-toggle');
+        const overlay = document.getElementById('sidebar-overlay');
+        
+        if (!sidebar || !mainContent || !sidebarToggle) {
+            console.error('Éléments de sidebar manquants');
+            return;
+        }
+        
+        if (isMobile) {
+            // Mode mobile - sidebar overlay
+            const isOpen = sidebar.classList.contains('open');
             
-            if (window.innerWidth <= 768 && 
-                !sidebar.contains(e.target) && 
-                !sidebarToggle.contains(e.target) && 
-                sidebar.classList.contains('open')) {
+            if (isOpen) {
+                // Fermer la sidebar
                 sidebar.classList.remove('open');
-                overlay.classList.remove('active');
                 sidebarToggle.classList.remove('active');
-            }
-        });
-
-        // Gestion du redimensionnement de la fenêtre
-        window.addEventListener('resize', function() {
-            const sidebar = document.getElementById('sidebar');
-            const mainContent = document.getElementById('main-content');
-            const overlay = document.getElementById('sidebar-overlay');
-            const sidebarToggle = document.getElementById('sidebar-toggle');
-            
-            if (window.innerWidth > 768) {
-                sidebar.classList.remove('open');
-                overlay.classList.remove('active');
-                
-                if (sidebarCollapsed) {
-                    sidebar.classList.add('collapsed');
-                    mainContent.classList.add('expanded');
-                } else {
-                    sidebar.classList.remove('collapsed');
-                    mainContent.classList.remove('expanded');
-                }
+                if (overlay) overlay.classList.remove('active');
             } else {
+                // Ouvrir la sidebar
+                sidebar.classList.add('open');
+                sidebarToggle.classList.add('active');
+                if (overlay) overlay.classList.add('active');
+            }
+        } else {
+            // Mode desktop - sidebar rétractable
+            if (sidebarCollapsed) {
+                // Étendre la sidebar
                 sidebar.classList.remove('collapsed');
                 mainContent.classList.remove('expanded');
-                sidebarCollapsed = false;
                 sidebarToggle.classList.remove('active');
+                sidebarToggle.style.left = '300px';
+                sidebarCollapsed = false;
+            } else {
+                // Rétracter la sidebar
+                sidebar.classList.add('collapsed');
+                mainContent.classList.add('expanded');
+                sidebarToggle.classList.add('active');
+                sidebarToggle.style.left = '100px';
+                sidebarCollapsed = true;
             }
-        });
-
-        // Script de gestion des mentions LinkedIn
-        function initMentionEditor(editorElement) {
-            // Code identique à l'original mais optimisé
-            const editor = editorElement;
-            let mentionDropdown = null;
-            let currentMentionSearch = "";
-            let mentionSearchActive = false;
-            let mentionStartPosition = 0;
-            let debounceTimeout = null;
+        }
+    }
+    
+    // Fermer la sidebar mobile en cliquant à l'extérieur
+    function closeMobileSidebar(e) {
+        if (!isMobile) return;
+        
+        const sidebar = document.getElementById('sidebar');
+        const sidebarToggle = document.getElementById('sidebar-toggle');
+        const overlay = document.getElementById('sidebar-overlay');
+        
+        if (!sidebar || !sidebarToggle) return;
+        
+        const isClickInSidebar = sidebar.contains(e.target);
+        const isClickOnToggle = sidebarToggle.contains(e.target);
+        const isSidebarOpen = sidebar.classList.contains('open');
+        
+        if (isSidebarOpen && !isClickInSidebar && !isClickOnToggle) {
+            sidebar.classList.remove('open');
+            sidebarToggle.classList.remove('active');
+            if (overlay) overlay.classList.remove('active');
+        }
+    }
+    
+    // Fermer la sidebar mobile sur clic overlay
+    function handleOverlayClick() {
+        if (!isMobile) return;
+        
+        const sidebar = document.getElementById('sidebar');
+        const sidebarToggle = document.getElementById('sidebar-toggle');
+        const overlay = document.getElementById('sidebar-overlay');
+        
+        if (sidebar && sidebarToggle) {
+            sidebar.classList.remove('open');
+            sidebarToggle.classList.remove('active');
+            if (overlay) overlay.classList.remove('active');
+        }
+    }
+    
+    // Gestion du redimensionnement de la fenêtre
+    function handleWindowResize() {
+        updateMobileState();
+    }
+    
+    // Fermer la sidebar mobile au clic sur un lien
+    function handleNavLinkClick() {
+        if (!isMobile) return;
+        
+        const sidebar = document.getElementById('sidebar');
+        const sidebarToggle = document.getElementById('sidebar-toggle');
+        const overlay = document.getElementById('sidebar-overlay');
+        
+        if (sidebar && sidebarToggle) {
+            sidebar.classList.remove('open');
+            sidebarToggle.classList.remove('active');
+            if (overlay) overlay.classList.remove('active');
+        }
+    }
+    
+    // Script de gestion des mentions LinkedIn
+    function initMentionEditor(editorElement) {
+        const editor = editorElement;
+        let mentionDropdown = null;
+        let currentMentionSearch = "";
+        let mentionSearchActive = false;
+        let mentionStartPosition = 0;
+        let debounceTimeout = null;
+        
+        // Créer le menu déroulant des mentions
+        function createMentionDropdown() {
+            mentionDropdown = document.createElement('div');
+            mentionDropdown.className = 'mention-dropdown';
+            mentionDropdown.style.display = 'none';
+            mentionDropdown.style.position = 'absolute';
+            mentionDropdown.style.zIndex = '1000';
+            document.body.appendChild(mentionDropdown);
+            return mentionDropdown;
+        }
+        
+        // Positionner le menu déroulant
+        function positionMentionDropdown(textarea) {
+            if (!mentionDropdown) return;
             
-            // Créer le menu déroulant des mentions
-            function createMentionDropdown() {
-                mentionDropdown = document.createElement('div');
-                mentionDropdown.className = 'mention-dropdown';
-                mentionDropdown.style.display = 'none';
-                mentionDropdown.style.position = 'absolute';
-                mentionDropdown.style.zIndex = '1000';
-                document.body.appendChild(mentionDropdown);
-                return mentionDropdown;
+            const rect = textarea.getBoundingClientRect();
+            const text = textarea.value;
+            const subtext = text.substring(0, textarea.selectionStart);
+            const lines = subtext.split('\n');
+            const lineHeight = parseInt(window.getComputedStyle(textarea).lineHeight) || 24;
+            const lineCount = lines.length;
+            
+            const top = rect.top + (lineCount * lineHeight) - textarea.scrollTop + 25;
+            const left = rect.left + 20;
+            
+            mentionDropdown.style.top = `${Math.min(top, window.innerHeight - 200)}px`;
+            mentionDropdown.style.left = `${Math.min(left, window.innerWidth - 370)}px`;
+        }
+        
+        // Rechercher des utilisateurs LinkedIn
+        function searchLinkedInUsers(query) {
+            fetch('/search_linkedin_users', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ query }),
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.results && data.results.length > 0) {
+                    displayMentionSuggestions(data.results);
+                } else {
+                    hideMentionDropdown();
+                }
+            })
+            .catch(error => {
+                console.error('Erreur de recherche:', error);
+                hideMentionDropdown();
+            });
+        }
+        
+        // Afficher les suggestions de mentions
+        function displayMentionSuggestions(users) {
+            if (!mentionDropdown) {
+                mentionDropdown = createMentionDropdown();
             }
             
-            // Positionner le menu déroulant
-            function positionMentionDropdown(textarea) {
-                if (!mentionDropdown) return;
-                
-                const rect = textarea.getBoundingClientRect();
-                const text = textarea.value;
-                const subtext = text.substring(0, textarea.selectionStart);
-                const lines = subtext.split('\n');
-                const lineHeight = parseInt(window.getComputedStyle(textarea).lineHeight) || 24;
-                const lineCount = lines.length;
-                
-                const top = rect.top + (lineCount * lineHeight) - textarea.scrollTop + 25;
-                const left = rect.left + 20;
-                
-                mentionDropdown.style.top = `${Math.min(top, window.innerHeight - 200)}px`;
-                mentionDropdown.style.left = `${Math.min(left, window.innerWidth - 370)}px`;
-            }
+            mentionDropdown.innerHTML = '';
             
-            // Rechercher des utilisateurs LinkedIn
-            function searchLinkedInUsers(query) {
-                fetch('/search_linkedin_users', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({ query }),
-                })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.results && data.results.length > 0) {
-                        displayMentionSuggestions(data.results);
-                    } else {
-                        hideMentionDropdown();
-                    }
-                })
-                .catch(error => {
-                    console.error('Erreur de recherche:', error);
+            users.forEach((user, index) => {
+                const suggestionItem = document.createElement('div');
+                suggestionItem.className = 'mention-suggestion';
+                
+                // Avatar ou placeholder
+                let avatarHtml;
+                if (user.image_url) {
+                    avatarHtml = `<img src="${user.image_url}" alt="${user.name}">`;
+                } else {
+                    const initial = user.name.charAt(0).toUpperCase();
+                    avatarHtml = `<div class="mention-avatar">${initial}</div>`;
+                }
+                
+                // Contenu de la suggestion
+                suggestionItem.innerHTML = `
+                    ${avatarHtml}
+                    <div style="flex: 1;">
+                        <div style="font-weight: 500; color: var(--noble-charcoal);">${user.name}</div>
+                        <div style="font-size: 0.8rem; color: var(--noble-charcoal-light);">${user.headline || 'Professionnel LinkedIn'}</div>
+                    </div>
+                    <div style="opacity: 0.6;">
+                        <i class="fab fa-linkedin" style="color: var(--noble-sage);"></i>
+                    </div>
+                `;
+                
+                // Gérer la sélection
+                suggestionItem.addEventListener('click', () => {
+                    insertMention(user);
                     hideMentionDropdown();
                 });
+                
+                mentionDropdown.appendChild(suggestionItem);
+            });
+            
+            mentionDropdown.style.display = 'block';
+            positionMentionDropdown(editor);
+        }
+        
+        // Cacher le menu déroulant des mentions
+        function hideMentionDropdown() {
+            if (mentionDropdown) {
+                mentionDropdown.style.display = 'none';
+            }
+            mentionSearchActive = false;
+        }
+        
+        // Insérer une mention dans l'éditeur
+        function insertMention(user) {
+            const cursorPos = editor.selectionStart;
+            const text = editor.value;
+            
+            const textBefore = text.substring(0, mentionStartPosition);
+            const textAfter = text.substring(cursorPos);
+            
+            const mention = `@[${user.name}](${user.profile_url}) `;
+            
+            editor.value = textBefore + mention + textAfter;
+            editor.selectionStart = editor.selectionEnd = textBefore.length + mention.length;
+            
+            editor.focus();
+            
+            // Déclencher l'événement de changement
+            const event = new Event('input', { bubbles: true });
+            editor.dispatchEvent(event);
+        }
+        
+        // Gestionnaires d'événements pour les mentions
+        editor.addEventListener('keyup', function(e) {
+            if (['ArrowUp', 'ArrowDown', 'Enter', 'Escape'].includes(e.key)) {
+                return;
             }
             
-            // Afficher les suggestions de mentions
-            function displayMentionSuggestions(users) {
-                if (!mentionDropdown) {
-                    mentionDropdown = createMentionDropdown();
-                }
+            const cursorPos = this.selectionStart;
+            const text = this.value;
+            
+            if (!mentionSearchActive) {
+                const lastAtPos = text.lastIndexOf('@', cursorPos - 1);
                 
-                mentionDropdown.innerHTML = '';
-                
-                users.forEach((user, index) => {
-                    const suggestionItem = document.createElement('div');
-                    suggestionItem.className = 'mention-suggestion';
-                    
-                    // Avatar ou placeholder
-                    let avatarHtml;
-                    if (user.image_url) {
-                        avatarHtml = `<img src="${user.image_url}" alt="${user.name}">`;
-                    } else {
-                        const initial = user.name.charAt(0).toUpperCase();
-                        avatarHtml = `<div class="mention-avatar">${initial}</div>`;
+                if (lastAtPos >= 0 && (lastAtPos === 0 || /\s/.test(text[lastAtPos - 1]))) {
+                    const textBetween = text.substring(lastAtPos + 1, cursorPos);
+                    if (!/\s/.test(textBetween)) {
+                        mentionStartPosition = lastAtPos;
+                        currentMentionSearch = textBetween;
+                        mentionSearchActive = true;
                     }
-                    
-                    // Contenu de la suggestion
-                    suggestionItem.innerHTML = `
-                        ${avatarHtml}
-                        <div style="flex: 1;">
-                            <div style="font-weight: 500; color: var(--noble-charcoal);">${user.name}</div>
-                            <div style="font-size: 0.8rem; color: var(--noble-charcoal-light);">${user.headline || 'Professionnel LinkedIn'}</div>
-                        </div>
-                        <div style="opacity: 0.6;">
-                            <i class="fab fa-linkedin" style="color: var(--noble-sage);"></i>
-                        </div>
-                    `;
-                    
-                    // Gérer la sélection
-                    suggestionItem.addEventListener('click', () => {
-                        insertMention(user);
-                        hideMentionDropdown();
-                    });
-                    
-                    mentionDropdown.appendChild(suggestionItem);
-                });
-                
-                mentionDropdown.style.display = 'block';
-                positionMentionDropdown(editor);
-            }
-            
-            // Cacher le menu déroulant des mentions
-            function hideMentionDropdown() {
-                if (mentionDropdown) {
-                    mentionDropdown.style.display = 'none';
                 }
-                mentionSearchActive = false;
-            }
-            
-            // Insérer une mention dans l'éditeur
-            function insertMention(user) {
-                const cursorPos = editor.selectionStart;
-                const text = editor.value;
-                
-                const textBefore = text.substring(0, mentionStartPosition);
-                const textAfter = text.substring(cursorPos);
-                
-                const mention = `@[${user.name}](${user.profile_url}) `;
-                
-                editor.value = textBefore + mention + textAfter;
-                editor.selectionStart = editor.selectionEnd = textBefore.length + mention.length;
-                
-                editor.focus();
-                
-                // Déclencher l'événement de changement
-                const event = new Event('input', { bubbles: true });
-                editor.dispatchEvent(event);
-            }
-            
-            // Gestionnaires d'événements pour les mentions
-            editor.addEventListener('keyup', function(e) {
-                if (['ArrowUp', 'ArrowDown', 'Enter', 'Escape'].includes(e.key)) {
-                    return;
-                }
-                
-                const cursorPos = this.selectionStart;
-                const text = this.value;
-                
-                if (!mentionSearchActive) {
-                    const lastAtPos = text.lastIndexOf('@', cursorPos - 1);
-                    
-                    if (lastAtPos >= 0 && (lastAtPos === 0 || /\s/.test(text[lastAtPos - 1]))) {
-                        const textBetween = text.substring(lastAtPos + 1, cursorPos);
-                        if (!/\s/.test(textBetween)) {
-                            mentionStartPosition = lastAtPos;
-                            currentMentionSearch = textBetween;
-                            mentionSearchActive = true;
-                        }
-                    }
+            } else {
+                if (cursorPos <= mentionStartPosition) {
+                    mentionSearchActive = false;
+                    hideMentionDropdown();
                 } else {
-                    if (cursorPos <= mentionStartPosition) {
+                    const textBetween = text.substring(mentionStartPosition + 1, cursorPos);
+                    if (/\s/.test(textBetween)) {
                         mentionSearchActive = false;
                         hideMentionDropdown();
                     } else {
-                        const textBetween = text.substring(mentionStartPosition + 1, cursorPos);
-                        if (/\s/.test(textBetween)) {
-                            mentionSearchActive = false;
-                            hideMentionDropdown();
-                        } else {
-                            currentMentionSearch = textBetween;
-                        }
+                        currentMentionSearch = textBetween;
                     }
                 }
-                
-                if (mentionSearchActive && currentMentionSearch.length >= 2) {
-                    clearTimeout(debounceTimeout);
-                    debounceTimeout = setTimeout(() => {
-                        searchLinkedInUsers(currentMentionSearch);
-                    }, 300);
-                } else if (mentionSearchActive && currentMentionSearch.length < 2) {
-                    hideMentionDropdown();
-                }
-            });
+            }
             
-            // Gestion des touches de navigation
-            editor.addEventListener('keydown', function(e) {
-                if (!mentionSearchActive || !mentionDropdown || mentionDropdown.style.display === 'none') {
+            if (mentionSearchActive && currentMentionSearch.length >= 2) {
+                clearTimeout(debounceTimeout);
+                debounceTimeout = setTimeout(() => {
+                    searchLinkedInUsers(currentMentionSearch);
+                }, 300);
+            } else if (mentionSearchActive && currentMentionSearch.length < 2) {
+                hideMentionDropdown();
+            }
+        });
+        
+        // Gestion des touches de navigation
+        editor.addEventListener('keydown', function(e) {
+            if (!mentionSearchActive || !mentionDropdown || mentionDropdown.style.display === 'none') {
+                return;
+            }
+            
+            const items = mentionDropdown.querySelectorAll('.mention-suggestion');
+            const activeItem = mentionDropdown.querySelector('.mention-suggestion.active');
+            let activeIndex = Array.from(items).indexOf(activeItem);
+            
+            switch (e.key) {
+                case 'ArrowDown':
+                    e.preventDefault();
+                    activeIndex = activeIndex < 0 || activeIndex >= items.length - 1 ? 0 : activeIndex + 1;
+                    break;
+                    
+                case 'ArrowUp':
+                    e.preventDefault();
+                    activeIndex = activeIndex <= 0 ? items.length - 1 : activeIndex - 1;
+                    break;
+                    
+                case 'Enter':
+                    e.preventDefault();
+                    if (activeItem) {
+                        activeItem.click();
+                    } else if (items.length > 0) {
+                        items[0].click();
+                    }
                     return;
-                }
-                
-                const items = mentionDropdown.querySelectorAll('.mention-suggestion');
-                const activeItem = mentionDropdown.querySelector('.mention-suggestion.active');
-                let activeIndex = Array.from(items).indexOf(activeItem);
-                
-                switch (e.key) {
-                    case 'ArrowDown':
-                        e.preventDefault();
-                        activeIndex = activeIndex < 0 || activeIndex >= items.length - 1 ? 0 : activeIndex + 1;
-                        break;
-                        
-                    case 'ArrowUp':
-                        e.preventDefault();
-                        activeIndex = activeIndex <= 0 ? items.length - 1 : activeIndex - 1;
-                        break;
-                        
-                    case 'Enter':
-                        e.preventDefault();
-                        if (activeItem) {
-                            activeItem.click();
-                        } else if (items.length > 0) {
-                            items[0].click();
-                        }
-                        return;
-                        
-                    case 'Escape':
-                        e.preventDefault();
-                        hideMentionDropdown();
-                        return;
-                        
-                    default:
-                        return;
-                }
-                
-                items.forEach(item => item.classList.remove('active'));
-                if (items[activeIndex]) {
-                    items[activeIndex].classList.add('active');
-                    items[activeIndex].scrollIntoView({ block: 'nearest' });
-                }
-            });
-            
-            // Fermer le dropdown en cliquant ailleurs
-            document.addEventListener('click', function(e) {
-                if (mentionDropdown && !mentionDropdown.contains(e.target) && e.target !== editor) {
+                    
+                case 'Escape':
+                    e.preventDefault();
                     hideMentionDropdown();
-                }
-            });
+                    return;
+                    
+                default:
+                    return;
+            }
             
-            return {
-                cleanup: function() {
-                    if (mentionDropdown && mentionDropdown.parentNode) {
-                        mentionDropdown.parentNode.removeChild(mentionDropdown);
-                    }
+            items.forEach(item => item.classList.remove('active'));
+            if (items[activeIndex]) {
+                items[activeIndex].classList.add('active');
+                items[activeIndex].scrollIntoView({ block: 'nearest' });
+            }
+        });
+        
+        // Fermer le dropdown en cliquant ailleurs
+        document.addEventListener('click', function(e) {
+            if (mentionDropdown && !mentionDropdown.contains(e.target) && e.target !== editor) {
+                hideMentionDropdown();
+            }
+        });
+        
+        return {
+            cleanup: function() {
+                if (mentionDropdown && mentionDropdown.parentNode) {
+                    mentionDropdown.parentNode.removeChild(mentionDropdown);
                 }
-            };
+            }
+        };
+    }
+    
+    // Initialisation au chargement du DOM
+    document.addEventListener('DOMContentLoaded', function() {
+        // Initialiser l'état de la sidebar
+        updateMobileState();
+        resetSidebarState();
+        
+        // Écouteurs d'événements pour la sidebar
+        window.addEventListener('resize', handleWindowResize);
+        document.addEventListener('click', closeMobileSidebar);
+        
+        // Gestionnaire pour l'overlay
+        const overlay = document.getElementById('sidebar-overlay');
+        if (overlay) {
+            overlay.addEventListener('click', handleOverlayClick);
         }
-
-        // Initialiser les éditeurs de mentions au chargement
-        document.addEventListener('DOMContentLoaded', function() {
-            const editors = document.querySelectorAll('.mention-editor');
-            editors.forEach(editor => {
-                const mentionEditor = initMentionEditor(editor);
-                editor.mentionEditor = mentionEditor;
-            });
-            
-            // Convertir les mentions pour l'affichage
-            function renderMentions(container) {
-                const mentionRegex = /@\[(.*?)\]\((.*?)\)/g;
-                const elements = container.querySelectorAll('.convert-mentions');
-                
-                elements.forEach(element => {
-                    const html = element.innerHTML.replace(mentionRegex, '<a href="$2" class="mention" target="_blank">@$1</a>');
-                    element.innerHTML = html;
-                });
-            }
-            
-            renderMentions(document);
-            
-            // Améliorer les interactions de la sidebar
-            const navLinks = document.querySelectorAll('.nav-link');
-            navLinks.forEach(link => {
-                link.addEventListener('mouseenter', function() {
-                    const icon = this.querySelector('.nav-icon');
-                    if (icon) {
-                        icon.style.transform = 'scale(1.1)';
-                    }
-                });
-                
-                link.addEventListener('mouseleave', function() {
-                    const icon = this.querySelector('.nav-icon');
-                    if (icon) {
-                        icon.style.transform = 'scale(1)';
-                    }
-                });
-                
-                // Fermer la sidebar mobile au clic sur un lien
-                link.addEventListener('click', function() {
-                    if (window.innerWidth <= 768) {
-                        const sidebar = document.getElementById('sidebar');
-                        const overlay = document.getElementById('sidebar-overlay');
-                        const sidebarToggle = document.getElementById('sidebar-toggle');
-                        
-                        sidebar.classList.remove('open');
-                        overlay.classList.remove('active');
-                        sidebarToggle.classList.remove('active');
-                    }
-                });
-            });
-            
-            // Animation du logo
-            const logoIcon = document.querySelector('.logo-icon');
-            if (logoIcon) {
-                logoIcon.addEventListener('click', function() {
-                    this.style.transform = 'scale(0.95) rotate(5deg)';
-                    setTimeout(() => {
-                        this.style.transform = 'scale(1) rotate(0deg)';
-                    }, 200);
-                });
-            }
+        
+        // Initialiser les éditeurs de mentions
+        const editors = document.querySelectorAll('.mention-editor');
+        editors.forEach(editor => {
+            const mentionEditor = initMentionEditor(editor);
+            editor.mentionEditor = mentionEditor;
         });
-
-        // Raccourcis clavier globaux
-        document.addEventListener('keydown', function(e) {
-            // Ctrl/Cmd + B pour toggle sidebar
-            if ((e.ctrlKey || e.metaKey) && e.key === 'b') {
-                e.preventDefault();
-                toggleSidebar();
-            }
+        
+        // Convertir les mentions pour l'affichage
+        function renderMentions(container) {
+            const mentionRegex = /@\[(.*?)\]\((.*?)\)/g;
+            const elements = container.querySelectorAll('.convert-mentions');
             
-            // Escape pour fermer la sidebar mobile
-            if (e.key === 'Escape' && window.innerWidth <= 768) {
-                const sidebar = document.getElementById('sidebar');
-                const overlay = document.getElementById('sidebar-overlay');
-                const sidebarToggle = document.getElementById('sidebar-toggle');
-                
-                if (sidebar.classList.contains('open')) {
-                    sidebar.classList.remove('open');
-                    overlay.classList.remove('active');
-                    sidebarToggle.classList.remove('active');
+            elements.forEach(element => {
+                const html = element.innerHTML.replace(mentionRegex, '<a href="$2" class="mention" target="_blank">@$1</a>');
+                element.innerHTML = html;
+            });
+        }
+        
+        renderMentions(document);
+        
+        // Interactions nobles sur les liens de navigation
+        const navLinks = document.querySelectorAll('.nav-link');
+        navLinks.forEach(link => {
+            link.addEventListener('mouseenter', function() {
+                const icon = this.querySelector('.nav-icon');
+                if (icon) {
+                    icon.style.transform = 'scale(1.1)';
                 }
-            }
-        });
-
-        // Animation de chargement de la page plus douce
-        window.addEventListener('load', function() {
-            document.body.style.opacity = '0';
-            document.body.style.transition = 'opacity 0.5s ease';
+            });
             
-            setTimeout(() => {
-                document.body.style.opacity = '1';
-            }, 100);
+            link.addEventListener('mouseleave', function() {
+                const icon = this.querySelector('.nav-icon');
+                if (icon) {
+                    icon.style.transform = 'scale(1)';
+                }
+            });
+            
+            // Fermer la sidebar mobile au clic sur un lien
+            link.addEventListener('click', handleNavLinkClick);
         });
+        
+        // Animation du logo
+        const logoIcon = document.querySelector('.logo-icon');
+        if (logoIcon) {
+            logoIcon.addEventListener('click', function() {
+                this.style.transform = 'scale(0.95) rotate(5deg)';
+                setTimeout(() => {
+                    this.style.transform = 'scale(1) rotate(0deg)';
+                }, 200);
+            });
+        }
+    });
+    
+    // Raccourcis clavier globaux
+    document.addEventListener('keydown', function(e) {
+        // Ctrl/Cmd + B pour toggle sidebar
+        if ((e.ctrlKey || e.metaKey) && e.key === 'b') {
+            e.preventDefault();
+            toggleSidebar();
+        }
+        
+        // Escape pour fermer la sidebar mobile
+        if (e.key === 'Escape' && isMobile) {
+            const sidebar = document.getElementById('sidebar');
+            const sidebarToggle = document.getElementById('sidebar-toggle');
+            const overlay = document.getElementById('sidebar-overlay');
+            
+            if (sidebar && sidebar.classList.contains('open')) {
+                sidebar.classList.remove('open');
+                if (sidebarToggle) sidebarToggle.classList.remove('active');
+                if (overlay) overlay.classList.remove('active');
+            }
+        }
+    });
+    
+    // Animation de chargement de la page
+    window.addEventListener('load', function() {
+        document.body.style.opacity = '0';
+        document.body.style.transition = 'opacity 0.5s ease';
+        
+        setTimeout(() => {
+            document.body.style.opacity = '1';
+        }, 100);
+    });
     </script>
 </body>
 </html>
