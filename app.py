@@ -289,6 +289,188 @@ import re
 import re
 import html
 
+def search_pexels_photos(query, per_page=12, page=1):
+    """
+    Recherche de photos sur Pexels
+    
+    Args:
+        query (str): Terme de recherche
+        per_page (int): Nombre de photos par page (max 80)
+        page (int): Numéro de page
+        
+    Returns:
+        dict: Résultats de l'API Pexels ou None en cas d'erreur
+    """
+    if not PEXELS_API_KEY or PEXELS_API_KEY == "VOTRE_CLE_API_PEXELS":
+        logger.warning("Clé API Pexels non configurée")
+        return None
+    
+    headers = {
+        "Authorization": PEXELS_API_KEY
+    }
+    
+    params = {
+        "query": query,
+        "per_page": min(per_page, 80),  # Limite de l'API
+        "page": page,
+        "orientation": "landscape"  # Mieux pour LinkedIn
+    }
+    
+    try:
+        response = requests.get(f"{PEXELS_API_URL}/search", headers=headers, params=params, timeout=10)
+        
+        if response.status_code == 200:
+            data = response.json()
+            
+            # Formater les résultats pour notre usage
+            formatted_photos = []
+            for photo in data.get('photos', []):
+                formatted_photos.append({
+                    'id': photo['id'],
+                    'photographer': photo['photographer'],
+                    'photographer_url': photo['photographer_url'],
+                    'src': {
+                        'small': photo['src']['small'],
+                        'medium': photo['src']['medium'],
+                        'large': photo['src']['large'],
+                        'original': photo['src']['original']
+                    },
+                    'alt': photo['alt'],
+                    'url': photo['url']
+                })
+            
+            return {
+                'photos': formatted_photos,
+                'total_results': data.get('total_results', 0),
+                'page': data.get('page', 1),
+                'per_page': data.get('per_page', 12),
+                'next_page': data.get('next_page', None)
+            }
+        else:
+            logger.error(f"Erreur API Pexels: {response.status_code} - {response.text}")
+            return None
+            
+    except Exception as e:
+        logger.error(f"Exception lors de la recherche Pexels: {str(e)}")
+        return None
+
+def upload_image_to_linkedin(image_content, access_token, urn, content_type='image/jpeg'):
+    """
+    Upload une image sur LinkedIn et retourne l'asset URN
+    
+    Args:
+        image_content (bytes): Contenu de l'image
+        access_token (str): Token d'accès LinkedIn
+        urn (str): URN de l'utilisateur
+        content_type (str): Type MIME de l'image
+        
+    Returns:
+        str: Asset URN ou None en cas d'erreur
+    """
+    headers = {
+        "Authorization": f"Bearer {access_token}",
+        "Content-Type": "application/json",
+        "X-Restli-Protocol-Version": "2.0.0"
+    }
+    
+    try:
+        # 1. Enregistrer le média sur LinkedIn
+        register_payload = {
+            "registerUploadRequest": {
+                "owner": urn,
+                "recipes": ["urn:li:digitalmediaRecipe:feedshare-image"],
+                "serviceRelationships": [
+                    {"relationshipType": "OWNER", "identifier": "urn:li:userGeneratedContent"}
+                ]
+            }
+        }
+
+        reg_resp = requests.post(LINKEDIN_ASSET_REGISTRATION_URL, headers=headers, json=register_payload)
+        if reg_resp.status_code != 200:
+            logger.error(f"Erreur registre upload: {reg_resp.text}")
+            return None
+
+        upload_info = reg_resp.json().get("value", {})
+        upload_url = upload_info.get("uploadMechanism", {}).get("com.linkedin.digitalmedia.uploading.MediaUploadHttpRequest", {}).get("uploadUrl")
+        asset = upload_info.get("asset")
+
+        if not upload_url or not asset:
+            logger.error("Upload URL ou asset manquant")
+            return None
+
+        # 2. Uploader l'image
+        upload_headers = {
+            "Authorization": f"Bearer {access_token}",
+            "Content-Type": content_type
+        }
+
+        put_resp = requests.put(upload_url, data=image_content, headers=upload_headers)
+
+        if put_resp.status_code not in [200, 201]:
+            logger.error(f"Erreur upload image: {put_resp.text}")
+            return None
+
+        return asset
+        
+    except Exception as e:
+        logger.error(f"Exception upload image LinkedIn: {str(e)}")
+        return None
+
+def download_pexels_photo(photo_url, size='medium'):
+    """
+    Télécharge une photo depuis Pexels et la retourne en bytes
+    
+    Args:
+        photo_url (str): URL de la photo
+        size (str): Taille de l'image ('small', 'medium', 'large')
+        
+    Returns:
+        bytes: Contenu de l'image ou None en cas d'erreur
+    """
+    try:
+        response = requests.get(photo_url, timeout=30)
+        if response.status_code == 200:
+            return response.content
+        else:
+            logger.error(f"Erreur téléchargement photo: {response.status_code}")
+            return None
+    except Exception as e:
+        logger.error(f"Exception téléchargement photo: {str(e)}")
+        return None
+
+@app.route("/api/search_photos", methods=["POST"])
+def search_photos():
+    """
+    API endpoint pour rechercher des photos Pexels
+    """
+    if 'profile' not in session:
+        return jsonify({"error": "Non authentifié"}), 401
+    
+    try:
+        data = request.get_json()
+        query = data.get('query', '').strip()
+        page = data.get('page', 1)
+        
+        if not query:
+            return jsonify({"error": "Terme de recherche requis"}), 400
+        
+        if len(query) < 2:
+            return jsonify({"error": "Terme de recherche trop court (minimum 2 caractères)"}), 400
+        
+        # Rechercher sur Pexels
+        results = search_pexels_photos(query, per_page=12, page=page)
+        
+        if results is None:
+            return jsonify({"error": "Service de photos temporairement indisponible"}), 503
+        
+        return jsonify({
+            "success": True,
+            "results": results
+        })
+        
+    except Exception as e:
+        logger.error(f"Erreur recherche photos: {str(e)}")
+        return jsonify({"error": "Erreur interne du serveur"}), 500
 
 # Si vous avez besoin d'une route personnalisée pour les fichiers statiques, 
 # vous pouvez ajouter ceci (mais normalement ce n'est pas nécessaire):
@@ -1627,6 +1809,7 @@ def process_mentions_for_linkedin(content):
 
 # Ajout à app.py pour gérer les images multiples
 
+# Modifier la route publish existante pour gérer les photos Pexels
 @app.route("/publish", methods=["POST"])
 def publish():
     access_token = session.get("access_token")
@@ -1671,68 +1854,63 @@ def publish():
     # Traiter les mentions pour LinkedIn
     processed_content, mention_entities = process_mentions_for_linkedin(content)
 
-    # ✅ NOUVELLE GESTION D'IMAGES MULTIPLES
+    # ✅ GESTION D'IMAGES : LOCALES + PEXELS
     media_assets = []
-    uploaded_files = request.files.getlist("images[]")  # getlist pour multiple files
     
-    # Limiter à 9 images maximum (limite LinkedIn)
+    # 1. Gestion des images locales (comme avant)
+    uploaded_files = request.files.getlist("images[]")
     max_images = min(len(uploaded_files), 9)
     
     for i in range(max_images):
         file = uploaded_files[i]
         if file and file.filename:
             try:
-                # 1. Enregistrer le média sur LinkedIn
-                register_payload = {
-                    "registerUploadRequest": {
-                        "owner": urn,
-                        "recipes": ["urn:li:digitalmediaRecipe:feedshare-image"],
-                        "serviceRelationships": [
-                            {"relationshipType": "OWNER", "identifier": "urn:li:userGeneratedContent"}
-                        ]
-                    }
-                }
-
-                reg_resp = requests.post(LINKEDIN_ASSET_REGISTRATION_URL, headers=headers, json=register_payload)
-                if reg_resp.status_code != 200:
-                    logger.error(f"Erreur registre upload image {i+1}: {reg_resp.text}")
-                    continue
-
-                upload_info = reg_resp.json().get("value", {})
-                upload_url = upload_info.get("uploadMechanism", {}).get("com.linkedin.digitalmedia.uploading.MediaUploadHttpRequest", {}).get("uploadUrl")
-                asset = upload_info.get("asset")
-
-                if not upload_url or not asset:
-                    logger.error(f"Upload URL ou asset manquant pour image {i+1}")
-                    continue
-
-                # 2. Uploader l'image
-                upload_headers = {
-                    "Authorization": f"Bearer {access_token}",
-                    "Content-Type": file.content_type or "image/png"
-                }
-
-                file_bytes = file.read()
-                put_resp = requests.put(upload_url, data=file_bytes, headers=upload_headers)
-
-                if put_resp.status_code not in [200, 201]:
-                    logger.error(f"Erreur upload image {i+1}: {put_resp.text}")
-                    continue
-
-                # 3. Ajouter à la liste des médias
-                media_assets.append({
-                    "status": "READY",
-                    "media": asset,
-                    "description": {
-                        "text": f"Image {i+1}"
-                    }
-                })
-                
-                logger.info(f"Image {i+1} uploadée avec succès: {asset}")
-                
+                # Upload image locale sur LinkedIn
+                asset = upload_image_to_linkedin(file.read(), access_token, urn, file.content_type)
+                if asset:
+                    media_assets.append({
+                        "status": "READY",
+                        "media": asset,
+                        "description": {
+                            "text": f"Image {i+1}"
+                        }
+                    })
+                    logger.info(f"Image locale {i+1} uploadée avec succès: {asset}")
+                    
             except Exception as e:
-                logger.error(f"Exception lors de l'upload de l'image {i+1}: {str(e)}")
+                logger.error(f"Exception lors de l'upload de l'image locale {i+1}: {str(e)}")
                 continue
+
+    # 2. Gestion des images Pexels
+    pexels_photos = request.form.getlist("pexels_photos[]")
+    for i, photo_data in enumerate(pexels_photos):
+        if len(media_assets) >= 9:  # Limite LinkedIn
+            break
+            
+        try:
+            photo_info = json.loads(photo_data)
+            photo_url = photo_info.get('src', {}).get('large', '')
+            
+            if photo_url:
+                # Télécharger la photo depuis Pexels
+                image_content = download_pexels_photo(photo_url)
+                
+                if image_content:
+                    # Upload sur LinkedIn
+                    asset = upload_image_to_linkedin(image_content, access_token, urn, 'image/jpeg')
+                    if asset:
+                        media_assets.append({
+                            "status": "READY",
+                            "media": asset,
+                            "description": {
+                                "text": f"Photo by {photo_info.get('photographer', 'Pexels')}"
+                            }
+                        })
+                        logger.info(f"Photo Pexels {i+1} uploadée avec succès: {asset}")
+                        
+        except Exception as e:
+            logger.error(f"Exception lors de l'upload de la photo Pexels {i+1}: {str(e)}")
+            continue
 
     # Déterminer le type de média
     if len(media_assets) == 0:
@@ -1742,10 +1920,10 @@ def publish():
         share_media_category = "IMAGE"
         media_content = media_assets
     else:
-        share_media_category = "IMAGE"  # LinkedIn supporte les images multiples
+        share_media_category = "IMAGE"
         media_content = media_assets
 
-    # Construire le payload de post avec les mentions si présentes
+    # Construire le payload de post
     post_data = {
         "author": urn,
         "lifecycleState": "PUBLISHED",
@@ -1779,7 +1957,7 @@ def publish():
     else:
         logger.error(f"Erreur publication: {post_resp.text}")
         return f"<h2>❌ Erreur lors de la publication :</h2><pre>{post_resp.text}</pre><p><a href='/dashboard'>Retour</a></p>"
-
+        
 @app.route("/edit_post/<int:post_id>", methods=["GET", "POST"])
 def edit_post(post_id):
     if 'profile' not in session:
