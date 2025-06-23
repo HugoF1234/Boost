@@ -94,6 +94,7 @@
             border-right: 1px solid rgba(139, 154, 124, 0.1);
         }
 
+        /* État collapsed de la sidebar */
         .sidebar.collapsed {
             width: 80px;
         }
@@ -129,7 +130,8 @@
             box-shadow: var(--shadow-gentle);
         }
 
-        body:has(.sidebar.collapsed) .sidebar-toggle {
+        /* Position du toggle quand la sidebar est collapsed */
+        .sidebar-toggle.collapsed {
             left: 100px;
         }
 
@@ -440,6 +442,10 @@
                 transform: scale(1.05);
                 background: var(--noble-sage-dark);
             }
+
+            .sidebar-toggle.collapsed {
+                left: 1rem !important;
+            }
         }
 
         /* Tablette responsive */
@@ -466,7 +472,7 @@
                 left: 260px;
             }
 
-            body:has(.sidebar.collapsed) .sidebar-toggle {
+            .sidebar-toggle.collapsed {
                 left: 90px;
             }
         }
@@ -755,10 +761,11 @@
         </main>
     </div>
 
-    <!-- Scripts identiques mais optimisés -->
+    <!-- Scripts corrigés -->
     <script>
         // Variable pour l'état de la sidebar
         let sidebarCollapsed = false;
+        let lastWindowWidth = window.innerWidth;
 
         // Fonction pour basculer la sidebar
         function toggleSidebar() {
@@ -766,39 +773,44 @@
             const mainContent = document.getElementById('main-content');
             const sidebarToggle = document.getElementById('sidebar-toggle');
             const overlay = document.getElementById('sidebar-overlay');
-            
+
             if (window.innerWidth <= 768) {
                 // Mode mobile - sidebar overlay
-                sidebar.classList.toggle('open');
-                overlay.classList.toggle('active');
-                sidebarToggle.classList.toggle('active');
+                const isOpen = sidebar.classList.contains('open');
+                if (isOpen) {
+                    sidebar.classList.remove('open');
+                    overlay.classList.remove('active');
+                    sidebarToggle.classList.remove('active');
+                } else {
+                    sidebar.classList.add('open');
+                    overlay.classList.add('active');
+                    sidebarToggle.classList.add('active');
+                }
             } else {
                 // Mode desktop - sidebar rétractable
                 sidebarCollapsed = !sidebarCollapsed;
-                
                 if (sidebarCollapsed) {
                     sidebar.classList.add('collapsed');
                     mainContent.classList.add('expanded');
+                    sidebarToggle.classList.add('collapsed');
                     sidebarToggle.classList.add('active');
-                    sidebarToggle.style.left = '100px';
                 } else {
                     sidebar.classList.remove('collapsed');
                     mainContent.classList.remove('expanded');
+                    sidebarToggle.classList.remove('collapsed');
                     sidebarToggle.classList.remove('active');
-                    sidebarToggle.style.left = '300px';
                 }
             }
         }
 
-        // Fermer la sidebar mobile en cliquant à l'extérieur
+        // Fermer la sidebar mobile en cliquant à l'extérieur ou sur overlay
         document.addEventListener('click', function(e) {
             const sidebar = document.getElementById('sidebar');
             const sidebarToggle = document.getElementById('sidebar-toggle');
             const overlay = document.getElementById('sidebar-overlay');
-            
-            if (window.innerWidth <= 768 && 
-                !sidebar.contains(e.target) && 
-                !sidebarToggle.contains(e.target) && 
+            if (window.innerWidth <= 768 &&
+                !sidebar.contains(e.target) &&
+                !sidebarToggle.contains(e.target) &&
                 sidebar.classList.contains('open')) {
                 sidebar.classList.remove('open');
                 overlay.classList.remove('active');
@@ -812,29 +824,38 @@
             const mainContent = document.getElementById('main-content');
             const overlay = document.getElementById('sidebar-overlay');
             const sidebarToggle = document.getElementById('sidebar-toggle');
-            
-            if (window.innerWidth > 768) {
-                sidebar.classList.remove('open');
+            const isMobile = window.innerWidth <= 768;
+            const wasMobile = lastWindowWidth <= 768;
+            lastWindowWidth = window.innerWidth;
+
+            if (!isMobile) {
+                // Mode desktop
                 overlay.classList.remove('active');
-                
+                sidebar.classList.remove('open');
+                sidebarToggle.classList.remove('active');
                 if (sidebarCollapsed) {
                     sidebar.classList.add('collapsed');
                     mainContent.classList.add('expanded');
+                    sidebarToggle.classList.add('collapsed');
                 } else {
                     sidebar.classList.remove('collapsed');
                     mainContent.classList.remove('expanded');
+                    sidebarToggle.classList.remove('collapsed');
                 }
             } else {
+                // Mode mobile
                 sidebar.classList.remove('collapsed');
                 mainContent.classList.remove('expanded');
-                sidebarCollapsed = false;
-                sidebarToggle.classList.remove('active');
+                sidebarToggle.classList.remove('collapsed');
+                // Réinitialiser l'état desktop si on vient de desktop
+                if (!wasMobile) {
+                    sidebarCollapsed = false;
+                }
             }
         });
 
         // Script de gestion des mentions LinkedIn
         function initMentionEditor(editorElement) {
-            // Code identique à l'original mais optimisé
             const editor = editorElement;
             let mentionDropdown = null;
             let currentMentionSearch = "";
