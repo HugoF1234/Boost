@@ -1,9 +1,7 @@
 {% extends "base.html" %}
 {% block content %}
 <style>
-    /* ===== Direction Artistique du Dashboard - Recopiée pour Cohérence ===== */
-
-    /* Variables nobles et apaisantes */
+    /* Variables nobles identiques au dashboard */
     :root {
         --noble-cream: #faf9f7;
         --noble-warm: #f5f2ed;
@@ -38,244 +36,978 @@
         font-size: 1.125rem;
     }
 
-    /* Section principale */
-    .creation-section, .generated-content {
-        background: white;
+    /* Header noble */
+    .edit-header {
+        background: linear-gradient(135deg, var(--noble-warm) 0%, var(--noble-mist) 100%);
         border-radius: 20px;
         padding: 2.5rem;
         margin-bottom: 2rem;
         border: 1px solid var(--noble-stone);
         box-shadow: var(--shadow-whisper);
+        position: relative;
+        overflow: hidden;
     }
 
-    .section-header {
-        margin-bottom: 2rem;
+    .edit-header::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        right: 0;
+        width: 120px;
+        height: 120px;
+        background: radial-gradient(circle, rgba(139, 154, 124, 0.06) 0%, transparent 70%);
+        border-radius: 50%;
+        transform: translate(30%, -30%);
     }
 
-    .section-title {
-        font-size: 1.4rem;
+    .edit-header-content {
+        position: relative;
+        z-index: 1;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 1.5rem;
+    }
+
+    .edit-title {
+        font-size: 1.75rem;
         font-weight: 600;
         color: var(--noble-charcoal);
-        margin-bottom: 0.5rem;
+        margin: 0;
         display: flex;
         align-items: center;
         gap: 0.75rem;
     }
 
-    .section-subtitle {
+    .edit-subtitle {
         color: var(--noble-charcoal-light);
-        font-size: 0.95rem;
-        line-height: 1.6;
+        font-size: 1rem;
+        margin-top: 0.5rem;
     }
 
-    /* Aperçu LinkedIn */
+    /* Layout principal responsive */
+    .edit-container {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 2rem;
+    }
+
+    @media (min-width: 1200px) {
+        .edit-container {
+            grid-template-columns: 1fr 400px;
+            align-items: start;
+        }
+    }
+
+    /* Section principale */
+    .edit-section {
+        background: white;
+        border-radius: 20px;
+        padding: 2.5rem;
+        border: 1px solid var(--noble-stone);
+        box-shadow: var(--shadow-whisper);
+        order: 2;
+    }
+
+    @media (min-width: 1200px) {
+        .edit-section {
+            order: 1;
+        }
+    }
+
+    /* Section aperçu */
+    .preview-section {
+        background: white;
+        border-radius: 20px;
+        padding: 2rem;
+        border: 1px solid var(--noble-stone);
+        box-shadow: var(--shadow-whisper);
+        position: sticky;
+        top: 2rem;
+        order: 1;
+    }
+
+    @media (min-width: 1200px) {
+        .preview-section {
+            order: 2;
+        }
+    }
+
+    .preview-title {
+        font-size: 1.2rem;
+        font-weight: 600;
+        color: var(--noble-charcoal);
+        margin-bottom: 1.5rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    /* Aperçu LinkedIn responsive */
     .linkedin-post {
         background: white;
         border: 1px solid #ddd;
         border-radius: 16px;
         padding: 1.5rem;
-        max-width: 600px;
-        margin: 0 auto 2rem auto;
         font-family: 'Segoe UI', Tahoma, sans-serif;
         box-shadow: var(--shadow-gentle);
+        transition: all 0.3s ease;
+        max-width: 100%;
+        overflow: hidden;
     }
-    .linkedin-header { display: flex; align-items: center; gap: 1rem; margin-bottom: 1rem; }
-    .linkedin-avatar { width: 52px; height: 52px; border-radius: 50%; object-fit: cover; }
-    .linkedin-avatar-placeholder { width: 52px; height: 52px; border-radius: 50%; background: linear-gradient(135deg, var(--noble-sage) 0%, var(--noble-accent) 100%); display: flex; align-items: center; justify-content: center; color: white; font-size: 1.2rem; font-weight: 600; }
-    .linkedin-name { font-weight: 600; font-size: 1rem; color: #0a66c2; }
-    .linkedin-subline { font-size: 0.875rem; color: #555; }
-    .linkedin-date { font-size: 0.75rem; color: #888; }
-    .linkedin-text { font-size: 1rem; color: #222; line-height: 1.5; margin-bottom: 1rem; white-space: pre-wrap; word-wrap: break-word; min-height: 60px; }
-    .linkedin-actions { display: flex; justify-content: space-around; font-size: 0.875rem; color: #666; border-top: 1px solid #eee; padding-top: 0.75rem; }
-    .linkedin-action { display: flex; align-items: center; gap: 0.5rem; }
 
-    /* Formulaires */
-    .form-group { display: flex; flex-direction: column; margin-bottom: 1.5rem; }
-    .form-label { font-size: 0.9rem; font-weight: 500; color: var(--noble-charcoal); margin-bottom: 0.75rem; }
-    .form-control { width: 100%; padding: 0.875rem 1.125rem; border: 1.5px solid var(--noble-stone); border-radius: 12px; font-size: 0.95rem; background: var(--noble-cream); color: var(--noble-charcoal); transition: all 0.3s ease; }
-    .form-control:focus { outline: none; border-color: var(--noble-sage); box-shadow: 0 0 0 3px rgba(139, 154, 124, 0.1); background: white; }
-    .textarea-control { min-height: 120px; resize: vertical; line-height: 1.6; }
+    .linkedin-post:hover {
+        transform: translateY(-2px);
+        box-shadow: var(--shadow-soft);
+    }
 
-    /* Section Médias */
-    .media-section { margin-top: 2rem; padding-top: 2rem; border-top: 1px solid var(--noble-stone); }
-    .media-tabs { display: flex; gap: 1rem; margin-bottom: 2rem; border-bottom: 1px solid var(--noble-stone); }
-    .media-tab { padding: 0.75rem 1.5rem; background: transparent; border: none; border-bottom: 2px solid transparent; cursor: pointer; font-weight: 500; color: var(--noble-charcoal-light); transition: all 0.3s ease; font-size: 0.9rem; display: flex; align-items: center; gap: 0.5rem; }
-    .media-tab.active { color: var(--noble-sage); border-bottom-color: var(--noble-sage); }
-    .local-images-section, .pexels-images-section { display: none; }
-    .local-images-section.active, .pexels-images-section.active { display: block; }
-    .file-upload-area { border: 2px dashed var(--noble-stone); border-radius: 12px; padding: 2rem; text-align: center; background: var(--noble-mist); transition: all 0.3s ease; cursor: pointer; }
-    .upload-icon { font-size: 2.5rem; color: var(--noble-sage); margin-bottom: 1rem; }
-    .upload-text { color: var(--noble-charcoal); font-weight: 500; margin-bottom: 0.5rem; }
-    .upload-hint { color: var(--noble-charcoal-light); font-size: 0.9rem; }
-    .pexels-search { display: flex; gap: 1rem; margin-bottom: 2rem; }
-    .pexels-search input { flex: 1; }
-    .pexels-results { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 1rem; }
-    .selected-images-preview { margin-top: 2rem; padding-top: 2rem; border-top: 1px solid var(--noble-stone); }
-    .selected-images-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); gap: 1rem; margin-top: 1rem; }
+    .linkedin-header {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        margin-bottom: 1rem;
+        flex-wrap: wrap;
+    }
 
-    /* Section Actions */
-    .publish-section { margin-top: 2rem; padding-top: 2rem; border-top: 1px solid var(--noble-stone); }
-    .publish-actions-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; align-items: start; }
-    .publish-group { display: flex; flex-direction: column; gap: 1rem; }
-    .publish-group.schedule-group { background: var(--noble-mist); padding: 1.5rem; border-radius: 12px; }
-    .publish-group-title { font-weight: 500; color: var(--noble-charcoal); margin-bottom: 0.5rem; }
-    .btn { padding: 0.875rem 1.75rem; border-radius: 12px; font-weight: 500; font-size: 0.95rem; cursor: pointer; transition: all 0.3s ease; display: inline-flex; align-items: center; gap: 0.625rem; text-decoration: none; border: none; }
-    .btn-primary { background: var(--noble-sage); color: white; }
-    .btn-secondary { background: white; color: var(--noble-charcoal); border: 1.5px solid var(--noble-stone); }
-    
-    @media (max-width: 992px) {
-        .publish-actions-grid { grid-template-columns: 1fr; }
+    .linkedin-avatar {
+        width: 52px;
+        height: 52px;
+        border-radius: 50%;
+        object-fit: cover;
+        border: 2px solid var(--noble-sage-light);
+        transition: all 0.3s ease;
+        flex-shrink: 0;
+    }
+
+    .linkedin-avatar:hover {
+        transform: scale(1.05);
+    }
+
+    .linkedin-avatar-placeholder {
+        width: 52px;
+        height: 52px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, var(--noble-sage) 0%, var(--noble-accent) 100%);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-size: 1.2rem;
+        font-weight: 600;
+        border: 2px solid var(--noble-sage-light);
+        flex-shrink: 0;
+    }
+
+    .linkedin-user-info {
+        flex: 1;
+        min-width: 0;
+    }
+
+    .linkedin-name {
+        font-weight: 600;
+        font-size: 1rem;
+        color: #0a66c2;
+        margin-bottom: 0.25rem;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+    .linkedin-subline {
+        font-size: 0.875rem;
+        color: #555;
+        margin-bottom: 0.25rem;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+    .linkedin-date {
+        font-size: 0.75rem;
+        color: #888;
+        display: flex;
+        align-items: center;
+        gap: 0.25rem;
+    }
+
+    .linkedin-text {
+        font-size: 1rem;
+        color: #222;
+        line-height: 1.5;
+        margin-bottom: 1rem;
+        white-space: pre-wrap;
+        word-wrap: break-word;
+        min-height: 60px;
+        transition: all 0.3s ease;
+        overflow-wrap: break-word;
+    }
+
+    .linkedin-text.empty {
+        color: #999;
+        font-style: italic;
+    }
+
+    .linkedin-actions {
+        display: flex;
+        justify-content: space-around;
+        font-size: 0.875rem;
+        color: #666;
+        border-top: 1px solid #eee;
+        padding-top: 0.75rem;
+        flex-wrap: wrap;
+    }
+
+    .linkedin-action {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.5rem 1rem;
+        border-radius: 8px;
+        transition: all 0.3s ease;
+        cursor: pointer;
+        flex: 1;
+        justify-content: center;
+        min-width: 80px;
+    }
+
+    .linkedin-action:hover {
+        background: var(--noble-mist);
+        color: var(--noble-sage);
+    }
+
+    /* Formulaires nobles */
+    .form-group {
+        margin-bottom: 1.5rem;
+    }
+
+    .form-label {
+        font-size: 0.9rem;
+        font-weight: 500;
+        color: var(--noble-charcoal);
+        margin-bottom: 0.75rem;
+        display: block;
+    }
+
+    .form-control {
+        width: 100%;
+        padding: 0.875rem 1.125rem;
+        border: 1.5px solid var(--noble-stone);
+        border-radius: 12px;
+        font-size: 0.95rem;
+        background: var(--noble-cream);
+        color: var(--noble-charcoal);
+        transition: all 0.3s ease;
+        font-family: inherit;
+        resize: vertical;
+    }
+
+    .form-control:focus {
+        outline: none;
+        border-color: var(--noble-sage);
+        box-shadow: 0 0 0 3px rgba(139, 154, 124, 0.1);
+        background: white;
+    }
+
+    .textarea-control {
+        min-height: 200px;
+        line-height: 1.6;
+        resize: vertical;
+    }
+
+    /* Section médias responsive */
+    .media-section {
+        margin-top: 2rem;
+        padding-top: 2rem;
+        border-top: 1px solid var(--noble-stone);
+    }
+
+    .media-tabs {
+        display: flex;
+        gap: 1rem;
+        margin-bottom: 2rem;
+        border-bottom: 1px solid var(--noble-stone);
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    .media-tab {
+        padding: 0.75rem 1.5rem;
+        background: transparent;
+        border: none;
+        border-bottom: 2px solid transparent;
+        cursor: pointer;
+        font-weight: 500;
+        color: var(--noble-charcoal-light);
+        transition: all 0.3s ease;
+        font-size: 0.9rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        white-space: nowrap;
+        flex-shrink: 0;
+    }
+
+    .media-tab.active {
+        color: var(--noble-sage);
+        border-bottom-color: var(--noble-sage);
+    }
+
+    .media-tab:hover {
+        color: var(--noble-sage-dark);
+    }
+
+    .local-images-section,
+    .pexels-images-section {
+        display: none;
+    }
+
+    .local-images-section.active,
+    .pexels-images-section.active {
+        display: block;
+    }
+
+    .file-upload-area {
+        border: 2px dashed var(--noble-stone);
+        border-radius: 12px;
+        padding: 2rem;
+        text-align: center;
+        background: var(--noble-mist);
+        transition: all 0.3s ease;
+        cursor: pointer;
+    }
+
+    .file-upload-area:hover {
+        border-color: var(--noble-sage);
+        background: rgba(139, 154, 124, 0.05);
+    }
+
+    .upload-icon {
+        font-size: 2.5rem;
+        color: var(--noble-sage);
+        margin-bottom: 1rem;
+    }
+
+    .upload-text {
+        color: var(--noble-charcoal);
+        font-weight: 500;
+        margin-bottom: 0.5rem;
+    }
+
+    .upload-hint {
+        color: var(--noble-charcoal-light);
+        font-size: 0.9rem;
+    }
+
+    /* Section Pexels responsive */
+    .pexels-search {
+        display: grid;
+        grid-template-columns: 1fr auto;
+        gap: 1rem;
+        margin-bottom: 2rem;
+        align-items: end;
+    }
+
+    .pexels-results {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+        gap: 1rem;
+        margin-bottom: 2rem;
+    }
+
+    @media (min-width: 768px) {
+        .pexels-results {
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+        }
+    }
+
+    .pexels-photo {
+        position: relative;
+        aspect-ratio: 4/3;
+        border-radius: 12px;
+        overflow: hidden;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        border: 2px solid transparent;
+    }
+
+    .pexels-photo:hover {
+        transform: translateY(-2px);
+        box-shadow: var(--shadow-gentle);
+    }
+
+    .pexels-photo.selected {
+        border-color: var(--noble-sage);
+        transform: scale(0.98);
+    }
+
+    .pexels-photo img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transition: all 0.3s ease;
+    }
+
+    .pexels-photo:hover img {
+        transform: scale(1.05);
+    }
+
+    /* Section actions responsive */
+    .publish-section {
+        margin-top: 2rem;
+        padding-top: 2rem;
+        border-top: 1px solid var(--noble-stone);
+    }
+
+    .publish-actions-grid {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 2rem;
+    }
+
+    @media (min-width: 768px) {
+        .publish-actions-grid {
+            grid-template-columns: 1fr 1fr;
+        }
+    }
+
+    .publish-group {
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+    }
+
+    .publish-group.schedule-group {
+        background: var(--noble-mist);
+        padding: 1.5rem;
+        border-radius: 12px;
+    }
+
+    .publish-group-title {
+        font-weight: 500;
+        color: var(--noble-charcoal);
+        margin-bottom: 0.5rem;
+    }
+
+    /* Boutons nobles */
+    .btn {
+        padding: 0.875rem 1.75rem;
+        border-radius: 12px;
+        font-weight: 500;
+        font-size: 0.95rem;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.625rem;
+        text-decoration: none;
+        border: none;
+        justify-content: center;
+        min-height: 48px;
+    }
+
+    .btn-primary {
+        background: linear-gradient(135deg, var(--noble-sage) 0%, var(--noble-sage-light) 100%);
+        color: white;
+        box-shadow: var(--shadow-whisper);
+    }
+
+    .btn-primary:hover {
+        transform: translateY(-1px);
+        box-shadow: var(--shadow-gentle);
+        background: linear-gradient(135deg, var(--noble-sage-dark) 0%, var(--noble-sage) 100%);
+    }
+
+    .btn-secondary {
+        background: white;
+        color: var(--noble-charcoal);
+        border: 1.5px solid var(--noble-stone);
+    }
+
+    .btn-secondary:hover {
+        background: var(--noble-warm);
+        border-color: var(--noble-sage);
+        transform: translateY(-1px);
+    }
+
+    .btn-danger {
+        background: linear-gradient(135deg, var(--gentle-error) 0%, #d4a574 100%);
+        color: white;
+        box-shadow: var(--shadow-whisper);
+    }
+
+    .btn-danger:hover {
+        transform: translateY(-1px);
+        box-shadow: var(--shadow-gentle);
+    }
+
+    /* Actions en bas */
+    .bottom-actions {
+        margin-top: 2rem;
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 1rem;
+    }
+
+    @media (min-width: 768px) {
+        .bottom-actions {
+            grid-template-columns: auto 1fr auto;
+            align-items: center;
+        }
+    }
+
+    /* Responsive spécifique */
+    @media (max-width: 767px) {
+        .edit-header {
+            padding: 2rem;
+        }
+
+        .edit-header-content {
+            flex-direction: column;
+            text-align: center;
+        }
+
+        .edit-title {
+            font-size: 1.5rem;
+        }
+
+        .edit-section,
+        .preview-section {
+            padding: 1.5rem;
+        }
+
+        .linkedin-header {
+            flex-direction: column;
+            text-align: center;
+        }
+
+        .linkedin-user-info {
+            text-align: center;
+        }
+
+        .linkedin-actions {
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .linkedin-action {
+            justify-content: center;
+        }
+
+        .media-tabs {
+            flex-direction: column;
+            gap: 0;
+        }
+
+        .media-tab {
+            border-bottom: none;
+            border-left: 2px solid transparent;
+            padding: 1rem;
+            justify-content: flex-start;
+        }
+
+        .media-tab.active {
+            border-left-color: var(--noble-sage);
+            border-bottom-color: transparent;
+        }
+
+        .pexels-search {
+            grid-template-columns: 1fr;
+        }
+
+        .bottom-actions {
+            text-align: center;
+        }
+    }
+
+    /* Animations nobles */
+    .fade-in {
+        animation: gentleFadeIn 0.8s ease-out;
+    }
+
+    @keyframes gentleFadeIn {
+        from {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    /* États de chargement */
+    .loading {
+        opacity: 0.6;
+        pointer-events: none;
+    }
+
+    .loading .btn {
+        cursor: not-allowed;
+    }
+
+    /* Compteur de caractères */
+    .character-counter {
+        font-size: 0.8rem;
+        color: var(--noble-charcoal-light);
+        text-align: right;
+        margin-top: 0.5rem;
+    }
+
+    .character-counter.warning {
+        color: var(--gentle-warning);
+    }
+
+    .character-counter.error {
+        color: var(--gentle-error);
+    }
+
+    /* Tooltip pour responsive */
+    .tooltip-hint {
+        position: relative;
+        cursor: help;
+    }
+
+    .tooltip-hint::after {
+        content: attr(data-tooltip);
+        position: absolute;
+        bottom: 100%;
+        left: 50%;
+        transform: translateX(-50%);
+        background: var(--noble-charcoal);
+        color: white;
+        padding: 0.5rem;
+        border-radius: 6px;
+        font-size: 0.8rem;
+        white-space: nowrap;
+        opacity: 0;
+        visibility: hidden;
+        transition: all 0.3s ease;
+        z-index: 1000;
+    }
+
+    .tooltip-hint:hover::after {
+        opacity: 1;
+        visibility: visible;
     }
 </style>
 
-<div class="creation-section fade-in">
-    <div class="section-header">
-        <h2 class="section-title">
-            <i class="fas fa-pen-to-square icon-noble"></i>
-            Modifier le post
-        </h2>
-        <p class="section-subtitle">Modifiez le contenu, les images et la programmation de votre publication LinkedIn.</p>
+<!-- Header noble -->
+<div class="edit-header fade-in">
+    <div class="edit-header-content">
+        <div>
+            <h1 class="edit-title">
+                <i class="fas fa-pen-to-square icon-noble"></i>
+                Modifier le post
+            </h1>
+            <p class="edit-subtitle">Modifiez le contenu, les images et la programmation de votre publication LinkedIn</p>
+        </div>
+        <div style="display: flex; gap: 1rem; align-items: center; flex-wrap: wrap;">
+            <span class="tooltip-hint" data-tooltip="L'aperçu se met à jour automatiquement">
+                <i class="fas fa-info-circle icon-noble"></i>
+            </span>
+            <a href="{{ url_for('historique') }}" class="btn btn-secondary">
+                <i class="fas fa-arrow-left"></i>
+                <span class="btn-text-hide-mobile">Retour</span>
+            </a>
+        </div>
     </div>
+</div>
 
-    <!-- Aperçu LinkedIn (Identique au dashboard) -->
-    <div class="linkedin-post" id="linkedin-preview">
-        <div class="linkedin-header">
-            {% if picture %}
-                <img src="{{ picture }}" alt="Photo de profil" class="linkedin-avatar" id="preview-avatar">
-            {% else %}
-                <div class="linkedin-avatar-placeholder" id="preview-avatar">
-                    {{ first_name[0]|upper if first_name else 'U' }}
+<!-- Container principal responsive -->
+<div class="edit-container">
+    <!-- Section d'édition -->
+    <div class="edit-section fade-in">
+        <form method="post" action="{{ url_for('edit_post', post_id=post.id) }}" enctype="multipart/form-data" id="edit-form">
+            <div class="form-group">
+                <label class="form-label" for="post-content-textarea">
+                    <i class="fas fa-edit icon-noble"></i>
+                    Contenu de votre post
+                </label>
+                <textarea name="post_content" 
+                          class="form-control textarea-control mention-editor" 
+                          rows="8" 
+                          required 
+                          id="post-content-textarea"
+                          placeholder="Rédigez votre contenu LinkedIn...">{{ post.content }}</textarea>
+                <div class="character-counter" id="character-counter">
+                    <span id="char-count">{{ post.content|length if post.content else 0 }}</span> / 3000 caractères
                 </div>
-            {% endif %}
-            <div class="linkedin-user-info">
-                <div class="linkedin-name" id="preview-name">
-                    {% if first_name and last_name %}
-                        {{ first_name }} {{ last_name }}
-                    {% elif name %}
-                        {{ name }}
-                    {% else %}
-                        Utilisateur ResoBoost
-                    {% endif %}
-                </div>
-                <div class="linkedin-subline" id="preview-role">
-                    {% if secteur %}
-                        {{ secteur|title }} • ResoBoost
-                    {% else %}
-                        Professionnel LinkedIn • ResoBoost
-                    {% endif %}
-                </div>
-                <div class="linkedin-date">
-                    <i class="fas fa-globe-europe"></i>
-                    {% if post.published_at %}
-                        {{ post.published_at.strftime('%d/%m/%Y à %H:%M') }}
-                    {% else %}
-                        il y a quelques instants
-                    {% endif %}
+                <div class="mention-tip">
+                    <i class="fas fa-at icon-noble"></i>
+                    <span><strong>Astuce :</strong> Tapez @ suivi d'un nom pour mentionner quelqu'un sur LinkedIn</span>
                 </div>
             </div>
-        </div>
-        <div class="linkedin-text" id="preview-text">{{ post.content | safe }}</div>
-        <div class="linkedin-actions">
-            <div class="linkedin-action"><i class="far fa-thumbs-up"></i> <span>J'aime</span></div>
-            <div class="linkedin-action"><i class="far fa-comment"></i> <span>Commenter</span></div>
-            <div class="linkedin-action"><i class="fas fa-share"></i> <span>Partager</span></div>
-            <div class="linkedin-action"><i class="fas fa-paper-plane"></i> <span>Envoyer</span></div>
+            
+            <!-- Section Images -->
+            <div class="media-section">
+                <h3 style="color: var(--noble-charcoal); margin-bottom: 1rem; display: flex; align-items: center; gap: 0.75rem;">
+                    <i class="fas fa-images icon-noble"></i>
+                    Ajouter des images
+                </h3>
+                
+                <div class="media-tabs">
+                    <button type="button" class="media-tab active" onclick="switchMediaTab('local')">
+                        <i class="fas fa-upload"></i>
+                        <span>Images locales</span>
+                    </button>
+                    <button type="button" class="media-tab" onclick="switchMediaTab('pexels')">
+                        <i class="fas fa-search"></i>
+                        <span>Photos Pexels</span>
+                    </button>
+                </div>
+                
+                <!-- Section images locales -->
+                <div class="local-images-section active" id="local-images-section">
+                    <div class="file-upload-area" onclick="document.getElementById('images').click()" id="file-upload-area">
+                        <div class="upload-icon">
+                            <i class="fas fa-cloud-upload-alt"></i>
+                        </div>
+                        <div class="upload-text">Cliquez pour sélectionner des images</div>
+                        <div class="upload-hint">ou glissez-déposez vos fichiers ici (JPG, PNG, max 9 images)</div>
+                    </div>
+                    <input type="file" name="images[]" id="images" accept="image/*" multiple class="form-control" style="display: none;">
+                </div>
+                
+                <!-- Section photos Pexels -->
+                <div class="pexels-images-section" id="pexels-images-section">
+                    <div class="pexels-search">
+                        <input type="text" 
+                               id="pexels-search-input" 
+                               class="form-control"
+                               placeholder="Rechercher des photos : marketing, business, technology...">
+                        <button type="button" 
+                                onclick="searchPexelsPhotos()" 
+                                id="pexels-search-btn"
+                                class="btn btn-primary">
+                            <i class="fas fa-search"></i>
+                            <span class="btn-text-hide-mobile">Rechercher</span>
+                        </button>
+                    </div>
+                    
+                    <div id="pexels-results-container">
+                        <div class="pexels-loading" style="display: none;" id="pexels-loading">
+                            <i class="fas fa-spinner fa-spin"></i>
+                            <p>Recherche en cours...</p>
+                        </div>
+                        
+                        <div class="pexels-error" style="display: none;" id="pexels-error">
+                            <i class="fas fa-exclamation-triangle"></i>
+                            <p>Erreur lors de la recherche. Veuillez réessayer.</p>
+                        </div>
+                        
+                        <div class="pexels-results" id="pexels-results"></div>
+                        
+                        <button type="button" 
+                                class="pexels-load-more" 
+                                style="display: none;" 
+                                onclick="loadMorePexelsPhotos()" 
+                                id="pexels-load-more">
+                            Charger plus de photos
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- Aperçu des images sélectionnées -->
+                <div class="selected-images-preview" style="display: none;" id="selected-images-preview">
+                    <h4 style="color: var(--noble-charcoal); margin-bottom: 1rem;">
+                        <i class="fas fa-check icon-noble"></i>
+                        Images sélectionnées (<span id="selected-count">0</span>/9)
+                    </h4>
+                    <div class="selected-images-grid" id="selected-images-grid"></div>
+                </div>
+            </div>
+
+            <!-- Section Actions -->
+            <div class="publish-section">
+                <h3 style="color: var(--noble-charcoal); margin-bottom: 1.5rem; display: flex; align-items: center; gap: 0.75rem;">
+                    <i class="fas fa-paper-plane icon-noble"></i>
+                    Finaliser votre post
+                </h3>
+                <div class="publish-actions-grid">
+                    <div class="publish-group schedule-group">
+                        <label class="publish-group-title" for="publish-time-input">
+                            📅 Programmer pour plus tard
+                        </label>
+                        <input type="datetime-local" 
+                               id="publish-time-input" 
+                               name="publish_time" 
+                               class="form-control" 
+                               value="{{ formatted_date }}">
+                        <button type="submit" 
+                                name="action" 
+                                value="schedule" 
+                                class="btn btn-secondary" 
+                                style="width: 100%;">
+                            <i class="fas fa-clock"></i>
+                            Programmer le post
+                        </button>
+                    </div>
+                    
+                    <div class="publish-group">
+                        <label class="publish-group-title">🚀 Actions immédiates</label>
+                        <button type="submit" 
+                                name="action" 
+                                value="publish_now" 
+                                class="btn btn-primary" 
+                                style="width: 100%;">
+                            <i class="fas fa-rocket"></i>
+                            Publier maintenant
+                        </button>
+                        <button type="submit" 
+                                name="action" 
+                                value="save_draft" 
+                                class="btn btn-secondary" 
+                                style="width: 100%;">
+                            <i class="fas fa-save"></i>
+                            Enregistrer en brouillon
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </form>
+
+        <!-- Actions en bas -->
+        <div class="bottom-actions">
+            <a href="{{ url_for('historique') }}" class="btn btn-secondary">
+                <i class="fas fa-times"></i>
+                Annuler
+            </a>
+            
+            <div></div> <!-- Spacer pour desktop -->
+            
+            <a href="{{ url_for('delete_post', post_id=post.id) }}" class="btn btn-danger">
+                <i class="fas fa-trash"></i>
+                Supprimer ce post
+            </a>
         </div>
     </div>
 
-    <form method="post" action="{{ url_for('edit_post', post_id=post.id) }}" enctype="multipart/form-data">
-        <div class="form-group">
-            <label class="form-label">Contenu de votre post</label>
-            <textarea name="post_content" class="form-control textarea-control" rows="8" required id="post-content-textarea">{{ post.content }}</textarea>
+    <!-- Section aperçu collante -->
+    <div class="preview-section fade-in">
+        <h3 class="preview-title">
+            <i class="fas fa-eye icon-noble"></i>
+            Aperçu temps réel
+        </h3>
+        
+        <!-- Aperçu LinkedIn dynamique -->
+        <div class="linkedin-post" id="linkedin-preview">
+            <div class="linkedin-header">
+                {% if picture %}
+                    <img src="{{ picture }}" alt="Photo de profil" class="linkedin-avatar" id="preview-avatar">
+                {% else %}
+                    <div class="linkedin-avatar-placeholder" id="preview-avatar">
+                        {{ first_name[0]|upper if first_name else 'U' }}
+                    </div>
+                {% endif %}
+                
+                <div class="linkedin-user-info">
+                    <div class="linkedin-name" id="preview-name">
+                        {% if first_name and last_name %}
+                            {{ first_name }} {{ last_name }}
+                        {% elif name %}
+                            {{ name }}
+                        {% else %}
+                            Utilisateur ResoBoost
+                        {% endif %}
+                    </div>
+                    <div class="linkedin-subline" id="preview-role">
+                        {% if secteur %}
+                            {{ secteur|title }} • ResoBoost
+                        {% else %}
+                            Professionnel LinkedIn • ResoBoost
+                        {% endif %}
+                    </div>
+                    <div class="linkedin-date">
+                        <i class="fas fa-globe-europe"></i>
+                        {% if post.published_at %}
+                            {{ post.published_at.strftime('%d/%m/%Y à %H:%M') }}
+                        {% else %}
+                            il y a quelques instants
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            
+            <div class="linkedin-text" id="preview-text">{{ post.content | safe }}</div>
+            
+            <div class="linkedin-actions">
+                <div class="linkedin-action">
+                    <i class="far fa-thumbs-up"></i>
+                    <span>J'aime</span>
+                </div>
+                <div class="linkedin-action">
+                    <i class="far fa-comment"></i>
+                    <span>Commenter</span>
+                </div>
+                <div class="linkedin-action">
+                    <i class="fas fa-share"></i>
+                    <span>Partager</span>
+                </div>
+                <div class="linkedin-action">
+                    <i class="fas fa-paper-plane"></i>
+                    <span>Envoyer</span>
+                </div>
+            </div>
         </div>
         
-        <!-- Section Images (Identique au dashboard) -->
-        <div class="media-section">
-             <h3 style="color: var(--noble-charcoal); margin-bottom: 1rem; display: flex; align-items: center; gap: 0.75rem;"><i class="fas fa-images icon-noble"></i> Ajouter des images</h3>
-            <div class="media-tabs">
-                <button type="button" class="media-tab active" onclick="switchMediaTab('local')">
-                    <i class="fas fa-upload"></i>
-                    Images locales
-                </button>
-                <button type="button" class="media-tab" onclick="switchMediaTab('pexels')">
-                    <i class="fas fa-search"></i>
-                    Photos Pexels
-                </button>
+        <!-- Informations supplémentaires -->
+        <div style="margin-top: 1.5rem; padding: 1rem; background: var(--noble-mist); border-radius: 12px; font-size: 0.85rem; color: var(--noble-charcoal-light);">
+            <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem;">
+                <i class="fas fa-info-circle icon-noble"></i>
+                <strong>Aperçu automatique</strong>
             </div>
-            <div class="local-images-section active" id="local-images-section">
-                <div class="file-upload-area" onclick="document.getElementById('images').click()" id="file-upload-area">
-                    <div class="upload-icon">
-                        <i class="fas fa-cloud-upload-alt"></i>
-                    </div>
-                    <div class="upload-text">Cliquez pour sélectionner des images</div>
-                    <div class="upload-hint">ou glissez-déposez vos fichiers ici (JPG, PNG, max 9 images)</div>
-                </div>
-                <input type="file" name="images[]" id="images" accept="image/*" multiple class="form-control" style="display: none;">
-            </div>
-            <div class="pexels-images-section" id="pexels-images-section">
-                <div class="pexels-search">
-                    <input type="text" id="pexels-search-input" placeholder="Rechercher des photos : marketing, business, technology...">
-                    <button type="button" onclick="searchPexelsPhotos()" id="pexels-search-btn">
-                        <i class="fas fa-search"></i>
-                        Rechercher
-                    </button>
-                </div>
-                <div id="pexels-results-container">
-                    <div class="pexels-loading" style="display: none;" id="pexels-loading">
-                        <i class="fas fa-spinner"></i>
-                        <p>Recherche en cours...</p>
-                    </div>
-                    <div class="pexels-error" style="display: none;" id="pexels-error">
-                        <i class="fas fa-exclamation-triangle"></i>
-                        <p>Erreur lors de la recherche. Veuillez réessayer.</p>
-                    </div>
-                    <div class="pexels-results" id="pexels-results"></div>
-                    <button type="button" class="pexels-load-more" style="display: none;" onclick="loadMorePexelsPhotos()" id="pexels-load-more">
-                        Charger plus de photos
-                    </button>
-                </div>
-            </div>
-            <div class="selected-images-preview" style="display: none;" id="selected-images-preview">
-                <h4 style="color: var(--noble-charcoal); margin-bottom: 1rem;">
-                    <i class="fas fa-check icon-noble"></i>
-                    Images sélectionnées (<span id="selected-count">0</span>/9)
-                </h4>
-                <div class="selected-images-grid" id="selected-images-grid"></div>
-            </div>
+            <p style="margin: 0; line-height: 1.4;">
+                Cet aperçu se met à jour automatiquement pendant que vous tapez. 
+                Les mentions (@nom) et hashtags (#tag) seront formatés sur LinkedIn.
+            </p>
         </div>
-
-        <!-- Section Actions (Identique au dashboard) -->
-        <div class="publish-section">
-            <h3 style="color: var(--noble-charcoal); margin-bottom: 1.5rem; display: flex; align-items: center; gap: 0.75rem;"><i class="fas fa-paper-plane icon-noble"></i> Finaliser votre post</h3>
-            <div class="publish-actions-grid">
-                <div class="publish-group schedule-group">
-                    <label class="publish-group-title" for="publish-time-input">📅 Programmer pour plus tard</label>
-                    <input type="datetime-local" id="publish-time-input" name="publish_time" class="form-control" value="{{ formatted_date }}">
-                    <button type="submit" name="action" value="schedule" class="btn btn-secondary" style="width: 100%;"><i class="fas fa-clock"></i> Programmer le post</button>
-                </div>
-                <div class="publish-group">
-                    <label class="publish-group-title">🚀 Actions immédiates</label>
-                    <button type="submit" name="action" value="publish_now" class="btn btn-primary" style="width: 100%;"><i class="fas fa-rocket"></i> Publier maintenant</button>
-                    <button type="submit" name="action" value="save_draft" class="btn btn-secondary" style="width: 100%;"><i class="fas fa-save"></i> Enregistrer en brouillon</button>
-                </div>
-            </div>
-        </div>
-
-        <div style="margin-top: 2rem; display: flex; justify-content: space-between; align-items: center;">
-            <a href="{{ url_for('historique') }}" class="btn btn-secondary"><i class="fas fa-times"></i> Annuler</a>
-            <a href="{{ url_for('delete_post', post_id=post.id) }}" class="btn" style="background: var(--gentle-error); color: white;"><i class="fas fa-trash"></i> Supprimer ce post</a>
-        </div>
-    </form>
+    </div>
 </div>
 
 <script>
-
+// Variables globales pour la gestion des médias (même logique que dashboard)
 let currentMediaTab = 'local';
 let selectedPexelsPhotos = [];
 let selectedLocalFiles = [];
 let pexelsCurrentPage = 1;
 let pexelsCurrentQuery = '';
 let pexelsTotalResults = 0;
+
+// Mise à jour de l'aperçu en temps réel
+function updatePreview() {
+    const content = document.getElementById('post-content-textarea').value;
+    const previewText = document.getElementById('preview-text');
+    
+    if (content.trim()) {
+        previewText.textContent = content;
+        previewText.classList.remove('empty');
+    } else {
+        previewText.textContent = 'Votre contenu apparaîtra ici...';
+        previewText.classList.add('empty');
+    }
+    
+    // Mise à jour du compteur de caractères
+    updateCharacterCounter(content.length);
+}
+
+// Compteur de caractères
+function updateCharacterCounter(count) {
+    const counter = document.getElementById('char-count');
+    const counterContainer = document.getElementById('character-counter');
+    
+    counter.textContent = count;
+    
+    // Réinitialiser les classes
+    counterContainer.classList.remove('warning', 'error');
+    
+    if (count > 2500) {
+        counterContainer.classList.add('warning');
+    }
+    if (count > 3000) {
+        counterContainer.classList.add('error');
+    }
+}
 
 // Gestion des onglets média
 function switchMediaTab(tab) {
@@ -324,14 +1056,11 @@ function setupLocalImageHandlers() {
 
 // Gestion des fichiers locaux
 function handleLocalFiles(files) {
-    // Limiter à 9 images maximum
     const maxFiles = Math.min(files.length, 9 - selectedPexelsPhotos.length);
     selectedLocalFiles = Array.from(files).slice(0, maxFiles);
     
-    // Mettre à jour l'aperçu
     updateSelectedImagesPreview();
     
-    // Mettre à jour le texte de l'upload area
     const uploadArea = document.getElementById('file-upload-area');
     if (uploadArea && selectedLocalFiles.length > 0) {
         uploadArea.innerHTML = `
@@ -358,7 +1087,6 @@ async function searchPexelsPhotos(page = 1) {
         return;
     }
     
-    // Si nouvelle recherche, réinitialiser
     if (page === 1) {
         pexelsCurrentQuery = query;
         pexelsCurrentPage = 1;
@@ -386,7 +1114,6 @@ async function searchPexelsPhotos(page = 1) {
             displayPexelsResults(data.results, page === 1);
             pexelsTotalResults = data.results.total_results;
             
-            // Afficher le bouton "Charger plus" si nécessaire
             const loadMoreBtn = document.getElementById('pexels-load-more');
             if (loadMoreBtn && data.results.next_page && data.results.photos.length > 0) {
                 loadMoreBtn.style.display = 'block';
@@ -419,7 +1146,6 @@ function displayPexelsResults(results, clearPrevious = true) {
         container.appendChild(photoElement);
     });
     
-    // Animer l'apparition des nouvelles photos
     const newPhotos = container.querySelectorAll('.pexels-photo:not(.animated)');
     newPhotos.forEach((photo, index) => {
         photo.classList.add('animated');
@@ -460,18 +1186,15 @@ function togglePexelsPhoto(photoId, encodedPhotoData) {
     const isSelected = selectedPexelsPhotos.some(p => p.id === photoId);
     
     if (isSelected) {
-        // Désélectionner
         selectedPexelsPhotos = selectedPexelsPhotos.filter(p => p.id !== photoId);
         photoElement.classList.remove('selected');
         photoElement.querySelector('.pexels-select-btn').textContent = 'Sélectionner';
     } else {
-        // Vérifier la limite
         if (selectedPexelsPhotos.length + selectedLocalFiles.length >= 9) {
             showPexelsError('Vous ne pouvez sélectionner que 9 images maximum au total');
             return;
         }
         
-        // Sélectionner
         selectedPexelsPhotos.push(photo);
         photoElement.classList.add('selected');
         photoElement.querySelector('.pexels-select-btn').textContent = 'Sélectionné';
@@ -524,13 +1247,11 @@ function updateSelectedImagesPreview() {
     countSpan.textContent = totalSelected;
     grid.innerHTML = '';
     
-    // Ajouter les images locales
     selectedLocalFiles.forEach((file, index) => {
         const item = createSelectedImagePreview(file, 'local', index);
         grid.appendChild(item);
     });
     
-    // Ajouter les photos Pexels
     selectedPexelsPhotos.forEach((photo, index) => {
         const item = createSelectedImagePreview(photo, 'pexels', index);
         grid.appendChild(item);
@@ -568,13 +1289,11 @@ function createSelectedImagePreview(data, type, index) {
 // Supprimer une image sélectionnée
 function removeSelectedImage(type, index) {
     if (type === 'local') {
-        // Révoquer l'URL de l'objet pour libérer la mémoire
         if (selectedLocalFiles[index]) {
             URL.revokeObjectURL(URL.createObjectURL(selectedLocalFiles[index]));
         }
         selectedLocalFiles.splice(index, 1);
         
-        // Mettre à jour l'input file et l'upload area
         const fileInput = document.getElementById('images');
         fileInput.value = '';
         
@@ -592,7 +1311,6 @@ function removeSelectedImage(type, index) {
         const removedPhoto = selectedPexelsPhotos[index];
         selectedPexelsPhotos.splice(index, 1);
         
-        // Mettre à jour l'affichage de la photo dans la grille Pexels
         const photoElement = document.querySelector(`[data-photo-id="${removedPhoto.id}"]`);
         if (photoElement) {
             photoElement.classList.remove('selected');
@@ -603,11 +1321,11 @@ function removeSelectedImage(type, index) {
     updateSelectedImagesPreview();
 }
 
-// Gestionnaire d'événements pour la recherche Pexels avec Enter
+// Initialisation
 document.addEventListener('DOMContentLoaded', function() {
-    // Définir la date par défaut pour le champ de programmation
+    // Configuration de la date par défaut
     const publishTimeInput = document.getElementById('publish-time-input');
-    if (publishTimeInput) {
+    if (publishTimeInput && !publishTimeInput.value) {
         const now = new Date();
         now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
         const formattedDate = now.toISOString().slice(0, 16);
@@ -616,6 +1334,20 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Configuration des gestionnaires d'images locales
     setupLocalImageHandlers();
+    
+    // Écouter les changements dans le textarea pour l'aperçu en temps réel
+    const textarea = document.getElementById('post-content-textarea');
+    if (textarea) {
+        // Mise à jour initiale
+        updatePreview();
+        
+        // Écouter les changements
+        textarea.addEventListener('input', updatePreview);
+        textarea.addEventListener('paste', function() {
+            // Délai pour laisser le temps au paste de s'effectuer
+            setTimeout(updatePreview, 50);
+        });
+    }
     
     // Gestionnaire pour la recherche Pexels avec Enter
     const pexelsInput = document.getElementById('pexels-search-input');
@@ -628,42 +1360,31 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
     
-    // Suggestions de recherche Pexels
-    const searchSuggestions = [
-        'business meeting', 'technology', 'marketing', 'team work', 
-        'innovation', 'success', 'growth', 'leadership', 'strategy',
-        'digital transformation', 'productivity', 'collaboration'
-    ];
-    
-    // Ajouter des suggestions au placeholder de manière dynamique
-    let suggestionIndex = 0;
-    setInterval(() => {
-        if (pexelsInput && !pexelsInput.value && document.activeElement !== pexelsInput) {
-            pexelsInput.placeholder = `Rechercher : ${searchSuggestions[suggestionIndex]}...`;
-            suggestionIndex = (suggestionIndex + 1) % searchSuggestions.length;
-        }
-    }, 3000);
-});
+    // Animation progressive des éléments
+    const elements = document.querySelectorAll('.fade-in');
+    elements.forEach((el, index) => {
+        el.style.opacity = '0';
+        el.style.transform = 'translateY(20px)';
+        el.style.transition = 'all 0.8s ease';
+        
+        setTimeout(() => {
+            el.style.opacity = '1';
+            el.style.transform = 'translateY(0)';
+        }, index * 200);
+    });
 
-// Modification de la soumission du formulaire pour inclure les photos Pexels
-document.addEventListener('DOMContentLoaded', function() {
-    const form = document.querySelector('form[action="/publish"]');
-    if (form) {
-        form.addEventListener('submit', function(e) {
-            // Ajouter les photos Pexels sélectionnées au formulaire
-            selectedPexelsPhotos.forEach((photo, index) => {
-                const input = document.createElement('input');
-                input.type = 'hidden';
-                input.name = 'pexels_photos[]';
-                input.value = JSON.stringify(photo);
-                form.appendChild(input);
-            });
+    // Interactions nobles sur les boutons
+    document.querySelectorAll('.btn').forEach(btn => {
+        btn.addEventListener('mouseenter', function() {
+            this.style.transform = 'translateY(-1px)';
         });
-    }
-});
+        
+        btn.addEventListener('mouseleave', function() {
+            this.style.transform = 'translateY(0)';
+        });
+    });
 
-// Animation noble des onglets média
-document.addEventListener('DOMContentLoaded', function() {
+    // Animation des onglets média
     document.querySelectorAll('.media-tab').forEach(tab => {
         tab.addEventListener('mouseenter', function() {
             if (!this.classList.contains('active')) {
@@ -677,23 +1398,103 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
     });
-    
-    // Animation des photos Pexels au hover
-    document.addEventListener('mouseover', function(e) {
-        if (e.target.closest('.pexels-photo')) {
-            const photo = e.target.closest('.pexels-photo');
-            photo.style.transform = 'translateY(-2px) scale(1.02)';
-        }
-    });
-    
-    document.addEventListener('mouseout', function(e) {
-        if (e.target.closest('.pexels-photo')) {
-            const photo = e.target.closest('.pexels-photo');
-            if (!photo.classList.contains('selected')) {
-                photo.style.transform = 'translateY(0) scale(1)';
+
+    // Gestion responsive du formulaire
+    function handleResponsiveForm() {
+        const isMobile = window.innerWidth <= 767;
+        const form = document.getElementById('edit-form');
+        
+        if (form) {
+            if (isMobile) {
+                form.style.fontSize = '16px'; // Évite le zoom sur iOS
+            } else {
+                form.style.fontSize = '';
             }
         }
-    });
+    }
+
+    window.addEventListener('resize', handleResponsiveForm);
+    handleResponsiveForm();
+
+    // Sauvegarde automatique du brouillon (optionnel)
+    let saveTimeout;
+    if (textarea) {
+        textarea.addEventListener('input', function() {
+            clearTimeout(saveTimeout);
+            saveTimeout = setTimeout(() => {
+                // Ici vous pourriez implémenter une sauvegarde automatique
+                console.log('Sauvegarde automatique du brouillon');
+            }, 5000); // Sauvegarde après 5 secondes d'inactivité
+        });
+    }
+});
+
+// Modification de la soumission du formulaire pour inclure les photos Pexels
+document.addEventListener('DOMContentLoaded', function() {
+    const form = document.getElementById('edit-form');
+    if (form) {
+        form.addEventListener('submit', function(e) {
+            // Ajouter un indicateur de chargement
+            const submitButtons = form.querySelectorAll('button[type="submit"]');
+            submitButtons.forEach(btn => {
+                btn.disabled = true;
+                const icon = btn.querySelector('i');
+                if (icon) {
+                    icon.className = 'fas fa-spinner fa-spin';
+                }
+            });
+            
+            // Ajouter les photos Pexels sélectionnées au formulaire
+            selectedPexelsPhotos.forEach((photo, index) => {
+                const input = document.createElement('input');
+                input.type = 'hidden';
+                input.name = 'pexels_photos[]';
+                input.value = JSON.stringify(photo);
+                form.appendChild(input);
+            });
+        });
+    }
+});
+
+// Gestion des raccourcis clavier
+document.addEventListener('keydown', function(e) {
+    // Ctrl/Cmd + S pour sauvegarder
+    if ((e.ctrlKey || e.metaKey) && e.key === 's') {
+        e.preventDefault();
+        const saveBtn = document.querySelector('button[value="save_draft"]');
+        if (saveBtn) {
+            saveBtn.click();
+        }
+    }
+    
+    // Ctrl/Cmd + Enter pour publier
+    if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
+        e.preventDefault();
+        const publishBtn = document.querySelector('button[value="publish_now"]');
+        if (publishBtn) {
+            publishBtn.click();
+        }
+    }
+    
+    // Echap pour annuler
+    if (e.key === 'Escape') {
+        const cancelBtn = document.querySelector('a[href*="historique"]');
+        if (cancelBtn && confirm('Êtes-vous sûr de vouloir annuler ? Les modifications non sauvegardées seront perdues.')) {
+            window.location.href = cancelBtn.href;
+        }
+    }
+});
+
+// Animation au scroll pour l'aperçu collant
+window.addEventListener('scroll', function() {
+    const previewSection = document.querySelector('.preview-section');
+    if (previewSection && window.innerWidth >= 1200) {
+        const scrolled = window.pageYOffset;
+        const parallax = scrolled * 0.1;
+        
+        previewSection.style.transform = `translateY(${parallax}px)`;
+    }
 });
 </script>
+
 {% endblock %}
