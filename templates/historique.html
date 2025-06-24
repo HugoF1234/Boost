@@ -37,6 +37,7 @@
 
     .historique-header {
         margin-bottom: 2rem;
+        flex-shrink: 0;
     }
 
     .historique-title {
@@ -55,15 +56,14 @@
 
     /* Layout Kanban */
     .kanban-container {
-        display: flex;
-        gap: 2rem;
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 1.5rem;
         height: 100%;
-        overflow-x: auto;
-        padding-bottom: 2rem;
+        overflow: hidden;
     }
 
     .kanban-column {
-        flex: 0 0 var(--column-width);
         background: var(--noble-warm);
         border-radius: 16px;
         padding: 1.5rem;
@@ -71,6 +71,7 @@
         flex-direction: column;
         box-shadow: var(--shadow-whisper);
         border: 1px solid var(--noble-stone);
+        overflow: hidden;
     }
 
     .column-header {
@@ -199,6 +200,7 @@
         align-items: center;
         justify-content: center;
         gap: 0.5rem;
+        text-decoration: none;
     }
 
     .btn-action:hover {
@@ -232,29 +234,13 @@
     }
 
     /* Responsive */
-    @media (max-width: 1200px) {
-        .kanban-container {
-            padding-bottom: 1rem;
-        }
-        
-        :root {
-            --column-width: 320px;
-        }
-    }
-
-    @media (max-width: 768px) {
+    @media (max-width: 992px) {
         .historique-container {
-            padding: 1rem;
+            height: auto;
         }
-
         .kanban-container {
-            flex-direction: column;
-            gap: 1rem;
-        }
-
-        .kanban-column {
-            flex: 0 0 auto;
-            width: 100%;
+            grid-template-columns: 1fr;
+            height: auto;
         }
     }
 </style>
@@ -296,14 +282,14 @@
                             </div>
                             <div class="post-text">{{ post.content }}</div>
                             <div class="post-actions">
-                                <button class="btn-action btn-edit">
+                                <a href="{{ url_for('edit_post', post_id=post.id) }}" class="btn-action btn-edit">
                                     <i class="fas fa-edit"></i>
                                     Modifier
-                                </button>
-                                <button class="btn-action btn-delete">
+                                </a>
+                                <a href="{{ url_for('delete_post', post_id=post.id) }}" class="btn-action btn-delete" onclick="return confirm('Êtes-vous sûr de vouloir supprimer ce post ?')">
                                     <i class="fas fa-trash"></i>
                                     Supprimer
-                                </button>
+                                </a>
                             </div>
                         </div>
                     </div>
@@ -314,52 +300,6 @@
                             <i class="fas fa-edit"></i>
                         </div>
                         <p class="empty-text">Aucun brouillon</p>
-                    </div>
-                {% endif %}
-            </div>
-        </div>
-
-        <!-- Colonne Publiés -->
-        <div class="kanban-column">
-            <div class="column-header">
-                <h2 class="column-title">
-                    <i class="fas fa-check-circle"></i>
-                    Publiés
-                </h2>
-                <span class="column-count">{{ published_posts|length if published_posts else 0 }}</span>
-            </div>
-            <div class="column-content">
-                {% if published_posts %}
-                    {% for post in published_posts %}
-                    <div class="post-card">
-                        {% if post.image_url %}
-                        <img src="{{ post.image_url }}" alt="Image du post" class="post-image">
-                        {% else %}
-                        <div class="post-image-placeholder">
-                            <i class="fas fa-image"></i>
-                        </div>
-                        {% endif %}
-                        <div class="post-content">
-                            <div class="post-date">
-                                <i class="fas fa-calendar"></i>
-                                {{ post.published_at.strftime('%d/%m/%Y à %H:%M') }}
-                            </div>
-                            <div class="post-text">{{ post.content }}</div>
-                            <div class="post-actions">
-                                <button class="btn-action">
-                                    <i class="fas fa-eye"></i>
-                                    Voir sur LinkedIn
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                    {% endfor %}
-                {% else %}
-                    <div class="column-empty">
-                        <div class="empty-icon">
-                            <i class="fas fa-check-circle"></i>
-                        </div>
-                        <p class="empty-text">Aucune publication</p>
                     </div>
                 {% endif %}
             </div>
@@ -392,14 +332,14 @@
                             </div>
                             <div class="post-text">{{ post.content }}</div>
                             <div class="post-actions">
-                                <button class="btn-action btn-edit">
+                                <a href="{{ url_for('edit_post', post_id=post.id) }}" class="btn-action btn-edit">
                                     <i class="fas fa-edit"></i>
                                     Modifier
-                                </button>
-                                <button class="btn-action btn-delete">
+                                </a>
+                                <a href="{{ url_for('delete_post', post_id=post.id) }}" class="btn-action btn-delete" onclick="return confirm('Êtes-vous sûr de vouloir supprimer ce post ?')">
                                     <i class="fas fa-trash"></i>
                                     Supprimer
-                                </button>
+                                </a>
                             </div>
                         </div>
                     </div>
@@ -414,17 +354,61 @@
                 {% endif %}
             </div>
         </div>
+
+        <!-- Colonne Publiés -->
+        <div class="kanban-column">
+            <div class="column-header">
+                <h2 class="column-title">
+                    <i class="fas fa-check-circle"></i>
+                    Publiés
+                </h2>
+                <span class="column-count">{{ published_posts|length if published_posts else 0 }}</span>
+            </div>
+            <div class="column-content">
+                {% if published_posts %}
+                    {% for post in published_posts %}
+                    <div class="post-card">
+                        {% if post.image_url %}
+                        <img src="{{ post.image_url }}" alt="Image du post" class="post-image">
+                        {% else %}
+                        <div class="post-image-placeholder">
+                            <i class="fas fa-image"></i>
+                        </div>
+                        {% endif %}
+                        <div class="post-content">
+                            <div class="post-date">
+                                <i class="fas fa-calendar"></i>
+                                {{ post.published_at.strftime('%d/%m/%Y à %H:%M') }}
+                            </div>
+                            <div class="post-text">{{ post.content }}</div>
+                            <div class="post-actions">
+                                <a href="{{ post.linkedin_post_url or '#' }}" target="_blank" class="btn-action">
+                                    <i class="fas fa-eye"></i>
+                                    Voir sur LinkedIn
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                {% else %}
+                    <div class="column-empty">
+                        <div class="empty-icon">
+                            <i class="fas fa-check-circle"></i>
+                        </div>
+                        <p class="empty-text">Aucune publication</p>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
     </div>
 </div>
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {
     // Animation des colonnes
-    const columns = document.querySelectorAll('.kanban-column');
-    columns.forEach((column, index) => {
+    document.querySelectorAll('.kanban-column').forEach((column, index) => {
         column.style.opacity = '0';
         column.style.transform = 'translateY(20px)';
-        
         setTimeout(() => {
             column.style.opacity = '1';
             column.style.transform = 'translateY(0)';
@@ -433,11 +417,9 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 
     // Animation des cartes
-    const cards = document.querySelectorAll('.post-card');
-    cards.forEach((card, index) => {
+    document.querySelectorAll('.post-card').forEach((card, index) => {
         card.style.opacity = '0';
         card.style.transform = 'translateY(20px)';
-        
         setTimeout(() => {
             card.style.opacity = '1';
             card.style.transform = 'translateY(0)';
