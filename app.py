@@ -1823,7 +1823,7 @@ def publish():
 
     content = request.form.get("post_content")
     date_str = request.form.get("publish_time")
-    publish_now = request.form.get("publish_now")
+    action = request.form.get("action")  # 'save_draft', 'schedule', 'publish_now'
 
     if not content:
         return "Aucun contenu reçu."
@@ -1834,6 +1834,7 @@ def publish():
         publish_time = datetime.utcnow()
 
     now = datetime.utcnow()
+    min_schedule_time = now + timedelta(minutes=30)
 
     profile = session.get('profile')
     sub = profile.get("sub", "")
@@ -1841,128 +1842,107 @@ def publish():
     urn = f"urn:li:person:{user_id}"
     user = User.query.filter_by(sub=sub).first()
 
-    # ✅ Cas planification (date future + pas de case cochée)
-    if publish_time > now and not publish_now:
+    # 1. Enregistrer en brouillon
+    if action == "save_draft":
+        if user:
+            draft_post = Post(content=content, published_at=now, user_id=user.id, scheduled=False)
+            db.session.add(draft_post)
+            db.session.commit()
+        session['draft'] = ""
+        return redirect(url_for("historique"))
+
+    # 2. Programmer le post
+    if action == "schedule":
+        if publish_time < min_schedule_time:
+            return "La date de programmation doit être au moins 30 minutes dans le futur. <a href='/dashboard'>Retour</a>"
         if user:
             planned_post = Post(content=content, published_at=publish_time, user_id=user.id, scheduled=True)
             db.session.add(planned_post)
             db.session.commit()
+        session['draft'] = ""
         return redirect(url_for("calendar"))
 
-    # ✅ Sinon → publication immédiate
-    headers = {
-        "Authorization": f"Bearer {access_token}",
-        "Content-Type": "application/json",
-        "X-Restli-Protocol-Version": "2.0.0"
-    }
-
-    # Traiter les mentions pour LinkedIn
-    processed_content, mention_entities = process_mentions_for_linkedin(content)
-
-    # ✅ GESTION D'IMAGES : LOCALES + PEXELS
-    media_assets = []
-    
-    # 1. Gestion des images locales (comme avant)
-    uploaded_files = request.files.getlist("images[]")
-    max_images = min(len(uploaded_files), 9)
-    
-    for i in range(max_images):
-        file = uploaded_files[i]
-        if file and file.filename:
-            try:
-                # Upload image locale sur LinkedIn
-                asset = upload_image_to_linkedin(file.read(), access_token, urn, file.content_type)
-                if asset:
-                    media_assets.append({
-                        "status": "READY",
-                        "media": asset,
-                        "description": {
-                            "text": f"Image {i+1}"
-                        }
-                    })
-                    logger.info(f"Image locale {i+1} uploadée avec succès: {asset}")
-                    
-            except Exception as e:
-                logger.error(f"Exception lors de l'upload de l'image locale {i+1}: {str(e)}")
-                continue
-
-    # 2. Gestion des images Pexels
-    pexels_photos = request.form.getlist("pexels_photos[]")
-    for i, photo_data in enumerate(pexels_photos):
-        if len(media_assets) >= 9:  # Limite LinkedIn
-            break
-            
-        try:
-            photo_info = json.loads(photo_data)
-            photo_url = photo_info.get('src', {}).get('large', '')
-            
-            if photo_url:
-                # Télécharger la photo depuis Pexels
-                image_content = download_pexels_photo(photo_url)
-                
-                if image_content:
-                    # Upload sur LinkedIn
-                    asset = upload_image_to_linkedin(image_content, access_token, urn, 'image/jpeg')
+    # 3. Publier maintenant
+    if action == "publish_now":
+        headers = {
+            "Authorization": f"Bearer {access_token}",
+            "Content-Type": "application/json",
+            "X-Restli-Protocol-Version": "2.0.0"
+        }
+        processed_content, mention_entities = process_mentions_for_linkedin(content)
+        media_assets = []
+        uploaded_files = request.files.getlist("images[]")
+        max_images = min(len(uploaded_files), 9)
+        for i in range(max_images):
+            file = uploaded_files[i]
+            if file and file.filename:
+                try:
+                    asset = upload_image_to_linkedin(file.read(), access_token, urn, file.content_type)
                     if asset:
                         media_assets.append({
                             "status": "READY",
                             "media": asset,
-                            "description": {
-                                "text": f"Photo by {photo_info.get('photographer', 'Pexels')}"
-                            }
+                            "description": {"text": f"Image {i+1}"}
                         })
-                        logger.info(f"Photo Pexels {i+1} uploadée avec succès: {asset}")
-                        
-        except Exception as e:
-            logger.error(f"Exception lors de l'upload de la photo Pexels {i+1}: {str(e)}")
-            continue
-
-    # Déterminer le type de média
-    if len(media_assets) == 0:
-        share_media_category = "NONE"
-        media_content = []
-    elif len(media_assets) == 1:
-        share_media_category = "IMAGE"
-        media_content = media_assets
-    else:
-        share_media_category = "IMAGE"
-        media_content = media_assets
-
-    # Construire le payload de post
-    post_data = {
-        "author": urn,
-        "lifecycleState": "PUBLISHED",
-        "specificContent": {
-            "com.linkedin.ugc.ShareContent": {
-                "shareCommentary": {"text": processed_content},
-                "shareMediaCategory": share_media_category,
-                "media": media_content
+                        logger.info(f"Image locale {i+1} uploadée avec succès: {asset}")
+                except Exception as e:
+                    logger.error(f"Exception lors de l'upload de l'image locale {i+1}: {str(e)}")
+                    continue
+        pexels_photos = request.form.getlist("pexels_photos[]")
+        for i, photo_data in enumerate(pexels_photos):
+            if len(media_assets) >= 9:
+                break
+            try:
+                photo_info = json.loads(photo_data)
+                photo_url = photo_info.get('src', {}).get('large', '')
+                if photo_url:
+                    image_content = download_pexels_photo(photo_url)
+                    if image_content:
+                        asset = upload_image_to_linkedin(image_content, access_token, urn, 'image/jpeg')
+                        if asset:
+                            media_assets.append({
+                                "status": "READY",
+                                "media": asset,
+                                "description": {"text": f"Photo by {photo_info.get('photographer', 'Pexels')}"}
+                            })
+                            logger.info(f"Photo Pexels {i+1} uploadée avec succès: {asset}")
+            except Exception as e:
+                logger.error(f"Exception lors de l'upload de la photo Pexels {i+1}: {str(e)}")
+                continue
+        if len(media_assets) == 0:
+            share_media_category = "NONE"
+            media_content = []
+        else:
+            share_media_category = "IMAGE"
+            media_content = media_assets
+        post_data = {
+            "author": urn,
+            "lifecycleState": "PUBLISHED",
+            "specificContent": {
+                "com.linkedin.ugc.ShareContent": {
+                    "shareCommentary": {"text": processed_content},
+                    "shareMediaCategory": share_media_category,
+                    "media": media_content
+                }
+            },
+            "visibility": {
+                "com.linkedin.ugc.MemberNetworkVisibility": "PUBLIC"
             }
-        },
-        "visibility": {
-            "com.linkedin.ugc.MemberNetworkVisibility": "PUBLIC"
         }
-    }
-    
-    # Ajouter les entités de mention si présentes
-    if mention_entities:
-        post_data["specificContent"]["com.linkedin.ugc.ShareContent"]["mentions"] = mention_entities
+        if mention_entities:
+            post_data["specificContent"]["com.linkedin.ugc.ShareContent"]["mentions"] = mention_entities
+        post_resp = requests.post(LINKEDIN_POSTS_URL, headers=headers, json=post_data)
+        if post_resp.status_code == 201:
+            if user:
+                published_post = Post(content=content, published_at=now, user_id=user.id, scheduled=False)
+                db.session.add(published_post)
+                db.session.commit()
+            session['draft'] = ""
+            return redirect(url_for("dashboard"))
+        else:
+            logger.error(f"Erreur publication: {post_resp.text}")
+            return f"<h2>❌ Erreur lors de la publication :</h2><pre>{post_resp.text}</pre><p><a href='/dashboard'>Retour</a></p>"
 
-    # Publier le post
-    post_resp = requests.post(LINKEDIN_POSTS_URL, headers=headers, json=post_data)
-
-    if post_resp.status_code == 201:
-        if user:
-            published_post = Post(content=content, published_at=now, user_id=user.id, scheduled=False)
-            db.session.add(published_post)
-            db.session.commit()
-
-        session['draft'] = ""
-        return redirect(url_for("dashboard"))
-    else:
-        logger.error(f"Erreur publication: {post_resp.text}")
-        return f"<h2>❌ Erreur lors de la publication :</h2><pre>{post_resp.text}</pre><p><a href='/dashboard'>Retour</a></p>"
-        
 @app.route("/edit_post/<int:post_id>", methods=["GET", "POST"])
 def edit_post(post_id):
     if 'profile' not in session:
@@ -2110,9 +2090,12 @@ def historique():
     if not user:
         return "<p>Utilisateur introuvable en base.</p>"
 
-    # Récupérer les objets Post complets au lieu de juste le contenu
+    now = datetime.utcnow()
     posts = Post.query.filter_by(user_id=user.id).order_by(Post.published_at.desc()).all()
-    return render_template("historique.html", posts=posts)
+    draft_posts = [p for p in posts if not p.scheduled and (not p.published_at or p.published_at > now)]
+    scheduled_posts = [p for p in posts if p.scheduled and p.published_at > now]
+    published_posts = [p for p in posts if not p.scheduled and p.published_at and p.published_at <= now]
+    return render_template("historique.html", draft_posts=draft_posts, scheduled_posts=scheduled_posts, published_posts=published_posts)
 
 @app.route("/parametres")
 def parametres():
