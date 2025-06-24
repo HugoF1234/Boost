@@ -278,7 +278,7 @@
                         <div class="post-content">
                             <div class="post-date">
                                 <i class="fas fa-calendar"></i>
-                                {{ post.created_at.strftime('%d/%m/%Y à %H:%M') }}
+                                {{ post.published_at.strftime('%d/%m/%Y à %H:%M') }}
                             </div>
                             <div class="post-text">{{ post.content }}</div>
                             <div class="post-actions">
@@ -367,7 +367,6 @@
             <div class="column-content">
                 {% if published_posts %}
                     {% for post in published_posts %}
-                    {% if post.linkedin_post_urn %}
                     <div class="post-card">
                         {% if post.image_url %}
                         <img src="{{ post.image_url }}" alt="Image du post" class="post-image">
@@ -390,7 +389,6 @@
                             </div>
                         </div>
                     </div>
-                    {% endif %}
                     {% endfor %}
                 {% else %}
                     <div class="column-empty">
