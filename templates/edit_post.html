@@ -31,13 +31,8 @@
         line-height: 1.7;
     }
 
-    .icon-noble {
-        color: var(--noble-sage);
-        font-size: 1.125rem;
-    }
-
-    /* Header noble */
-    .edit-header {
+    /* Header noble et accueillant */
+    .welcome-section {
         background: linear-gradient(135deg, var(--noble-warm) 0%, var(--noble-mist) 100%);
         border-radius: 20px;
         padding: 2.5rem;
@@ -48,7 +43,7 @@
         overflow: hidden;
     }
 
-    .edit-header::before {
+    .welcome-section::before {
         content: '';
         position: absolute;
         top: 0;
@@ -60,7 +55,7 @@
         transform: translate(30%, -30%);
     }
 
-    .edit-header-content {
+    .welcome-content {
         position: relative;
         z-index: 1;
         display: flex;
@@ -70,91 +65,91 @@
         gap: 1.5rem;
     }
 
-    .edit-title {
+    .greeting {
         font-size: 1.75rem;
         font-weight: 600;
         color: var(--noble-charcoal);
-        margin: 0;
+        margin-bottom: 0.5rem;
+        letter-spacing: -0.02em;
+    }
+
+    .greeting-subtitle {
+        color: var(--noble-charcoal-light);
+        font-size: 1rem;
+        font-weight: 400;
+    }
+
+    .success-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        background: linear-gradient(135deg, rgba(124, 152, 133, 0.1) 0%, rgba(124, 152, 133, 0.05) 100%);
+        color: var(--gentle-success);
+        padding: 0.5rem 1rem;
+        border-radius: 20px;
+        font-size: 0.85rem;
+        font-weight: 500;
+        border: 1px solid rgba(124, 152, 133, 0.2);
+        animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+        0%, 100% { transform: scale(1); }
+        50% { transform: scale(1.02); }
+    }
+
+    /* Sections principales */
+    .creation-section {
+        background: white;
+        border-radius: 20px;
+        padding: 2.5rem;
+        margin-bottom: 2rem;
+        border: 1px solid var(--noble-stone);
+        box-shadow: var(--shadow-whisper);
+    }
+
+    .section-header {
+        margin-bottom: 2rem;
+    }
+
+    .section-title {
+        font-size: 1.4rem;
+        font-weight: 600;
+        color: var(--noble-charcoal);
+        margin-bottom: 0.5rem;
         display: flex;
         align-items: center;
         gap: 0.75rem;
     }
 
-    .edit-subtitle {
+    .section-subtitle {
         color: var(--noble-charcoal-light);
-        font-size: 1rem;
-        margin-top: 0.5rem;
+        font-size: 0.95rem;
+        line-height: 1.6;
     }
 
-    /* Layout principal responsive */
-    .edit-container {
-        display: grid;
-        grid-template-columns: 1fr;
-        gap: 2rem;
-    }
-
-    @media (min-width: 1200px) {
-        .edit-container {
-            grid-template-columns: 1fr 400px;
-            align-items: start;
-        }
-    }
-
-    /* Section principale */
-    .edit-section {
+    /* Section du contenu généré - version modifiée pour l'édition */
+    .generated-content {
         background: white;
         border-radius: 20px;
         padding: 2.5rem;
+        margin-bottom: 2rem;
         border: 1px solid var(--noble-stone);
         box-shadow: var(--shadow-whisper);
-        order: 2;
+        border: 2px solid var(--noble-sage-light);
     }
 
-    @media (min-width: 1200px) {
-        .edit-section {
-            order: 1;
-        }
-    }
-
-    /* Section aperçu */
-    .preview-section {
-        background: white;
-        border-radius: 20px;
-        padding: 2rem;
-        border: 1px solid var(--noble-stone);
-        box-shadow: var(--shadow-whisper);
-        position: sticky;
-        top: 2rem;
-        order: 1;
-    }
-
-    @media (min-width: 1200px) {
-        .preview-section {
-            order: 2;
-        }
-    }
-
-    .preview-title {
-        font-size: 1.2rem;
-        font-weight: 600;
-        color: var(--noble-charcoal);
-        margin-bottom: 1.5rem;
-        display: flex;
-        align-items: center;
-        gap: 0.5rem;
-    }
-
-    /* Aperçu LinkedIn responsive */
+    /* Aperçu LinkedIn amélioré */
     .linkedin-post {
         background: white;
         border: 1px solid #ddd;
         border-radius: 16px;
         padding: 1.5rem;
+        max-width: 600px;
+        margin: 2rem auto;
         font-family: 'Segoe UI', Tahoma, sans-serif;
         box-shadow: var(--shadow-gentle);
         transition: all 0.3s ease;
-        max-width: 100%;
-        overflow: hidden;
     }
 
     .linkedin-post:hover {
@@ -167,7 +162,6 @@
         align-items: center;
         gap: 1rem;
         margin-bottom: 1rem;
-        flex-wrap: wrap;
     }
 
     .linkedin-avatar {
@@ -177,7 +171,6 @@
         object-fit: cover;
         border: 2px solid var(--noble-sage-light);
         transition: all 0.3s ease;
-        flex-shrink: 0;
     }
 
     .linkedin-avatar:hover {
@@ -196,12 +189,10 @@
         font-size: 1.2rem;
         font-weight: 600;
         border: 2px solid var(--noble-sage-light);
-        flex-shrink: 0;
     }
 
     .linkedin-user-info {
         flex: 1;
-        min-width: 0;
     }
 
     .linkedin-name {
@@ -209,18 +200,12 @@
         font-size: 1rem;
         color: #0a66c2;
         margin-bottom: 0.25rem;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        white-space: nowrap;
     }
 
     .linkedin-subline {
         font-size: 0.875rem;
         color: #555;
         margin-bottom: 0.25rem;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        white-space: nowrap;
     }
 
     .linkedin-date {
@@ -240,7 +225,6 @@
         word-wrap: break-word;
         min-height: 60px;
         transition: all 0.3s ease;
-        overflow-wrap: break-word;
     }
 
     .linkedin-text.empty {
@@ -255,7 +239,6 @@
         color: #666;
         border-top: 1px solid #eee;
         padding-top: 0.75rem;
-        flex-wrap: wrap;
     }
 
     .linkedin-action {
@@ -266,9 +249,6 @@
         border-radius: 8px;
         transition: all 0.3s ease;
         cursor: pointer;
-        flex: 1;
-        justify-content: center;
-        min-width: 80px;
     }
 
     .linkedin-action:hover {
@@ -276,8 +256,10 @@
         color: var(--noble-sage);
     }
 
-    /* Formulaires nobles */
+    /* Formulaires de génération */
     .form-group {
+        display: flex;
+        flex-direction: column;
         margin-bottom: 1.5rem;
     }
 
@@ -286,11 +268,9 @@
         font-weight: 500;
         color: var(--noble-charcoal);
         margin-bottom: 0.75rem;
-        display: block;
     }
 
     .form-control {
-        width: 100%;
         padding: 0.875rem 1.125rem;
         border: 1.5px solid var(--noble-stone);
         border-radius: 12px;
@@ -299,7 +279,6 @@
         color: var(--noble-charcoal);
         transition: all 0.3s ease;
         font-family: inherit;
-        resize: vertical;
     }
 
     .form-control:focus {
@@ -311,11 +290,11 @@
 
     .textarea-control {
         min-height: 200px;
-        line-height: 1.6;
         resize: vertical;
+        line-height: 1.6;
     }
 
-    /* Section médias responsive */
+    /* Section de sélection des photos - Intégration Pexels */
     .media-section {
         margin-top: 2rem;
         padding-top: 2rem;
@@ -327,8 +306,6 @@
         gap: 1rem;
         margin-bottom: 2rem;
         border-bottom: 1px solid var(--noble-stone);
-        overflow-x: auto;
-        -webkit-overflow-scrolling: touch;
     }
 
     .media-tab {
@@ -344,8 +321,6 @@
         display: flex;
         align-items: center;
         gap: 0.5rem;
-        white-space: nowrap;
-        flex-shrink: 0;
     }
 
     .media-tab.active {
@@ -357,13 +332,12 @@
         color: var(--noble-sage-dark);
     }
 
-    .local-images-section,
-    .pexels-images-section {
+    /* Sélection d'images locales */
+    .local-images-section {
         display: none;
     }
 
-    .local-images-section.active,
-    .pexels-images-section.active {
+    .local-images-section.active {
         display: block;
     }
 
@@ -375,11 +349,19 @@
         background: var(--noble-mist);
         transition: all 0.3s ease;
         cursor: pointer;
+        position: relative;
+        overflow: hidden;
     }
 
     .file-upload-area:hover {
         border-color: var(--noble-sage);
         background: rgba(139, 154, 124, 0.05);
+    }
+
+    .file-upload-area.dragover {
+        border-color: var(--noble-sage);
+        background: rgba(139, 154, 124, 0.1);
+        transform: scale(1.02);
     }
 
     .upload-icon {
@@ -399,26 +381,70 @@
         font-size: 0.9rem;
     }
 
-    /* Section Pexels responsive */
+    /* Sélection d'images Pexels */
+    .pexels-images-section {
+        display: none;
+    }
+
+    .pexels-images-section.active {
+        display: block;
+    }
+
     .pexels-search {
-        display: grid;
-        grid-template-columns: 1fr auto;
+        display: flex;
         gap: 1rem;
         margin-bottom: 2rem;
         align-items: end;
     }
 
-    .pexels-results {
-        display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-        gap: 1rem;
-        margin-bottom: 2rem;
+    .pexels-search input {
+        flex: 1;
+        padding: 0.875rem 1.125rem;
+        border: 1.5px solid var(--noble-stone);
+        border-radius: 12px;
+        font-size: 0.95rem;
+        background: var(--noble-cream);
+        color: var(--noble-charcoal);
+        transition: all 0.3s ease;
     }
 
-    @media (min-width: 768px) {
-        .pexels-results {
-            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-        }
+    .pexels-search input:focus {
+        outline: none;
+        border-color: var(--noble-sage);
+        background: white;
+        box-shadow: 0 0 0 3px rgba(139, 154, 124, 0.1);
+    }
+
+    .pexels-search button {
+        padding: 0.875rem 1.5rem;
+        background: var(--noble-sage);
+        color: white;
+        border: none;
+        border-radius: 12px;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .pexels-search button:hover {
+        background: var(--noble-sage-dark);
+        transform: translateY(-1px);
+    }
+
+    .pexels-search button:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+        transform: none;
+    }
+
+    .pexels-results {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+        gap: 1rem;
+        margin-bottom: 2rem;
     }
 
     .pexels-photo {
@@ -452,23 +478,228 @@
         transform: scale(1.05);
     }
 
-    /* Section actions responsive */
-    .publish-section {
+    .pexels-photo-overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: linear-gradient(to bottom, transparent 0%, rgba(0,0,0,0.7) 100%);
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-end;
+        padding: 1rem;
+        opacity: 0;
+        transition: all 0.3s ease;
+    }
+
+    .pexels-photo:hover .pexels-photo-overlay {
+        opacity: 1;
+    }
+
+    .pexels-photographer {
+        color: white;
+        font-size: 0.8rem;
+        font-weight: 500;
+        margin-bottom: 0.5rem;
+    }
+
+    .pexels-select-btn {
+        background: rgba(255, 255, 255, 0.9);
+        color: var(--noble-charcoal);
+        border: none;
+        padding: 0.5rem 1rem;
+        border-radius: 8px;
+        font-size: 0.8rem;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+
+    .pexels-select-btn:hover {
+        background: white;
+        transform: translateY(-1px);
+    }
+
+    .pexels-photo.selected .pexels-select-btn {
+        background: var(--noble-sage);
+        color: white;
+    }
+
+    .pexels-loading {
+        text-align: center;
+        padding: 2rem;
+        color: var(--noble-charcoal-light);
+    }
+
+    .pexels-loading i {
+        font-size: 2rem;
+        margin-bottom: 1rem;
+        color: var(--noble-sage);
+        animation: spin 1s linear infinite;
+    }
+
+    @keyframes spin {
+        from { transform: rotate(0deg); }
+        to { transform: rotate(360deg); }
+    }
+
+    .pexels-error {
+        text-align: center;
+        padding: 2rem;
+        background: rgba(184, 160, 130, 0.1);
+        border-radius: 12px;
+        color: var(--gentle-warning);
+        border: 1px solid var(--gentle-warning);
+    }
+
+    .pexels-load-more {
+        width: 100%;
+        padding: 1rem 2rem;
+        background: var(--noble-warm);
+        color: var(--noble-charcoal);
+        border: 1px solid var(--noble-stone);
+        border-radius: 12px;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        margin-top: 1rem;
+    }
+
+    .pexels-load-more:hover {
+        background: var(--noble-sage);
+        color: white;
+        border-color: var(--noble-sage);
+    }
+
+    /* Aperçu des images sélectionnées */
+    .selected-images-preview {
         margin-top: 2rem;
         padding-top: 2rem;
         border-top: 1px solid var(--noble-stone);
     }
 
-    .publish-actions-grid {
+    .selected-images-grid {
         display: grid;
-        grid-template-columns: 1fr;
-        gap: 2rem;
+        grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+        gap: 1rem;
+        margin-top: 1rem;
     }
 
-    @media (min-width: 768px) {
-        .publish-actions-grid {
-            grid-template-columns: 1fr 1fr;
-        }
+    .selected-image-item {
+        position: relative;
+        aspect-ratio: 1;
+        border-radius: 8px;
+        overflow: hidden;
+        border: 2px solid var(--noble-sage-light);
+    }
+
+    .selected-image-item img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    .remove-image-btn {
+        position: absolute;
+        top: 0.5rem;
+        right: 0.5rem;
+        width: 24px;
+        height: 24px;
+        background: rgba(0, 0, 0, 0.7);
+        color: white;
+        border: none;
+        border-radius: 50%;
+        cursor: pointer;
+        font-size: 0.8rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.3s ease;
+    }
+
+    .remove-image-btn:hover {
+        background: var(--gentle-error);
+        transform: scale(1.1);
+    }
+
+    .selected-image-source {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        background: rgba(0, 0, 0, 0.7);
+        color: white;
+        font-size: 0.7rem;
+        padding: 0.25rem;
+        text-align: center;
+    }
+
+    /* Boutons nobles - Sans dégradé */
+    .btn {
+        padding: 0.875rem 1.75rem;
+        border-radius: 12px;
+        font-weight: 500;
+        font-size: 0.95rem;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.625rem;
+        text-decoration: none;
+        border: none;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .btn-primary {
+        background: var(--noble-sage);
+        color: white;
+        box-shadow: var(--shadow-whisper);
+    }
+
+    .btn-primary:hover {
+        transform: translateY(-1px);
+        box-shadow: var(--shadow-gentle);
+        background: var(--noble-sage-dark);
+    }
+
+    .btn-secondary {
+        background: white;
+        color: var(--noble-charcoal);
+        border: 1.5px solid var(--noble-stone);
+    }
+
+    .btn-secondary:hover {
+        background: var(--noble-warm);
+        border-color: var(--noble-sage);
+        transform: translateY(-1px);
+    }
+
+    .btn-danger {
+        background: var(--gentle-error);
+        color: white;
+        box-shadow: var(--shadow-whisper);
+    }
+
+    .btn-danger:hover {
+        background: #b87d7d;
+        transform: translateY(-1px);
+        box-shadow: var(--shadow-gentle);
+    }
+
+    /* Actions de publication */
+    .publish-section {
+        border-top: 1px solid var(--noble-stone);
+        padding-top: 2rem;
+        margin-top: 2rem;
+    }
+
+    .publish-actions-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 2rem;
+        align-items: start;
     }
 
     .publish-group {
@@ -489,161 +720,14 @@
         margin-bottom: 0.5rem;
     }
 
-    /* Boutons nobles */
-    .btn {
-        padding: 0.875rem 1.75rem;
-        border-radius: 12px;
-        font-weight: 500;
-        font-size: 0.95rem;
-        cursor: pointer;
-        transition: all 0.3s ease;
-        display: inline-flex;
-        align-items: center;
-        gap: 0.625rem;
-        text-decoration: none;
-        border: none;
-        justify-content: center;
-        min-height: 48px;
-    }
-
-    .btn-primary {
-        background: linear-gradient(135deg, var(--noble-sage) 0%, var(--noble-sage-light) 100%);
-        color: white;
-        box-shadow: var(--shadow-whisper);
-    }
-
-    .btn-primary:hover {
-        transform: translateY(-1px);
-        box-shadow: var(--shadow-gentle);
-        background: linear-gradient(135deg, var(--noble-sage-dark) 0%, var(--noble-sage) 100%);
-    }
-
-    .btn-secondary {
-        background: white;
-        color: var(--noble-charcoal);
-        border: 1.5px solid var(--noble-stone);
-    }
-
-    .btn-secondary:hover {
-        background: var(--noble-warm);
-        border-color: var(--noble-sage);
-        transform: translateY(-1px);
-    }
-
-    .btn-danger {
-        background: linear-gradient(135deg, var(--gentle-error) 0%, #d4a574 100%);
-        color: white;
-        box-shadow: var(--shadow-whisper);
-    }
-
-    .btn-danger:hover {
-        transform: translateY(-1px);
-        box-shadow: var(--shadow-gentle);
-    }
-
     /* Actions en bas */
     .bottom-actions {
         margin-top: 2rem;
-        display: grid;
-        grid-template-columns: 1fr;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
         gap: 1rem;
-    }
-
-    @media (min-width: 768px) {
-        .bottom-actions {
-            grid-template-columns: auto 1fr auto;
-            align-items: center;
-        }
-    }
-
-    /* Responsive spécifique */
-    @media (max-width: 767px) {
-        .edit-header {
-            padding: 2rem;
-        }
-
-        .edit-header-content {
-            flex-direction: column;
-            text-align: center;
-        }
-
-        .edit-title {
-            font-size: 1.5rem;
-        }
-
-        .edit-section,
-        .preview-section {
-            padding: 1.5rem;
-        }
-
-        .linkedin-header {
-            flex-direction: column;
-            text-align: center;
-        }
-
-        .linkedin-user-info {
-            text-align: center;
-        }
-
-        .linkedin-actions {
-            flex-direction: column;
-            gap: 0.5rem;
-        }
-
-        .linkedin-action {
-            justify-content: center;
-        }
-
-        .media-tabs {
-            flex-direction: column;
-            gap: 0;
-        }
-
-        .media-tab {
-            border-bottom: none;
-            border-left: 2px solid transparent;
-            padding: 1rem;
-            justify-content: flex-start;
-        }
-
-        .media-tab.active {
-            border-left-color: var(--noble-sage);
-            border-bottom-color: transparent;
-        }
-
-        .pexels-search {
-            grid-template-columns: 1fr;
-        }
-
-        .bottom-actions {
-            text-align: center;
-        }
-    }
-
-    /* Animations nobles */
-    .fade-in {
-        animation: gentleFadeIn 0.8s ease-out;
-    }
-
-    @keyframes gentleFadeIn {
-        from {
-            opacity: 0;
-            transform: translateY(20px);
-        }
-        to {
-            opacity: 1;
-            transform: translateY(0);
-        }
-    }
-
-    /* États de chargement */
-    .loading {
-        opacity: 0.6;
-        pointer-events: none;
-    }
-
-    .loading .btn {
-        cursor: not-allowed;
     }
 
     /* Compteur de caractères */
@@ -662,311 +746,341 @@
         color: var(--gentle-error);
     }
 
-    /* Tooltip pour responsive */
-    .tooltip-hint {
-        position: relative;
-        cursor: help;
+    /* Responsive */
+    @media (max-width: 992px) {
+        .publish-actions-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+    
+    @media (max-width: 768px) {
+        .welcome-content {
+            flex-direction: column;
+            text-align: center;
+        }
+
+        .media-tabs {
+            flex-direction: column;
+            gap: 0;
+        }
+
+        .media-tab {
+            border-bottom: none;
+            border-left: 2px solid transparent;
+            padding: 1rem;
+        }
+
+        .media-tab.active {
+            border-left-color: var(--noble-sage);
+            border-bottom-color: transparent;
+        }
+
+        .pexels-search {
+            flex-direction: column;
+        }
+
+        .pexels-results {
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+        }
+
+        .bottom-actions {
+            flex-direction: column;
+            text-align: center;
+        }
     }
 
-    .tooltip-hint::after {
-        content: attr(data-tooltip);
-        position: absolute;
-        bottom: 100%;
-        left: 50%;
-        transform: translateX(-50%);
-        background: var(--noble-charcoal);
-        color: white;
-        padding: 0.5rem;
-        border-radius: 6px;
-        font-size: 0.8rem;
-        white-space: nowrap;
-        opacity: 0;
-        visibility: hidden;
-        transition: all 0.3s ease;
-        z-index: 1000;
+    /* Animations très douces */
+    .fade-in {
+        animation: gentleFadeIn 0.8s ease-out;
     }
 
-    .tooltip-hint:hover::after {
-        opacity: 1;
-        visibility: visible;
+    @keyframes gentleFadeIn {
+        from {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    /* Icônes avec style noble */
+    .icon-noble {
+        color: var(--noble-sage);
+        font-size: 1.125rem;
     }
 </style>
 
-<!-- Header noble -->
-<div class="edit-header fade-in">
-    <div class="edit-header-content">
+<!-- Section d'accueil noble -->
+<div class="welcome-section fade-in">
+    <div class="welcome-content">
         <div>
-            <h1 class="edit-title">
-                <i class="fas fa-pen-to-square icon-noble"></i>
-                Modifier le post
-            </h1>
-            <p class="edit-subtitle">Modifiez le contenu, les images et la programmation de votre publication LinkedIn</p>
+            <h1 class="greeting">Modifier votre post 🌿</h1>
+            <p class="greeting-subtitle">Ajustez le contenu, les images et la programmation de votre publication</p>
         </div>
-        <div style="display: flex; gap: 1rem; align-items: center; flex-wrap: wrap;">
-            <span class="tooltip-hint" data-tooltip="L'aperçu se met à jour automatiquement">
-                <i class="fas fa-info-circle icon-noble"></i>
-            </span>
-            <a href="{{ url_for('historique') }}" class="btn btn-secondary">
-                <i class="fas fa-arrow-left"></i>
-                <span class="btn-text-hide-mobile">Retour</span>
-            </a>
+        <div class="success-badge">
+            <i class="fas fa-edit"></i>
+            Mode édition activé
         </div>
     </div>
 </div>
 
-<!-- Container principal responsive -->
-<div class="edit-container">
-    <!-- Section d'édition -->
-    <div class="edit-section fade-in">
-        <form method="post" action="{{ url_for('edit_post', post_id=post.id) }}" enctype="multipart/form-data" id="edit-form">
-            <div class="form-group">
-                <label class="form-label" for="post-content-textarea">
-                    <i class="fas fa-edit icon-noble"></i>
-                    Contenu de votre post
-                </label>
-                <textarea name="post_content" 
-                          class="form-control textarea-control mention-editor" 
-                          rows="8" 
-                          required 
-                          id="post-content-textarea"
-                          placeholder="Rédigez votre contenu LinkedIn...">{{ post.content }}</textarea>
-                <div class="character-counter" id="character-counter">
-                    <span id="char-count">{{ post.content|length if post.content else 0 }}</span> / 3000 caractères
-                </div>
-                <div class="mention-tip">
-                    <i class="fas fa-at icon-noble"></i>
-                    <span><strong>Astuce :</strong> Tapez @ suivi d'un nom pour mentionner quelqu'un sur LinkedIn</span>
-                </div>
+<!-- Section d'aperçu du contenu -->
+<div class="generated-content fade-in">
+    <div class="section-header">
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+            <div>
+                <h2 class="section-title">
+                    <i class="fas fa-eye icon-noble"></i>
+                    Aperçu de votre post
+                </h2>
+                <p class="section-subtitle">Visualisez votre contenu tel qu'il apparaîtra sur LinkedIn</p>
             </div>
-            
-            <!-- Section Images -->
-            <div class="media-section">
-                <h3 style="color: var(--noble-charcoal); margin-bottom: 1rem; display: flex; align-items: center; gap: 0.75rem;">
-                    <i class="fas fa-images icon-noble"></i>
-                    Ajouter des images
-                </h3>
-                
-                <div class="media-tabs">
-                    <button type="button" class="media-tab active" onclick="switchMediaTab('local')">
-                        <i class="fas fa-upload"></i>
-                        <span>Images locales</span>
-                    </button>
-                    <button type="button" class="media-tab" onclick="switchMediaTab('pexels')">
-                        <i class="fas fa-search"></i>
-                        <span>Photos Pexels</span>
-                    </button>
-                </div>
-                
-                <!-- Section images locales -->
-                <div class="local-images-section active" id="local-images-section">
-                    <div class="file-upload-area" onclick="document.getElementById('images').click()" id="file-upload-area">
-                        <div class="upload-icon">
-                            <i class="fas fa-cloud-upload-alt"></i>
-                        </div>
-                        <div class="upload-text">Cliquez pour sélectionner des images</div>
-                        <div class="upload-hint">ou glissez-déposez vos fichiers ici (JPG, PNG, max 9 images)</div>
-                    </div>
-                    <input type="file" name="images[]" id="images" accept="image/*" multiple class="form-control" style="display: none;">
-                </div>
-                
-                <!-- Section photos Pexels -->
-                <div class="pexels-images-section" id="pexels-images-section">
-                    <div class="pexels-search">
-                        <input type="text" 
-                               id="pexels-search-input" 
-                               class="form-control"
-                               placeholder="Rechercher des photos : marketing, business, technology...">
-                        <button type="button" 
-                                onclick="searchPexelsPhotos()" 
-                                id="pexels-search-btn"
-                                class="btn btn-primary">
-                            <i class="fas fa-search"></i>
-                            <span class="btn-text-hide-mobile">Rechercher</span>
-                        </button>
-                    </div>
-                    
-                    <div id="pexels-results-container">
-                        <div class="pexels-loading" style="display: none;" id="pexels-loading">
-                            <i class="fas fa-spinner fa-spin"></i>
-                            <p>Recherche en cours...</p>
-                        </div>
-                        
-                        <div class="pexels-error" style="display: none;" id="pexels-error">
-                            <i class="fas fa-exclamation-triangle"></i>
-                            <p>Erreur lors de la recherche. Veuillez réessayer.</p>
-                        </div>
-                        
-                        <div class="pexels-results" id="pexels-results"></div>
-                        
-                        <button type="button" 
-                                class="pexels-load-more" 
-                                style="display: none;" 
-                                onclick="loadMorePexelsPhotos()" 
-                                id="pexels-load-more">
-                            Charger plus de photos
-                        </button>
-                    </div>
-                </div>
-                
-                <!-- Aperçu des images sélectionnées -->
-                <div class="selected-images-preview" style="display: none;" id="selected-images-preview">
-                    <h4 style="color: var(--noble-charcoal); margin-bottom: 1rem;">
-                        <i class="fas fa-check icon-noble"></i>
-                        Images sélectionnées (<span id="selected-count">0</span>/9)
-                    </h4>
-                    <div class="selected-images-grid" id="selected-images-grid"></div>
-                </div>
-            </div>
-
-            <!-- Section Actions -->
-            <div class="publish-section">
-                <h3 style="color: var(--noble-charcoal); margin-bottom: 1.5rem; display: flex; align-items: center; gap: 0.75rem;">
-                    <i class="fas fa-paper-plane icon-noble"></i>
-                    Finaliser votre post
-                </h3>
-                <div class="publish-actions-grid">
-                    <div class="publish-group schedule-group">
-                        <label class="publish-group-title" for="publish-time-input">
-                            📅 Programmer pour plus tard
-                        </label>
-                        <input type="datetime-local" 
-                               id="publish-time-input" 
-                               name="publish_time" 
-                               class="form-control" 
-                               value="{{ formatted_date }}">
-                        <button type="submit" 
-                                name="action" 
-                                value="schedule" 
-                                class="btn btn-secondary" 
-                                style="width: 100%;">
-                            <i class="fas fa-clock"></i>
-                            Programmer le post
-                        </button>
-                    </div>
-                    
-                    <div class="publish-group">
-                        <label class="publish-group-title">🚀 Actions immédiates</label>
-                        <button type="submit" 
-                                name="action" 
-                                value="publish_now" 
-                                class="btn btn-primary" 
-                                style="width: 100%;">
-                            <i class="fas fa-rocket"></i>
-                            Publier maintenant
-                        </button>
-                        <button type="submit" 
-                                name="action" 
-                                value="save_draft" 
-                                class="btn btn-secondary" 
-                                style="width: 100%;">
-                            <i class="fas fa-save"></i>
-                            Enregistrer en brouillon
-                        </button>
-                    </div>
-                </div>
-            </div>
-        </form>
-
-        <!-- Actions en bas -->
-        <div class="bottom-actions">
-            <a href="{{ url_for('historique') }}" class="btn btn-secondary">
-                <i class="fas fa-times"></i>
-                Annuler
-            </a>
-            
-            <div></div> <!-- Spacer pour desktop -->
-            
-            <a href="{{ url_for('delete_post', post_id=post.id) }}" class="btn btn-danger">
-                <i class="fas fa-trash"></i>
-                Supprimer ce post
-            </a>
         </div>
     </div>
+    
+    <!-- Aperçu LinkedIn dynamique -->
+    <div class="linkedin-post" id="linkedin-preview">
+        <div class="linkedin-header">
+            {% if picture %}
+                <img src="{{ picture }}" alt="Photo de profil" class="linkedin-avatar" id="preview-avatar">
+            {% else %}
+                <div class="linkedin-avatar-placeholder" id="preview-avatar">
+                    {{ first_name[0]|upper if first_name else 'U' }}
+                </div>
+            {% endif %}
+            
+            <div class="linkedin-user-info">
+                <div class="linkedin-name" id="preview-name">
+                    {% if first_name and last_name %}
+                        {{ first_name }} {{ last_name }}
+                    {% elif name %}
+                        {{ name }}
+                    {% else %}
+                        Utilisateur ResoBoost
+                    {% endif %}
+                </div>
+                <div class="linkedin-subline" id="preview-role">
+                    {% if secteur %}
+                        {{ secteur|title }} • ResoBoost
+                    {% else %}
+                        Professionnel LinkedIn • ResoBoost
+                    {% endif %}
+                </div>
+                <div class="linkedin-date">
+                    <i class="fas fa-globe-europe"></i>
+                    {% if post.published_at %}
+                        {{ post.published_at.strftime('%d/%m/%Y à %H:%M') }}
+                    {% else %}
+                        il y a quelques instants
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        
+        <div class="linkedin-text" id="preview-text">{{ post.content | safe }}</div>
+        
+        <div class="linkedin-actions">
+            <div class="linkedin-action">
+                <i class="far fa-thumbs-up"></i>
+                <span>J'aime</span>
+            </div>
+            <div class="linkedin-action">
+                <i class="far fa-comment"></i>
+                <span>Commenter</span>
+            </div>
+            <div class="linkedin-action">
+                <i class="fas fa-share"></i>
+                <span>Partager</span>
+            </div>
+            <div class="linkedin-action">
+                <i class="fas fa-paper-plane"></i>
+                <span>Envoyer</span>
+            </div>
+        </div>
+    </div>
+</div>
 
-    <!-- Section aperçu collante -->
-    <div class="preview-section fade-in">
-        <h3 class="preview-title">
-            <i class="fas fa-eye icon-noble"></i>
-            Aperçu temps réel
-        </h3>
+<!-- Section d'édition du contenu -->
+<div class="creation-section fade-in">
+    <div class="section-header">
+        <h2 class="section-title">
+            <i class="fas fa-pen-to-square icon-noble"></i>
+            Éditer votre contenu
+        </h2>
+        <p class="section-subtitle">Modifiez le texte de votre publication - l'aperçu se met à jour automatiquement</p>
+    </div>
+    
+    <form method="post" action="{{ url_for('edit_post', post_id=post.id) }}" enctype="multipart/form-data" id="edit-form">
+        <div class="form-group">
+            <label class="form-label" for="post-content-textarea">
+                <i class="fas fa-edit icon-noble"></i>
+                Contenu de votre post
+            </label>
+            <textarea name="post_content" 
+                      class="form-control textarea-control" 
+                      rows="8" 
+                      required 
+                      id="post-content-textarea"
+                      placeholder="Rédigez votre contenu LinkedIn...">{{ post.content }}</textarea>
+            <div class="character-counter" id="character-counter">
+                <span id="char-count">{{ post.content|length if post.content else 0 }}</span> / 3000 caractères
+            </div>
+        </div>
         
-        <!-- Aperçu LinkedIn dynamique -->
-        <div class="linkedin-post" id="linkedin-preview">
-            <div class="linkedin-header">
-                {% if picture %}
-                    <img src="{{ picture }}" alt="Photo de profil" class="linkedin-avatar" id="preview-avatar">
-                {% else %}
-                    <div class="linkedin-avatar-placeholder" id="preview-avatar">
-                        {{ first_name[0]|upper if first_name else 'U' }}
+        <!-- Section Images -->
+        <div class="media-section">
+            <h3 style="color: var(--noble-charcoal); margin-bottom: 1rem; display: flex; align-items: center; gap: 0.75rem;">
+                <i class="fas fa-images icon-noble"></i>
+                Ajouter des images
+            </h3>
+            
+            <div class="media-tabs">
+                <button type="button" class="media-tab active" onclick="switchMediaTab('local')">
+                    <i class="fas fa-upload"></i>
+                    Images locales
+                </button>
+                <button type="button" class="media-tab" onclick="switchMediaTab('pexels')">
+                    <i class="fas fa-search"></i>
+                    Photos Pexels
+                </button>
+            </div>
+            
+            <!-- Section images locales -->
+            <div class="local-images-section active" id="local-images-section">
+                <div class="file-upload-area" onclick="document.getElementById('images').click()" id="file-upload-area">
+                    <div class="upload-icon">
+                        <i class="fas fa-cloud-upload-alt"></i>
                     </div>
-                {% endif %}
+                    <div class="upload-text">Cliquez pour sélectionner des images</div>
+                    <div class="upload-hint">ou glissez-déposez vos fichiers ici (JPG, PNG, max 9 images)</div>
+                </div>
+                <input type="file" name="images[]" id="images" accept="image/*" multiple class="form-control" style="display: none;">
+            </div>
+            
+            <!-- Section photos Pexels -->
+            <div class="pexels-images-section" id="pexels-images-section">
+                <div class="pexels-search">
+                    <input type="text" 
+                           id="pexels-search-input" 
+                           placeholder="Rechercher des photos : marketing, business, technology...">
+                    <button type="button" 
+                            onclick="searchPexelsPhotos()" 
+                            id="pexels-search-btn">
+                        <i class="fas fa-search"></i>
+                        Rechercher
+                    </button>
+                </div>
                 
-                <div class="linkedin-user-info">
-                    <div class="linkedin-name" id="preview-name">
-                        {% if first_name and last_name %}
-                            {{ first_name }} {{ last_name }}
-                        {% elif name %}
-                            {{ name }}
-                        {% else %}
-                            Utilisateur ResoBoost
-                        {% endif %}
+                <div id="pexels-results-container">
+                    <div class="pexels-loading" style="display: none;" id="pexels-loading">
+                        <i class="fas fa-spinner"></i>
+                        <p>Recherche en cours...</p>
                     </div>
-                    <div class="linkedin-subline" id="preview-role">
-                        {% if secteur %}
-                            {{ secteur|title }} • ResoBoost
-                        {% else %}
-                            Professionnel LinkedIn • ResoBoost
-                        {% endif %}
+                    
+                    <div class="pexels-error" style="display: none;" id="pexels-error">
+                        <i class="fas fa-exclamation-triangle"></i>
+                        <p>Erreur lors de la recherche. Veuillez réessayer.</p>
                     </div>
-                    <div class="linkedin-date">
-                        <i class="fas fa-globe-europe"></i>
-                        {% if post.published_at %}
-                            {{ post.published_at.strftime('%d/%m/%Y à %H:%M') }}
-                        {% else %}
-                            il y a quelques instants
-                        {% endif %}
+                    
+                    <div class="pexels-results" id="pexels-results">
+                        <!-- Les photos seront ajoutées dynamiquement ici -->
                     </div>
+                    
+                    <button type="button" 
+                            class="pexels-load-more" 
+                            style="display: none;" 
+                            onclick="loadMorePexelsPhotos()" 
+                            id="pexels-load-more">
+                        Charger plus de photos
+                    </button>
                 </div>
             </div>
             
-            <div class="linkedin-text" id="preview-text">{{ post.content | safe }}</div>
-            
-            <div class="linkedin-actions">
-                <div class="linkedin-action">
-                    <i class="far fa-thumbs-up"></i>
-                    <span>J'aime</span>
-                </div>
-                <div class="linkedin-action">
-                    <i class="far fa-comment"></i>
-                    <span>Commenter</span>
-                </div>
-                <div class="linkedin-action">
-                    <i class="fas fa-share"></i>
-                    <span>Partager</span>
-                </div>
-                <div class="linkedin-action">
-                    <i class="fas fa-paper-plane"></i>
-                    <span>Envoyer</span>
+            <!-- Aperçu des images sélectionnées -->
+            <div class="selected-images-preview" style="display: none;" id="selected-images-preview">
+                <h4 style="color: var(--noble-charcoal); margin-bottom: 1rem;">
+                    <i class="fas fa-check icon-noble"></i>
+                    Images sélectionnées (<span id="selected-count">0</span>/9)
+                </h4>
+                <div class="selected-images-grid" id="selected-images-grid">
+                    <!-- Les images sélectionnées apparaîtront ici -->
                 </div>
             </div>
         </div>
+</div>
+
+<!-- Section de finalisation -->
+<div class="creation-section fade-in">
+    <div class="section-header">
+        <h2 class="section-title">
+            <i class="fas fa-paper-plane icon-noble"></i>
+            Finaliser votre post
+        </h2>
+        <p class="section-subtitle">Choisissez comment et quand publier votre contenu mis à jour</p>
+    </div>
+    
+    <div class="publish-section">
+        <div class="publish-actions-grid">
+            <div class="publish-group schedule-group">
+                <label class="publish-group-title" for="publish-time-input">
+                    📅 Programmer pour plus tard
+                </label>
+                <input type="datetime-local" 
+                       id="publish-time-input" 
+                       name="publish_time" 
+                       class="form-control" 
+                       value="{{ formatted_date }}">
+                <button type="submit" 
+                        name="action" 
+                        value="schedule" 
+                        class="btn btn-secondary" 
+                        style="width: 100%;">
+                    <i class="fas fa-clock"></i>
+                    Programmer le post
+                </button>
+            </div>
+            
+            <div class="publish-group">
+                <label class="publish-group-title">🚀 Actions immédiates</label>
+                <button type="submit" 
+                        name="action" 
+                        value="publish_now" 
+                        class="btn btn-primary" 
+                        style="width: 100%;">
+                    <i class="fas fa-rocket"></i>
+                    Publier maintenant
+                </button>
+                <button type="submit" 
+                        name="action" 
+                        value="save_draft" 
+                        class="btn btn-secondary" 
+                        style="width: 100%;">
+                    <i class="fas fa-save"></i>
+                    Enregistrer en brouillon
+                </button>
+            </div>
+        </div>
+    </div>
+    </form>
+
+    <!-- Actions en bas -->
+    <div class="bottom-actions">
+        <a href="{{ url_for('historique') }}" class="btn btn-secondary">
+            <i class="fas fa-arrow-left"></i>
+            Retour à l'historique
+        </a>
         
-        <!-- Informations supplémentaires -->
-        <div style="margin-top: 1.5rem; padding: 1rem; background: var(--noble-mist); border-radius: 12px; font-size: 0.85rem; color: var(--noble-charcoal-light);">
-            <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem;">
-                <i class="fas fa-info-circle icon-noble"></i>
-                <strong>Aperçu automatique</strong>
-            </div>
-            <p style="margin: 0; line-height: 1.4;">
-                Cet aperçu se met à jour automatiquement pendant que vous tapez. 
-                Les mentions (@nom) et hashtags (#tag) seront formatés sur LinkedIn.
-            </p>
-        </div>
+        <a href="{{ url_for('delete_post', post_id=post.id) }}" class="btn btn-danger">
+            <i class="fas fa-trash"></i>
+            Supprimer ce post
+        </a>
     </div>
 </div>
 
 <script>
-// Variables globales pour la gestion des médias (même logique que dashboard)
+// Variables globales pour la gestion des médias
 let currentMediaTab = 'local';
 let selectedPexelsPhotos = [];
 let selectedLocalFiles = [];
@@ -1360,73 +1474,21 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
     
-    // Animation progressive des éléments
-    const elements = document.querySelectorAll('.fade-in');
-    elements.forEach((el, index) => {
-        el.style.opacity = '0';
-        el.style.transform = 'translateY(20px)';
-        el.style.transition = 'all 0.8s ease';
-        
-        setTimeout(() => {
-            el.style.opacity = '1';
-            el.style.transform = 'translateY(0)';
-        }, index * 200);
-    });
-
-    // Interactions nobles sur les boutons
-    document.querySelectorAll('.btn').forEach(btn => {
-        btn.addEventListener('mouseenter', function() {
-            this.style.transform = 'translateY(-1px)';
-        });
-        
-        btn.addEventListener('mouseleave', function() {
-            this.style.transform = 'translateY(0)';
-        });
-    });
-
-    // Animation des onglets média
-    document.querySelectorAll('.media-tab').forEach(tab => {
-        tab.addEventListener('mouseenter', function() {
-            if (!this.classList.contains('active')) {
-                this.style.transform = 'translateY(-1px)';
-            }
-        });
-        
-        tab.addEventListener('mouseleave', function() {
-            if (!this.classList.contains('active')) {
-                this.style.transform = 'translateY(0)';
-            }
-        });
-    });
-
-    // Gestion responsive du formulaire
-    function handleResponsiveForm() {
-        const isMobile = window.innerWidth <= 767;
-        const form = document.getElementById('edit-form');
-        
-        if (form) {
-            if (isMobile) {
-                form.style.fontSize = '16px'; // Évite le zoom sur iOS
-            } else {
-                form.style.fontSize = '';
-            }
+    // Suggestions de recherche Pexels
+    const searchSuggestions = [
+        'business meeting', 'technology', 'marketing', 'team work', 
+        'innovation', 'success', 'growth', 'leadership', 'strategy',
+        'digital transformation', 'productivity', 'collaboration'
+    ];
+    
+    // Ajouter des suggestions au placeholder de manière dynamique
+    let suggestionIndex = 0;
+    setInterval(() => {
+        if (pexelsInput && !pexelsInput.value && document.activeElement !== pexelsInput) {
+            pexelsInput.placeholder = `Rechercher : ${searchSuggestions[suggestionIndex]}...`;
+            suggestionIndex = (suggestionIndex + 1) % searchSuggestions.length;
         }
-    }
-
-    window.addEventListener('resize', handleResponsiveForm);
-    handleResponsiveForm();
-
-    // Sauvegarde automatique du brouillon (optionnel)
-    let saveTimeout;
-    if (textarea) {
-        textarea.addEventListener('input', function() {
-            clearTimeout(saveTimeout);
-            saveTimeout = setTimeout(() => {
-                // Ici vous pourriez implémenter une sauvegarde automatique
-                console.log('Sauvegarde automatique du brouillon');
-            }, 5000); // Sauvegarde après 5 secondes d'inactivité
-        });
-    }
+    }, 3000);
 });
 
 // Modification de la soumission du formulaire pour inclure les photos Pexels
@@ -1456,6 +1518,23 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 });
 
+// Animation noble des onglets média
+document.addEventListener('DOMContentLoaded', function() {
+    document.querySelectorAll('.media-tab').forEach(tab => {
+        tab.addEventListener('mouseenter', function() {
+            if (!this.classList.contains('active')) {
+                this.style.transform = 'translateY(-1px)';
+            }
+        });
+        
+        tab.addEventListener('mouseleave', function() {
+            if (!this.classList.contains('active')) {
+                this.style.transform = 'translateY(0)';
+            }
+        });
+    });
+});
+
 // Gestion des raccourcis clavier
 document.addEventListener('keydown', function(e) {
     // Ctrl/Cmd + S pour sauvegarder
@@ -1482,17 +1561,6 @@ document.addEventListener('keydown', function(e) {
         if (cancelBtn && confirm('Êtes-vous sûr de vouloir annuler ? Les modifications non sauvegardées seront perdues.')) {
             window.location.href = cancelBtn.href;
         }
-    }
-});
-
-// Animation au scroll pour l'aperçu collant
-window.addEventListener('scroll', function() {
-    const previewSection = document.querySelector('.preview-section');
-    if (previewSection && window.innerWidth >= 1200) {
-        const scrolled = window.pageYOffset;
-        const parallax = scrolled * 0.1;
-        
-        previewSection.style.transform = `translateY(${parallax}px)`;
     }
 });
 </script>
