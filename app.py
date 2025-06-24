@@ -2092,9 +2092,15 @@ def historique():
 
     now = datetime.utcnow()
     posts = Post.query.filter_by(user_id=user.id).order_by(Post.published_at.desc()).all()
-    draft_posts = [p for p in posts if not p.scheduled and (not p.published_at or p.published_at > now)]
-    scheduled_posts = [p for p in posts if p.scheduled and p.published_at > now]
-    published_posts = [p for p in posts if not p.scheduled and p.published_at and p.published_at <= now]
+    # A post is published if it has a LinkedIn URN.
+    published_posts = [p for p in posts if p.linkedin_post_urn]
+
+    # A post is scheduled if it is marked as scheduled for the future and not yet published.
+    scheduled_posts = [p for p in posts if p.scheduled and p.published_at and p.published_at > now and not p.linkedin_post_urn]
+
+    # A draft is a post that is not scheduled and not published.
+    draft_posts = [p for p in posts if not p.scheduled and not p.linkedin_post_urn]
+
     return render_template("historique.html", draft_posts=draft_posts, scheduled_posts=scheduled_posts, published_posts=published_posts)
 
 @app.route("/parametres")
