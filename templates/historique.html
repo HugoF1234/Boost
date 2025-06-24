@@ -367,6 +367,7 @@
             <div class="column-content">
                 {% if published_posts %}
                     {% for post in published_posts %}
+                    {% if post.linkedin_post_urn %}
                     <div class="post-card">
                         {% if post.image_url %}
                         <img src="{{ post.image_url }}" alt="Image du post" class="post-image">
@@ -382,13 +383,14 @@
                             </div>
                             <div class="post-text">{{ post.content }}</div>
                             <div class="post-actions">
-                                <a href="{{ post.linkedin_post_url or '#' }}" target="_blank" class="btn-action">
+                                <a href="https://www.linkedin.com/feed/update/{{ post.linkedin_post_urn }}" target="_blank" class="btn-action">
                                     <i class="fas fa-eye"></i>
                                     Voir sur LinkedIn
                                 </a>
                             </div>
                         </div>
                     </div>
+                    {% endif %}
                     {% endfor %}
                 {% else %}
                     <div class="column-empty">
