@@ -1,6 +1,8 @@
 {% extends "base.html" %}
 {% block content %}
 <style>
+    /* ===== Direction Artistique du Dashboard - Recopiée pour Cohérence ===== */
+
     /* Variables nobles et apaisantes */
     :root {
         --noble-cream: #faf9f7;
@@ -31,78 +33,23 @@
         line-height: 1.7;
     }
 
-    /* Header noble et accueillant */
-    .page-header {
-        background: linear-gradient(135deg, var(--noble-warm) 0%, var(--noble-mist) 100%);
-        color: var(--noble-charcoal);
-        padding: 2.5rem;
-        border-radius: 20px;
-        margin-bottom: 2rem;
-        position: relative;
-        overflow: hidden;
-        box-shadow: var(--shadow-whisper);
-        border: 1px solid var(--noble-stone);
+    .icon-noble {
+        color: var(--noble-sage);
+        font-size: 1.125rem;
     }
 
-    .page-header::before {
-        content: '';
-        position: absolute;
-        top: 0;
-        right: 0;
-        width: 120px;
-        height: 120px;
-        background: radial-gradient(circle, rgba(139, 154, 124, 0.06) 0%, transparent 70%);
-        border-radius: 50%;
-        transform: translate(30%, -30%);
-    }
-
-    .header-content {
-        position: relative;
-        z-index: 1;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        flex-wrap: wrap;
-        gap: 1.5rem;
-    }
-
-    .page-title {
-        font-size: 2rem;
-        font-weight: 600;
-        margin: 0;
-        letter-spacing: -0.02em;
-        display: flex;
-        align-items: center;
-        gap: 1rem;
-        color: var(--noble-charcoal);
-    }
-
-    .page-subtitle {
-        font-size: 1rem;
-        font-weight: 400;
-        margin-top: 0.5rem;
-        color: var(--noble-charcoal-light);
-    }
-
-    /* Cartes de contenu nobles */
-    .content-card {
+    /* Section principale */
+    .creation-section, .generated-content {
         background: white;
         border-radius: 20px;
-        border: 1px solid var(--noble-stone);
-        overflow: hidden;
-        transition: all 0.3s ease;
+        padding: 2.5rem;
         margin-bottom: 2rem;
+        border: 1px solid var(--noble-stone);
         box-shadow: var(--shadow-whisper);
     }
 
-    .content-card:hover {
-        transform: translateY(-2px);
-        box-shadow: var(--shadow-gentle);
-        border-color: var(--noble-sage-light);
-    }
-
-    .card-body {
-        padding: 2.5rem;
+    .section-header {
+        margin-bottom: 2rem;
     }
 
     .section-title {
@@ -119,818 +66,634 @@
         color: var(--noble-charcoal-light);
         font-size: 0.95rem;
         line-height: 1.6;
-        margin-bottom: 2rem;
     }
 
-    /* Aperçu LinkedIn amélioré */
+    /* Aperçu LinkedIn */
     .linkedin-post {
         background: white;
         border: 1px solid #ddd;
         border-radius: 16px;
         padding: 1.5rem;
         max-width: 600px;
-        margin: 2rem auto;
+        margin: 0 auto 2rem auto;
         font-family: 'Segoe UI', Tahoma, sans-serif;
         box-shadow: var(--shadow-gentle);
-        transition: all 0.3s ease;
     }
+    .linkedin-header { display: flex; align-items: center; gap: 1rem; margin-bottom: 1rem; }
+    .linkedin-avatar { width: 52px; height: 52px; border-radius: 50%; object-fit: cover; }
+    .linkedin-avatar-placeholder { width: 52px; height: 52px; border-radius: 50%; background: linear-gradient(135deg, var(--noble-sage) 0%, var(--noble-accent) 100%); display: flex; align-items: center; justify-content: center; color: white; font-size: 1.2rem; font-weight: 600; }
+    .linkedin-name { font-weight: 600; font-size: 1rem; color: #0a66c2; }
+    .linkedin-subline { font-size: 0.875rem; color: #555; }
+    .linkedin-date { font-size: 0.75rem; color: #888; }
+    .linkedin-text { font-size: 1rem; color: #222; line-height: 1.5; margin-bottom: 1rem; white-space: pre-wrap; word-wrap: break-word; min-height: 60px; }
+    .linkedin-actions { display: flex; justify-content: space-around; font-size: 0.875rem; color: #666; border-top: 1px solid #eee; padding-top: 0.75rem; }
+    .linkedin-action { display: flex; align-items: center; gap: 0.5rem; }
 
-    .linkedin-post:hover {
-        transform: translateY(-2px);
-        box-shadow: var(--shadow-soft);
-    }
+    /* Formulaires */
+    .form-group { display: flex; flex-direction: column; margin-bottom: 1.5rem; }
+    .form-label { font-size: 0.9rem; font-weight: 500; color: var(--noble-charcoal); margin-bottom: 0.75rem; }
+    .form-control { width: 100%; padding: 0.875rem 1.125rem; border: 1.5px solid var(--noble-stone); border-radius: 12px; font-size: 0.95rem; background: var(--noble-cream); color: var(--noble-charcoal); transition: all 0.3s ease; }
+    .form-control:focus { outline: none; border-color: var(--noble-sage); box-shadow: 0 0 0 3px rgba(139, 154, 124, 0.1); background: white; }
+    .textarea-control { min-height: 120px; resize: vertical; line-height: 1.6; }
 
-    .linkedin-header {
-        display: flex;
-        align-items: center;
-        gap: 1rem;
-        margin-bottom: 1rem;
-    }
+    /* Section Médias */
+    .media-section { margin-top: 2rem; padding-top: 2rem; border-top: 1px solid var(--noble-stone); }
+    .media-tabs { display: flex; gap: 1rem; margin-bottom: 2rem; border-bottom: 1px solid var(--noble-stone); }
+    .media-tab { padding: 0.75rem 1.5rem; background: transparent; border: none; border-bottom: 2px solid transparent; cursor: pointer; font-weight: 500; color: var(--noble-charcoal-light); transition: all 0.3s ease; font-size: 0.9rem; display: flex; align-items: center; gap: 0.5rem; }
+    .media-tab.active { color: var(--noble-sage); border-bottom-color: var(--noble-sage); }
+    .local-images-section, .pexels-images-section { display: none; }
+    .local-images-section.active, .pexels-images-section.active { display: block; }
+    .file-upload-area { border: 2px dashed var(--noble-stone); border-radius: 12px; padding: 2rem; text-align: center; background: var(--noble-mist); transition: all 0.3s ease; cursor: pointer; }
+    .upload-icon { font-size: 2.5rem; color: var(--noble-sage); margin-bottom: 1rem; }
+    .upload-text { color: var(--noble-charcoal); font-weight: 500; margin-bottom: 0.5rem; }
+    .upload-hint { color: var(--noble-charcoal-light); font-size: 0.9rem; }
+    .pexels-search { display: flex; gap: 1rem; margin-bottom: 2rem; }
+    .pexels-search input { flex: 1; }
+    .pexels-results { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 1rem; }
+    .selected-images-preview { margin-top: 2rem; padding-top: 2rem; border-top: 1px solid var(--noble-stone); }
+    .selected-images-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); gap: 1rem; margin-top: 1rem; }
 
-    .linkedin-avatar {
-        width: 52px;
-        height: 52px;
-        border-radius: 50%;
-        object-fit: cover;
-        border: 2px solid var(--noble-sage-light);
-        transition: all 0.3s ease;
-    }
-
-    .linkedin-avatar:hover {
-        transform: scale(1.05);
-    }
-
-    .linkedin-avatar-placeholder {
-        width: 52px;
-        height: 52px;
-        border-radius: 50%;
-        background: linear-gradient(135deg, var(--noble-sage) 0%, var(--noble-accent) 100%);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        color: white;
-        font-size: 1.2rem;
-        font-weight: 600;
-        border: 2px solid var(--noble-sage-light);
-    }
-
-    .linkedin-user-info {
-        flex: 1;
-    }
-
-    .linkedin-name {
-        font-weight: 600;
-        font-size: 1rem;
-        color: #0a66c2;
-        margin-bottom: 0.25rem;
-    }
-
-    .linkedin-subline {
-        font-size: 0.875rem;
-        color: #555;
-        margin-bottom: 0.25rem;
-    }
-
-    .linkedin-date {
-        font-size: 0.75rem;
-        color: #888;
-        display: flex;
-        align-items: center;
-        gap: 0.25rem;
-    }
-
-    .linkedin-text {
-        font-size: 1rem;
-        color: #222;
-        line-height: 1.5;
-        margin-bottom: 1rem;
-        white-space: pre-wrap;
-        word-wrap: break-word;
-        min-height: 60px;
-        transition: all 0.3s ease;
-    }
-
-    .linkedin-text.empty {
-        color: #999;
-        font-style: italic;
-    }
-
-    .linkedin-actions {
-        display: flex;
-        justify-content: space-around;
-        font-size: 0.875rem;
-        color: #666;
-        border-top: 1px solid #eee;
-        padding-top: 0.75rem;
-    }
-
-    .linkedin-action {
-        display: flex;
-        align-items: center;
-        gap: 0.5rem;
-        padding: 0.5rem 1rem;
-        border-radius: 8px;
-        transition: all 0.3s ease;
-        cursor: pointer;
-    }
-
-    .linkedin-action:hover {
-        background: var(--noble-mist);
-        color: var(--noble-sage);
-    }
-
-    /* Aperçu du post actuel */
-    .current-post {
-        background: linear-gradient(135deg, rgba(139, 154, 124, 0.04) 0%, rgba(156, 139, 122, 0.04) 100%);
-        border: 1px solid rgba(139, 154, 124, 0.15);
-        border-radius: 16px;
-        padding: 2rem;
-        margin-bottom: 2rem;
-        position: relative;
-    }
-
-    .current-post::before {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 4px;
-        height: 100%;
-        background: linear-gradient(to bottom, var(--noble-sage), var(--noble-accent));
-        border-radius: 2px;
-    }
-
-    .post-meta {
-        display: flex;
-        align-items: center;
-        gap: 1rem;
-        margin-bottom: 1rem;
-        font-size: 0.9rem;
-        color: var(--noble-charcoal-light);
-        flex-wrap: wrap;
-    }
-
-    .meta-badge {
-        background: var(--noble-sage);
-        color: white;
-        padding: 0.375rem 0.875rem;
-        border-radius: 20px;
-        font-size: 0.8rem;
-        font-weight: 500;
-        display: flex;
-        align-items: center;
-        gap: 0.5rem;
-    }
-
-    .post-content-preview {
-        background: white;
-        border-radius: 12px;
-        padding: 1.5rem;
-        border-left: 4px solid var(--noble-sage);
-        color: var(--noble-charcoal);
-        line-height: 1.6;
-        white-space: pre-wrap;
-        word-wrap: break-word;
-        max-height: 150px;
-        overflow-y: auto;
-    }
-
-    /* Formulaires nobles */
-    .form-group {
-        margin-bottom: 1.5rem;
-    }
-
-    .form-label {
-        font-size: 0.9rem;
-        font-weight: 500;
-        color: var(--noble-charcoal);
-        margin-bottom: 0.75rem;
-        display: block;
-        display: flex;
-        align-items: center;
-        gap: 0.5rem;
-    }
-
-    .form-control {
-        width: 100%;
-        padding: 0.875rem 1.125rem;
-        border: 1.5px solid var(--noble-stone);
-        border-radius: 12px;
-        font-size: 0.95rem;
-        background: var(--noble-cream);
-        color: var(--noble-charcoal);
-        transition: all 0.3s ease;
-        font-family: inherit;
-    }
-
-    .form-control:focus {
-        outline: none;
-        border-color: var(--noble-sage);
-        box-shadow: 0 0 0 3px rgba(139, 154, 124, 0.1);
-        background: white;
-    }
-
-    .textarea-control {
-        min-height: 150px;
-        resize: vertical;
-        line-height: 1.6;
-    }
-
-    /* Checkbox noble */
-    .checkbox-group {
-        display: flex;
-        align-items: center;
-        gap: 0.75rem;
-        padding: 1rem;
-        background: var(--noble-mist);
-        border: 1px solid var(--noble-stone);
-        border-radius: 12px;
-        cursor: pointer;
-        transition: all 0.3s ease;
-        margin-bottom: 1.5rem;
-    }
-
-    .checkbox-group:hover {
-        background: var(--noble-warm);
-        border-color: var(--noble-sage-light);
-    }
-
-    .checkbox-group input[type="checkbox"] {
-        width: 18px;
-        height: 18px;
-        accent-color: var(--noble-sage);
-    }
-
-    .checkbox-label {
-        font-size: 0.9rem;
-        color: var(--noble-charcoal);
-        font-weight: 500;
-        cursor: pointer;
-        flex: 1;
-    }
-
-    /* Boutons nobles */
-    .btn-noble {
-        padding: 0.875rem 1.75rem;
-        border-radius: 12px;
-        font-weight: 500;
-        font-size: 0.95rem;
-        cursor: pointer;
-        transition: all 0.3s ease;
-        display: inline-flex;
-        align-items: center;
-        gap: 0.625rem;
-        text-decoration: none;
-        border: none;
-        position: relative;
-        overflow: hidden;
-    }
-
-    .btn-primary-noble {
-        background: linear-gradient(135deg, var(--noble-sage) 0%, var(--noble-sage-light) 100%);
-        color: white;
-        box-shadow: var(--shadow-whisper);
-    }
-
-    .btn-primary-noble:hover {
-        transform: translateY(-1px);
-        box-shadow: var(--shadow-gentle);
-        background: linear-gradient(135deg, var(--noble-sage-dark) 0%, var(--noble-sage) 100%);
-    }
-
-    .btn-secondary-noble {
-        background: white;
-        color: var(--noble-charcoal);
-        border: 1.5px solid var(--noble-stone);
-    }
-
-    .btn-secondary-noble:hover {
-        background: var(--noble-warm);
-        border-color: var(--noble-sage);
-        transform: translateY(-1px);
-    }
-
-    .btn-danger-noble {
-        background: linear-gradient(135deg, var(--gentle-error) 0%, #d4a574 100%);
-        color: white;
-        box-shadow: var(--shadow-whisper);
-    }
-
-    .btn-danger-noble:hover {
-        transform: translateY(-1px);
-        box-shadow: var(--shadow-gentle);
-        background: linear-gradient(135deg, #b57a7a 0%, var(--gentle-error) 100%);
-    }
-
-    /* Actions du formulaire */
-    .form-actions {
-        display: flex;
-        gap: 1rem;
-        justify-content: space-between;
-        align-items: center;
-        flex-wrap: wrap;
-        margin-top: 2rem;
-        padding-top: 2rem;
-        border-top: 1px solid var(--noble-stone);
-    }
-
-    .form-actions-left {
-        display: flex;
-        gap: 1rem;
-        flex-wrap: wrap;
-    }
-
-    .form-actions-right {
-        display: flex;
-        gap: 1rem;
-        flex-wrap: wrap;
-    }
-
-    /* Notice d'information */
-    .info-notice {
-        background: linear-gradient(135deg, rgba(139, 154, 124, 0.05) 0%, rgba(156, 139, 122, 0.05) 100%);
-        border: 1px solid rgba(139, 154, 124, 0.15);
-        border-radius: 12px;
-        padding: 1rem;
-        margin-top: 1rem;
-        display: flex;
-        align-items: center;
-        gap: 0.75rem;
-        position: relative;
-    }
-
-    .info-notice::before {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 4px;
-        height: 100%;
-        background: var(--noble-sage);
-        border-radius: 2px;
-    }
-
-    .info-icon {
-        width: 30px;
-        height: 30px;
-        background: var(--noble-sage);
-        border-radius: 50%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        color: white;
-        font-size: 0.9rem;
-        flex-shrink: 0;
-    }
-
-    .info-content {
-        flex: 1;
-        color: var(--noble-charcoal-light);
-        font-size: 0.9rem;
-        line-height: 1.5;
-    }
-
-    /* Responsive */
-    @media (max-width: 768px) {
-        .header-content {
-            flex-direction: column;
-            text-align: center;
-        }
-
-        .page-title {
-            font-size: 1.8rem;
-        }
-
-        .card-body {
-            padding: 1.5rem;
-        }
-
-        .form-actions {
-            flex-direction: column;
-            align-items: stretch;
-        }
-
-        .form-actions-left,
-        .form-actions-right {
-            justify-content: center;
-        }
-
-        .post-meta {
-            flex-direction: column;
-            align-items: flex-start;
-            gap: 0.75rem;
-        }
-
-        .linkedin-post {
-            margin: 1rem 0;
-            padding: 1rem;
-        }
-    }
-
-    /* Animations nobles */
-    .fade-in {
-        animation: gentleFadeIn 0.8s ease-out;
-    }
-
-    @keyframes gentleFadeIn {
-        from {
-            opacity: 0;
-            transform: translateY(20px);
-        }
-        to {
-            opacity: 1;
-            transform: translateY(0);
-        }
-    }
-
-    .slide-in {
-        animation: gentleSlideIn 0.6s ease-out;
-    }
-
-    @keyframes gentleSlideIn {
-        from {
-            opacity: 0;
-            transform: translateX(20px);
-        }
-        to {
-            opacity: 1;
-            transform: translateX(0);
-        }
-    }
-
-    /* Icônes nobles */
-    .icon-noble {
-        color: var(--noble-sage);
-        font-size: 1.125rem;
+    /* Section Actions */
+    .publish-section { margin-top: 2rem; padding-top: 2rem; border-top: 1px solid var(--noble-stone); }
+    .publish-actions-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; align-items: start; }
+    .publish-group { display: flex; flex-direction: column; gap: 1rem; }
+    .publish-group.schedule-group { background: var(--noble-mist); padding: 1.5rem; border-radius: 12px; }
+    .publish-group-title { font-weight: 500; color: var(--noble-charcoal); margin-bottom: 0.5rem; }
+    .btn { padding: 0.875rem 1.75rem; border-radius: 12px; font-weight: 500; font-size: 0.95rem; cursor: pointer; transition: all 0.3s ease; display: inline-flex; align-items: center; gap: 0.625rem; text-decoration: none; border: none; }
+    .btn-primary { background: var(--noble-sage); color: white; }
+    .btn-secondary { background: white; color: var(--noble-charcoal); border: 1.5px solid var(--noble-stone); }
+    
+    @media (max-width: 992px) {
+        .publish-actions-grid { grid-template-columns: 1fr; }
     }
 </style>
 
-<!-- Header de page noble -->
-<div class="page-header fade-in">
-    <div class="header-content">
-        <div>
-            <h1 class="page-title">
-                <i class="fas fa-edit icon-noble"></i>
-                Modifier le post
-            </h1>
-            <p class="page-subtitle">Ajustez le contenu, les images et les paramètres de votre publication.</p>
-        </div>
-        <a href="{{ url_for('calendar') }}" class="btn-noble btn-secondary-noble">
-            <i class="fas fa-arrow-left"></i>
-            Retour au calendrier
-        </a>
-    </div>
-</div>
-
-<!-- Aperçu du post actuel -->
-<div class="content-card slide-in">
-    <div class="card-body">
-        <h2 class="section-title">
-            <i class="fas fa-eye icon-noble"></i>
-            Aperçu du post
-        </h2>
-        <p class="section-subtitle">Voici comment votre post apparaîtra sur LinkedIn</p>
-        
-        <!-- Aperçu LinkedIn dynamique -->
-        <div class="linkedin-post" id="linkedin-preview">
-            <div class="linkedin-header">
-                {% if picture %}
-                    <img src="{{ picture }}" alt="Photo de profil" class="linkedin-avatar" id="preview-avatar">
-                {% else %}
-                    <div class="linkedin-avatar-placeholder" id="preview-avatar">
-                        {{ first_name[0]|upper if first_name else 'U' }}
-                    </div>
-                {% endif %}
-                
-                <div class="linkedin-user-info">
-                    <div class="linkedin-name" id="preview-name">
-                        {% if first_name and last_name %}
-                            {{ first_name }} {{ last_name }}
-                        {% elif name %}
-                            {{ name }}
-                        {% else %}
-                            Utilisateur ResoBoost
-                        {% endif %}
-                    </div>
-                    <div class="linkedin-subline" id="preview-role">
-                        {% if secteur %}
-                            {{ secteur|title }} • ResoBoost
-                        {% else %}
-                            Professionnel LinkedIn • ResoBoost
-                        {% endif %}
-                    </div>
-                    <div class="linkedin-date">
-                        <i class="fas fa-globe-europe"></i>
-                        {% if post.published_at %}
-                            Programmé pour le {{ post.published_at.strftime("%d/%m/%Y à %H:%M") }}
-                        {% else %}
-                            Date inconnue
-                        {% endif %}
-                    </div>
-                </div>
-            </div>
-            
-            <div class="linkedin-text" id="preview-text">{{ post.content | safe }}</div>
-            
-            <div class="linkedin-actions">
-                <div class="linkedin-action">
-                    <i class="far fa-thumbs-up"></i>
-                    <span>J'aime</span>
-                </div>
-                <div class="linkedin-action">
-                    <i class="far fa-comment"></i>
-                    <span>Commenter</span>
-                </div>
-                <div class="linkedin-action">
-                    <i class="fas fa-share"></i>
-                    <span>Partager</span>
-                </div>
-                <div class="linkedin-action">
-                    <i class="fas fa-paper-plane"></i>
-                    <span>Envoyer</span>
-                </div>
-            </div>
-        </div>
-
-        <div class="current-post">
-            <div class="post-meta">
-                <div class="meta-badge">
-                    <i class="fas fa-calendar"></i>
-                    {{ post.published_at.strftime("%d/%m/%Y à %H:%M") if post.published_at else "Date inconnue" }}
-                </div>
-                <div class="meta-badge" style="background: var(--gentle-info);">
-                    <i class="fas fa-clock"></i>
-                    {% if post.scheduled %}Programmé{% else %}Publié{% endif %}
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-
-<!-- Formulaire d'édition -->
-<div class="content-card slide-in">
-    <div class="card-body">
+<div class="creation-section fade-in">
+    <div class="section-header">
         <h2 class="section-title">
             <i class="fas fa-pen-to-square icon-noble"></i>
-            Modifier le contenu
+            Modifier le post
         </h2>
-        <p class="section-subtitle">Apportez les modifications nécessaires à votre publication</p>
-        
-        <form method="post" action="{{ url_for('edit_post', post_id=post.id) }}" enctype="multipart/form-data">
-            <div class="form-group">
-                <label class="form-label">
-                    <i class="fas fa-pen icon-noble"></i>
-                    Contenu du post
-                </label>
-                <textarea name="post_content" class="form-control textarea-control" rows="8" required id="post-content">{{ post.content }}</textarea>
-            </div>
-            
-            <!-- Section Médias -->
-            <div class="media-section">
-                <h3 style="color: var(--noble-charcoal);"><i class="fas fa-images icon-noble"></i> Ajouter/Modifier les images</h3>
-                <div class="media-tabs">
-                    <button type="button" class="media-tab active" onclick="switchMediaTab('local')"><i class="fas fa-upload"></i> Images locales</button>
-                    <button type="button" class="media-tab" onclick="switchMediaTab('pexels')"><i class="fas fa-search"></i> Photos Pexels</button>
-                </div>
-                <div class="local-images-section active" id="local-images-section">
-                    <div class="file-upload-area" onclick="document.getElementById('images').click()" id="file-upload-area">...</div>
-                    <input type="file" name="images[]" id="images" accept="image/*" multiple style="display: none;">
-                </div>
-                <div class="pexels-images-section" id="pexels-images-section">...</div>
-                <div class="selected-images-preview" style="display: none;" id="selected-images-preview">...</div>
-            </div>
-            
-            <!-- Section Actions -->
-            <div class="publish-section">
-                <h3 style="color: var(--noble-charcoal);"><i class="fas fa-paper-plane icon-noble"></i> Finaliser vos modifications</h3>
-                <div class="publish-actions-grid">
-                    <div class="publish-group schedule-group">
-                        <label class="publish-group-title">📅 Programmer pour plus tard</label>
-                        <input type="datetime-local" id="publish-time-input" name="publish_time" class="form-control" value="{{ formatted_date }}">
-                        <button type="submit" name="action" value="schedule" class="btn btn-secondary" style="width: 100%;"><i class="fas fa-clock"></i> Mettre à jour la programmation</button>
-                    </div>
-                    <div class="publish-group">
-                        <label class="publish-group-title">🚀 Actions</label>
-                        <button type="submit" name="action" value="publish_now" class="btn btn-primary" style="width: 100%;"><i class="fas fa-rocket"></i> Publier les modifications</button>
-                        <button type="submit" name="action" value="save_draft" class="btn btn-secondary" style="width: 100%;"><i class="fas fa-save"></i> Enregistrer en brouillon</button>
-                    </div>
-                </div>
-            </div>
-            
-            <div style="margin-top: 2rem; display: flex; justify-content: space-between; align-items: center;">
-                <a href="{{ url_for('historique') }}" class="btn btn-secondary"><i class="fas fa-times"></i> Annuler</a>
-                <a href="{{ url_for('delete_post', post_id=post.id) }}" class="btn" style="background: var(--gentle-error); color: white;"><i class="fas fa-trash"></i> Supprimer ce post</a>
-            </div>
-        </form>
+        <p class="section-subtitle">Modifiez le contenu, les images et la programmation de votre publication LinkedIn.</p>
     </div>
+
+    <!-- Aperçu LinkedIn (Identique au dashboard) -->
+    <div class="linkedin-post" id="linkedin-preview">
+        <div class="linkedin-header">
+            {% if picture %}
+                <img src="{{ picture }}" alt="Photo de profil" class="linkedin-avatar" id="preview-avatar">
+            {% else %}
+                <div class="linkedin-avatar-placeholder" id="preview-avatar">
+                    {{ first_name[0]|upper if first_name else 'U' }}
+                </div>
+            {% endif %}
+            <div class="linkedin-user-info">
+                <div class="linkedin-name" id="preview-name">
+                    {% if first_name and last_name %}
+                        {{ first_name }} {{ last_name }}
+                    {% elif name %}
+                        {{ name }}
+                    {% else %}
+                        Utilisateur ResoBoost
+                    {% endif %}
+                </div>
+                <div class="linkedin-subline" id="preview-role">
+                    {% if secteur %}
+                        {{ secteur|title }} • ResoBoost
+                    {% else %}
+                        Professionnel LinkedIn • ResoBoost
+                    {% endif %}
+                </div>
+                <div class="linkedin-date">
+                    <i class="fas fa-globe-europe"></i>
+                    {% if post.published_at %}
+                        {{ post.published_at.strftime('%d/%m/%Y à %H:%M') }}
+                    {% else %}
+                        il y a quelques instants
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        <div class="linkedin-text" id="preview-text">{{ post.content | safe }}</div>
+        <div class="linkedin-actions">
+            <div class="linkedin-action"><i class="far fa-thumbs-up"></i> <span>J'aime</span></div>
+            <div class="linkedin-action"><i class="far fa-comment"></i> <span>Commenter</span></div>
+            <div class="linkedin-action"><i class="fas fa-share"></i> <span>Partager</span></div>
+            <div class="linkedin-action"><i class="fas fa-paper-plane"></i> <span>Envoyer</span></div>
+        </div>
+    </div>
+
+    <form method="post" action="{{ url_for('edit_post', post_id=post.id) }}" enctype="multipart/form-data">
+        <div class="form-group">
+            <label class="form-label">Contenu de votre post</label>
+            <textarea name="post_content" class="form-control textarea-control" rows="8" required id="post-content-textarea">{{ post.content }}</textarea>
+        </div>
+        
+        <!-- Section Images (Identique au dashboard) -->
+        <div class="media-section">
+             <h3 style="color: var(--noble-charcoal); margin-bottom: 1rem; display: flex; align-items: center; gap: 0.75rem;"><i class="fas fa-images icon-noble"></i> Ajouter des images</h3>
+            <div class="media-tabs">
+                <button type="button" class="media-tab active" onclick="switchMediaTab('local')">
+                    <i class="fas fa-upload"></i>
+                    Images locales
+                </button>
+                <button type="button" class="media-tab" onclick="switchMediaTab('pexels')">
+                    <i class="fas fa-search"></i>
+                    Photos Pexels
+                </button>
+            </div>
+            <div class="local-images-section active" id="local-images-section">
+                <div class="file-upload-area" onclick="document.getElementById('images').click()" id="file-upload-area">
+                    <div class="upload-icon">
+                        <i class="fas fa-cloud-upload-alt"></i>
+                    </div>
+                    <div class="upload-text">Cliquez pour sélectionner des images</div>
+                    <div class="upload-hint">ou glissez-déposez vos fichiers ici (JPG, PNG, max 9 images)</div>
+                </div>
+                <input type="file" name="images[]" id="images" accept="image/*" multiple class="form-control" style="display: none;">
+            </div>
+            <div class="pexels-images-section" id="pexels-images-section">
+                <div class="pexels-search">
+                    <input type="text" id="pexels-search-input" placeholder="Rechercher des photos : marketing, business, technology...">
+                    <button type="button" onclick="searchPexelsPhotos()" id="pexels-search-btn">
+                        <i class="fas fa-search"></i>
+                        Rechercher
+                    </button>
+                </div>
+                <div id="pexels-results-container">
+                    <div class="pexels-loading" style="display: none;" id="pexels-loading">
+                        <i class="fas fa-spinner"></i>
+                        <p>Recherche en cours...</p>
+                    </div>
+                    <div class="pexels-error" style="display: none;" id="pexels-error">
+                        <i class="fas fa-exclamation-triangle"></i>
+                        <p>Erreur lors de la recherche. Veuillez réessayer.</p>
+                    </div>
+                    <div class="pexels-results" id="pexels-results"></div>
+                    <button type="button" class="pexels-load-more" style="display: none;" onclick="loadMorePexelsPhotos()" id="pexels-load-more">
+                        Charger plus de photos
+                    </button>
+                </div>
+            </div>
+            <div class="selected-images-preview" style="display: none;" id="selected-images-preview">
+                <h4 style="color: var(--noble-charcoal); margin-bottom: 1rem;">
+                    <i class="fas fa-check icon-noble"></i>
+                    Images sélectionnées (<span id="selected-count">0</span>/9)
+                </h4>
+                <div class="selected-images-grid" id="selected-images-grid"></div>
+            </div>
+        </div>
+
+        <!-- Section Actions (Identique au dashboard) -->
+        <div class="publish-section">
+            <h3 style="color: var(--noble-charcoal); margin-bottom: 1.5rem; display: flex; align-items: center; gap: 0.75rem;"><i class="fas fa-paper-plane icon-noble"></i> Finaliser votre post</h3>
+            <div class="publish-actions-grid">
+                <div class="publish-group schedule-group">
+                    <label class="publish-group-title" for="publish-time-input">📅 Programmer pour plus tard</label>
+                    <input type="datetime-local" id="publish-time-input" name="publish_time" class="form-control" value="{{ formatted_date }}">
+                    <button type="submit" name="action" value="schedule" class="btn btn-secondary" style="width: 100%;"><i class="fas fa-clock"></i> Programmer le post</button>
+                </div>
+                <div class="publish-group">
+                    <label class="publish-group-title">🚀 Actions immédiates</label>
+                    <button type="submit" name="action" value="publish_now" class="btn btn-primary" style="width: 100%;"><i class="fas fa-rocket"></i> Publier maintenant</button>
+                    <button type="submit" name="action" value="save_draft" class="btn btn-secondary" style="width: 100%;"><i class="fas fa-save"></i> Enregistrer en brouillon</button>
+                </div>
+            </div>
+        </div>
+
+        <div style="margin-top: 2rem; display: flex; justify-content: space-between; align-items: center;">
+            <a href="{{ url_for('historique') }}" class="btn btn-secondary"><i class="fas fa-times"></i> Annuler</a>
+            <a href="{{ url_for('delete_post', post_id=post.id) }}" class="btn" style="background: var(--gentle-error); color: white;"><i class="fas fa-trash"></i> Supprimer ce post</a>
+        </div>
+    </form>
 </div>
 
 <script>
-// Animations nobles au chargement
+
+let currentMediaTab = 'local';
+let selectedPexelsPhotos = [];
+let selectedLocalFiles = [];
+let pexelsCurrentPage = 1;
+let pexelsCurrentQuery = '';
+let pexelsTotalResults = 0;
+
+// Gestion des onglets média
+function switchMediaTab(tab) {
+    currentMediaTab = tab;
+    
+    // Mettre à jour les onglets
+    document.querySelectorAll('.media-tab').forEach(t => t.classList.remove('active'));
+    document.querySelector(`.media-tab[onclick="switchMediaTab('${tab}')"]`).classList.add('active');
+    
+    // Mettre à jour les sections
+    document.querySelectorAll('.local-images-section, .pexels-images-section').forEach(s => s.classList.remove('active'));
+    document.getElementById(`${tab}-images-section`).classList.add('active');
+}
+
+// Gestion du drag & drop pour les images locales
+function setupLocalImageHandlers() {
+    const fileInput = document.getElementById('images');
+    const uploadArea = document.getElementById('file-upload-area');
+    
+    if (!fileInput || !uploadArea) return;
+    
+    // Gestion du changement de fichier
+    fileInput.addEventListener('change', function(e) {
+        handleLocalFiles(e.target.files);
+    });
+    
+    // Gestion du drag & drop
+    uploadArea.addEventListener('dragover', function(e) {
+        e.preventDefault();
+        this.classList.add('dragover');
+    });
+    
+    uploadArea.addEventListener('dragleave', function(e) {
+        e.preventDefault();
+        this.classList.remove('dragover');
+    });
+    
+    uploadArea.addEventListener('drop', function(e) {
+        e.preventDefault();
+        this.classList.remove('dragover');
+        
+        const files = Array.from(e.dataTransfer.files).filter(file => file.type.startsWith('image/'));
+        handleLocalFiles(files);
+    });
+}
+
+// Gestion des fichiers locaux
+function handleLocalFiles(files) {
+    // Limiter à 9 images maximum
+    const maxFiles = Math.min(files.length, 9 - selectedPexelsPhotos.length);
+    selectedLocalFiles = Array.from(files).slice(0, maxFiles);
+    
+    // Mettre à jour l'aperçu
+    updateSelectedImagesPreview();
+    
+    // Mettre à jour le texte de l'upload area
+    const uploadArea = document.getElementById('file-upload-area');
+    if (uploadArea && selectedLocalFiles.length > 0) {
+        uploadArea.innerHTML = `
+            <div class="upload-icon">
+                <i class="fas fa-check-circle" style="color: var(--gentle-success);"></i>
+            </div>
+            <div class="upload-text">${selectedLocalFiles.length} image(s) sélectionnée(s)</div>
+            <div class="upload-hint">Cliquez pour changer la sélection</div>
+        `;
+    }
+}
+
+// Recherche de photos Pexels
+async function searchPexelsPhotos(page = 1) {
+    const query = document.getElementById('pexels-search-input').value.trim();
+    
+    if (!query) {
+        showPexelsError('Veuillez entrer un terme de recherche');
+        return;
+    }
+    
+    if (query.length < 2) {
+        showPexelsError('Le terme de recherche doit contenir au moins 2 caractères');
+        return;
+    }
+    
+    // Si nouvelle recherche, réinitialiser
+    if (page === 1) {
+        pexelsCurrentQuery = query;
+        pexelsCurrentPage = 1;
+        document.getElementById('pexels-results').innerHTML = '';
+    }
+    
+    showPexelsLoading(true);
+    document.getElementById('pexels-search-btn').disabled = true;
+    
+    try {
+        const response = await fetch('/api/search_photos', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                query: query,
+                page: page
+            })
+        });
+        
+        const data = await response.json();
+        
+        if (data.success && data.results) {
+            displayPexelsResults(data.results, page === 1);
+            pexelsTotalResults = data.results.total_results;
+            
+            // Afficher le bouton "Charger plus" si nécessaire
+            const loadMoreBtn = document.getElementById('pexels-load-more');
+            if (loadMoreBtn && data.results.next_page && data.results.photos.length > 0) {
+                loadMoreBtn.style.display = 'block';
+            } else if (loadMoreBtn) {
+                loadMoreBtn.style.display = 'none';
+            }
+        } else {
+            showPexelsError(data.error || 'Erreur lors de la recherche');
+        }
+    } catch (error) {
+        console.error('Erreur recherche Pexels:', error);
+        showPexelsError('Erreur de connexion. Veuillez réessayer.');
+    } finally {
+        showPexelsLoading(false);
+        document.getElementById('pexels-search-btn').disabled = false;
+    }
+}
+
+// Afficher les résultats Pexels
+function displayPexelsResults(results, clearPrevious = true) {
+    const container = document.getElementById('pexels-results');
+    if (!container) return;
+    
+    if (clearPrevious) {
+        container.innerHTML = '';
+    }
+    
+    results.photos.forEach(photo => {
+        const photoElement = createPexelsPhotoElement(photo);
+        container.appendChild(photoElement);
+    });
+    
+    // Animer l'apparition des nouvelles photos
+    const newPhotos = container.querySelectorAll('.pexels-photo:not(.animated)');
+    newPhotos.forEach((photo, index) => {
+        photo.classList.add('animated');
+        photo.style.opacity = '0';
+        photo.style.transform = 'translateY(20px)';
+        
+        setTimeout(() => {
+            photo.style.transition = 'all 0.6s ease';
+            photo.style.opacity = '1';
+            photo.style.transform = 'translateY(0)';
+        }, index * 100);
+    });
+}
+
+// Créer un élément photo Pexels
+function createPexelsPhotoElement(photo) {
+    const photoDiv = document.createElement('div');
+    photoDiv.className = 'pexels-photo';
+    photoDiv.dataset.photoId = photo.id;
+    
+    photoDiv.innerHTML = `
+        <img src="${photo.src.medium}" alt="${photo.alt}" loading="lazy">
+        <div class="pexels-photo-overlay">
+            <div class="pexels-photographer">Photo par ${photo.photographer}</div>
+            <button type="button" class="pexels-select-btn" onclick="togglePexelsPhoto(${photo.id}, '${encodeURIComponent(JSON.stringify(photo))}')">
+                Sélectionner
+            </button>
+        </div>
+    `;
+    
+    return photoDiv;
+}
+
+// Basculer la sélection d'une photo Pexels
+function togglePexelsPhoto(photoId, encodedPhotoData) {
+    const photo = JSON.parse(decodeURIComponent(encodedPhotoData));
+    const photoElement = document.querySelector(`[data-photo-id="${photoId}"]`);
+    const isSelected = selectedPexelsPhotos.some(p => p.id === photoId);
+    
+    if (isSelected) {
+        // Désélectionner
+        selectedPexelsPhotos = selectedPexelsPhotos.filter(p => p.id !== photoId);
+        photoElement.classList.remove('selected');
+        photoElement.querySelector('.pexels-select-btn').textContent = 'Sélectionner';
+    } else {
+        // Vérifier la limite
+        if (selectedPexelsPhotos.length + selectedLocalFiles.length >= 9) {
+            showPexelsError('Vous ne pouvez sélectionner que 9 images maximum au total');
+            return;
+        }
+        
+        // Sélectionner
+        selectedPexelsPhotos.push(photo);
+        photoElement.classList.add('selected');
+        photoElement.querySelector('.pexels-select-btn').textContent = 'Sélectionné';
+    }
+    
+    updateSelectedImagesPreview();
+}
+
+// Charger plus de photos Pexels
+function loadMorePexelsPhotos() {
+    pexelsCurrentPage++;
+    searchPexelsPhotos(pexelsCurrentPage);
+}
+
+// Afficher le loading Pexels
+function showPexelsLoading(show) {
+    const loadingEl = document.getElementById('pexels-loading');
+    const errorEl = document.getElementById('pexels-error');
+    if (loadingEl) loadingEl.style.display = show ? 'block' : 'none';
+    if (errorEl) errorEl.style.display = 'none';
+}
+
+// Afficher une erreur Pexels
+function showPexelsError(message) {
+    const loadingEl = document.getElementById('pexels-loading');
+    const errorEl = document.getElementById('pexels-error');
+    if (loadingEl) loadingEl.style.display = 'none';
+    if (errorEl) {
+        errorEl.style.display = 'block';
+        const errorText = errorEl.querySelector('p');
+        if (errorText) errorText.textContent = message;
+    }
+}
+
+// Mettre à jour l'aperçu des images sélectionnées
+function updateSelectedImagesPreview() {
+    const totalSelected = selectedLocalFiles.length + selectedPexelsPhotos.length;
+    const previewSection = document.getElementById('selected-images-preview');
+    const grid = document.getElementById('selected-images-grid');
+    const countSpan = document.getElementById('selected-count');
+    
+    if (!previewSection || !grid || !countSpan) return;
+    
+    if (totalSelected === 0) {
+        previewSection.style.display = 'none';
+        return;
+    }
+    
+    previewSection.style.display = 'block';
+    countSpan.textContent = totalSelected;
+    grid.innerHTML = '';
+    
+    // Ajouter les images locales
+    selectedLocalFiles.forEach((file, index) => {
+        const item = createSelectedImagePreview(file, 'local', index);
+        grid.appendChild(item);
+    });
+    
+    // Ajouter les photos Pexels
+    selectedPexelsPhotos.forEach((photo, index) => {
+        const item = createSelectedImagePreview(photo, 'pexels', index);
+        grid.appendChild(item);
+    });
+}
+
+// Créer un aperçu d'image sélectionnée
+function createSelectedImagePreview(data, type, index) {
+    const itemDiv = document.createElement('div');
+    itemDiv.className = 'selected-image-item';
+    
+    let imageSrc, sourceText, removeHandler;
+    
+    if (type === 'local') {
+        imageSrc = URL.createObjectURL(data);
+        sourceText = 'Local';
+        removeHandler = `removeSelectedImage('local', ${index})`;
+    } else {
+        imageSrc = data.src.small;
+        sourceText = `Pexels - ${data.photographer}`;
+        removeHandler = `removeSelectedImage('pexels', ${index})`;
+    }
+    
+    itemDiv.innerHTML = `
+        <img src="${imageSrc}" alt="Image sélectionnée">
+        <button type="button" class="remove-image-btn" onclick="${removeHandler}">
+            <i class="fas fa-times"></i>
+        </button>
+        <div class="selected-image-source">${sourceText}</div>
+    `;
+    
+    return itemDiv;
+}
+
+// Supprimer une image sélectionnée
+function removeSelectedImage(type, index) {
+    if (type === 'local') {
+        // Révoquer l'URL de l'objet pour libérer la mémoire
+        if (selectedLocalFiles[index]) {
+            URL.revokeObjectURL(URL.createObjectURL(selectedLocalFiles[index]));
+        }
+        selectedLocalFiles.splice(index, 1);
+        
+        // Mettre à jour l'input file et l'upload area
+        const fileInput = document.getElementById('images');
+        fileInput.value = '';
+        
+        if (selectedLocalFiles.length === 0) {
+            const uploadArea = document.getElementById('file-upload-area');
+            uploadArea.innerHTML = `
+                <div class="upload-icon">
+                    <i class="fas fa-cloud-upload-alt"></i>
+                </div>
+                <div class="upload-text">Cliquez pour sélectionner des images</div>
+                <div class="upload-hint">ou glissez-déposez vos fichiers ici (JPG, PNG, max 9 images)</div>
+            `;
+        }
+    } else {
+        const removedPhoto = selectedPexelsPhotos[index];
+        selectedPexelsPhotos.splice(index, 1);
+        
+        // Mettre à jour l'affichage de la photo dans la grille Pexels
+        const photoElement = document.querySelector(`[data-photo-id="${removedPhoto.id}"]`);
+        if (photoElement) {
+            photoElement.classList.remove('selected');
+            photoElement.querySelector('.pexels-select-btn').textContent = 'Sélectionner';
+        }
+    }
+    
+    updateSelectedImagesPreview();
+}
+
+// Gestionnaire d'événements pour la recherche Pexels avec Enter
 document.addEventListener('DOMContentLoaded', function() {
-    // Animation progressive des éléments
-    const elements = document.querySelectorAll('.fade-in, .slide-in');
-    elements.forEach((el, index) => {
-        el.style.opacity = '0';
-        el.style.transform = 'translateY(20px)';
-        el.style.transition = 'all 0.8s ease';
-        
-        setTimeout(() => {
-            el.style.opacity = '1';
-            el.style.transform = 'translateY(0)';
-        }, index * 200);
-    });
+    // Définir la date par défaut pour le champ de programmation
+    const publishTimeInput = document.getElementById('publish-time-input');
+    if (publishTimeInput) {
+        const now = new Date();
+        now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
+        const formattedDate = now.toISOString().slice(0, 16);
+        publishTimeInput.value = formattedDate;
+    }
 
-    // Mise à jour dynamique de l'aperçu LinkedIn
-    const postContentTextarea = document.querySelector('textarea[name="post_content"]');
-    const previewText = document.getElementById('preview-text');
+    // Configuration des gestionnaires d'images locales
+    setupLocalImageHandlers();
     
-    if (postContentTextarea && previewText) {
-        // Fonction pour mettre à jour l'aperçu
-        function updatePreview() {
-            const content = postContentTextarea.value.trim();
-            
-            if (content) {
-                previewText.textContent = content;
-                previewText.classList.remove('empty');
-            } else {
-                previewText.textContent = 'Votre contenu apparaîtra ici...';
-                previewText.classList.add('empty');
+    // Gestionnaire pour la recherche Pexels avec Enter
+    const pexelsInput = document.getElementById('pexels-search-input');
+    if (pexelsInput) {
+        pexelsInput.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                searchPexelsPhotos();
             }
+        });
+    }
+    
+    // Suggestions de recherche Pexels
+    const searchSuggestions = [
+        'business meeting', 'technology', 'marketing', 'team work', 
+        'innovation', 'success', 'growth', 'leadership', 'strategy',
+        'digital transformation', 'productivity', 'collaboration'
+    ];
+    
+    // Ajouter des suggestions au placeholder de manière dynamique
+    let suggestionIndex = 0;
+    setInterval(() => {
+        if (pexelsInput && !pexelsInput.value && document.activeElement !== pexelsInput) {
+            pexelsInput.placeholder = `Rechercher : ${searchSuggestions[suggestionIndex]}...`;
+            suggestionIndex = (suggestionIndex + 1) % searchSuggestions.length;
         }
-        
-        // Mettre à jour l'aperçu en temps réel
-        postContentTextarea.addEventListener('input', updatePreview);
-        postContentTextarea.addEventListener('paste', function() {
-            // Petit délai pour que le contenu collé soit pris en compte
-            setTimeout(updatePreview, 10);
-        });
-        
-        // Initialiser l'aperçu
-        updatePreview();
-        
-        // Animation sur focus/blur du textarea
-        postContentTextarea.addEventListener('focus', function() {
-            const linkedinPreview = document.getElementById('linkedin-preview');
-            if (linkedinPreview) {
-                linkedinPreview.style.transform = 'scale(1.02)';
-                linkedinPreview.style.boxShadow = 'var(--shadow-soft)';
-            }
-        });
-        
-        postContentTextarea.addEventListener('blur', function() {
-            const linkedinPreview = document.getElementById('linkedin-preview');
-            if (linkedinPreview) {
-                linkedinPreview.style.transform = 'scale(1)';
-                linkedinPreview.style.boxShadow = 'var(--shadow-gentle)';
-            }
-        });
-    }
+    }, 3000);
+});
 
-    // Interactions nobles sur les boutons
-    document.querySelectorAll('.btn-noble').forEach(btn => {
-        btn.addEventListener('mouseenter', function() {
-            this.style.transform = 'translateY(-1px)';
-        });
-        
-        btn.addEventListener('mouseleave', function() {
-            this.style.transform = 'translateY(0)';
-        });
-
-        btn.addEventListener('mousedown', function() {
-            this.style.transform = 'translateY(0) scale(0.98)';
-        });
-
-        btn.addEventListener('mouseup', function() {
-            this.style.transform = 'translateY(-1px) scale(1)';
-        });
-    });
-
-    // Animation de la checkbox
-    document.querySelector('.checkbox-group')?.addEventListener('click', function() {
-        this.style.transform = 'scale(0.98)';
-        setTimeout(() => {
-            this.style.transform = 'scale(1.01)';
-            setTimeout(() => {
-                this.style.transform = 'scale(1)';
-            }, 100);
-        }, 100);
-    });
-
-    // Interactions nobles sur les formulaires
-    document.querySelectorAll('.form-control').forEach(input => {
-        input.addEventListener('focus', function() {
-            this.style.transform = 'translateY(-1px)';
-        });
-        
-        input.addEventListener('blur', function() {
-            this.style.transform = 'translateY(0)';
-        });
-    });
-
-    // Animation de l'aperçu du post
-    document.querySelector('.current-post')?.addEventListener('mouseenter', function() {
-        this.style.transform = 'scale(1.01)';
-        this.style.borderColor = 'var(--noble-sage)';
-    });
-
-    document.querySelector('.current-post')?.addEventListener('mouseleave', function() {
-        this.style.transform = 'scale(1)';
-        this.style.borderColor = '';
-    });
-
-    // Animation de l'avatar LinkedIn au clic
-    const avatar = document.getElementById('preview-avatar');
-    if (avatar) {
-        avatar.addEventListener('click', function() {
-            this.style.transform = 'scale(0.95) rotate(5deg)';
-            setTimeout(() => {
-                this.style.transform = 'scale(1) rotate(0deg)';
-            }, 200);
-        });
-    }
-    
-    // Animation des actions LinkedIn
-    document.querySelectorAll('.linkedin-action').forEach(action => {
-        action.addEventListener('click', function(e) {
-            e.preventDefault();
-            
-            // Animation de clic
-            this.style.transform = 'scale(0.95)';
-            this.style.background = 'var(--noble-sage-light)';
-            this.style.color = 'white';
-            
-            setTimeout(() => {
-                this.style.transform = 'scale(1)';
-                this.style.background = '';
-                this.style.color = '';
-            }, 150);
-            
-            // Effet de particules pour le like
-            if (this.querySelector('.fa-thumbs-up')) {
-                createLikeParticles(this);
-            }
-        });
-    });
-    
-    // Fonction pour créer des particules de like
-    function createLikeParticles(element) {
-        for (let i = 0; i < 3; i++) {
-            const particle = document.createElement('div');
-            particle.style.position = 'absolute';
-            particle.style.width = '8px';
-            particle.style.height = '8px';
-            particle.style.background = 'var(--noble-sage)';
-            particle.style.borderRadius = '50%';
-            particle.style.pointerEvents = 'none';
-            particle.style.zIndex = '1000';
-            
-            const rect = element.getBoundingClientRect();
-            particle.style.left = (rect.left + rect.width/2) + 'px';
-            particle.style.top = (rect.top + rect.height/2) + 'px';
-            
-            document.body.appendChild(particle);
-            
-            const angle = (i / 3) * Math.PI * 2;
-            const distance = 20 + Math.random() * 15;
-            const x = Math.cos(angle) * distance;
-            const y = Math.sin(angle) * distance - 20;
-            
-            particle.animate([
-                { transform: 'translate(0, 0) scale(1)', opacity: 1 },
-                { transform: `translate(${x}px, ${y}px) scale(0)`, opacity: 0 }
-            ], {
-                duration: 800,
-                easing: 'cubic-bezier(0.4, 0, 0.2, 1)'
-            }).onfinish = () => {
-                particle.remove();
-            };
-        }
-    }
-    
-    // Effet de typing sur l'aperçu quand on tape
-    let typingTimeout;
-    if (postContentTextarea) {
-        postContentTextarea.addEventListener('input', function() {
-            const linkedinPreview = document.getElementById('linkedin-preview');
-            if (linkedinPreview) {
-                linkedinPreview.style.borderColor = 'var(--noble-sage)';
-                
-                clearTimeout(typingTimeout);
-                typingTimeout = setTimeout(() => {
-                    linkedinPreview.style.borderColor = '#ddd';
-                }, 1000);
-            }
+// Modification de la soumission du formulaire pour inclure les photos Pexels
+document.addEventListener('DOMContentLoaded', function() {
+    const form = document.querySelector('form[action="/publish"]');
+    if (form) {
+        form.addEventListener('submit', function(e) {
+            // Ajouter les photos Pexels sélectionnées au formulaire
+            selectedPexelsPhotos.forEach((photo, index) => {
+                const input = document.createElement('input');
+                input.type = 'hidden';
+                input.name = 'pexels_photos[]';
+                input.value = JSON.stringify(photo);
+                form.appendChild(input);
+            });
         });
     }
 });
 
-function switchMediaTab(tab) {
-    document.querySelectorAll('.media-tab').forEach(t => t.classList.remove('active'));
-    document.querySelector(`.media-tab[onclick="switchMediaTab('${tab}')"]`).classList.add('active');
-    document.getElementById('local-images-section').classList.toggle('active', tab === 'local');
-    document.getElementById('pexels-images-section').classList.toggle('active', tab === 'pexels');
-}
+// Animation noble des onglets média
+document.addEventListener('DOMContentLoaded', function() {
+    document.querySelectorAll('.media-tab').forEach(tab => {
+        tab.addEventListener('mouseenter', function() {
+            if (!this.classList.contains('active')) {
+                this.style.transform = 'translateY(-1px)';
+            }
+        });
+        
+        tab.addEventListener('mouseleave', function() {
+            if (!this.classList.contains('active')) {
+                this.style.transform = 'translateY(0)';
+            }
+        });
+    });
+    
+    // Animation des photos Pexels au hover
+    document.addEventListener('mouseover', function(e) {
+        if (e.target.closest('.pexels-photo')) {
+            const photo = e.target.closest('.pexels-photo');
+            photo.style.transform = 'translateY(-2px) scale(1.02)';
+        }
+    });
+    
+    document.addEventListener('mouseout', function(e) {
+        if (e.target.closest('.pexels-photo')) {
+            const photo = e.target.closest('.pexels-photo');
+            if (!photo.classList.contains('selected')) {
+                photo.style.transform = 'translateY(0) scale(1)';
+            }
+        }
+    });
+});
 </script>
-
 {% endblock %}
