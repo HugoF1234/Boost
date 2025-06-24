@@ -863,43 +863,38 @@
         margin-top: 2rem;
     }
 
-    .publish-options {
+    .publish-actions-grid {
         display: grid;
-        grid-template-columns: 1fr auto auto;
-        gap: 1.5rem;
-        align-items: end;
-        margin-bottom: 1.5rem;
+        grid-template-columns: 1fr 1fr;
+        gap: 2rem;
+        align-items: start;
     }
 
-    .checkbox-group {
+    .publish-group {
         display: flex;
-        align-items: center;
-        gap: 0.75rem;
-        padding: 0.875rem 1.125rem;
+        flex-direction: column;
+        gap: 1rem;
+    }
+
+    .publish-group.schedule-group {
         background: var(--noble-mist);
+        padding: 1.5rem;
         border-radius: 12px;
-        border: 1px solid var(--noble-stone);
-        cursor: pointer;
-        transition: all 0.3s ease;
     }
 
-    .checkbox-group:hover {
-        background: var(--noble-warm);
-    }
-
-    .checkbox-group input[type="checkbox"] {
-        width: 18px;
-        height: 18px;
-        accent-color: var(--noble-sage);
-    }
-
-    .checkbox-label {
-        font-size: 0.9rem;
-        color: var(--noble-charcoal);
+    .publish-group-title {
         font-weight: 500;
+        color: var(--noble-charcoal);
+        margin-bottom: 0.5rem;
     }
 
     /* Responsive */
+    @media (max-width: 992px) {
+        .publish-actions-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+    
     @media (max-width: 768px) {
         .welcome-content {
             flex-direction: column;
@@ -1206,11 +1201,7 @@
     <form method="post" action="{{ url_for('publish') }}" enctype="multipart/form-data">
         <div class="form-group">
             <label class="form-label">Contenu de votre post</label>
-            <textarea name="post_content" class="form-control textarea-control mention-editor" rows="8" required id="post-content">{{ draft }}</textarea>
-            <div class="mention-tip">
-                <i class="fas fa-at icon-noble"></i>
-                <span>Tapez @ pour mentionner une personne ou une entreprise</span>
-            </div>
+            <textarea name="post_content" class="form-control textarea-control" rows="8" required id="post-content">{{ draft }}</textarea>
         </div>
         
         <!-- Section de sélection des photos - Intégration Pexels -->
@@ -1286,22 +1277,32 @@
             </div>
         </div>
         
-        <div class="publish-options">
-            <div class="form-group">
-                <label class="form-label">📅 Date et heure de publication</label>
-                <input type="datetime-local" name="publish_time" class="form-control" required>
+        <div class="publish-section">
+            <h3 style="color: var(--noble-charcoal); margin-bottom: 1.5rem; display: flex; align-items: center; gap: 0.75rem;">
+                <i class="fas fa-paper-plane icon-noble"></i>
+                Finaliser votre post
+            </h3>
+            <div class="publish-actions-grid">
+                <div class="publish-group schedule-group">
+                    <label class="publish-group-title" for="publish-time-input">📅 Programmer pour plus tard</label>
+                    <input type="datetime-local" id="publish-time-input" name="publish_time" class="form-control">
+                    <button type="submit" name="action" value="schedule" class="btn btn-secondary" style="width: 100%;">
+                        <i class="fas fa-clock"></i> Programmer le post
+                    </button>
+                </div>
+                <div class="publish-group">
+                    <label class="publish-group-title">🚀 Actions immédiates</label>
+                    <button type="submit" name="action" value="publish_now" class="btn btn-primary" style="width: 100%;">
+                        <i class="fas fa-rocket"></i> Publier maintenant
+                    </button>
+                    <button type="submit" name="action" value="save_draft" class="btn btn-secondary" style="width: 100%;">
+                        <i class="fas fa-save"></i> Enregistrer en brouillon
+                    </button>
+                </div>
             </div>
-            <div class="checkbox-group">
-                <input type="checkbox" id="publish-now" name="publish_now">
-                <label class="checkbox-label" for="publish-now">⚡ Publier maintenant</label>
-            </div>
-            <button type="submit" class="btn btn-primary">
-                <i class="fas fa-paper-plane"></i>
-                Publier
-            </button>
         </div>
         
-        <a href="{{ url_for('dashboard', clear='true') }}" class="btn btn-secondary">
+        <a href="{{ url_for('dashboard', clear='true') }}" class="btn btn-secondary" style="margin-top: 2rem;">
             <i class="fas fa-times"></i>
             Annuler
         </a>
@@ -1646,6 +1647,15 @@ function removeSelectedImage(type, index) {
 
 // Gestionnaire d'événements pour la recherche Pexels avec Enter
 document.addEventListener('DOMContentLoaded', function() {
+    // Définir la date par défaut pour le champ de programmation
+    const publishTimeInput = document.getElementById('publish-time-input');
+    if (publishTimeInput) {
+        const now = new Date();
+        now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
+        const formattedDate = now.toISOString().slice(0, 16);
+        publishTimeInput.value = formattedDate;
+    }
+
     // Configuration des gestionnaires d'images locales
     setupLocalImageHandlers();
     
