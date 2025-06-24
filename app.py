@@ -1933,12 +1933,13 @@ def publish():
             post_data["specificContent"]["com.linkedin.ugc.ShareContent"]["mentions"] = mention_entities
         post_resp = requests.post(LINKEDIN_POSTS_URL, headers=headers, json=post_data)
         if post_resp.status_code == 201:
+            linkedin_urn = post_resp.json().get("id")
             if user:
-                published_post = Post(content=content, published_at=now, user_id=user.id, scheduled=False)
+                published_post = Post(content=content, published_at=now, user_id=user.id, scheduled=False, linkedin_post_urn=linkedin_urn)
                 db.session.add(published_post)
                 db.session.commit()
             session['draft'] = ""
-            return redirect(url_for("dashboard"))
+            return redirect(url_for("historique"))
         else:
             logger.error(f"Erreur publication: {post_resp.text}")
             return f"<h2>❌ Erreur lors de la publication :</h2><pre>{post_resp.text}</pre><p><a href='/dashboard'>Retour</a></p>"
