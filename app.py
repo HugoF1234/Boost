@@ -1988,6 +1988,8 @@ def publish():
             
 # À remplacer dans app.py - Route edit_post corrigée
 
+# À remplacer dans app.py - Route edit_post corrigée et adaptée
+
 @app.route("/edit_post/<int:post_id>", methods=["GET", "POST"])
 def edit_post(post_id):
     if 'profile' not in session:
@@ -2197,6 +2199,34 @@ def edit_post(post_id):
         draft=post.content,
         **session.get('profile', {})
     )
+
+# Route pour supprimer un post (à ajouter aussi)
+@app.route("/delete_post/<int:post_id>")
+def delete_post(post_id):
+    if 'profile' not in session:
+        return redirect(url_for("index"))
+
+    user = User.query.filter_by(sub=session['profile'].get("sub", "")).first()
+    if not user:
+        flash("Utilisateur introuvable", "error")
+        return redirect(url_for("historique"))
+
+    post = Post.query.filter_by(id=post_id, user_id=user.id).first()
+    if not post:
+        flash("Post introuvable ou vous n'avez pas les droits", "error")
+        return redirect(url_for("historique"))
+
+    try:
+        db.session.delete(post)
+        db.session.commit()
+        flash("Post supprimé avec succès", "success")
+        logger.info(f"Post {post_id} supprimé par l'utilisateur {user.id}")
+    except Exception as e:
+        db.session.rollback()
+        logger.error(f"Erreur lors de la suppression du post {post_id}: {str(e)}")
+        flash("Erreur lors de la suppression du post", "error")
+
+    return redirect(url_for("historique"))
 
 @app.route("/profil", methods=["GET", "POST"])
 def profil():
