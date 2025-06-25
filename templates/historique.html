@@ -385,12 +385,11 @@
                             <div class="post-date">
                                 <i class="fas fa-calendar-alt"></i>
                                 {% if post.published_at %}
-                                    {% set now = moment() %}
-                                    {% set post_time = post.published_at %}
-                                    {% if post_time > now %}
-                                        Dans {{ (post_time - now).days }} jour(s)
+                                    {% set now = moment() if moment is defined else None %}
+                                    {% if now and post.published_at > now %}
+                                        Dans {{ ((post.published_at - now).total_seconds() / 3600 / 24) | int }} jour(s)
                                     {% else %}
-                                        Le {{ post_time.strftime('%d/%m/%Y à %H:%M') }}
+                                        Le {{ post.published_at.strftime('%d/%m/%Y à %H:%M') }}
                                     {% endif %}
                                 {% else %}
                                     Date inconnue
@@ -597,7 +596,7 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
 
-    // Auto-refresh pour les posts programmés (toutes les 30 secondes)
+    // Auto-refresh pour les posts programmés (toutes les 5 minutes)
     setInterval(() => {
         const scheduledColumn = document.querySelector('.kanban-column:nth-child(2) .column-content');
         if (scheduledColumn && scheduledColumn.children.length > 1) { // Si il y a des posts programmés
@@ -612,7 +611,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 })
                 .catch(error => console.log('Auto-refresh check failed:', error));
         }
-    }, 30000); // 30 secondes
+    }, 300000); // 5 minutes
 });
 </script>
 {% endblock %}
