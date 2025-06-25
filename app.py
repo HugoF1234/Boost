@@ -2039,7 +2039,7 @@ def edit_post(post_id):
             if action == "save_draft":
                 # Sauvegarder en brouillon
                 post.scheduled = False
-                post.published_at = datetime.utcnow()
+                post.published_at = datetime.utcnow()  # Date de modification
                 post.linkedin_post_urn = None
                 flash("Post sauvegardé en brouillon avec succès", "success")
                 
@@ -2056,8 +2056,8 @@ def edit_post(post_id):
                                          **session.get('profile', {}))
                 
                 post.scheduled = True
-                post.published_at = publish_time
-                post.linkedin_post_urn = None
+                post.published_at = publish_time  # Date de programmation
+                post.linkedin_post_urn = None  # S'assurer qu'il n'y a pas d'URN
                 flash(f"Post programmé pour le {publish_time.strftime('%d/%m/%Y à %H:%M')}", "success")
                 
             elif action == "publish_now":
@@ -2157,8 +2157,8 @@ def edit_post(post_id):
                 if post_resp.status_code == 201:
                     linkedin_urn = post_resp.json().get("id")
                     post.linkedin_post_urn = linkedin_urn
-                    post.scheduled = False
-                    post.published_at = datetime.utcnow()
+                    post.scheduled = False  # Plus programmé une fois publié
+                    post.published_at = datetime.utcnow()  # Date de publication réelle
                     flash("Post publié avec succès sur LinkedIn !", "success")
                 else:
                     logger.error(f"Erreur publication LinkedIn: {post_resp.text}")
@@ -2200,7 +2200,8 @@ def edit_post(post_id):
         **session.get('profile', {})
     )
 
-# Route pour supprimer un post (à ajouter aussi)
+
+# Route pour supprimer un post (à ajouter aussi si elle n'existe pas)
 @app.route("/delete_post/<int:post_id>")
 def delete_post(post_id):
     if 'profile' not in session:
@@ -2270,13 +2271,16 @@ def historique():
 
     now = datetime.utcnow()
     posts = Post.query.filter_by(user_id=user.id).order_by(Post.published_at.desc()).all()
-    # A post is published if it has a LinkedIn URN.
+    
+    # CORRECTION : Logique de classification mise à jour
+    
+    # Un post est publié s'il a un URN LinkedIn (peu importe scheduled)
     published_posts = [p for p in posts if p.linkedin_post_urn]
 
-    # A post is scheduled if it is marked as scheduled for the future and not yet published.
-    scheduled_posts = [p for p in posts if p.scheduled and p.published_at and p.published_at > now and not p.linkedin_post_urn]
+    # Un post est programmé s'il est marqué comme scheduled ET n'a pas encore d'URN LinkedIn ET la date est dans le futur
+    scheduled_posts = [p for p in posts if p.scheduled and not p.linkedin_post_urn and p.published_at and p.published_at > now]
 
-    # A draft is a post that is not scheduled and not published.
+    # Un brouillon est un post qui n'est PAS programmé ET n'a pas d'URN LinkedIn
     draft_posts = [p for p in posts if not p.scheduled and not p.linkedin_post_urn]
 
     return render_template("historique.html", draft_posts=draft_posts, scheduled_posts=scheduled_posts, published_posts=published_posts)
@@ -2296,13 +2300,16 @@ def calendar():
     if not user:
         return "Utilisateur introuvable"
 
-    # Ajout de la date actuelle pour le calcul de la différence de temps
+    # CORRECTION : Même logique que historique pour les posts programmés
     from datetime import datetime
     now = datetime.utcnow()
-    upcoming_posts = Post.query.filter_by(user_id=user.id, scheduled=True).filter(Post.published_at > now).order_by(Post.published_at).all()
+    # Posts programmés = scheduled=True ET pas d'URN LinkedIn ET date future
+    upcoming_posts = Post.query.filter_by(user_id=user.id, scheduled=True).filter(
+        Post.linkedin_post_urn.is_(None),
+        Post.published_at > now
+    ).order_by(Post.published_at).all()
 
     return render_template("calendar.html", posts=upcoming_posts, now=now)
-#http://localhost:5000/publish_scheduled
 
 @app.route("/publish_scheduled")
 def publish_scheduled():
