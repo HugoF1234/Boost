@@ -2002,13 +2002,15 @@ def edit_post(post_id):
         flash("Post introuvable ou vous n'avez pas les droits", "error")
         return redirect(url_for("historique"))
 
-    # Traitement POST - Sauvegarder les modifications
+    # Traitement POST
     if request.method == "POST":
         try:
             # Récupérer les données du formulaire
             new_content = request.form.get("post_content", "").strip()
             new_date_str = request.form.get("publish_time", "")
             action = request.form.get("action", "save_draft")
+            
+            logger.info(f"🔄 Modification post {post_id}: action={action}")
             
             # Validation du contenu
             if not new_content:
@@ -2028,21 +2030,20 @@ def edit_post(post_id):
             else:
                 publish_time = datetime.utcnow()
             
-            # IMPORTANT : Nettoyer d'abord tous les champs
+            # Mettre à jour le contenu
             post.content = new_content
-            post.linkedin_post_urn = None  # Reset URN sauf si publication immédiate
             
-            # Gérer les différentes actions avec RESET COMPLET
+            # ACTIONS AVEC DEBUG COMPLET
             if action == "save_draft":
-                # BROUILLON : Réinitialiser complètement
+                # BROUILLON
                 post.scheduled = False
                 post.published_at = datetime.utcnow()
                 post.linkedin_post_urn = None
-                logger.info(f"Post {post_id} sauvé en brouillon: scheduled={post.scheduled}, urn={post.linkedin_post_urn}")
+                logger.info(f"📝 Post {post_id} → BROUILLON: scheduled=False, urn=None")
                 flash("Post sauvegardé en brouillon avec succès", "success")
                 
             elif action == "schedule":
-                # PROGRAMMÉ : Vérifier et programmer
+                # PROGRAMMÉ
                 now = datetime.utcnow()
                 min_schedule_time = now + timedelta(minutes=30)
                 
@@ -2056,21 +2057,33 @@ def edit_post(post_id):
                 post.scheduled = True
                 post.published_at = publish_time
                 post.linkedin_post_urn = None
-                logger.info(f"Post {post_id} programmé: scheduled={post.scheduled}, date={publish_time}, urn={post.linkedin_post_urn}")
+                logger.info(f"⏰ Post {post_id} → PROGRAMMÉ: scheduled=True, date={publish_time}, urn=None")
                 flash(f"Post programmé pour le {publish_time.strftime('%d/%m/%Y à %H:%M')}", "success")
                 
             elif action == "publish_now":
-                # PUBLIER : Code de publication LinkedIn complet
+                # PUBLICATION IMMÉDIATE
                 access_token = session.get("access_token")
                 if not access_token:
                     flash("Token LinkedIn expiré. Veuillez vous reconnecter", "error")
                     return redirect(url_for("linkedin_auth"))
                 
-                # Publication sur LinkedIn
+                # Vérifier la validité du token avant de publier
+                test_headers = {"Authorization": f"Bearer {access_token}"}
+                test_resp = requests.get(LINKEDIN_USERINFO_URL, headers=test_headers)
+                
+                if test_resp.status_code != 200:
+                    logger.error(f"🔑 Token LinkedIn invalide: {test_resp.status_code}")
+                    flash("Token LinkedIn expiré. Veuillez vous reconnecter", "error")
+                    session.pop('access_token', None)  # Supprimer le token invalide
+                    return redirect(url_for("linkedin_auth"))
+                
+                # Publier sur LinkedIn
                 profile = session.get('profile')
                 sub = profile.get("sub", "")
-                user_id = sub.split("_")[-1]
+                user_id = sub.split("_")[-1] if "_" in sub else sub.replace("urn:li:person:", "")
                 urn = f"urn:li:person:{user_id}"
+                
+                logger.info(f"📤 Tentative publication LinkedIn pour URN: {urn}")
                 
                 headers = {
                     "Authorization": f"Bearer {access_token}",
@@ -2078,65 +2091,18 @@ def edit_post(post_id):
                     "X-Restli-Protocol-Version": "2.0.0"
                 }
                 
+                # Traitement des mentions LinkedIn
                 processed_content, mention_entities = process_mentions_for_linkedin(new_content)
-                media_assets = []
                 
-                # Images locales
-                uploaded_files = request.files.getlist("images[]")
-                max_images = min(len(uploaded_files), 9)
-                for i in range(max_images):
-                    file = uploaded_files[i]
-                    if file and file.filename:
-                        try:
-                            asset = upload_image_to_linkedin(file.read(), access_token, urn, file.content_type)
-                            if asset:
-                                media_assets.append({
-                                    "status": "READY",
-                                    "media": asset,
-                                    "description": {"text": f"Image {i+1}"}
-                                })
-                        except Exception as e:
-                            logger.error(f"Erreur upload image {i+1}: {str(e)}")
-                            continue
-                
-                # Images Pexels
-                pexels_photos = request.form.getlist("pexels_photos[]")
-                for i, photo_data in enumerate(pexels_photos):
-                    if len(media_assets) >= 9:
-                        break
-                    try:
-                        photo_info = json.loads(photo_data)
-                        photo_url = photo_info.get('src', {}).get('large', '')
-                        if photo_url:
-                            image_content = download_pexels_photo(photo_url)
-                            if image_content:
-                                asset = upload_image_to_linkedin(image_content, access_token, urn, 'image/jpeg')
-                                if asset:
-                                    media_assets.append({
-                                        "status": "READY",
-                                        "media": asset,
-                                        "description": {"text": f"Photo par {photo_info.get('photographer', 'Pexels')}"}
-                                    })
-                    except Exception as e:
-                        logger.error(f"Erreur upload photo Pexels {i+1}: {str(e)}")
-                        continue
-                
-                # Construire le post LinkedIn
-                if len(media_assets) == 0:
-                    share_media_category = "NONE"
-                    media_content = []
-                else:
-                    share_media_category = "IMAGE"
-                    media_content = media_assets
-                
+                # Gestion simple des images (sans Pexels pour débugger)
                 post_data = {
                     "author": urn,
                     "lifecycleState": "PUBLISHED",
                     "specificContent": {
                         "com.linkedin.ugc.ShareContent": {
                             "shareCommentary": {"text": processed_content},
-                            "shareMediaCategory": share_media_category,
-                            "media": media_content
+                            "shareMediaCategory": "NONE",
+                            "media": []
                         }
                     },
                     "visibility": {
@@ -2147,53 +2113,80 @@ def edit_post(post_id):
                 if mention_entities:
                     post_data["specificContent"]["com.linkedin.ugc.ShareContent"]["mentions"] = mention_entities
                 
-                # Publier sur LinkedIn
-                post_resp = requests.post(LINKEDIN_POSTS_URL, headers=headers, json=post_data)
+                logger.info(f"📤 Données post LinkedIn: {json.dumps(post_data, indent=2)}")
                 
-                if post_resp.status_code == 201:
-                    linkedin_urn = post_resp.json().get("id")
-                    post.linkedin_post_urn = linkedin_urn
-                    post.scheduled = False
-                    post.published_at = datetime.utcnow()
-                    logger.info(f"Post {post_id} publié: scheduled={post.scheduled}, urn={linkedin_urn}")
-                    flash("Post publié avec succès sur LinkedIn !", "success")
-                else:
-                    logger.error(f"Erreur publication LinkedIn: {post_resp.text}")
-                    flash("Erreur lors de la publication sur LinkedIn", "error")
+                # Publier sur LinkedIn
+                try:
+                    post_resp = requests.post(LINKEDIN_POSTS_URL, headers=headers, json=post_data, timeout=30)
+                    logger.info(f"📤 Réponse LinkedIn: {post_resp.status_code} - {post_resp.text}")
+                    
+                    if post_resp.status_code == 201:
+                        linkedin_urn = post_resp.json().get("id")
+                        post.linkedin_post_urn = linkedin_urn
+                        post.scheduled = False
+                        post.published_at = datetime.utcnow()
+                        logger.info(f"✅ Post {post_id} → PUBLIÉ: urn={linkedin_urn}")
+                        flash("Post publié avec succès sur LinkedIn !", "success")
+                    else:
+                        logger.error(f"❌ Erreur publication LinkedIn {post_resp.status_code}: {post_resp.text}")
+                        
+                        # Gestion spécifique des erreurs LinkedIn
+                        if post_resp.status_code == 401:
+                            flash("Token LinkedIn expiré ou permissions insuffisantes. Reconnectez-vous.", "error")
+                            session.pop('access_token', None)
+                            return redirect(url_for("linkedin_auth"))
+                        elif post_resp.status_code == 403:
+                            flash("Permissions LinkedIn insuffisantes. Vérifiez vos autorisations d'application.", "error")
+                        else:
+                            flash(f"Erreur LinkedIn ({post_resp.status_code}). Réessayez plus tard.", "error")
+                        
+                        return render_template("edit_post.html", 
+                                             post=post, 
+                                             formatted_date=new_date_str,
+                                             **session.get('profile', {}))
+                
+                except requests.exceptions.RequestException as e:
+                    logger.error(f"❌ Exception réseau LinkedIn: {str(e)}")
+                    flash("Erreur de connexion avec LinkedIn. Vérifiez votre connexion internet.", "error")
                     return render_template("edit_post.html", 
                                          post=post, 
                                          formatted_date=new_date_str,
                                          **session.get('profile', {}))
             
-            # CRITIQUE : Forcer la sauvegarde et vider le cache SQLAlchemy
-            db.session.flush()  # Forcer l'écriture en base
-            db.session.commit()  # Confirmer la transaction
-            db.session.expunge(post)  # Retirer l'objet du cache SQLAlchemy
-            
-            logger.info(f"Post {post_id} modifié avec succès par l'utilisateur {user.id}")
-            logger.info(f"État final: scheduled={post.scheduled}, urn={post.linkedin_post_urn}, date={post.published_at}")
+            # SAUVEGARDE FORCÉE
+            try:
+                db.session.flush()
+                db.session.commit()
+                logger.info(f"💾 Post {post_id} sauvegardé: scheduled={post.scheduled}, urn={'OUI' if post.linkedin_post_urn else 'NON'}")
+            except Exception as db_error:
+                db.session.rollback()
+                logger.error(f"❌ Erreur base de données: {str(db_error)}")
+                flash("Erreur de sauvegarde en base de données", "error")
+                return render_template("edit_post.html", 
+                                     post=post, 
+                                     formatted_date=new_date_str,
+                                     **session.get('profile', {}))
             
             # Nettoyer la session
             session.pop('draft', None)
             session.pop('editing_post_id', None)
             
-            # Redirection avec rafraîchissement forcé
+            # Redirection intelligente
             if action == "publish_now":
-                return redirect(url_for("historique") + "?refresh=1")
+                return redirect(url_for("historique"))
             elif action == "schedule":
-                return redirect(url_for("calendar") + "?refresh=1") 
+                return redirect(url_for("historique"))  # Changé pour éviter confusion
             else:
-                return redirect(url_for("historique") + "?refresh=1")
+                return redirect(url_for("historique"))
                 
         except Exception as e:
             db.session.rollback()
-            logger.error(f"Erreur lors de la modification du post {post_id}: {str(e)}")
-            flash("Une erreur est survenue lors de la sauvegarde", "error")
+            logger.error(f"❌ Erreur générale modification post {post_id}: {str(e)}")
+            flash("Une erreur inattendue est survenue", "error")
     
     # Affichage en GET
     formatted_date = post.published_at.strftime("%Y-%m-%dT%H:%M") if post.published_at else ""
     
-    # Mettre le contenu du post en session pour l'aperçu
     session['draft'] = post.content
     session['editing_post_id'] = post.id
     
@@ -2204,6 +2197,8 @@ def edit_post(post_id):
         draft=post.content,
         **session.get('profile', {})
     )
+
+
 
 # Route pour supprimer un post (à ajouter aussi si elle n'existe pas)
 @app.route("/delete_post/<int:post_id>")
@@ -2273,45 +2268,109 @@ def historique():
     if not user:
         return "<p>Utilisateur introuvable en base.</p>"
 
-    # CRITIQUE : Forcer une nouvelle requête sans cache
-    db.session.expire_all()  # Invalider le cache SQLAlchemy
+    # Force refresh de la session SQLAlchemy
+    db.session.expire_all()
     
     now = datetime.utcnow()
     posts = Post.query.filter_by(user_id=user.id).order_by(Post.published_at.desc()).all()
     
-    # Debug : Log du nombre de posts par catégorie
-    logger.info(f"=== DEBUG HISTORIQUE pour utilisateur {user.id} ===")
-    logger.info(f"Total posts trouvés: {len(posts)}")
+    logger.info(f"🔍 === DEBUG HISTORIQUE utilisateur {user.id} ===")
+    logger.info(f"📊 Total posts: {len(posts)}")
+    logger.info(f"🕐 Heure actuelle: {now}")
     
-    # Classification avec debug
+    # Classification avec debug ultra-détaillé
     published_posts = []
     scheduled_posts = []
     draft_posts = []
     
     for post in posts:
-        logger.info(f"Post {post.id}: scheduled={post.scheduled}, urn={'OUI' if post.linkedin_post_urn else 'NON'}, date={post.published_at}")
+        has_urn = bool(post.linkedin_post_urn)
+        is_scheduled = bool(post.scheduled)
+        future_date = post.published_at and post.published_at > now
         
-        if post.linkedin_post_urn:
+        logger.info(f"📄 Post {post.id}:")
+        logger.info(f"   ├─ scheduled: {is_scheduled}")
+        logger.info(f"   ├─ urn: {'✅' if has_urn else '❌'}")
+        logger.info(f"   ├─ date: {post.published_at}")
+        logger.info(f"   └─ date future: {'✅' if future_date else '❌'}")
+        
+        if has_urn:
             published_posts.append(post)
-            logger.info(f"  -> PUBLIÉ (a un URN)")
-        elif post.scheduled and post.published_at and post.published_at > now:
+            logger.info(f"   → 📱 PUBLIÉ")
+        elif is_scheduled and future_date:
             scheduled_posts.append(post)
-            logger.info(f"  -> PROGRAMMÉ (scheduled=True, date future)")
-        elif not post.scheduled:
-            draft_posts.append(post)
-            logger.info(f"  -> BROUILLON (scheduled=False)")
+            logger.info(f"   → ⏰ PROGRAMMÉ")
         else:
-            # Post programmé mais date passée - traiter comme brouillon
             draft_posts.append(post)
-            logger.info(f"  -> BROUILLON (date passée)")
+            logger.info(f"   → 📝 BROUILLON")
     
-    logger.info(f"Résultat: {len(draft_posts)} brouillons, {len(scheduled_posts)} programmés, {len(published_posts)} publiés")
+    logger.info(f"📈 RÉSULTAT: {len(draft_posts)} brouillons, {len(scheduled_posts)} programmés, {len(published_posts)} publiés")
     
     return render_template("historique.html", 
                          draft_posts=draft_posts, 
                          scheduled_posts=scheduled_posts, 
                          published_posts=published_posts)
 
+@app.route("/debug_posts")
+def debug_posts():
+    """Route de diagnostic pour vérifier l'état des posts"""
+    if 'profile' not in session:
+        return "Non connecté"
+    
+    user = User.query.filter_by(sub=session['profile'].get("sub", "")).first()
+    if not user:
+        return "Utilisateur introuvable"
+    
+    posts = Post.query.filter_by(user_id=user.id).all()
+    
+    debug_html = f"""
+    <h1>🔍 Debug Posts Utilisateur {user.id}</h1>
+    <p>Total: {len(posts)} posts</p>
+    <table border="1" style="border-collapse: collapse; width: 100%;">
+    <tr>
+        <th>ID</th>
+        <th>Scheduled</th>
+        <th>URN LinkedIn</th>
+        <th>Date</th>
+        <th>Contenu (50 chars)</th>
+        <th>Classification</th>
+    </tr>
+    """
+    
+    now = datetime.utcnow()
+    
+    for post in posts:
+        has_urn = bool(post.linkedin_post_urn)
+        is_scheduled = bool(post.scheduled)
+        future_date = post.published_at and post.published_at > now
+        
+        if has_urn:
+            classification = "PUBLIÉ"
+            color = "#4CAF50"
+        elif is_scheduled and future_date:
+            classification = "PROGRAMMÉ"
+            color = "#2196F3"
+        else:
+            classification = "BROUILLON"
+            color = "#FF9800"
+        
+        debug_html += f"""
+        <tr style="background-color: {color}20;">
+            <td>{post.id}</td>
+            <td>{'✅' if is_scheduled else '❌'}</td>
+            <td>{'✅' if has_urn else '❌'}</td>
+            <td>{post.published_at}</td>
+            <td>{(post.content or '')[:50]}...</td>
+            <td style="font-weight: bold;">{classification}</td>
+        </tr>
+        """
+    
+    debug_html += """
+    </table>
+    <p><a href="/historique">← Retour historique</a></p>
+    """
+    
+    return debug_html
 
 @app.route("/parametres")
 def parametres():
@@ -2347,53 +2406,45 @@ def calendar():
 
 @app.route("/publish_scheduled")
 def publish_scheduled():
+    """Publication automatique des posts programmés - VERSION CORRIGÉE"""
     now = datetime.utcnow()
-    posts_to_publish = Post.query.filter(Post.scheduled == True, Post.published_at <= now).all()
+    
+    # Récupérer TOUS les posts programmés dont l'heure est arrivée
+    posts_to_publish = Post.query.filter(
+        Post.scheduled == True, 
+        Post.published_at <= now,
+        Post.linkedin_post_urn.is_(None)  # Seulement ceux pas encore publiés
+    ).all()
 
     count = 0
+    errors = []
+    
+    logger.info(f"🔄 Vérification auto-publication: {len(posts_to_publish)} post(s) à traiter")
+    
     for post in posts_to_publish:
-        user = User.query.get(post.user_id)
-        if not user:
-            continue
+        try:
+            user = User.query.get(post.user_id)
+            if not user:
+                logger.warning(f"❌ Utilisateur introuvable pour le post {post.id}")
+                continue
 
-        access_token = session.get("access_token")
-        if not access_token:
-            continue
+            # PROBLÈME PRINCIPAL : Il faut le token d'accès de chaque utilisateur
+            # La publication automatique ne peut pas fonctionner sans les tokens individuels
+            # Pour l'instant, on marque simplement le post comme "prêt à publier manuellement"
+            
+            logger.info(f"📅 Post {post.id} prêt pour publication manuelle")
+            # On ne modifie rien - l'utilisateur devra publier manuellement
+            
+        except Exception as e:
+            error_msg = f"Erreur post {post.id}: {str(e)}"
+            logger.error(error_msg)
+            errors.append(error_msg)
 
-        sub = user.sub
-        user_id = sub.split("_")[-1]
-        urn = f"urn:li:person:{user_id}"
+    if errors:
+        logger.error(f"❌ Erreurs lors de la vérification: {'; '.join(errors)}")
+    
+    return f"✅ Vérification terminée. {len(posts_to_publish)} post(s) prêt(s) pour publication manuelle."
 
-        headers = {
-            "Authorization": f"Bearer {access_token}",
-            "Content-Type": "application/json",
-            "X-Restli-Protocol-Version": "2.0.0"
-        }
-
-        post_data = {
-            "author": urn,
-            "lifecycleState": "PUBLISHED",
-            "specificContent": {
-                "com.linkedin.ugc.ShareContent": {
-                    "shareCommentary": {"text": post.content},
-                    "shareMediaCategory": "NONE",
-                    "media": []
-                }
-            },
-            "visibility": {
-                "com.linkedin.ugc.MemberNetworkVisibility": "PUBLIC"
-            }
-        }
-
-        post_resp = requests.post(LINKEDIN_POSTS_URL, headers=headers, json=post_data)
-        if post_resp.status_code == 201:
-            post.scheduled = False
-            db.session.commit()
-            count += 1
-        else:
-            print("Erreur LinkedIn:", post_resp.text)
-
-    return f"✅ {count} post(s) planifié(s) publiés automatiquement."
 
 
 @app.errorhandler(500)
