@@ -27,6 +27,12 @@
         --column-width: 380px;
     }
 
+    body {
+        background: var(--noble-cream);
+        color: var(--noble-charcoal);
+        line-height: 1.7;
+    }
+
     .historique-container {
         padding: 2rem;
         height: calc(100vh - 120px);
@@ -216,6 +222,40 @@
         color: var(--gentle-error);
     }
 
+    .btn-view:hover {
+        color: #0a66c2;
+    }
+
+    /* Status indicators */
+    .post-status {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.25rem 0.75rem;
+        border-radius: 20px;
+        font-size: 0.7rem;
+        font-weight: 500;
+        margin-bottom: 0.5rem;
+    }
+
+    .status-draft {
+        background: rgba(184, 160, 130, 0.1);
+        color: var(--gentle-warning);
+        border: 1px solid var(--gentle-warning);
+    }
+
+    .status-scheduled {
+        background: rgba(139, 163, 184, 0.1);
+        color: var(--gentle-info);
+        border: 1px solid var(--gentle-info);
+    }
+
+    .status-published {
+        background: rgba(124, 152, 133, 0.1);
+        color: var(--gentle-success);
+        border: 1px solid var(--gentle-success);
+    }
+
     /* Empty state */
     .column-empty {
         text-align: center;
@@ -243,6 +283,22 @@
             height: auto;
         }
     }
+
+    /* Animations */
+    .fade-in {
+        animation: gentleFadeIn 0.8s ease-out;
+    }
+
+    @keyframes gentleFadeIn {
+        from {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
 </style>
 
 <div class="historique-container">
@@ -256,7 +312,7 @@
 
     <div class="kanban-container">
         <!-- Colonne Brouillons -->
-        <div class="kanban-column">
+        <div class="kanban-column fade-in">
             <div class="column-header">
                 <h2 class="column-title">
                     <i class="fas fa-edit"></i>
@@ -268,17 +324,17 @@
                 {% if draft_posts %}
                     {% for post in draft_posts %}
                     <div class="post-card">
-                        {% if post.image_url %}
-                        <img src="{{ post.image_url }}" alt="Image du post" class="post-image">
-                        {% else %}
                         <div class="post-image-placeholder">
-                            <i class="fas fa-image"></i>
+                            <i class="fas fa-file-alt"></i>
                         </div>
-                        {% endif %}
                         <div class="post-content">
+                            <div class="post-status status-draft">
+                                <i class="fas fa-edit"></i>
+                                Brouillon
+                            </div>
                             <div class="post-date">
                                 <i class="fas fa-calendar"></i>
-                                {{ post.published_at.strftime('%d/%m/%Y à %H:%M') }}
+                                Créé le {{ post.published_at.strftime('%d/%m/%Y à %H:%M') if post.published_at else 'Date inconnue' }}
                             </div>
                             <div class="post-text">{{ post.content }}</div>
                             <div class="post-actions">
@@ -286,7 +342,7 @@
                                     <i class="fas fa-edit"></i>
                                     Modifier
                                 </a>
-                                <a href="{{ url_for('delete_post', post_id=post.id) }}" class="btn-action btn-delete" onclick="return confirm('Êtes-vous sûr de vouloir supprimer ce post ?')">
+                                <a href="{{ url_for('delete_post', post_id=post.id) }}" class="btn-action btn-delete" onclick="return confirm('Êtes-vous sûr de vouloir supprimer ce brouillon ?')">
                                     <i class="fas fa-trash"></i>
                                     Supprimer
                                 </a>
@@ -299,14 +355,14 @@
                         <div class="empty-icon">
                             <i class="fas fa-edit"></i>
                         </div>
-                        <p class="empty-text">Aucun brouillon</p>
+                        <p class="empty-text">Aucun brouillon<br><small>Créez du contenu depuis le dashboard</small></p>
                     </div>
                 {% endif %}
             </div>
         </div>
 
         <!-- Colonne Programmés -->
-        <div class="kanban-column">
+        <div class="kanban-column fade-in">
             <div class="column-header">
                 <h2 class="column-title">
                     <i class="fas fa-clock"></i>
@@ -318,17 +374,27 @@
                 {% if scheduled_posts %}
                     {% for post in scheduled_posts %}
                     <div class="post-card">
-                        {% if post.image_url %}
-                        <img src="{{ post.image_url }}" alt="Image du post" class="post-image">
-                        {% else %}
                         <div class="post-image-placeholder">
-                            <i class="fas fa-image"></i>
+                            <i class="fas fa-clock"></i>
                         </div>
-                        {% endif %}
                         <div class="post-content">
-                            <div class="post-date">
+                            <div class="post-status status-scheduled">
                                 <i class="fas fa-clock"></i>
-                                Prévu le {{ post.published_at.strftime('%d/%m/%Y à %H:%M') }}
+                                Programmé
+                            </div>
+                            <div class="post-date">
+                                <i class="fas fa-calendar-alt"></i>
+                                {% if post.published_at %}
+                                    {% set now = moment() %}
+                                    {% set post_time = post.published_at %}
+                                    {% if post_time > now %}
+                                        Dans {{ (post_time - now).days }} jour(s)
+                                    {% else %}
+                                        Le {{ post_time.strftime('%d/%m/%Y à %H:%M') }}
+                                    {% endif %}
+                                {% else %}
+                                    Date inconnue
+                                {% endif %}
                             </div>
                             <div class="post-text">{{ post.content }}</div>
                             <div class="post-actions">
@@ -336,9 +402,9 @@
                                     <i class="fas fa-edit"></i>
                                     Modifier
                                 </a>
-                                <a href="{{ url_for('delete_post', post_id=post.id) }}" class="btn-action btn-delete" onclick="return confirm('Êtes-vous sûr de vouloir supprimer ce post ?')">
-                                    <i class="fas fa-trash"></i>
-                                    Supprimer
+                                <a href="{{ url_for('delete_post', post_id=post.id) }}" class="btn-action btn-delete" onclick="return confirm('Êtes-vous sûr de vouloir annuler cette programmation ?')">
+                                    <i class="fas fa-times"></i>
+                                    Annuler
                                 </a>
                             </div>
                         </div>
@@ -349,14 +415,14 @@
                         <div class="empty-icon">
                             <i class="fas fa-clock"></i>
                         </div>
-                        <p class="empty-text">Aucun post programmé</p>
+                        <p class="empty-text">Aucun post programmé<br><small>Programmez vos publications à l'avance</small></p>
                     </div>
                 {% endif %}
             </div>
         </div>
 
         <!-- Colonne Publiés -->
-        <div class="kanban-column">
+        <div class="kanban-column fade-in">
             <div class="column-header">
                 <h2 class="column-title">
                     <i class="fas fa-check-circle"></i>
@@ -368,24 +434,31 @@
                 {% if published_posts %}
                     {% for post in published_posts %}
                     <div class="post-card">
-                        {% if post.image_url %}
-                        <img src="{{ post.image_url }}" alt="Image du post" class="post-image">
-                        {% else %}
-                        <div class="post-image-placeholder">
-                            <i class="fas fa-image"></i>
+                        <div class="post-image-placeholder" style="background: linear-gradient(135deg, rgba(124, 152, 133, 0.1) 0%, rgba(124, 152, 133, 0.05) 100%);">
+                            <i class="fas fa-check-circle" style="color: var(--gentle-success);"></i>
                         </div>
-                        {% endif %}
                         <div class="post-content">
+                            <div class="post-status status-published">
+                                <i class="fas fa-check-circle"></i>
+                                Publié
+                            </div>
                             <div class="post-date">
-                                <i class="fas fa-calendar"></i>
-                                {{ post.published_at.strftime('%d/%m/%Y à %H:%M') }}
+                                <i class="fas fa-calendar-check"></i>
+                                {{ post.published_at.strftime('%d/%m/%Y à %H:%M') if post.published_at else 'Date inconnue' }}
                             </div>
                             <div class="post-text">{{ post.content }}</div>
                             <div class="post-actions">
-                                <a href="https://www.linkedin.com/feed/update/{{ post.linkedin_post_urn }}" target="_blank" class="btn-action">
-                                    <i class="fas fa-eye"></i>
+                                {% if post.linkedin_post_urn %}
+                                <a href="https://www.linkedin.com/feed/" target="_blank" class="btn-action btn-view">
+                                    <i class="fab fa-linkedin"></i>
                                     Voir sur LinkedIn
                                 </a>
+                                {% else %}
+                                <span class="btn-action" style="color: var(--noble-charcoal-light); cursor: default;">
+                                    <i class="fas fa-link"></i>
+                                    Lien indisponible
+                                </span>
+                                {% endif %}
                             </div>
                         </div>
                     </div>
@@ -395,7 +468,7 @@
                         <div class="empty-icon">
                             <i class="fas fa-check-circle"></i>
                         </div>
-                        <p class="empty-text">Aucune publication</p>
+                        <p class="empty-text">Aucune publication<br><small>Vos posts publiés apparaîtront ici</small></p>
                     </div>
                 {% endif %}
             </div>
@@ -403,9 +476,45 @@
     </div>
 </div>
 
+<!-- Bouton flottant pour créer un nouveau post -->
+<a href="{{ url_for('dashboard') }}" class="floating-btn" title="Créer un nouveau post">
+    <i class="fas fa-plus"></i>
+</a>
+
+<style>
+.floating-btn {
+    position: fixed;
+    bottom: 2rem;
+    right: 2rem;
+    width: 60px;
+    height: 60px;
+    background: linear-gradient(135deg, var(--noble-sage) 0%, var(--noble-sage-light) 100%);
+    color: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-decoration: none;
+    font-size: 1.5rem;
+    box-shadow: var(--shadow-gentle);
+    transition: all 0.3s ease;
+    z-index: 1000;
+}
+
+.floating-btn:hover {
+    transform: translateY(-2px) scale(1.05);
+    box-shadow: var(--shadow-soft);
+    background: linear-gradient(135deg, var(--noble-sage-dark) 0%, var(--noble-sage) 100%);
+}
+
+.floating-btn:active {
+    transform: translateY(0) scale(1);
+}
+</style>
+
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    // Animation des colonnes
+    // Animation des colonnes avec délai
     document.querySelectorAll('.kanban-column').forEach((column, index) => {
         column.style.opacity = '0';
         column.style.transform = 'translateY(20px)';
@@ -416,16 +525,94 @@ document.addEventListener('DOMContentLoaded', function() {
         }, index * 200);
     });
 
-    // Animation des cartes
-    document.querySelectorAll('.post-card').forEach((card, index) => {
-        card.style.opacity = '0';
-        card.style.transform = 'translateY(20px)';
-        setTimeout(() => {
-            card.style.opacity = '1';
-            card.style.transform = 'translateY(0)';
-            card.style.transition = 'all 0.4s ease';
-        }, 600 + (index * 100));
+    // Animation des cartes avec délai plus long
+    setTimeout(() => {
+        document.querySelectorAll('.post-card').forEach((card, index) => {
+            card.style.opacity = '0';
+            card.style.transform = 'translateY(20px)';
+            setTimeout(() => {
+                card.style.opacity = '1';
+                card.style.transform = 'translateY(0)';
+                card.style.transition = 'all 0.4s ease';
+            }, index * 100);
+        });
+    }, 600);
+
+    // Animation du bouton flottant
+    setTimeout(() => {
+        const floatingBtn = document.querySelector('.floating-btn');
+        if (floatingBtn) {
+            floatingBtn.style.opacity = '0';
+            floatingBtn.style.transform = 'translateY(20px) scale(0.8)';
+            setTimeout(() => {
+                floatingBtn.style.opacity = '1';
+                floatingBtn.style.transform = 'translateY(0) scale(1)';
+                floatingBtn.style.transition = 'all 0.6s ease';
+            }, 100);
+        }
+    }, 1200);
+
+    // Mise à jour des compteurs avec animation
+    document.querySelectorAll('.column-count').forEach(counter => {
+        const finalCount = parseInt(counter.textContent);
+        counter.textContent = '0';
+        
+        let currentCount = 0;
+        const increment = Math.ceil(finalCount / 20);
+        const timer = setInterval(() => {
+            currentCount += increment;
+            if (currentCount >= finalCount) {
+                counter.textContent = finalCount;
+                clearInterval(timer);
+            } else {
+                counter.textContent = currentCount;
+            }
+        }, 50);
     });
+
+    // Effet de survol pour les cartes
+    document.querySelectorAll('.post-card').forEach(card => {
+        card.addEventListener('mouseenter', function() {
+            this.style.transform = 'translateY(-4px)';
+            this.style.boxShadow = 'var(--shadow-soft)';
+        });
+        
+        card.addEventListener('mouseleave', function() {
+            this.style.transform = 'translateY(-2px)';
+            this.style.boxShadow = 'var(--shadow-gentle)';
+        });
+    });
+
+    // Confirmation personnalisée pour les suppressions
+    document.querySelectorAll('.btn-delete').forEach(btn => {
+        btn.addEventListener('click', function(e) {
+            e.preventDefault();
+            
+            const postCard = this.closest('.post-card');
+            const postText = postCard.querySelector('.post-text').textContent.substring(0, 50) + '...';
+            
+            if (confirm(`Êtes-vous sûr de vouloir supprimer ce post ?\n\n"${postText}"\n\nCette action est irréversible.`)) {
+                window.location.href = this.href;
+            }
+        });
+    });
+
+    // Auto-refresh pour les posts programmés (toutes les 30 secondes)
+    setInterval(() => {
+        const scheduledColumn = document.querySelector('.kanban-column:nth-child(2) .column-content');
+        if (scheduledColumn && scheduledColumn.children.length > 1) { // Si il y a des posts programmés
+            // Vérifier s'il y a des posts qui devraient être publiés
+            fetch('/publish_scheduled', { method: 'GET' })
+                .then(response => response.text())
+                .then(data => {
+                    if (data.includes('publiés automatiquement')) {
+                        // Rafraîchir la page si des posts ont été publiés
+                        window.location.reload();
+                    }
+                })
+                .catch(error => console.log('Auto-refresh check failed:', error));
+        }
+    }, 30000); // 30 secondes
 });
 </script>
 {% endblock %}
