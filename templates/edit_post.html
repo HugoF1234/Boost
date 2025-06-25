@@ -307,347 +307,6 @@
         line-height: 1.6;
     }
 
-    /* Section de sélection des photos - Intégration Pexels */
-    .media-section {
-        margin-top: 2rem;
-        padding-top: 2rem;
-        border-top: 1px solid var(--noble-stone);
-    }
-
-    .media-tabs {
-        display: flex;
-        gap: 1rem;
-        margin-bottom: 2rem;
-        border-bottom: 1px solid var(--noble-stone);
-    }
-
-    .media-tab {
-        padding: 0.75rem 1.5rem;
-        background: transparent;
-        border: none;
-        border-bottom: 2px solid transparent;
-        cursor: pointer;
-        font-weight: 500;
-        color: var(--noble-charcoal-light);
-        transition: all 0.3s ease;
-        font-size: 0.9rem;
-        display: flex;
-        align-items: center;
-        gap: 0.5rem;
-    }
-
-    .media-tab.active {
-        color: var(--noble-sage);
-        border-bottom-color: var(--noble-sage);
-    }
-
-    .media-tab:hover {
-        color: var(--noble-sage-dark);
-    }
-
-    /* Sélection d'images locales */
-    .local-images-section {
-        display: none;
-    }
-
-    .local-images-section.active {
-        display: block;
-    }
-
-    .file-upload-area {
-        border: 2px dashed var(--noble-stone);
-        border-radius: 12px;
-        padding: 2rem;
-        text-align: center;
-        background: var(--noble-mist);
-        transition: all 0.3s ease;
-        cursor: pointer;
-        position: relative;
-        overflow: hidden;
-    }
-
-    .file-upload-area:hover {
-        border-color: var(--noble-sage);
-        background: rgba(139, 154, 124, 0.05);
-    }
-
-    .file-upload-area.dragover {
-        border-color: var(--noble-sage);
-        background: rgba(139, 154, 124, 0.1);
-        transform: scale(1.02);
-    }
-
-    .upload-icon {
-        font-size: 2.5rem;
-        color: var(--noble-sage);
-        margin-bottom: 1rem;
-    }
-
-    .upload-text {
-        color: var(--noble-charcoal);
-        font-weight: 500;
-        margin-bottom: 0.5rem;
-    }
-
-    .upload-hint {
-        color: var(--noble-charcoal-light);
-        font-size: 0.9rem;
-    }
-
-    /* Sélection d'images Pexels */
-    .pexels-images-section {
-        display: none;
-    }
-
-    .pexels-images-section.active {
-        display: block;
-    }
-
-    .pexels-search {
-        display: flex;
-        gap: 1rem;
-        margin-bottom: 2rem;
-        align-items: end;
-    }
-
-    .pexels-search input {
-        flex: 1;
-        padding: 0.875rem 1.125rem;
-        border: 1.5px solid var(--noble-stone);
-        border-radius: 12px;
-        font-size: 0.95rem;
-        background: var(--noble-cream);
-        color: var(--noble-charcoal);
-        transition: all 0.3s ease;
-    }
-
-    .pexels-search input:focus {
-        outline: none;
-        border-color: var(--noble-sage);
-        background: white;
-        box-shadow: 0 0 0 3px rgba(139, 154, 124, 0.1);
-    }
-
-    .pexels-search button {
-        padding: 0.875rem 1.5rem;
-        background: var(--noble-sage);
-        color: white;
-        border: none;
-        border-radius: 12px;
-        font-weight: 500;
-        cursor: pointer;
-        transition: all 0.3s ease;
-        display: flex;
-        align-items: center;
-        gap: 0.5rem;
-    }
-
-    .pexels-search button:hover {
-        background: var(--noble-sage-dark);
-        transform: translateY(-1px);
-    }
-
-    .pexels-search button:disabled {
-        opacity: 0.6;
-        cursor: not-allowed;
-        transform: none;
-    }
-
-    .pexels-results {
-        display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-        gap: 1rem;
-        margin-bottom: 2rem;
-    }
-
-    .pexels-photo {
-        position: relative;
-        aspect-ratio: 4/3;
-        border-radius: 12px;
-        overflow: hidden;
-        cursor: pointer;
-        transition: all 0.3s ease;
-        border: 2px solid transparent;
-    }
-
-    .pexels-photo:hover {
-        transform: translateY(-2px);
-        box-shadow: var(--shadow-gentle);
-    }
-
-    .pexels-photo.selected {
-        border-color: var(--noble-sage);
-        transform: scale(0.98);
-    }
-
-    .pexels-photo img {
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-        transition: all 0.3s ease;
-    }
-
-    .pexels-photo:hover img {
-        transform: scale(1.05);
-    }
-
-    .pexels-photo-overlay {
-        position: absolute;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        background: linear-gradient(to bottom, transparent 0%, rgba(0,0,0,0.7) 100%);
-        display: flex;
-        flex-direction: column;
-        justify-content: flex-end;
-        padding: 1rem;
-        opacity: 0;
-        transition: all 0.3s ease;
-    }
-
-    .pexels-photo:hover .pexels-photo-overlay {
-        opacity: 1;
-    }
-
-    .pexels-photographer {
-        color: white;
-        font-size: 0.8rem;
-        font-weight: 500;
-        margin-bottom: 0.5rem;
-    }
-
-    .pexels-select-btn {
-        background: rgba(255, 255, 255, 0.9);
-        color: var(--noble-charcoal);
-        border: none;
-        padding: 0.5rem 1rem;
-        border-radius: 8px;
-        font-size: 0.8rem;
-        font-weight: 500;
-        cursor: pointer;
-        transition: all 0.3s ease;
-    }
-
-    .pexels-select-btn:hover {
-        background: white;
-        transform: translateY(-1px);
-    }
-
-    .pexels-photo.selected .pexels-select-btn {
-        background: var(--noble-sage);
-        color: white;
-    }
-
-    .pexels-loading {
-        text-align: center;
-        padding: 2rem;
-        color: var(--noble-charcoal-light);
-    }
-
-    .pexels-loading i {
-        font-size: 2rem;
-        margin-bottom: 1rem;
-        color: var(--noble-sage);
-        animation: spin 1s linear infinite;
-    }
-
-    @keyframes spin {
-        from { transform: rotate(0deg); }
-        to { transform: rotate(360deg); }
-    }
-
-    .pexels-error {
-        text-align: center;
-        padding: 2rem;
-        background: rgba(184, 160, 130, 0.1);
-        border-radius: 12px;
-        color: var(--gentle-warning);
-        border: 1px solid var(--gentle-warning);
-    }
-
-    .pexels-load-more {
-        width: 100%;
-        padding: 1rem 2rem;
-        background: var(--noble-warm);
-        color: var(--noble-charcoal);
-        border: 1px solid var(--noble-stone);
-        border-radius: 12px;
-        font-weight: 500;
-        cursor: pointer;
-        transition: all 0.3s ease;
-        margin-top: 1rem;
-    }
-
-    .pexels-load-more:hover {
-        background: var(--noble-sage);
-        color: white;
-        border-color: var(--noble-sage);
-    }
-
-    /* Aperçu des images sélectionnées */
-    .selected-images-preview {
-        margin-top: 2rem;
-        padding-top: 2rem;
-        border-top: 1px solid var(--noble-stone);
-    }
-
-    .selected-images-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
-        gap: 1rem;
-        margin-top: 1rem;
-    }
-
-    .selected-image-item {
-        position: relative;
-        aspect-ratio: 1;
-        border-radius: 8px;
-        overflow: hidden;
-        border: 2px solid var(--noble-sage-light);
-    }
-
-    .selected-image-item img {
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-    }
-
-    .remove-image-btn {
-        position: absolute;
-        top: 0.5rem;
-        right: 0.5rem;
-        width: 24px;
-        height: 24px;
-        background: rgba(0, 0, 0, 0.7);
-        color: white;
-        border: none;
-        border-radius: 50%;
-        cursor: pointer;
-        font-size: 0.8rem;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        transition: all 0.3s ease;
-    }
-
-    .remove-image-btn:hover {
-        background: var(--gentle-error);
-        transform: scale(1.1);
-    }
-
-    .selected-image-source {
-        position: absolute;
-        bottom: 0;
-        left: 0;
-        right: 0;
-        background: rgba(0, 0, 0, 0.7);
-        color: white;
-        font-size: 0.7rem;
-        padding: 0.25rem;
-        text-align: center;
-    }
-
     /* Boutons nobles */
     .btn {
         padding: 0.875rem 1.75rem;
@@ -772,30 +431,6 @@
             text-align: center;
         }
 
-        .media-tabs {
-            flex-direction: column;
-            gap: 0;
-        }
-
-        .media-tab {
-            border-bottom: none;
-            border-left: 2px solid transparent;
-            padding: 1rem;
-        }
-
-        .media-tab.active {
-            border-left-color: var(--noble-sage);
-            border-bottom-color: transparent;
-        }
-
-        .pexels-search {
-            flex-direction: column;
-        }
-
-        .pexels-results {
-            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-        }
-
         .bottom-actions {
             flex-direction: column;
             text-align: center;
@@ -915,7 +550,7 @@
     </div>
 </div>
 
-<!-- Section d'édition du contenu -->
+<!-- Section d'édition du contenu avec TROIS FORMULAIRES SÉPARÉS -->
 <div class="creation-section fade-in">
     <div class="section-header">
         <h2 class="section-title">
@@ -925,150 +560,63 @@
         <p class="section-subtitle">Modifiez le texte de votre publication - l'aperçu se met à jour automatiquement</p>
     </div>
     
-    <form method="post" action="{{ url_for('test_form_data') }}" enctype="multipart/form-data" id="edit-form">
-        <div class="form-group">
-            <label class="form-label" for="post-content-textarea">
-                <i class="fas fa-edit icon-noble"></i>
-                Contenu de votre post
-            </label>
-            <textarea name="post_content" 
-                      class="form-control textarea-control" 
-                      rows="8" 
-                      required 
-                      id="post-content-textarea"
-                      placeholder="Rédigez votre contenu LinkedIn...">{{ post.content }}</textarea>
-            <div class="character-counter" id="character-counter">
-                <span id="char-count">{{ post.content|length if post.content else 0 }}</span> / 3000 caractères
-            </div>
+    <!-- CONTENU COMMUN (en dehors des formulaires) -->
+    <div class="form-group">
+        <label class="form-label" for="post-content-textarea">
+            <i class="fas fa-edit icon-noble"></i>
+            Contenu de votre post
+        </label>
+        <textarea name="post_content" 
+                  class="form-control textarea-control" 
+                  rows="8" 
+                  required 
+                  id="post-content-textarea"
+                  placeholder="Rédigez votre contenu LinkedIn...">{{ post.content }}</textarea>
+        <div class="character-counter" id="character-counter">
+            <span id="char-count">{{ post.content|length if post.content else 0 }}</span> / 3000 caractères
         </div>
+    </div>
+    
+    <!-- FORMULAIRE 1: SAUVEGARDER EN BROUILLON -->
+    <form method="post" action="{{ url_for('edit_post', post_id=post.id) }}" id="draft-form" style="margin-bottom: 2rem;">
+        <input type="hidden" name="post_content" id="draft-content">
+        <input type="hidden" name="action" value="save_draft">
+        <button type="submit" class="btn btn-secondary" style="width: 100%;">
+            <i class="fas fa-save"></i>
+            Enregistrer en brouillon
+        </button>
+    </form>
+    
+    <!-- FORMULAIRE 2: PROGRAMMER -->
+    <form method="post" action="{{ url_for('edit_post', post_id=post.id) }}" id="schedule-form" style="margin-bottom: 2rem;">
+        <input type="hidden" name="post_content" id="schedule-content">
+        <input type="hidden" name="action" value="schedule">
         
-        <!-- Section Images -->
-        <div class="media-section">
-            <h3 style="color: var(--noble-charcoal); margin-bottom: 1rem; display: flex; align-items: center; gap: 0.75rem;">
-                <i class="fas fa-images icon-noble"></i>
-                Ajouter des images
-            </h3>
-            
-            <div class="media-tabs">
-                <button type="button" class="media-tab active" onclick="switchMediaTab('local')">
-                    <i class="fas fa-upload"></i>
-                    Images locales
-                </button>
-                <button type="button" class="media-tab" onclick="switchMediaTab('pexels')">
-                    <i class="fas fa-search"></i>
-                    Photos Pexels
-                </button>
-            </div>
-            
-            <!-- Section images locales -->
-            <div class="local-images-section active" id="local-images-section">
-                <div class="file-upload-area" onclick="document.getElementById('images').click()" id="file-upload-area">
-                    <div class="upload-icon">
-                        <i class="fas fa-cloud-upload-alt"></i>
-                    </div>
-                    <div class="upload-text">Cliquez pour sélectionner des images</div>
-                    <div class="upload-hint">ou glissez-déposez vos fichiers ici (JPG, PNG, max 9 images)</div>
-                </div>
-                <input type="file" name="images[]" id="images" accept="image/*" multiple class="form-control" style="display: none;">
-            </div>
-            
-            <!-- Section photos Pexels -->
-            <div class="pexels-images-section" id="pexels-images-section">
-                <div class="pexels-search">
-                    <input type="text" 
-                           id="pexels-search-input" 
-                           placeholder="Rechercher des photos : marketing, business, technology...">
-                    <button type="button" 
-                            onclick="searchPexelsPhotos()" 
-                            id="pexels-search-btn">
-                        <i class="fas fa-search"></i>
-                        Rechercher
-                    </button>
-                </div>
-                
-                <div id="pexels-results-container">
-                    <div class="pexels-loading" style="display: none;" id="pexels-loading">
-                        <i class="fas fa-spinner"></i>
-                        <p>Recherche en cours...</p>
-                    </div>
-                    
-                    <div class="pexels-error" style="display: none;" id="pexels-error">
-                        <i class="fas fa-exclamation-triangle"></i>
-                        <p>Erreur lors de la recherche. Veuillez réessayer.</p>
-                    </div>
-                    
-                    <div class="pexels-results" id="pexels-results">
-                        <!-- Les photos seront ajoutées dynamiquement ici -->
-                    </div>
-                    
-                    <button type="button" 
-                            class="pexels-load-more" 
-                            style="display: none;" 
-                            onclick="loadMorePexelsPhotos()" 
-                            id="pexels-load-more">
-                        Charger plus de photos
-                    </button>
-                </div>
-            </div>
-            
-            <!-- Aperçu des images sélectionnées -->
-            <div class="selected-images-preview" style="display: none;" id="selected-images-preview">
-                <h4 style="color: var(--noble-charcoal); margin-bottom: 1rem;">
-                    <i class="fas fa-check icon-noble"></i>
-                    Images sélectionnées (<span id="selected-count">0</span>/9)
-                </h4>
-                <div class="selected-images-grid" id="selected-images-grid">
-                    <!-- Les images sélectionnées apparaîtront ici -->
-                </div>
-            </div>
+        <div class="publish-group schedule-group">
+            <label class="publish-group-title" for="schedule-time-input">
+                📅 Programmer pour plus tard
+            </label>
+            <input type="datetime-local" 
+                   id="schedule-time-input" 
+                   name="publish_time" 
+                   class="form-control" 
+                   value="{{ formatted_date }}"
+                   style="margin-bottom: 1rem;">
+            <button type="submit" class="btn btn-secondary" style="width: 100%;">
+                <i class="fas fa-clock"></i>
+                Programmer le post
+            </button>
         </div>
-
-        <div class="publish-section">
-            <h3 style="color: var(--noble-charcoal); margin-bottom: 1.5rem; display: flex; align-items: center; gap: 0.75rem;">
-                <i class="fas fa-paper-plane icon-noble"></i>
-                Finaliser votre post
-            </h3>
-            <div class="publish-actions-grid">
-                <div class="publish-group schedule-group">
-                    <label class="publish-group-title" for="publish-time-input">
-                        📅 Programmer pour plus tard
-                    </label>
-                    <input type="datetime-local" 
-                           id="publish-time-input" 
-                           name="publish_time" 
-                           class="form-control" 
-                           value="{{ formatted_date }}">
-                    <button type="submit" 
-                            name="action" 
-                            value="schedule" 
-                            class="btn btn-secondary" 
-                            style="width: 100%;">
-                        <i class="fas fa-clock"></i>
-                        Programmer le post
-                    </button>
-                </div>
-                
-                <div class="publish-group">
-                    <label class="publish-group-title">🚀 Actions immédiates</label>
-                    <button type="submit" 
-                            name="action" 
-                            value="publish_now" 
-                            class="btn btn-primary" 
-                            style="width: 100%;">
-                        <i class="fas fa-rocket"></i>
-                        Publier maintenant
-                    </button>
-                    <button type="submit" 
-                            name="action" 
-                            value="save_draft" 
-                            class="btn btn-secondary" 
-                            style="width: 100%;">
-                        <i class="fas fa-save"></i>
-                        Enregistrer en brouillon
-                    </button>
-                </div>
-            </div>
-        </div>
+    </form>
+    
+    <!-- FORMULAIRE 3: PUBLIER MAINTENANT -->
+    <form method="post" action="{{ url_for('edit_post', post_id=post.id) }}" id="publish-form" style="margin-bottom: 2rem;">
+        <input type="hidden" name="post_content" id="publish-content">
+        <input type="hidden" name="action" value="publish_now">
+        <button type="submit" class="btn btn-primary" style="width: 100%;" onclick="return confirm('Êtes-vous sûr de vouloir publier ce post maintenant ?');">
+            <i class="fas fa-rocket"></i>
+            Publier maintenant
+        </button>
     </form>
 
     <!-- Actions en bas -->
@@ -1086,7 +634,7 @@
 </div>
 
 <script>
-// Variables globales pour la gestion des médias (identiques au dashboard)
+// Variables globales pour la gestion des médias
 let currentMediaTab = 'local';
 let selectedPexelsPhotos = [];
 let selectedLocalFiles = [];
@@ -1094,7 +642,7 @@ let pexelsCurrentPage = 1;
 let pexelsCurrentQuery = '';
 let pexelsTotalResults = 0;
 
-// Mise à jour de l'aperçu en temps réel
+// Mise à jour de l'aperçu en temps réel ET synchronisation des formulaires
 function updatePreview() {
     const content = document.getElementById('post-content-textarea').value;
     const previewText = document.getElementById('preview-text');
@@ -1106,6 +654,15 @@ function updatePreview() {
         previewText.textContent = 'Votre contenu apparaîtra ici...';
         previewText.classList.add('empty');
     }
+    
+    // SYNCHRONISER tous les champs cachés avec le contenu
+    const hiddenFields = ['draft-content', 'schedule-content', 'publish-content'];
+    hiddenFields.forEach(id => {
+        const field = document.getElementById(id);
+        if (field) {
+            field.value = content;
+        }
+    });
     
     // Mise à jour du compteur de caractères
     updateCharacterCounter(content.length);
@@ -1129,323 +686,16 @@ function updateCharacterCounter(count) {
     }
 }
 
-// Gestion des onglets média (identique au dashboard)
-function switchMediaTab(tab) {
-    currentMediaTab = tab;
-    
-    // Mettre à jour les onglets
-    document.querySelectorAll('.media-tab').forEach(t => t.classList.remove('active'));
-    document.querySelector(`.media-tab[onclick="switchMediaTab('${tab}')"]`).classList.add('active');
-    
-    // Mettre à jour les sections
-    document.querySelectorAll('.local-images-section, .pexels-images-section').forEach(s => s.classList.remove('active'));
-    document.getElementById(`${tab}-images-section`).classList.add('active');
-}
-
-// Gestion du drag & drop pour les images locales (identique au dashboard)
-function setupLocalImageHandlers() {
-    const fileInput = document.getElementById('images');
-    const uploadArea = document.getElementById('file-upload-area');
-    
-    if (!fileInput || !uploadArea) return;
-    
-    // Gestion du changement de fichier
-    fileInput.addEventListener('change', function(e) {
-        handleLocalFiles(e.target.files);
-    });
-    
-    // Gestion du drag & drop
-    uploadArea.addEventListener('dragover', function(e) {
-        e.preventDefault();
-        this.classList.add('dragover');
-    });
-    
-    uploadArea.addEventListener('dragleave', function(e) {
-        e.preventDefault();
-        this.classList.remove('dragover');
-    });
-    
-    uploadArea.addEventListener('drop', function(e) {
-        e.preventDefault();
-        this.classList.remove('dragover');
-        
-        const files = Array.from(e.dataTransfer.files).filter(file => file.type.startsWith('image/'));
-        handleLocalFiles(files);
-    });
-}
-
-// Gestion des fichiers locaux (identique au dashboard)
-function handleLocalFiles(files) {
-    const maxFiles = Math.min(files.length, 9 - selectedPexelsPhotos.length);
-    selectedLocalFiles = Array.from(files).slice(0, maxFiles);
-    
-    updateSelectedImagesPreview();
-    
-    const uploadArea = document.getElementById('file-upload-area');
-    if (uploadArea && selectedLocalFiles.length > 0) {
-        uploadArea.innerHTML = `
-            <div class="upload-icon">
-                <i class="fas fa-check-circle" style="color: var(--gentle-success);"></i>
-            </div>
-            <div class="upload-text">${selectedLocalFiles.length} image(s) sélectionnée(s)</div>
-            <div class="upload-hint">Cliquez pour changer la sélection</div>
-        `;
-    }
-}
-
-// Recherche de photos Pexels (identique au dashboard)
-async function searchPexelsPhotos(page = 1) {
-    const query = document.getElementById('pexels-search-input').value.trim();
-    
-    if (!query) {
-        showPexelsError('Veuillez entrer un terme de recherche');
-        return;
-    }
-    
-    if (query.length < 2) {
-        showPexelsError('Le terme de recherche doit contenir au moins 2 caractères');
-        return;
-    }
-    
-    if (page === 1) {
-        pexelsCurrentQuery = query;
-        pexelsCurrentPage = 1;
-        document.getElementById('pexels-results').innerHTML = '';
-    }
-    
-    showPexelsLoading(true);
-    document.getElementById('pexels-search-btn').disabled = true;
-    
-    try {
-        const response = await fetch('/api/search_photos', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-                query: query,
-                page: page
-            })
-        });
-        
-        const data = await response.json();
-        
-        if (data.success && data.results) {
-            displayPexelsResults(data.results, page === 1);
-            pexelsTotalResults = data.results.total_results;
-            
-            const loadMoreBtn = document.getElementById('pexels-load-more');
-            if (loadMoreBtn && data.results.next_page && data.results.photos.length > 0) {
-                loadMoreBtn.style.display = 'block';
-            } else if (loadMoreBtn) {
-                loadMoreBtn.style.display = 'none';
-            }
-        } else {
-            showPexelsError(data.error || 'Erreur lors de la recherche');
-        }
-    } catch (error) {
-        console.error('Erreur recherche Pexels:', error);
-        showPexelsError('Erreur de connexion. Veuillez réessayer.');
-    } finally {
-        showPexelsLoading(false);
-        document.getElementById('pexels-search-btn').disabled = false;
-    }
-}
-
-// Toutes les autres fonctions Pexels (identiques au dashboard)
-function displayPexelsResults(results, clearPrevious = true) {
-    const container = document.getElementById('pexels-results');
-    if (!container) return;
-    
-    if (clearPrevious) {
-        container.innerHTML = '';
-    }
-    
-    results.photos.forEach(photo => {
-        const photoElement = createPexelsPhotoElement(photo);
-        container.appendChild(photoElement);
-    });
-    
-    const newPhotos = container.querySelectorAll('.pexels-photo:not(.animated)');
-    newPhotos.forEach((photo, index) => {
-        photo.classList.add('animated');
-        photo.style.opacity = '0';
-        photo.style.transform = 'translateY(20px)';
-        
-        setTimeout(() => {
-            photo.style.transition = 'all 0.6s ease';
-            photo.style.opacity = '1';
-            photo.style.transform = 'translateY(0)';
-        }, index * 100);
-    });
-}
-
-function createPexelsPhotoElement(photo) {
-    const photoDiv = document.createElement('div');
-    photoDiv.className = 'pexels-photo';
-    photoDiv.dataset.photoId = photo.id;
-    
-    photoDiv.innerHTML = `
-        <img src="${photo.src.medium}" alt="${photo.alt}" loading="lazy">
-        <div class="pexels-photo-overlay">
-            <div class="pexels-photographer">Photo par ${photo.photographer}</div>
-            <button type="button" class="pexels-select-btn" onclick="togglePexelsPhoto(${photo.id}, '${encodeURIComponent(JSON.stringify(photo))}')">
-                Sélectionner
-            </button>
-        </div>
-    `;
-    
-    return photoDiv;
-}
-
-function togglePexelsPhoto(photoId, encodedPhotoData) {
-    const photo = JSON.parse(decodeURIComponent(encodedPhotoData));
-    const photoElement = document.querySelector(`[data-photo-id="${photoId}"]`);
-    const isSelected = selectedPexelsPhotos.some(p => p.id === photoId);
-    
-    if (isSelected) {
-        selectedPexelsPhotos = selectedPexelsPhotos.filter(p => p.id !== photoId);
-        photoElement.classList.remove('selected');
-        photoElement.querySelector('.pexels-select-btn').textContent = 'Sélectionner';
-    } else {
-        if (selectedPexelsPhotos.length + selectedLocalFiles.length >= 9) {
-            showPexelsError('Vous ne pouvez sélectionner que 9 images maximum au total');
-            return;
-        }
-        
-        selectedPexelsPhotos.push(photo);
-        photoElement.classList.add('selected');
-        photoElement.querySelector('.pexels-select-btn').textContent = 'Sélectionné';
-    }
-    
-    updateSelectedImagesPreview();
-}
-
-function loadMorePexelsPhotos() {
-    pexelsCurrentPage++;
-    searchPexelsPhotos(pexelsCurrentPage);
-}
-
-function showPexelsLoading(show) {
-    const loadingEl = document.getElementById('pexels-loading');
-    const errorEl = document.getElementById('pexels-error');
-    if (loadingEl) loadingEl.style.display = show ? 'block' : 'none';
-    if (errorEl) errorEl.style.display = 'none';
-}
-
-function showPexelsError(message) {
-    const loadingEl = document.getElementById('pexels-loading');
-    const errorEl = document.getElementById('pexels-error');
-    if (loadingEl) loadingEl.style.display = 'none';
-    if (errorEl) {
-        errorEl.style.display = 'block';
-        const errorText = errorEl.querySelector('p');
-        if (errorText) errorText.textContent = message;
-    }
-}
-
-function updateSelectedImagesPreview() {
-    const totalSelected = selectedLocalFiles.length + selectedPexelsPhotos.length;
-    const previewSection = document.getElementById('selected-images-preview');
-    const grid = document.getElementById('selected-images-grid');
-    const countSpan = document.getElementById('selected-count');
-    
-    if (!previewSection || !grid || !countSpan) return;
-    
-    if (totalSelected === 0) {
-        previewSection.style.display = 'none';
-        return;
-    }
-    
-    previewSection.style.display = 'block';
-    countSpan.textContent = totalSelected;
-    grid.innerHTML = '';
-    
-    selectedLocalFiles.forEach((file, index) => {
-        const item = createSelectedImagePreview(file, 'local', index);
-        grid.appendChild(item);
-    });
-    
-    selectedPexelsPhotos.forEach((photo, index) => {
-        const item = createSelectedImagePreview(photo, 'pexels', index);
-        grid.appendChild(item);
-    });
-}
-
-function createSelectedImagePreview(data, type, index) {
-    const itemDiv = document.createElement('div');
-    itemDiv.className = 'selected-image-item';
-    
-    let imageSrc, sourceText, removeHandler;
-    
-    if (type === 'local') {
-        imageSrc = URL.createObjectURL(data);
-        sourceText = 'Local';
-        removeHandler = `removeSelectedImage('local', ${index})`;
-    } else {
-        imageSrc = data.src.small;
-        sourceText = `Pexels - ${data.photographer}`;
-        removeHandler = `removeSelectedImage('pexels', ${index})`;
-    }
-    
-    itemDiv.innerHTML = `
-        <img src="${imageSrc}" alt="Image sélectionnée">
-        <button type="button" class="remove-image-btn" onclick="${removeHandler}">
-            <i class="fas fa-times"></i>
-        </button>
-        <div class="selected-image-source">${sourceText}</div>
-    `;
-    
-    return itemDiv;
-}
-
-function removeSelectedImage(type, index) {
-    if (type === 'local') {
-        if (selectedLocalFiles[index]) {
-            URL.revokeObjectURL(URL.createObjectURL(selectedLocalFiles[index]));
-        }
-        selectedLocalFiles.splice(index, 1);
-        
-        const fileInput = document.getElementById('images');
-        fileInput.value = '';
-        
-        if (selectedLocalFiles.length === 0) {
-            const uploadArea = document.getElementById('file-upload-area');
-            uploadArea.innerHTML = `
-                <div class="upload-icon">
-                    <i class="fas fa-cloud-upload-alt"></i>
-                </div>
-                <div class="upload-text">Cliquez pour sélectionner des images</div>
-                <div class="upload-hint">ou glissez-déposez vos fichiers ici (JPG, PNG, max 9 images)</div>
-            `;
-        }
-    } else {
-        const removedPhoto = selectedPexelsPhotos[index];
-        selectedPexelsPhotos.splice(index, 1);
-        
-        const photoElement = document.querySelector(`[data-photo-id="${removedPhoto.id}"]`);
-        if (photoElement) {
-            photoElement.classList.remove('selected');
-            photoElement.querySelector('.pexels-select-btn').textContent = 'Sélectionner';
-        }
-    }
-    
-    updateSelectedImagesPreview();
-}
-
 // Initialisation
 document.addEventListener('DOMContentLoaded', function() {
-    // Configuration de la date par défaut
-    const publishTimeInput = document.getElementById('publish-time-input');
-    if (publishTimeInput && !publishTimeInput.value) {
+    // Configuration de la date par défaut pour la programmation
+    const scheduleTimeInput = document.getElementById('schedule-time-input');
+    if (scheduleTimeInput && !scheduleTimeInput.value) {
         const now = new Date();
-        now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
+        now.setMinutes(now.getMinutes() - now.getTimezoneOffset() + 60); // +1 heure par défaut
         const formattedDate = now.toISOString().slice(0, 16);
-        publishTimeInput.value = formattedDate;
+        scheduleTimeInput.value = formattedDate;
     }
-
-    // Configuration des gestionnaires d'images locales
-    setupLocalImageHandlers();
     
     // Écouter les changements dans le textarea pour l'aperçu en temps réel
     const textarea = document.getElementById('post-content-textarea');
@@ -1461,75 +711,24 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
     
-    // Gestionnaire pour la recherche Pexels avec Enter
-    const pexelsInput = document.getElementById('pexels-search-input');
-    if (pexelsInput) {
-        pexelsInput.addEventListener('keypress', function(e) {
-            if (e.key === 'Enter') {
-                e.preventDefault();
-                searchPexelsPhotos();
-            }
-        });
-    }
+    // Debug des formulaires
+    console.log('🔧 DEBUG EDIT POST:');
+    console.log('  - 3 formulaires séparés créés');
+    console.log('  - Synchronisation du contenu activée');
     
-    // Suggestions de recherche Pexels
-    const searchSuggestions = [
-        'business meeting', 'technology', 'marketing', 'team work', 
-        'innovation', 'success', 'growth', 'leadership', 'strategy',
-        'digital transformation', 'productivity', 'collaboration'
-    ];
-    
-    // Ajouter des suggestions au placeholder de manière dynamique
-    let suggestionIndex = 0;
-    setInterval(() => {
-        if (pexelsInput && !pexelsInput.value && document.activeElement !== pexelsInput) {
-            pexelsInput.placeholder = `Rechercher : ${searchSuggestions[suggestionIndex]}...`;
-            suggestionIndex = (suggestionIndex + 1) % searchSuggestions.length;
+    // Ajouter des listeners pour déboguer les soumissions
+    const forms = ['draft-form', 'schedule-form', 'publish-form'];
+    forms.forEach(formId => {
+        const form = document.getElementById(formId);
+        if (form) {
+            form.addEventListener('submit', function(e) {
+                const action = form.querySelector('input[name="action"]').value;
+                const content = form.querySelector('input[name="post_content"]').value;
+                console.log(`🚀 SOUMISSION ${action.toUpperCase()}:`);
+                console.log(`   Contenu: "${content.substring(0, 50)}..."`);
+                console.log(`   Longueur: ${content.length} caractères`);
+            });
         }
-    }, 3000);
-});
-
-// Modification de la soumission du formulaire pour inclure les photos Pexels
-document.addEventListener('DOMContentLoaded', function() {
-    const form = document.getElementById('edit-form');
-    if (form) {
-        form.addEventListener('submit', function(e) {
-            // Ajouter un indicateur de chargement
-            const submitButtons = form.querySelectorAll('button[type="submit"]');
-            submitButtons.forEach(btn => {
-                btn.disabled = true;
-                const icon = btn.querySelector('i');
-                if (icon) {
-                    icon.className = 'fas fa-spinner fa-spin';
-                }
-            });
-            
-            // Ajouter les photos Pexels sélectionnées au formulaire
-            selectedPexelsPhotos.forEach((photo, index) => {
-                const input = document.createElement('input');
-                input.type = 'hidden';
-                input.name = 'pexels_photos[]';
-                input.value = JSON.stringify(photo);
-                form.appendChild(input);
-            });
-        });
-    }
-});
-
-// Animation noble des onglets média
-document.addEventListener('DOMContentLoaded', function() {
-    document.querySelectorAll('.media-tab').forEach(tab => {
-        tab.addEventListener('mouseenter', function() {
-            if (!this.classList.contains('active')) {
-                this.style.transform = 'translateY(-1px)';
-            }
-        });
-        
-        tab.addEventListener('mouseleave', function() {
-            if (!this.classList.contains('active')) {
-                this.style.transform = 'translateY(0)';
-            }
-        });
     });
 });
 
@@ -1538,26 +737,21 @@ document.addEventListener('keydown', function(e) {
     // Ctrl/Cmd + S pour sauvegarder
     if ((e.ctrlKey || e.metaKey) && e.key === 's') {
         e.preventDefault();
-        const saveBtn = document.querySelector('button[value="save_draft"]');
-        if (saveBtn) {
-            saveBtn.click();
-        }
+        document.getElementById('draft-form').submit();
     }
     
     // Ctrl/Cmd + Enter pour publier
     if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
         e.preventDefault();
-        const publishBtn = document.querySelector('button[value="publish_now"]');
-        if (publishBtn) {
-            publishBtn.click();
+        if (confirm('Êtes-vous sûr de vouloir publier ce post maintenant ?')) {
+            document.getElementById('publish-form').submit();
         }
     }
     
     // Echap pour annuler
     if (e.key === 'Escape') {
-        const cancelBtn = document.querySelector('a[href*="historique"]');
-        if (cancelBtn && confirm('Êtes-vous sûr de vouloir annuler ? Les modifications non sauvegardées seront perdues.')) {
-            window.location.href = cancelBtn.href;
+        if (confirm('Êtes-vous sûr de vouloir annuler ? Les modifications non sauvegardées seront perdues.')) {
+            window.location.href = '/historique';
         }
     }
 });
