@@ -2,13 +2,17 @@
 {% block content %}
 {% with messages = get_flashed_messages(with_categories=true) %}
   {% if messages %}
-    <div class="flashes">
+    <div class="flashes" style="margin-bottom: 2rem;">
       {% for category, message in messages %}
-        <div class="alert alert-{{ category }}">{{ message }}</div>
+        <div class="alert alert-{{ 'success' if category == 'success' else 'danger' }}" style="background: {% if category == 'success' %}var(--gentle-success){% else %}var(--gentle-error){% endif %}; color: white; padding: 1rem; border-radius: 12px; margin-bottom: 1rem;">
+          <i class="fas fa-{% if category == 'success' %}check-circle{% else %}exclamation-triangle{% endif %}"></i>
+          {{ message }}
+        </div>
       {% endfor %}
     </div>
   {% endif %}
 {% endwith %}
+
 <style>
     /* Variables nobles identiques au dashboard */
     :root {
@@ -644,7 +648,7 @@
         text-align: center;
     }
 
-    /* Boutons nobles - Sans dégradé */
+    /* Boutons nobles */
     .btn {
         padding: 0.875rem 1.75rem;
         border-radius: 12px;
@@ -1019,8 +1023,12 @@
             </div>
         </div>
 
-        <!-- Section de finalisation ajoutée -->
+        <!-- Section de finalisation -->
         <div class="publish-section">
+            <h3 style="color: var(--noble-charcoal); margin-bottom: 1.5rem; display: flex; align-items: center; gap: 0.75rem;">
+                <i class="fas fa-paper-plane icon-noble"></i>
+                Finaliser votre post
+            </h3>
             <div class="publish-actions-grid">
                 <div class="publish-group schedule-group">
                     <label class="publish-group-title" for="publish-time-input">
@@ -1071,7 +1079,7 @@
             Retour à l'historique
         </a>
         
-        <a href="{{ url_for('delete_post', post_id=post.id) }}" class="btn btn-danger">
+        <a href="{{ url_for('delete_post', post_id=post.id) }}" class="btn btn-danger" onclick="return confirm('Êtes-vous sûr de vouloir supprimer ce post définitivement ?')">
             <i class="fas fa-trash"></i>
             Supprimer ce post
         </a>
@@ -1079,7 +1087,7 @@
 </div>
 
 <script>
-// Variables globales pour la gestion des médias
+// Variables globales pour la gestion des médias (identiques au dashboard)
 let currentMediaTab = 'local';
 let selectedPexelsPhotos = [];
 let selectedLocalFiles = [];
@@ -1122,7 +1130,7 @@ function updateCharacterCounter(count) {
     }
 }
 
-// Gestion des onglets média
+// Gestion des onglets média (identique au dashboard)
 function switchMediaTab(tab) {
     currentMediaTab = tab;
     
@@ -1135,7 +1143,7 @@ function switchMediaTab(tab) {
     document.getElementById(`${tab}-images-section`).classList.add('active');
 }
 
-// Gestion du drag & drop pour les images locales
+// Gestion du drag & drop pour les images locales (identique au dashboard)
 function setupLocalImageHandlers() {
     const fileInput = document.getElementById('images');
     const uploadArea = document.getElementById('file-upload-area');
@@ -1167,7 +1175,7 @@ function setupLocalImageHandlers() {
     });
 }
 
-// Gestion des fichiers locaux
+// Gestion des fichiers locaux (identique au dashboard)
 function handleLocalFiles(files) {
     const maxFiles = Math.min(files.length, 9 - selectedPexelsPhotos.length);
     selectedLocalFiles = Array.from(files).slice(0, maxFiles);
@@ -1186,7 +1194,7 @@ function handleLocalFiles(files) {
     }
 }
 
-// Recherche de photos Pexels
+// Recherche de photos Pexels (identique au dashboard)
 async function searchPexelsPhotos(page = 1) {
     const query = document.getElementById('pexels-search-input').value.trim();
     
@@ -1245,7 +1253,7 @@ async function searchPexelsPhotos(page = 1) {
     }
 }
 
-// Afficher les résultats Pexels
+// Toutes les autres fonctions Pexels (identiques au dashboard)
 function displayPexelsResults(results, clearPrevious = true) {
     const container = document.getElementById('pexels-results');
     if (!container) return;
@@ -1273,7 +1281,6 @@ function displayPexelsResults(results, clearPrevious = true) {
     });
 }
 
-// Créer un élément photo Pexels
 function createPexelsPhotoElement(photo) {
     const photoDiv = document.createElement('div');
     photoDiv.className = 'pexels-photo';
@@ -1292,7 +1299,6 @@ function createPexelsPhotoElement(photo) {
     return photoDiv;
 }
 
-// Basculer la sélection d'une photo Pexels
 function togglePexelsPhoto(photoId, encodedPhotoData) {
     const photo = JSON.parse(decodeURIComponent(encodedPhotoData));
     const photoElement = document.querySelector(`[data-photo-id="${photoId}"]`);
@@ -1316,13 +1322,11 @@ function togglePexelsPhoto(photoId, encodedPhotoData) {
     updateSelectedImagesPreview();
 }
 
-// Charger plus de photos Pexels
 function loadMorePexelsPhotos() {
     pexelsCurrentPage++;
     searchPexelsPhotos(pexelsCurrentPage);
 }
 
-// Afficher le loading Pexels
 function showPexelsLoading(show) {
     const loadingEl = document.getElementById('pexels-loading');
     const errorEl = document.getElementById('pexels-error');
@@ -1330,7 +1334,6 @@ function showPexelsLoading(show) {
     if (errorEl) errorEl.style.display = 'none';
 }
 
-// Afficher une erreur Pexels
 function showPexelsError(message) {
     const loadingEl = document.getElementById('pexels-loading');
     const errorEl = document.getElementById('pexels-error');
@@ -1342,7 +1345,6 @@ function showPexelsError(message) {
     }
 }
 
-// Mettre à jour l'aperçu des images sélectionnées
 function updateSelectedImagesPreview() {
     const totalSelected = selectedLocalFiles.length + selectedPexelsPhotos.length;
     const previewSection = document.getElementById('selected-images-preview');
@@ -1371,7 +1373,6 @@ function updateSelectedImagesPreview() {
     });
 }
 
-// Créer un aperçu d'image sélectionnée
 function createSelectedImagePreview(data, type, index) {
     const itemDiv = document.createElement('div');
     itemDiv.className = 'selected-image-item';
@@ -1399,7 +1400,6 @@ function createSelectedImagePreview(data, type, index) {
     return itemDiv;
 }
 
-// Supprimer une image sélectionnée
 function removeSelectedImage(type, index) {
     if (type === 'local') {
         if (selectedLocalFiles[index]) {
