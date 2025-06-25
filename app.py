@@ -2002,16 +2002,27 @@ def edit_post(post_id):
         flash("Post introuvable ou vous n'avez pas les droits", "error")
         return redirect(url_for("historique"))
 
-    # Traitement POST - Sauvegarder les modifications
+    # Traitement POST
     if request.method == "POST":
+        # DEBUG COMPLET des données reçues
+        logger.info(f"🔍 === DEBUG EDIT POST {post_id} ===")
+        logger.info(f"📋 request.method: {request.method}")
+        logger.info(f"📋 request.form: {dict(request.form)}")
+        logger.info(f"📋 request.files: {dict(request.files)}")
+        
         try:
-            # Récupérer les données du formulaire
+            # Récupérer les données du formulaire avec debug
             new_content = request.form.get("post_content", "").strip()
             new_date_str = request.form.get("publish_time", "")
-            action = request.form.get("action", "save_draft")
+            action = request.form.get("action", "AUCUNE_ACTION_DETECTEE")
+            
+            logger.info(f"📝 Contenu: {len(new_content)} caractères")
+            logger.info(f"📅 Date: {new_date_str}")
+            logger.info(f"🎯 ACTION DETECTEE: '{action}'")
             
             # Validation du contenu
             if not new_content:
+                logger.warning("❌ Contenu vide détecté")
                 flash("Le contenu du post ne peut pas être vide", "error")
                 return render_template("edit_post.html", 
                                      post=post, 
@@ -2023,28 +2034,42 @@ def edit_post(post_id):
             if new_date_str:
                 try:
                     publish_time = datetime.strptime(new_date_str, "%Y-%m-%dT%H:%M")
-                except (ValueError, TypeError):
+                    logger.info(f"📅 Date parsée: {publish_time}")
+                except (ValueError, TypeError) as e:
+                    logger.error(f"❌ Erreur parsing date: {e}")
                     publish_time = datetime.utcnow()
             else:
                 publish_time = datetime.utcnow()
+                logger.info(f"📅 Date par défaut: {publish_time}")
+            
+            # Sauvegarder l'état AVANT modification
+            old_scheduled = post.scheduled
+            old_urn = post.linkedin_post_urn
+            old_date = post.published_at
+            
+            logger.info(f"📊 AVANT: scheduled={old_scheduled}, urn={'OUI' if old_urn else 'NON'}, date={old_date}")
             
             # Mettre à jour le contenu
             post.content = new_content
             
-            # Gérer les différentes actions
+            # TRAITEMENT DES ACTIONS avec debug ultra-détaillé
             if action == "save_draft":
-                # Sauvegarder en brouillon
+                logger.info("🔄 TRAITEMENT ACTION: save_draft")
                 post.scheduled = False
                 post.published_at = datetime.utcnow()
                 post.linkedin_post_urn = None
+                logger.info(f"📝 Post {post_id} → BROUILLON: scheduled=False, urn=None")
                 flash("Post sauvegardé en brouillon avec succès", "success")
                 
             elif action == "schedule":
-                # Programmer le post
+                logger.info("🔄 TRAITEMENT ACTION: schedule")
                 now = datetime.utcnow()
                 min_schedule_time = now + timedelta(minutes=30)
                 
+                logger.info(f"⏰ Vérification date: {publish_time} vs {min_schedule_time}")
+                
                 if publish_time < min_schedule_time:
+                    logger.warning(f"❌ Date trop proche: {publish_time} < {min_schedule_time}")
                     flash("La date de programmation doit être au moins 30 minutes dans le futur", "error")
                     return render_template("edit_post.html", 
                                          post=post, 
@@ -2054,20 +2079,26 @@ def edit_post(post_id):
                 post.scheduled = True
                 post.published_at = publish_time
                 post.linkedin_post_urn = None
+                logger.info(f"⏰ Post {post_id} → PROGRAMMÉ: scheduled=True, date={publish_time}, urn=None")
                 flash(f"Post programmé pour le {publish_time.strftime('%d/%m/%Y à %H:%M')}", "success")
                 
             elif action == "publish_now":
-                # Publier immédiatement
+                logger.info("🔄 TRAITEMENT ACTION: publish_now")
                 access_token = session.get("access_token")
                 if not access_token:
+                    logger.error("❌ Aucun token d'accès LinkedIn")
                     flash("Token LinkedIn expiré. Veuillez vous reconnecter", "error")
                     return redirect(url_for("linkedin_auth"))
                 
-                # Publier sur LinkedIn
+                # Tenter la publication sur LinkedIn
+                logger.info("🚀 Tentative de publication sur LinkedIn...")
+                
                 profile = session.get('profile')
                 sub = profile.get("sub", "")
-                user_id = sub.split("_")[-1]
+                user_id = sub.split("_")[-1] if "_" in sub else sub.replace("urn:li:person:", "")
                 urn = f"urn:li:person:{user_id}"
+                
+                logger.info(f"📤 URN utilisateur: {urn}")
                 
                 headers = {
                     "Authorization": f"Bearer {access_token}",
@@ -2075,68 +2106,15 @@ def edit_post(post_id):
                     "X-Restli-Protocol-Version": "2.0.0"
                 }
                 
-                # Traitement des mentions LinkedIn
-                processed_content, mention_entities = process_mentions_for_linkedin(new_content)
-                
-                # Gérer les images (locales et Pexels)
-                media_assets = []
-                
-                # Images locales
-                uploaded_files = request.files.getlist("images[]")
-                max_images = min(len(uploaded_files), 9)
-                for i in range(max_images):
-                    file = uploaded_files[i]
-                    if file and file.filename:
-                        try:
-                            asset = upload_image_to_linkedin(file.read(), access_token, urn, file.content_type)
-                            if asset:
-                                media_assets.append({
-                                    "status": "READY",
-                                    "media": asset,
-                                    "description": {"text": f"Image {i+1}"}
-                                })
-                        except Exception as e:
-                            logger.error(f"Erreur upload image {i+1}: {str(e)}")
-                            continue
-                
-                # Images Pexels
-                pexels_photos = request.form.getlist("pexels_photos[]")
-                for i, photo_data in enumerate(pexels_photos):
-                    if len(media_assets) >= 9:
-                        break
-                    try:
-                        photo_info = json.loads(photo_data)
-                        photo_url = photo_info.get('src', {}).get('large', '')
-                        if photo_url:
-                            image_content = download_pexels_photo(photo_url)
-                            if image_content:
-                                asset = upload_image_to_linkedin(image_content, access_token, urn, 'image/jpeg')
-                                if asset:
-                                    media_assets.append({
-                                        "status": "READY",
-                                        "media": asset,
-                                        "description": {"text": f"Photo par {photo_info.get('photographer', 'Pexels')}"}
-                                    })
-                    except Exception as e:
-                        logger.error(f"Erreur upload photo Pexels {i+1}: {str(e)}")
-                        continue
-                
-                # Construire les données du post LinkedIn
-                if len(media_assets) == 0:
-                    share_media_category = "NONE"
-                    media_content = []
-                else:
-                    share_media_category = "IMAGE"
-                    media_content = media_assets
-                
+                # Publication simple sans images pour déboguer
                 post_data = {
                     "author": urn,
                     "lifecycleState": "PUBLISHED",
                     "specificContent": {
                         "com.linkedin.ugc.ShareContent": {
-                            "shareCommentary": {"text": processed_content},
-                            "shareMediaCategory": share_media_category,
-                            "media": media_content
+                            "shareCommentary": {"text": new_content},
+                            "shareMediaCategory": "NONE",
+                            "media": []
                         }
                     },
                     "visibility": {
@@ -2144,47 +2122,84 @@ def edit_post(post_id):
                     }
                 }
                 
-                if mention_entities:
-                    post_data["specificContent"]["com.linkedin.ugc.ShareContent"]["mentions"] = mention_entities
+                logger.info(f"📤 Données post: {json.dumps(post_data, indent=2)}")
                 
-                # Publier sur LinkedIn
-                post_resp = requests.post(LINKEDIN_POSTS_URL, headers=headers, json=post_data)
+                try:
+                    post_resp = requests.post(LINKEDIN_POSTS_URL, headers=headers, json=post_data, timeout=30)
+                    logger.info(f"📤 Réponse LinkedIn: {post_resp.status_code}")
+                    logger.info(f"📤 Contenu réponse: {post_resp.text}")
+                    
+                    if post_resp.status_code == 201:
+                        linkedin_urn = post_resp.json().get("id")
+                        post.linkedin_post_urn = linkedin_urn
+                        post.scheduled = False
+                        post.published_at = datetime.utcnow()
+                        logger.info(f"✅ Post {post_id} → PUBLIÉ: urn={linkedin_urn}")
+                        flash("Post publié avec succès sur LinkedIn !", "success")
+                    else:
+                        logger.error(f"❌ Erreur publication LinkedIn: {post_resp.status_code} - {post_resp.text}")
+                        flash(f"Erreur LinkedIn ({post_resp.status_code}). Réessayez plus tard.", "error")
+                        return render_template("edit_post.html", 
+                                             post=post, 
+                                             formatted_date=new_date_str,
+                                             **session.get('profile', {}))
                 
-                if post_resp.status_code == 201:
-                    linkedin_urn = post_resp.json().get("id")
-                    post.linkedin_post_urn = linkedin_urn
-                    post.scheduled = False
-                    post.published_at = datetime.utcnow()
-                    flash("Post publié avec succès sur LinkedIn !", "success")
-                else:
-                    logger.error(f"Erreur publication LinkedIn: {post_resp.text}")
-                    flash("Erreur lors de la publication sur LinkedIn", "error")
+                except requests.exceptions.RequestException as e:
+                    logger.error(f"❌ Exception réseau LinkedIn: {str(e)}")
+                    flash("Erreur de connexion avec LinkedIn. Vérifiez votre connexion internet.", "error")
                     return render_template("edit_post.html", 
                                          post=post, 
                                          formatted_date=new_date_str,
                                          **session.get('profile', {}))
-            
-            # Sauvegarder en base de données
-            db.session.commit()
-            logger.info(f"Post {post_id} modifié avec succès par l'utilisateur {user.id}")
-            
-            # Rediriger selon l'action
-            if action == "publish_now":
-                return redirect(url_for("historique"))
-            elif post.scheduled:
-                return redirect(url_for("calendar"))
             else:
-                return redirect(url_for("historique"))
+                logger.error(f"❌ ACTION INCONNUE: '{action}'")
+                flash(f"Action inconnue: {action}", "error")
+                return render_template("edit_post.html", 
+                                     post=post, 
+                                     formatted_date=new_date_str,
+                                     **session.get('profile', {}))
+            
+            # Sauvegarder l'état APRÈS modification
+            logger.info(f"📊 APRÈS: scheduled={post.scheduled}, urn={'OUI' if post.linkedin_post_urn else 'NON'}, date={post.published_at}")
+            
+            # SAUVEGARDE FORCÉE
+            try:
+                logger.info("💾 Début sauvegarde en base...")
+                db.session.flush()
+                db.session.commit()
+                logger.info(f"✅ Post {post_id} sauvegardé avec succès")
+                
+                # Vérification post-sauvegarde
+                db.session.refresh(post)
+                logger.info(f"🔍 VÉRIFICATION: scheduled={post.scheduled}, urn={'OUI' if post.linkedin_post_urn else 'NON'}")
+                
+            except Exception as db_error:
+                db.session.rollback()
+                logger.error(f"❌ Erreur base de données: {str(db_error)}")
+                flash("Erreur de sauvegarde en base de données", "error")
+                return render_template("edit_post.html", 
+                                     post=post, 
+                                     formatted_date=new_date_str,
+                                     **session.get('profile', {}))
+            
+            # Nettoyer la session
+            session.pop('draft', None)
+            session.pop('editing_post_id', None)
+            
+            logger.info(f"🎯 REDIRECT vers historique pour voir le résultat")
+            
+            # Redirection
+            return redirect(url_for("historique"))
                 
         except Exception as e:
             db.session.rollback()
-            logger.error(f"Erreur lors de la modification du post {post_id}: {str(e)}")
-            flash("Une erreur est survenue lors de la sauvegarde", "error")
+            logger.error(f"❌ Erreur générale modification post {post_id}: {str(e)}")
+            logger.error(f"❌ Traceback: {traceback.format_exc()}")
+            flash("Une erreur inattendue est survenue", "error")
     
     # Affichage en GET
     formatted_date = post.published_at.strftime("%Y-%m-%dT%H:%M") if post.published_at else ""
     
-    # Mettre le contenu du post en session comme draft pour l'aperçu
     session['draft'] = post.content
     session['editing_post_id'] = post.id
     
@@ -2196,6 +2211,25 @@ def edit_post(post_id):
         **session.get('profile', {})
     )
 
+# Route de test pour déboguer les données de formulaire
+@app.route("/test_form_data", methods=["POST"])
+def test_form_data():
+    """Route de test pour voir exactement ce qui est envoyé par le formulaire"""
+    logger.info("🧪 === TEST FORM DATA ===")
+    logger.info(f"📋 request.method: {request.method}")
+    logger.info(f"📋 request.form: {dict(request.form)}")
+    logger.info(f"📋 request.files: {dict(request.files)}")
+    logger.info(f"📋 request.json: {request.json}")
+    logger.info(f"📋 request.data: {request.data}")
+    
+    return f"""
+    <h1>Test Form Data</h1>
+    <p>Method: {request.method}</p>
+    <p>Form: {dict(request.form)}</p>
+    <p>Files: {dict(request.files)}</p>
+    <p><a href="javascript:history.back()">← Retour</a></p>
+    """
+    
 @app.route("/delete_post/<int:post_id>")
 def delete_post(post_id):
     if 'profile' not in session:
