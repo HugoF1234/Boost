@@ -1986,6 +1986,8 @@ def publish():
             logger.error(f"Erreur publication: {post_resp.text}")
             return f"<h2>❌ Erreur lors de la publication :</h2><pre>{post_resp.text}</pre><p><a href='/dashboard'>Retour</a></p>"
             
+# À remplacer dans app.py - Route edit_post corrigée
+
 @app.route("/edit_post/<int:post_id>", methods=["GET", "POST"])
 def edit_post(post_id):
     if 'profile' not in session:
@@ -1994,14 +1996,197 @@ def edit_post(post_id):
     # Récupérer l'utilisateur et le post
     user = User.query.filter_by(sub=session['profile'].get("sub", "")).first()
     if not user:
-        return "Utilisateur introuvable"
+        flash("Utilisateur introuvable", "error")
+        return redirect(url_for("historique"))
 
-    post = Post.query.filter_by(id=post_id, user_id=user.id).first_or_404()
+    post = Post.query.filter_by(id=post_id, user_id=user.id).first()
+    if not post:
+        flash("Post introuvable ou vous n'avez pas les droits", "error")
+        return redirect(url_for("historique"))
 
-    # Affichage du formulaire en GET
+    # Traitement POST - Sauvegarder les modifications
+    if request.method == "POST":
+        try:
+            # Récupérer les données du formulaire
+            new_content = request.form.get("post_content", "").strip()
+            new_date_str = request.form.get("publish_time", "")
+            action = request.form.get("action", "save_draft")
+            
+            # Validation du contenu
+            if not new_content:
+                flash("Le contenu du post ne peut pas être vide", "error")
+                return render_template("edit_post.html", 
+                                     post=post, 
+                                     formatted_date=post.published_at.strftime("%Y-%m-%dT%H:%M") if post.published_at else "",
+                                     **session.get('profile', {}))
+            
+            # Traitement de la date
+            publish_time = None
+            if new_date_str:
+                try:
+                    publish_time = datetime.strptime(new_date_str, "%Y-%m-%dT%H:%M")
+                except (ValueError, TypeError):
+                    publish_time = datetime.utcnow()
+            else:
+                publish_time = datetime.utcnow()
+            
+            # Mettre à jour le contenu
+            post.content = new_content
+            
+            # Gérer les différentes actions
+            if action == "save_draft":
+                # Sauvegarder en brouillon
+                post.scheduled = False
+                post.published_at = datetime.utcnow()
+                post.linkedin_post_urn = None
+                flash("Post sauvegardé en brouillon avec succès", "success")
+                
+            elif action == "schedule":
+                # Programmer le post
+                now = datetime.utcnow()
+                min_schedule_time = now + timedelta(minutes=30)
+                
+                if publish_time < min_schedule_time:
+                    flash("La date de programmation doit être au moins 30 minutes dans le futur", "error")
+                    return render_template("edit_post.html", 
+                                         post=post, 
+                                         formatted_date=new_date_str,
+                                         **session.get('profile', {}))
+                
+                post.scheduled = True
+                post.published_at = publish_time
+                post.linkedin_post_urn = None
+                flash(f"Post programmé pour le {publish_time.strftime('%d/%m/%Y à %H:%M')}", "success")
+                
+            elif action == "publish_now":
+                # Publier immédiatement
+                access_token = session.get("access_token")
+                if not access_token:
+                    flash("Token LinkedIn expiré. Veuillez vous reconnecter", "error")
+                    return redirect(url_for("linkedin_auth"))
+                
+                # Publier sur LinkedIn
+                profile = session.get('profile')
+                sub = profile.get("sub", "")
+                user_id = sub.split("_")[-1]
+                urn = f"urn:li:person:{user_id}"
+                
+                headers = {
+                    "Authorization": f"Bearer {access_token}",
+                    "Content-Type": "application/json",
+                    "X-Restli-Protocol-Version": "2.0.0"
+                }
+                
+                # Traitement des mentions LinkedIn
+                processed_content, mention_entities = process_mentions_for_linkedin(new_content)
+                
+                # Gérer les images (locales et Pexels)
+                media_assets = []
+                
+                # Images locales
+                uploaded_files = request.files.getlist("images[]")
+                max_images = min(len(uploaded_files), 9)
+                for i in range(max_images):
+                    file = uploaded_files[i]
+                    if file and file.filename:
+                        try:
+                            asset = upload_image_to_linkedin(file.read(), access_token, urn, file.content_type)
+                            if asset:
+                                media_assets.append({
+                                    "status": "READY",
+                                    "media": asset,
+                                    "description": {"text": f"Image {i+1}"}
+                                })
+                        except Exception as e:
+                            logger.error(f"Erreur upload image {i+1}: {str(e)}")
+                            continue
+                
+                # Images Pexels
+                pexels_photos = request.form.getlist("pexels_photos[]")
+                for i, photo_data in enumerate(pexels_photos):
+                    if len(media_assets) >= 9:
+                        break
+                    try:
+                        photo_info = json.loads(photo_data)
+                        photo_url = photo_info.get('src', {}).get('large', '')
+                        if photo_url:
+                            image_content = download_pexels_photo(photo_url)
+                            if image_content:
+                                asset = upload_image_to_linkedin(image_content, access_token, urn, 'image/jpeg')
+                                if asset:
+                                    media_assets.append({
+                                        "status": "READY",
+                                        "media": asset,
+                                        "description": {"text": f"Photo par {photo_info.get('photographer', 'Pexels')}"}
+                                    })
+                    except Exception as e:
+                        logger.error(f"Erreur upload photo Pexels {i+1}: {str(e)}")
+                        continue
+                
+                # Construire les données du post LinkedIn
+                if len(media_assets) == 0:
+                    share_media_category = "NONE"
+                    media_content = []
+                else:
+                    share_media_category = "IMAGE"
+                    media_content = media_assets
+                
+                post_data = {
+                    "author": urn,
+                    "lifecycleState": "PUBLISHED",
+                    "specificContent": {
+                        "com.linkedin.ugc.ShareContent": {
+                            "shareCommentary": {"text": processed_content},
+                            "shareMediaCategory": share_media_category,
+                            "media": media_content
+                        }
+                    },
+                    "visibility": {
+                        "com.linkedin.ugc.MemberNetworkVisibility": "PUBLIC"
+                    }
+                }
+                
+                if mention_entities:
+                    post_data["specificContent"]["com.linkedin.ugc.ShareContent"]["mentions"] = mention_entities
+                
+                # Publier sur LinkedIn
+                post_resp = requests.post(LINKEDIN_POSTS_URL, headers=headers, json=post_data)
+                
+                if post_resp.status_code == 201:
+                    linkedin_urn = post_resp.json().get("id")
+                    post.linkedin_post_urn = linkedin_urn
+                    post.scheduled = False
+                    post.published_at = datetime.utcnow()
+                    flash("Post publié avec succès sur LinkedIn !", "success")
+                else:
+                    logger.error(f"Erreur publication LinkedIn: {post_resp.text}")
+                    flash("Erreur lors de la publication sur LinkedIn", "error")
+                    return render_template("edit_post.html", 
+                                         post=post, 
+                                         formatted_date=new_date_str,
+                                         **session.get('profile', {}))
+            
+            # Sauvegarder en base de données
+            db.session.commit()
+            logger.info(f"Post {post_id} modifié avec succès par l'utilisateur {user.id}")
+            
+            # Rediriger selon l'action
+            if action == "publish_now":
+                return redirect(url_for("historique"))
+            elif post.scheduled:
+                return redirect(url_for("calendar"))
+            else:
+                return redirect(url_for("historique"))
+                
+        except Exception as e:
+            db.session.rollback()
+            logger.error(f"Erreur lors de la modification du post {post_id}: {str(e)}")
+            flash("Une erreur est survenue lors de la sauvegarde", "error")
+    
+    # Affichage en GET
     formatted_date = post.published_at.strftime("%Y-%m-%dT%H:%M") if post.published_at else ""
     
-    # Mettre le contenu du post en session comme draft
+    # Mettre le contenu du post en session comme draft pour l'aperçu
     session['draft'] = post.content
     session['editing_post_id'] = post.id
     
@@ -2012,40 +2197,6 @@ def edit_post(post_id):
         draft=post.content,
         **session.get('profile', {})
     )
-
-@app.route("/delete_post/<int:post_id>", methods=["GET", "POST"])
-def delete_post(post_id):
-    if 'profile' not in session:
-        return redirect(url_for("index"))
-
-    user = User.query.filter_by(sub=session['profile'].get("sub", "")).first()
-    if not user:
-        return "Utilisateur introuvable"
-
-    post = Post.query.filter_by(id=post_id, user_id=user.id).first()
-    if not post:
-        return "Post introuvable ou vous n'avez pas les droits"
-
-    if request.method == "POST":
-        access_token = session.get("access_token")
-        if post.linkedin_post_urn and access_token:
-            post_id_urn = post.linkedin_post_urn
-            headers = {
-                "Authorization": f"Bearer {access_token}"
-            }
-            response = requests.delete(
-                f"https://api.linkedin.com/v2/ugcPosts/{post_id_urn.split(':')[-1]}",
-                headers=headers
-            )
-            if response.status_code != 204:
-                logger.error(f"Erreur suppression LinkedIn : {response.text}")
-
-        db.session.delete(post)
-        db.session.commit()
-
-        return redirect(url_for("calendar") if post.scheduled else url_for("historique"))
-
-    return render_template("delete_post.html", post=post)
 
 @app.route("/profil", methods=["GET", "POST"])
 def profil():
