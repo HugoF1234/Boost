@@ -1986,10 +1986,6 @@ def publish():
             logger.error(f"Erreur publication: {post_resp.text}")
             return f"<h2>❌ Erreur lors de la publication :</h2><pre>{post_resp.text}</pre><p><a href='/dashboard'>Retour</a></p>"
             
-# À remplacer dans app.py - Route edit_post corrigée
-
-# À remplacer dans app.py - Route edit_post corrigée et adaptée
-
 @app.route("/edit_post/<int:post_id>", methods=["GET", "POST"])
 def edit_post(post_id):
     if 'profile' not in session:
@@ -2032,19 +2028,21 @@ def edit_post(post_id):
             else:
                 publish_time = datetime.utcnow()
             
-            # Mettre à jour le contenu
+            # IMPORTANT : Nettoyer d'abord tous les champs
             post.content = new_content
+            post.linkedin_post_urn = None  # Reset URN sauf si publication immédiate
             
-            # Gérer les différentes actions
+            # Gérer les différentes actions avec RESET COMPLET
             if action == "save_draft":
-                # Sauvegarder en brouillon
+                # BROUILLON : Réinitialiser complètement
                 post.scheduled = False
-                post.published_at = datetime.utcnow()  # Date de modification
+                post.published_at = datetime.utcnow()
                 post.linkedin_post_urn = None
+                logger.info(f"Post {post_id} sauvé en brouillon: scheduled={post.scheduled}, urn={post.linkedin_post_urn}")
                 flash("Post sauvegardé en brouillon avec succès", "success")
                 
             elif action == "schedule":
-                # Programmer le post
+                # PROGRAMMÉ : Vérifier et programmer
                 now = datetime.utcnow()
                 min_schedule_time = now + timedelta(minutes=30)
                 
@@ -2056,18 +2054,19 @@ def edit_post(post_id):
                                          **session.get('profile', {}))
                 
                 post.scheduled = True
-                post.published_at = publish_time  # Date de programmation
-                post.linkedin_post_urn = None  # S'assurer qu'il n'y a pas d'URN
+                post.published_at = publish_time
+                post.linkedin_post_urn = None
+                logger.info(f"Post {post_id} programmé: scheduled={post.scheduled}, date={publish_time}, urn={post.linkedin_post_urn}")
                 flash(f"Post programmé pour le {publish_time.strftime('%d/%m/%Y à %H:%M')}", "success")
                 
             elif action == "publish_now":
-                # Publier immédiatement
+                # PUBLIER : Code de publication LinkedIn complet
                 access_token = session.get("access_token")
                 if not access_token:
                     flash("Token LinkedIn expiré. Veuillez vous reconnecter", "error")
                     return redirect(url_for("linkedin_auth"))
                 
-                # Publier sur LinkedIn
+                # Publication sur LinkedIn
                 profile = session.get('profile')
                 sub = profile.get("sub", "")
                 user_id = sub.split("_")[-1]
@@ -2079,10 +2078,7 @@ def edit_post(post_id):
                     "X-Restli-Protocol-Version": "2.0.0"
                 }
                 
-                # Traitement des mentions LinkedIn
                 processed_content, mention_entities = process_mentions_for_linkedin(new_content)
-                
-                # Gérer les images (locales et Pexels)
                 media_assets = []
                 
                 # Images locales
@@ -2125,7 +2121,7 @@ def edit_post(post_id):
                         logger.error(f"Erreur upload photo Pexels {i+1}: {str(e)}")
                         continue
                 
-                # Construire les données du post LinkedIn
+                # Construire le post LinkedIn
                 if len(media_assets) == 0:
                     share_media_category = "NONE"
                     media_content = []
@@ -2157,8 +2153,9 @@ def edit_post(post_id):
                 if post_resp.status_code == 201:
                     linkedin_urn = post_resp.json().get("id")
                     post.linkedin_post_urn = linkedin_urn
-                    post.scheduled = False  # Plus programmé une fois publié
-                    post.published_at = datetime.utcnow()  # Date de publication réelle
+                    post.scheduled = False
+                    post.published_at = datetime.utcnow()
+                    logger.info(f"Post {post_id} publié: scheduled={post.scheduled}, urn={linkedin_urn}")
                     flash("Post publié avec succès sur LinkedIn !", "success")
                 else:
                     logger.error(f"Erreur publication LinkedIn: {post_resp.text}")
@@ -2168,17 +2165,25 @@ def edit_post(post_id):
                                          formatted_date=new_date_str,
                                          **session.get('profile', {}))
             
-            # Sauvegarder en base de données
-            db.session.commit()
-            logger.info(f"Post {post_id} modifié avec succès par l'utilisateur {user.id}")
+            # CRITIQUE : Forcer la sauvegarde et vider le cache SQLAlchemy
+            db.session.flush()  # Forcer l'écriture en base
+            db.session.commit()  # Confirmer la transaction
+            db.session.expunge(post)  # Retirer l'objet du cache SQLAlchemy
             
-            # Rediriger selon l'action
+            logger.info(f"Post {post_id} modifié avec succès par l'utilisateur {user.id}")
+            logger.info(f"État final: scheduled={post.scheduled}, urn={post.linkedin_post_urn}, date={post.published_at}")
+            
+            # Nettoyer la session
+            session.pop('draft', None)
+            session.pop('editing_post_id', None)
+            
+            # Redirection avec rafraîchissement forcé
             if action == "publish_now":
-                return redirect(url_for("historique"))
-            elif post.scheduled:
-                return redirect(url_for("calendar"))
+                return redirect(url_for("historique") + "?refresh=1")
+            elif action == "schedule":
+                return redirect(url_for("calendar") + "?refresh=1") 
             else:
-                return redirect(url_for("historique"))
+                return redirect(url_for("historique") + "?refresh=1")
                 
         except Exception as e:
             db.session.rollback()
@@ -2188,7 +2193,7 @@ def edit_post(post_id):
     # Affichage en GET
     formatted_date = post.published_at.strftime("%Y-%m-%dT%H:%M") if post.published_at else ""
     
-    # Mettre le contenu du post en session comme draft pour l'aperçu
+    # Mettre le contenu du post en session pour l'aperçu
     session['draft'] = post.content
     session['editing_post_id'] = post.id
     
@@ -2199,7 +2204,6 @@ def edit_post(post_id):
         draft=post.content,
         **session.get('profile', {})
     )
-
 
 # Route pour supprimer un post (à ajouter aussi si elle n'existe pas)
 @app.route("/delete_post/<int:post_id>")
@@ -2269,21 +2273,45 @@ def historique():
     if not user:
         return "<p>Utilisateur introuvable en base.</p>"
 
+    # CRITIQUE : Forcer une nouvelle requête sans cache
+    db.session.expire_all()  # Invalider le cache SQLAlchemy
+    
     now = datetime.utcnow()
     posts = Post.query.filter_by(user_id=user.id).order_by(Post.published_at.desc()).all()
     
-    # CORRECTION : Logique de classification mise à jour
+    # Debug : Log du nombre de posts par catégorie
+    logger.info(f"=== DEBUG HISTORIQUE pour utilisateur {user.id} ===")
+    logger.info(f"Total posts trouvés: {len(posts)}")
     
-    # Un post est publié s'il a un URN LinkedIn (peu importe scheduled)
-    published_posts = [p for p in posts if p.linkedin_post_urn]
+    # Classification avec debug
+    published_posts = []
+    scheduled_posts = []
+    draft_posts = []
+    
+    for post in posts:
+        logger.info(f"Post {post.id}: scheduled={post.scheduled}, urn={'OUI' if post.linkedin_post_urn else 'NON'}, date={post.published_at}")
+        
+        if post.linkedin_post_urn:
+            published_posts.append(post)
+            logger.info(f"  -> PUBLIÉ (a un URN)")
+        elif post.scheduled and post.published_at and post.published_at > now:
+            scheduled_posts.append(post)
+            logger.info(f"  -> PROGRAMMÉ (scheduled=True, date future)")
+        elif not post.scheduled:
+            draft_posts.append(post)
+            logger.info(f"  -> BROUILLON (scheduled=False)")
+        else:
+            # Post programmé mais date passée - traiter comme brouillon
+            draft_posts.append(post)
+            logger.info(f"  -> BROUILLON (date passée)")
+    
+    logger.info(f"Résultat: {len(draft_posts)} brouillons, {len(scheduled_posts)} programmés, {len(published_posts)} publiés")
+    
+    return render_template("historique.html", 
+                         draft_posts=draft_posts, 
+                         scheduled_posts=scheduled_posts, 
+                         published_posts=published_posts)
 
-    # Un post est programmé s'il est marqué comme scheduled ET n'a pas encore d'URN LinkedIn ET la date est dans le futur
-    scheduled_posts = [p for p in posts if p.scheduled and not p.linkedin_post_urn and p.published_at and p.published_at > now]
-
-    # Un brouillon est un post qui n'est PAS programmé ET n'a pas d'URN LinkedIn
-    draft_posts = [p for p in posts if not p.scheduled and not p.linkedin_post_urn]
-
-    return render_template("historique.html", draft_posts=draft_posts, scheduled_posts=scheduled_posts, published_posts=published_posts)
 
 @app.route("/parametres")
 def parametres():
@@ -2300,14 +2328,20 @@ def calendar():
     if not user:
         return "Utilisateur introuvable"
 
-    # CORRECTION : Même logique que historique pour les posts programmés
-    from datetime import datetime
+    # CRITIQUE : Forcer une nouvelle requête sans cache
+    db.session.expire_all()
+    
     now = datetime.utcnow()
-    # Posts programmés = scheduled=True ET pas d'URN LinkedIn ET date future
+    # Posts programmés avec debug
     upcoming_posts = Post.query.filter_by(user_id=user.id, scheduled=True).filter(
         Post.linkedin_post_urn.is_(None),
         Post.published_at > now
     ).order_by(Post.published_at).all()
+    
+    logger.info(f"=== DEBUG CALENDAR pour utilisateur {user.id} ===")
+    logger.info(f"Posts programmés trouvés: {len(upcoming_posts)}")
+    for post in upcoming_posts:
+        logger.info(f"Post {post.id}: date={post.published_at}, scheduled={post.scheduled}")
 
     return render_template("calendar.html", posts=upcoming_posts, now=now)
 
