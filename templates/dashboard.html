@@ -964,6 +964,86 @@
         color: var(--noble-sage);
         font-size: 1.125rem;
     }
+    .pdf-section {
+        display: none;
+    }
+    
+    .pdf-section.active {
+        display: block;
+    }
+    
+    .pdf-upload-area {
+        border: 2px dashed var(--noble-stone);
+        border-radius: 12px;
+        padding: 2rem;
+        text-align: center;
+        background: var(--noble-mist);
+        transition: all 0.3s ease;
+        cursor: pointer;
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .pdf-upload-area:hover {
+        border-color: var(--gentle-error);
+        background: rgba(196, 144, 144, 0.05);
+    }
+    
+    .pdf-upload-area.dragover {
+        border-color: var(--gentle-error);
+        background: rgba(196, 144, 144, 0.1);
+        transform: scale(1.02);
+    }
+    
+    .pdf-upload-area.has-file {
+        border-color: var(--gentle-success);
+        background: rgba(124, 152, 133, 0.05);
+    }
+    
+    .pdf-upload-area.has-file .upload-icon i {
+        color: var(--gentle-success);
+    }
+    
+    /* Style pour les onglets avec indication PDF */
+    .media-tab[onclick="switchMediaTab('pdf')"] {
+        position: relative;
+    }
+    
+    .media-tab[onclick="switchMediaTab('pdf')"].has-pdf::after {
+        content: '';
+        position: absolute;
+        top: 0.5rem;
+        right: 0.5rem;
+        width: 8px;
+        height: 8px;
+        background: var(--gentle-success);
+        border-radius: 50%;
+        border: 2px solid white;
+    }
+    
+    /* Animation pour l'alerte de limitation */
+    .linkedin-limitation-alert {
+        animation: gentleShake 0.6s ease-in-out;
+    }
+    
+    @keyframes gentleShake {
+        0%, 100% { transform: translateX(0); }
+        25% { transform: translateX(-5px); }
+        75% { transform: translateX(5px); }
+    }
+    
+    /* Style pour les onglets désactivés */
+    .media-tab.disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+        pointer-events: none;
+    }
+    
+    /* Indicateur visuel pour les conflits */
+    .media-conflict {
+        border: 2px solid var(--gentle-error) !important;
+        background: rgba(196, 144, 144, 0.1) !important;
+    }
 </style>
 
 <!-- Section d'accueil noble -->
@@ -1207,9 +1287,20 @@
         <!-- Section de sélection des photos - Intégration Pexels -->
         <div class="media-section">
             <h3 style="color: var(--noble-charcoal); margin-bottom: 1rem; display: flex; align-items: center; gap: 0.75rem;">
-                <i class="fas fa-images icon-noble"></i>
-                Ajouter des images
+                <i class="fas fa-paperclip icon-noble"></i>
+                Ajouter des fichiers
             </h3>
+            
+            <!-- Alerte de limitation LinkedIn -->
+            <div class="linkedin-limitation-alert" id="linkedin-limitation-alert" style="display: none;">
+                <div style="background: rgba(196, 144, 144, 0.1); border: 1px solid var(--gentle-error); border-radius: 12px; padding: 1rem; margin-bottom: 1.5rem; display: flex; align-items: center; gap: 0.75rem;">
+                    <i class="fas fa-exclamation-triangle" style="color: var(--gentle-error); font-size: 1.2rem;"></i>
+                    <div>
+                        <strong style="color: var(--gentle-error);">Limitation LinkedIn :</strong>
+                        <span style="color: var(--noble-charcoal-light);">Vous ne pouvez pas joindre à la fois des images et un PDF. Veuillez choisir l'un ou l'autre.</span>
+                    </div>
+                </div>
+            </div>
             
             <div class="media-tabs">
                 <button type="button" class="media-tab active" onclick="switchMediaTab('local')">
@@ -1220,9 +1311,13 @@
                     <i class="fas fa-search"></i>
                     Photos Pexels
                 </button>
+                <button type="button" class="media-tab" onclick="switchMediaTab('pdf')">
+                    <i class="fas fa-file-pdf"></i>
+                    Document PDF
+                </button>
             </div>
             
-            <!-- Section images locales -->
+            <!-- Section images locales (existante) -->
             <div class="local-images-section active" id="local-images-section">
                 <div class="file-upload-area" onclick="document.getElementById('images').click()" id="file-upload-area">
                     <div class="upload-icon">
@@ -1234,7 +1329,7 @@
                 <input type="file" name="images[]" id="images" accept="image/*" multiple class="form-control" style="display: none;">
             </div>
             
-            <!-- Section photos Pexels -->
+            <!-- Section photos Pexels (existante) -->
             <div class="pexels-images-section" id="pexels-images-section">
                 <div class="pexels-search">
                     <input type="text" id="pexels-search-input" placeholder="Rechercher des photos : marketing, business, technology...">
@@ -1265,7 +1360,51 @@
                 </div>
             </div>
             
-            <!-- Aperçu des images sélectionnées -->
+            <!-- NOUVELLE Section PDF -->
+            <div class="pdf-section" id="pdf-section" style="display: none;">
+                <div class="pdf-upload-info" style="background: rgba(139, 154, 124, 0.05); border-radius: 12px; padding: 1.5rem; margin-bottom: 1.5rem; border-left: 4px solid var(--noble-sage);">
+                    <h4 style="color: var(--noble-charcoal); margin-bottom: 0.75rem; display: flex; align-items: center; gap: 0.5rem;">
+                        <i class="fas fa-info-circle" style="color: var(--noble-sage);"></i>
+                        Joindre un document PDF
+                    </h4>
+                    <p style="color: var(--noble-charcoal-light); margin-bottom: 1rem; line-height: 1.6;">
+                        Partagez des présentations, rapports, guides ou tout autre document professionnel. 
+                        Le PDF sera visible dans votre post LinkedIn sous forme de document téléchargeable.
+                    </p>
+                    <ul style="color: var(--noble-charcoal-light); font-size: 0.9rem; line-height: 1.5; padding-left: 1.5rem;">
+                        <li>Taille maximum : 100 MB</li>
+                        <li>Formats acceptés : PDF uniquement</li>
+                        <li>⚠️ <strong>Important :</strong> Un PDF exclut l'ajout d'images</li>
+                    </ul>
+                </div>
+                
+                <div class="pdf-upload-area" onclick="document.getElementById('pdf_file').click()" id="pdf-upload-area">
+                    <div class="upload-icon">
+                        <i class="fas fa-file-pdf" style="color: var(--gentle-error);"></i>
+                    </div>
+                    <div class="upload-text">Cliquez pour sélectionner un document PDF</div>
+                    <div class="upload-hint">ou glissez-déposez votre fichier ici (max 100 MB)</div>
+                </div>
+                <input type="file" name="pdf_file" id="pdf_file" accept=".pdf" class="form-control" style="display: none;">
+                
+                <!-- Aperçu du PDF sélectionné -->
+                <div class="pdf-preview" id="pdf-preview" style="display: none;">
+                    <div style="background: white; border: 1px solid var(--noble-stone); border-radius: 12px; padding: 1.5rem; margin-top: 1.5rem; display: flex; align-items: center; gap: 1rem;">
+                        <div style="width: 48px; height: 48px; background: var(--gentle-error); border-radius: 8px; display: flex; align-items: center; justify-content: center; color: white;">
+                            <i class="fas fa-file-pdf"></i>
+                        </div>
+                        <div style="flex: 1;">
+                            <div id="pdf-filename" style="font-weight: 500; color: var(--noble-charcoal); margin-bottom: 0.25rem;"></div>
+                            <div id="pdf-filesize" style="font-size: 0.9rem; color: var(--noble-charcoal-light);"></div>
+                        </div>
+                        <button type="button" onclick="removePdfFile()" style="background: var(--gentle-error); color: white; border: none; border-radius: 8px; padding: 0.5rem; cursor: pointer; transition: all 0.3s ease;">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Aperçu des images sélectionnées (existant, mais avec modifications pour la validation) -->
             <div class="selected-images-preview" style="display: none;" id="selected-images-preview">
                 <h4 style="color: var(--noble-charcoal); margin-bottom: 1rem;">
                     <i class="fas fa-check icon-noble"></i>
@@ -1315,12 +1454,19 @@
 let currentMediaTab = 'local';
 let selectedPexelsPhotos = [];
 let selectedLocalFiles = [];
+let selectedPdfFile = null;
 let pexelsCurrentPage = 1;
 let pexelsCurrentQuery = '';
 let pexelsTotalResults = 0;
 
-// Gestion des onglets média
+// Fonction modifiée pour basculer les onglets média avec validation
 function switchMediaTab(tab) {
+    // Vérifier les conflits avant de changer d'onglet
+    if (!canSwitchToTab(tab)) {
+        showLinkedInLimitationAlert();
+        return;
+    }
+    
     currentMediaTab = tab;
     
     // Mettre à jour les onglets
@@ -1328,8 +1474,87 @@ function switchMediaTab(tab) {
     document.querySelector(`.media-tab[onclick="switchMediaTab('${tab}')"]`).classList.add('active');
     
     // Mettre à jour les sections
-    document.querySelectorAll('.local-images-section, .pexels-images-section').forEach(s => s.classList.remove('active'));
-    document.getElementById(`${tab}-images-section`).classList.add('active');
+    document.querySelectorAll('.local-images-section, .pexels-images-section, .pdf-section').forEach(s => s.classList.remove('active'));
+    document.getElementById(`${tab === 'local' || tab === 'pexels' ? tab + '-images' : tab}-section`).classList.add('active');
+    
+    // Masquer l'alerte si l'utilisateur change vers un onglet valide
+    hideLinkedInLimitationAlert();
+}
+
+// Vérifier si on peut basculer vers un onglet
+function canSwitchToTab(targetTab) {
+    const hasImages = selectedLocalFiles.length > 0 || selectedPexelsPhotos.length > 0;
+    const hasPdf = selectedPdfFile !== null;
+    
+    if (targetTab === 'pdf' && hasImages) {
+        return false; // Ne peut pas aller vers PDF si des images sont sélectionnées
+    }
+    
+    if ((targetTab === 'local' || targetTab === 'pexels') && hasPdf) {
+        return false; // Ne peut pas aller vers images si un PDF est sélectionné
+    }
+    
+    return true;
+}
+
+// Afficher l'alerte de limitation LinkedIn
+function showLinkedInLimitationAlert() {
+    const alert = document.getElementById('linkedin-limitation-alert');
+    if (alert) {
+        alert.style.display = 'block';
+        alert.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+}
+
+// Masquer l'alerte de limitation LinkedIn
+function hideLinkedInLimitationAlert() {
+    const alert = document.getElementById('linkedin-limitation-alert');
+    if (alert) {
+        alert.style.display = 'none';
+    }
+}
+
+// Validation globale des médias
+function validateMediaSelection() {
+    const hasImages = selectedLocalFiles.length > 0 || selectedPexelsPhotos.length > 0;
+    const hasPdf = selectedPdfFile !== null;
+    
+    if (hasImages && hasPdf) {
+        showLinkedInLimitationAlert();
+        return false;
+    }
+    
+    hideLinkedInLimitationAlert();
+    updateTabStates();
+    return true;
+}
+
+// Mettre à jour l'état des onglets
+function updateTabStates() {
+    const hasImages = selectedLocalFiles.length > 0 || selectedPexelsPhotos.length > 0;
+    const hasPdf = selectedPdfFile !== null;
+    
+    const pdfTab = document.querySelector('.media-tab[onclick="switchMediaTab(\'pdf\')"]');
+    const localTab = document.querySelector('.media-tab[onclick="switchMediaTab(\'local\')"]');
+    const pexelsTab = document.querySelector('.media-tab[onclick="switchMediaTab(\'pexels\')"]');
+    
+    // Désactiver l'onglet PDF si des images sont sélectionnées
+    if (hasImages) {
+        pdfTab?.classList.add('disabled');
+    } else {
+        pdfTab?.classList.remove('disabled');
+    }
+    
+    // Désactiver les onglets images si un PDF est sélectionné
+    if (hasPdf) {
+        localTab?.classList.add('disabled');
+        pexelsTab?.classList.add('disabled');
+        pdfTab?.classList.add('has-pdf');
+    } else {
+        localTab?.classList.remove('disabled');
+        pexelsTab?.classList.remove('disabled');
+        pdfTab?.classList.remove('has-pdf');
+    }
 }
 
 // Gestion du drag & drop pour les images locales
@@ -1364,14 +1589,21 @@ function setupLocalImageHandlers() {
     });
 }
 
-// Gestion des fichiers locaux
+// Fonction modifiée pour gérer les fichiers locaux
 function handleLocalFiles(files) {
+    // Vérifier s'il y a déjà un PDF sélectionné
+    if (selectedPdfFile) {
+        showLinkedInLimitationAlert();
+        return;
+    }
+    
     // Limiter à 9 images maximum
     const maxFiles = Math.min(files.length, 9 - selectedPexelsPhotos.length);
     selectedLocalFiles = Array.from(files).slice(0, maxFiles);
     
     // Mettre à jour l'aperçu
     updateSelectedImagesPreview();
+    validateMediaSelection();
     
     // Mettre à jour le texte de l'upload area
     const uploadArea = document.getElementById('file-upload-area');
@@ -1384,6 +1616,119 @@ function handleLocalFiles(files) {
             <div class="upload-hint">Cliquez pour changer la sélection</div>
         `;
     }
+}
+
+// Gestion du PDF
+function setupPdfHandlers() {
+    const pdfInput = document.getElementById('pdf_file');
+    const uploadArea = document.getElementById('pdf-upload-area');
+    
+    if (!pdfInput || !uploadArea) return;
+    
+    // Gestion du changement de fichier
+    pdfInput.addEventListener('change', function(e) {
+        if (e.target.files.length > 0) {
+            handlePdfFile(e.target.files[0]);
+        }
+    });
+    
+    // Gestion du drag & drop
+    uploadArea.addEventListener('dragover', function(e) {
+        e.preventDefault();
+        this.classList.add('dragover');
+    });
+    
+    uploadArea.addEventListener('dragleave', function(e) {
+        e.preventDefault();
+        this.classList.remove('dragover');
+    });
+    
+    uploadArea.addEventListener('drop', function(e) {
+        e.preventDefault();
+        this.classList.remove('dragover');
+        
+        const files = Array.from(e.dataTransfer.files).filter(file => file.type === 'application/pdf');
+        if (files.length > 0) {
+            handlePdfFile(files[0]);
+        }
+    });
+}
+
+// Gérer la sélection d'un fichier PDF
+function handlePdfFile(file) {
+    // Vérifier s'il y a déjà des images sélectionnées
+    if (selectedLocalFiles.length > 0 || selectedPexelsPhotos.length > 0) {
+        showLinkedInLimitationAlert();
+        return;
+    }
+    
+    // Vérifier la taille (100 MB max)
+    const maxSize = 100 * 1024 * 1024; // 100 MB en bytes
+    if (file.size > maxSize) {
+        alert('Le fichier PDF est trop volumineux (maximum 100 MB)');
+        return;
+    }
+    
+    selectedPdfFile = file;
+    updatePdfPreview();
+    validateMediaSelection();
+}
+
+// Mettre à jour l'aperçu du PDF
+function updatePdfPreview() {
+    const preview = document.getElementById('pdf-preview');
+    const uploadArea = document.getElementById('pdf-upload-area');
+    const filename = document.getElementById('pdf-filename');
+    const filesize = document.getElementById('pdf-filesize');
+    
+    if (!preview || !uploadArea || !filename || !filesize) return;
+    
+    if (selectedPdfFile) {
+        // Afficher l'aperçu
+        preview.style.display = 'block';
+        filename.textContent = selectedPdfFile.name;
+        filesize.textContent = formatFileSize(selectedPdfFile.size);
+        
+        // Mettre à jour l'upload area
+        uploadArea.classList.add('has-file');
+        uploadArea.innerHTML = `
+            <div class="upload-icon">
+                <i class="fas fa-check-circle" style="color: var(--gentle-success);"></i>
+            </div>
+            <div class="upload-text">PDF sélectionné : ${selectedPdfFile.name}</div>
+            <div class="upload-hint">Cliquez pour changer le fichier</div>
+        `;
+    } else {
+        // Masquer l'aperçu
+        preview.style.display = 'none';
+        uploadArea.classList.remove('has-file');
+        uploadArea.innerHTML = `
+            <div class="upload-icon">
+                <i class="fas fa-file-pdf" style="color: var(--gentle-error);"></i>
+            </div>
+            <div class="upload-text">Cliquez pour sélectionner un document PDF</div>
+            <div class="upload-hint">ou glissez-déposez votre fichier ici (max 100 MB)</div>
+        `;
+    }
+}
+
+// Supprimer le fichier PDF sélectionné
+function removePdfFile() {
+    selectedPdfFile = null;
+    const pdfInput = document.getElementById('pdf_file');
+    if (pdfInput) pdfInput.value = '';
+    
+    updatePdfPreview();
+    validateMediaSelection();
+}
+
+// Formater la taille de fichier
+function formatFileSize(bytes) {
+    if (bytes === 0) return '0 Bytes';
+    const k = 1024;
+    const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+    const i = Math.floor(Math.log(bytes) / Math.log(k));
+    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
 }
 
 // Recherche de photos Pexels
@@ -1495,8 +1840,14 @@ function createPexelsPhotoElement(photo) {
     return photoDiv;
 }
 
-// Basculer la sélection d'une photo Pexels
+// Fonction modifiée pour basculer les photos Pexels
 function togglePexelsPhoto(photoId, encodedPhotoData) {
+    // Vérifier s'il y a déjà un PDF sélectionné
+    if (selectedPdfFile) {
+        showLinkedInLimitationAlert();
+        return;
+    }
+    
     const photo = JSON.parse(decodeURIComponent(encodedPhotoData));
     const photoElement = document.querySelector(`[data-photo-id="${photoId}"]`);
     const isSelected = selectedPexelsPhotos.some(p => p.id === photoId);
@@ -1520,6 +1871,7 @@ function togglePexelsPhoto(photoId, encodedPhotoData) {
     }
     
     updateSelectedImagesPreview();
+    validateMediaSelection();
 }
 
 // Charger plus de photos Pexels
@@ -1607,7 +1959,7 @@ function createSelectedImagePreview(data, type, index) {
     return itemDiv;
 }
 
-// Supprimer une image sélectionnée
+// Fonction modifiée pour supprimer une image
 function removeSelectedImage(type, index) {
     if (type === 'local') {
         // Révoquer l'URL de l'objet pour libérer la mémoire
@@ -1643,9 +1995,23 @@ function removeSelectedImage(type, index) {
     }
     
     updateSelectedImagesPreview();
+    validateMediaSelection();
 }
 
-// Gestionnaire d'événements pour la recherche Pexels avec Enter
+// Validation avant soumission du formulaire
+function validateFormSubmission() {
+    const hasImages = selectedLocalFiles.length > 0 || selectedPexelsPhotos.length > 0;
+    const hasPdf = selectedPdfFile !== null;
+    
+    if (hasImages && hasPdf) {
+        showLinkedInLimitationAlert();
+        return false;
+    }
+    
+    return true;
+}
+
+// Gestionnaires d'événements pour la recherche Pexels avec Enter
 document.addEventListener('DOMContentLoaded', function() {
     // Définir la date par défaut pour le champ de programmation
     const publishTimeInput = document.getElementById('publish-time-input');
@@ -1656,8 +2022,9 @@ document.addEventListener('DOMContentLoaded', function() {
         publishTimeInput.value = formattedDate;
     }
 
-    // Configuration des gestionnaires d'images locales
+    // Configuration des gestionnaires d'images locales et PDF
     setupLocalImageHandlers();
+    setupPdfHandlers(); // Nouvelle fonction
     
     // Gestionnaire pour la recherche Pexels avec Enter
     const pexelsInput = document.getElementById('pexels-search-input');
@@ -1685,13 +2052,22 @@ document.addEventListener('DOMContentLoaded', function() {
             suggestionIndex = (suggestionIndex + 1) % searchSuggestions.length;
         }
     }, 3000);
+    
+    // Configuration initiale des états des onglets
+    updateTabStates();
 });
 
-// Modification de la soumission du formulaire pour inclure les photos Pexels
+// Modification de la soumission du formulaire pour inclure les photos Pexels et validation
 document.addEventListener('DOMContentLoaded', function() {
     const form = document.querySelector('form[action="/publish"]');
     if (form) {
         form.addEventListener('submit', function(e) {
+            // Validation avant soumission
+            if (!validateFormSubmission()) {
+                e.preventDefault();
+                return false;
+            }
+            
             // Ajouter les photos Pexels sélectionnées au formulaire
             selectedPexelsPhotos.forEach((photo, index) => {
                 const input = document.createElement('input');
@@ -1708,7 +2084,7 @@ document.addEventListener('DOMContentLoaded', function() {
 document.addEventListener('DOMContentLoaded', function() {
     document.querySelectorAll('.media-tab').forEach(tab => {
         tab.addEventListener('mouseenter', function() {
-            if (!this.classList.contains('active')) {
+            if (!this.classList.contains('active') && !this.classList.contains('disabled')) {
                 this.style.transform = 'translateY(-1px)';
             }
         });
