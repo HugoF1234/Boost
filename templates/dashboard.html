@@ -1460,6 +1460,7 @@ let pexelsCurrentQuery = '';
 let pexelsTotalResults = 0;
 
 // Fonction modifiée pour basculer les onglets média avec validation
+// Fonction modifiée pour basculer les onglets média avec validation
 function switchMediaTab(tab) {
     // Vérifier les conflits avant de changer d'onglet
     if (!canSwitchToTab(tab)) {
@@ -1474,8 +1475,26 @@ function switchMediaTab(tab) {
     document.querySelector(`.media-tab[onclick="switchMediaTab('${tab}')"]`).classList.add('active');
     
     // Mettre à jour les sections
-    document.querySelectorAll('.local-images-section, .pexels-images-section, .pdf-section').forEach(s => s.classList.remove('active'));
-    document.getElementById(`${tab === 'local' || tab === 'pexels' ? tab + '-images' : tab}-section`).classList.add('active');
+    document.querySelectorAll('.local-images-section, .pexels-images-section, .pdf-section').forEach(s => {
+        s.classList.remove('active');
+        s.style.display = 'none';
+    });
+    
+    // Afficher la section appropriée
+    let sectionId;
+    if (tab === 'local') {
+        sectionId = 'local-images-section';
+    } else if (tab === 'pexels') {
+        sectionId = 'pexels-images-section';
+    } else if (tab === 'pdf') {
+        sectionId = 'pdf-section';
+    }
+    
+    const targetSection = document.getElementById(sectionId);
+    if (targetSection) {
+        targetSection.classList.add('active');
+        targetSection.style.display = 'block';
+    }
     
     // Masquer l'alerte si l'utilisateur change vers un onglet valide
     hideLinkedInLimitationAlert();
