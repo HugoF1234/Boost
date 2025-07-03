@@ -1599,22 +1599,37 @@ def dashboard():
                 
                 # Construire le prompt avec les instructions personnalisées
                 article_prompt = f"""
-                Rédige un post LinkedIn sur l'actualité suivante:
+                Tu es un expert LinkedIn reconnu pour tes posts pertinents et percutants.
                 
-                Titre: {selected_article.get('title')}
-                Description: {selected_article.get('description')}
-                Source: {selected_article.get('source', {}).get('name')}
+                Rédige un post LinkedIn complet à partir de l’article suivant :
                 
-                Instructions:
-                - Ton: {tone}
-                - Perspective: {perspective}
-                - Format: {format_text}
-                - Secteur d'expertise: {user.secteur if user and user.secteur else "general"}
-                - Inclus 2-3 hashtags pertinents
-                - Le post doit être personnel, comme si la personne donnait son avis sur cette actualité
-                - Maximum 800 caractères
-                - Format adapté à LinkedIn
+                📰 **Titre** : {selected_article.get('title')}
+                📄 **Résumé** : {selected_article.get('description')}
+                🏢 **Source** : {selected_article.get('source', {}).get('name')}
+                
+                🎯 **Objectif** : Réagir à cette actualité en apportant :
+                - une analyse personnelle,
+                - un point de vue argumenté,
+                - des implications concrètes pour ton secteur : {user.secteur if user and user.secteur else "général"},
+                - des insights ou propositions utiles pour les professionnels.
+                
+                🗣️ **Style attendu** :
+                - Ton : {tone}
+                - Perspective : {perspective}
+                - Format : {format_text}
+                - Écriture fluide, humaine, professionnelle et engageante
+                - Inclus une conclusion forte ou une ouverture pour discussion
+                - Ajoute 2 ou 3 hashtags pertinents à la fin
+                
+                📝 **Contraintes** :
+                - Maximum 900 caractères
+                - Pas de lien externe
+                - Commence directement par une accroche ou une idée forte
+                - Parle à la première personne ("je") si le ton est personnel
+                
+                Inspire-toi des posts qui génèrent le plus de commentaires sur LinkedIn. Structure le contenu comme un mini-point de vue publié par un professionnel engagé.
                 """
+
                 
                 # NOUVEAU: Ajouter les instructions personnalisées si elles existent
                 if custom_instructions:
