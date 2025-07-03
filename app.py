@@ -1872,7 +1872,7 @@ def process_mentions_for_linkedin(content):
     
 def upload_pdf_to_linkedin(pdf_content, access_token, urn):
     """
-    Upload un PDF sur LinkedIn - Version corrigée pour posts organiques
+    Upload un PDF sur LinkedIn en utilisant l'API Assets (compatible UGC Posts)
     
     Args:
         pdf_content (bytes): Contenu du PDF
@@ -1880,39 +1880,36 @@ def upload_pdf_to_linkedin(pdf_content, access_token, urn):
         urn (str): URN de l'utilisateur
         
     Returns:
-        str: Document URN ou None en cas d'erreur
+        str: Asset URN ou None en cas d'erreur
     """
     try:
-        # Method 1: Essayer avec l'API Assets classique mais recette document
+        # Utiliser l'API Assets avec la recette feedshare-image pour PDF
         headers = {
             "Authorization": f"Bearer {access_token}",
             "Content-Type": "application/json",
             "X-Restli-Protocol-Version": "2.0.0"
         }
 
-        # Payload pour l'enregistrement du document via Assets API
+        # Payload pour l'enregistrement du PDF comme asset media
         register_payload = {
             "registerUploadRequest": {
                 "owner": urn,
-                "recipes": ["urn:li:digitalmediaRecipe:feedshare-document"],
+                "recipes": ["urn:li:digitalmediaRecipe:feedshare-image"],  # Utiliser image recipe
                 "serviceRelationships": [
                     {"relationshipType": "OWNER", "identifier": "urn:li:userGeneratedContent"}
                 ]
             }
         }
 
-        # URL Assets API (même que pour les images)
+        # URL Assets API
         register_url = "https://api.linkedin.com/v2/assets?action=registerUpload"
         
-        logger.info(f"📄 Enregistrement du document PDF via Assets API...")
+        logger.info(f"📄 Enregistrement du PDF via Assets API (image recipe)...")
         reg_resp = requests.post(register_url, headers=headers, json=register_payload)
         
         if reg_resp.status_code != 200:
             logger.error(f"❌ Erreur enregistrement PDF: {reg_resp.status_code} - {reg_resp.text}")
-            
-            # Method 2: Fallback vers la nouvelle API Documents
-            logger.info(f"📄 Tentative avec la nouvelle API Documents...")
-            return upload_pdf_to_linkedin_new_api(pdf_content, access_token, urn)
+            return None
 
         upload_info = reg_resp.json().get("value", {})
         upload_url = upload_info.get("uploadMechanism", {}).get("com.linkedin.digitalmedia.uploading.MediaUploadHttpRequest", {}).get("uploadUrl")
@@ -1923,7 +1920,7 @@ def upload_pdf_to_linkedin(pdf_content, access_token, urn):
             logger.error(f"Réponse complète: {reg_resp.text}")
             return None
 
-        logger.info(f"✅ Document enregistré: {asset}")
+        logger.info(f"✅ PDF enregistré comme asset: {asset}")
         logger.info(f"📤 URL d'upload: {upload_url}")
 
         # 2. Étape 2 : Upload du contenu PDF
@@ -1939,7 +1936,7 @@ def upload_pdf_to_linkedin(pdf_content, access_token, urn):
             logger.error(f"❌ Erreur upload contenu PDF: {put_resp.status_code} - {put_resp.text}")
             return None
 
-        logger.info(f"✅ PDF uploadé avec succès: {asset}")
+        logger.info(f"✅ PDF uploadé avec succès comme asset: {asset}")
         return asset
 
     except Exception as e:
@@ -2091,30 +2088,19 @@ def publish():
                 pdf_document_urn = upload_pdf_to_linkedin(pdf_content, access_token, urn)
                 
                 if pdf_document_urn:
-                    # Traiter le PDF comme un média image pour l'API UGC Posts
-                    if pdf_document_urn.startswith("urn:li:document:"):
-                        # Nouvelle API Documents - utiliser la structure "media"
-                        document_media = {
-                            "status": "READY",
-                            "media": pdf_document_urn,
-                            "description": {
-                                "text": pdf_file.filename
-                            }
+                    # Traiter le PDF comme un asset media (même structure que les images)
+                    document_media = {
+                        "status": "READY",
+                        "media": pdf_document_urn,
+                        "description": {
+                            "text": pdf_file.filename
                         }
-                    else:
-                        # Ancienne API Assets (urn:li:digitalmediaAsset:)
-                        document_media = {
-                            "status": "READY",
-                            "media": pdf_document_urn,
-                            "description": {
-                                "text": pdf_file.filename
-                            }
-                        }
+                    }
                     
                     media_assets = [document_media]  # SEUL le PDF
                     share_media_category = "IMAGE"  # PDF traité comme IMAGE pour l'API UGC
                     
-                    logger.info(f"✅ PDF configuré pour publication comme IMAGE: {pdf_document_urn}")
+                    logger.info(f"✅ PDF configuré pour publication comme asset: {pdf_document_urn}")
                 else:
                     logger.error(f"❌ Échec de l'upload PDF")
                     return f"<h2>❌ Erreur lors de l'upload du PDF</h2><p><a href='/dashboard'>Retour</a></p>"
