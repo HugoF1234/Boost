@@ -358,6 +358,50 @@ def search_pexels_photos(query, per_page=12, page=1):
     except Exception as e:
         logger.error(f"Exception lors de la recherche Pexels: {str(e)}")
         return None
+        
+def upload_pdf_to_linkedin(pdf_content, access_token, urn):
+    headers = {
+        "Authorization": f"Bearer {access_token}",
+        "Content-Type": "application/json",
+        "X-Restli-Protocol-Version": "2.0.0"
+    }
+
+    register_payload = {
+        "registerUploadRequest": {
+            "owner": urn,
+            "recipes": ["urn:li:digitalmediaRecipe:feedshare-document"],
+            "serviceRelationships": [
+                {"relationshipType": "OWNER", "identifier": "urn:li:userGeneratedContent"}
+            ]
+        }
+    }
+
+    reg_resp = requests.post(LINKEDIN_ASSET_REGISTRATION_URL, headers=headers, json=register_payload)
+    if reg_resp.status_code != 200:
+        logger.error(f"Erreur registre upload PDF: {reg_resp.text}")
+        return None
+
+    upload_info = reg_resp.json().get("value", {})
+    upload_url = upload_info.get("uploadMechanism", {}).get("com.linkedin.digitalmedia.uploading.MediaUploadHttpRequest", {}).get("uploadUrl")
+    asset = upload_info.get("asset")
+
+    if not upload_url or not asset:
+        logger.error("Upload URL ou asset PDF manquant")
+        return None
+
+    # PUT du contenu PDF
+    upload_headers = {
+        "Authorization": f"Bearer {access_token}",
+        "Content-Type": "application/pdf"
+    }
+
+    put_resp = requests.put(upload_url, data=pdf_content, headers=upload_headers)
+
+    if put_resp.status_code not in [200, 201]:
+        logger.error(f"Erreur upload PDF: {put_resp.text}")
+        return None
+
+    return asset
 
 def upload_image_to_linkedin(image_content, access_token, urn, content_type='image/jpeg'):
     """
@@ -1820,10 +1864,6 @@ def process_mentions_for_linkedin(content):
     
     return processed_content, mention_entities
 
-# Ajout à app.py pour gérer les images multiples
-
-# Modifier la route publish existante pour gérer les photos Pexels
-# Modifier la route publish existante pour gérer les photos Pexels ET l'édition
 @app.route("/publish", methods=["POST"])
 def publish():
     access_token = session.get("access_token")
@@ -1832,7 +1872,7 @@ def publish():
 
     content = request.form.get("post_content")
     date_str = request.form.get("publish_time")
-    action = request.form.get("action")  # 'save_draft', 'schedule', 'publish_now'
+    action = request.form.get("action")
 
     if not content:
         return "Aucun contenu reçu."
@@ -1851,56 +1891,44 @@ def publish():
     urn = f"urn:li:person:{user_id}"
     user = User.query.filter_by(sub=sub).first()
 
-    # Vérifier si on édite un post existant
     editing_post_id = session.get('editing_post_id')
-    post_to_edit = None
-    if editing_post_id:
-        post_to_edit = Post.query.filter_by(id=editing_post_id, user_id=user.id).first()
+    post_to_edit = Post.query.filter_by(id=editing_post_id, user_id=user.id).first() if editing_post_id else None
 
-    # 1. Enregistrer en brouillon
     if action == "save_draft":
         if post_to_edit:
-            # Modifier le post existant
             post_to_edit.content = content
             post_to_edit.published_at = now
             post_to_edit.scheduled = False
             post_to_edit.linkedin_post_urn = None
             db.session.commit()
         else:
-            # Créer un nouveau brouillon
             draft_post = Post(content=content, published_at=now, user_id=user.id, scheduled=False)
             db.session.add(draft_post)
             db.session.commit()
-        
-        # Nettoyer la session
+
         session.pop('draft', None)
         session.pop('editing_post_id', None)
         return redirect(url_for("historique"))
 
-    # 2. Programmer le post
     if action == "schedule":
         if publish_time < min_schedule_time:
             return "La date de programmation doit être au moins 30 minutes dans le futur. <a href='/dashboard'>Retour</a>"
-        
+
         if post_to_edit:
-            # Modifier le post existant
             post_to_edit.content = content
             post_to_edit.published_at = publish_time
             post_to_edit.scheduled = True
             post_to_edit.linkedin_post_urn = None
             db.session.commit()
         else:
-            # Créer un nouveau post programmé
             planned_post = Post(content=content, published_at=publish_time, user_id=user.id, scheduled=True)
             db.session.add(planned_post)
             db.session.commit()
-        
-        # Nettoyer la session
+
         session.pop('draft', None)
         session.pop('editing_post_id', None)
         return redirect(url_for("historique"))
 
-    # 3. Publier maintenant
     if action == "publish_now":
         headers = {
             "Authorization": f"Bearer {access_token}",
@@ -1909,6 +1937,7 @@ def publish():
         }
         processed_content, mention_entities = process_mentions_for_linkedin(content)
         media_assets = []
+
         uploaded_files = request.files.getlist("images[]")
         max_images = min(len(uploaded_files), 9)
         for i in range(max_images):
@@ -1925,7 +1954,7 @@ def publish():
                         logger.info(f"Image locale {i+1} uploadée avec succès: {asset}")
                 except Exception as e:
                     logger.error(f"Exception lors de l'upload de l'image locale {i+1}: {str(e)}")
-                    continue
+
         pexels_photos = request.form.getlist("pexels_photos[]")
         for i, photo_data in enumerate(pexels_photos):
             if len(media_assets) >= 9:
@@ -1946,13 +1975,26 @@ def publish():
                             logger.info(f"Photo Pexels {i+1} uploadée avec succès: {asset}")
             except Exception as e:
                 logger.error(f"Exception lors de l'upload de la photo Pexels {i+1}: {str(e)}")
-                continue
-        if len(media_assets) == 0:
-            share_media_category = "NONE"
-            media_content = []
-        else:
-            share_media_category = "IMAGE"
-            media_content = media_assets
+
+        pdf_file = request.files.get("pdf_file")
+        pdf_asset = None
+        if pdf_file and pdf_file.filename.endswith(".pdf"):
+            try:
+                pdf_content = pdf_file.read()
+                pdf_asset = upload_pdf_to_linkedin(pdf_content, access_token, urn)
+                if pdf_asset:
+                    media_assets.append({
+                        "status": "READY",
+                        "media": pdf_asset,
+                        "title": {"text": pdf_file.filename},
+                        "description": {"text": "Document joint"}
+                    })
+                    logger.info(f"✅ PDF joint avec succès: {pdf_asset}")
+            except Exception as e:
+                logger.error(f"❌ Erreur upload PDF : {str(e)}")
+
+        share_media_category = "DOCUMENT" if pdf_asset else ("IMAGE" if media_assets else "NONE")
+
         post_data = {
             "author": urn,
             "lifecycleState": "PUBLISHED",
@@ -1960,39 +2002,39 @@ def publish():
                 "com.linkedin.ugc.ShareContent": {
                     "shareCommentary": {"text": processed_content},
                     "shareMediaCategory": share_media_category,
-                    "media": media_content
+                    "media": media_assets
                 }
             },
             "visibility": {
                 "com.linkedin.ugc.MemberNetworkVisibility": "PUBLIC"
             }
         }
+
         if mention_entities:
             post_data["specificContent"]["com.linkedin.ugc.ShareContent"]["mentions"] = mention_entities
+
         post_resp = requests.post(LINKEDIN_POSTS_URL, headers=headers, json=post_data)
         if post_resp.status_code == 201:
             linkedin_urn = post_resp.json().get("id")
-            
+
             if post_to_edit:
-                # Modifier le post existant
                 post_to_edit.content = content
                 post_to_edit.published_at = now
                 post_to_edit.scheduled = False
                 post_to_edit.linkedin_post_urn = linkedin_urn
                 db.session.commit()
             else:
-                # Créer un nouveau post publié
                 published_post = Post(content=content, published_at=now, user_id=user.id, scheduled=False, linkedin_post_urn=linkedin_urn)
                 db.session.add(published_post)
                 db.session.commit()
-            
-            # Nettoyer la session
+
             session.pop('draft', None)
             session.pop('editing_post_id', None)
             return redirect(url_for("historique"))
         else:
             logger.error(f"Erreur publication: {post_resp.text}")
             return f"<h2>❌ Erreur lors de la publication :</h2><pre>{post_resp.text}</pre><p><a href='/dashboard'>Retour</a></p>"
+
             
 @app.route("/edit_post/<int:post_id>", methods=["GET", "POST"])
 def edit_post(post_id):
