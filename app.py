@@ -507,45 +507,42 @@ def clean_html(text):
 
 def get_news_by_keyword(keyword, days=30, language="fr"):
     """
-    Récupère les actualités en fonction d'un mot-clé, sans filtrage par secteur
-    
+    Récupère les actualités en fonction d'un mot-clé, sans filtrage par secteur.
+    Transforme les espaces en '+' pour forcer une recherche AND sur NewsAPI.
+
     Args:
-        keyword (str): Mot-clé de recherche
+        keyword (str): Mot-clé ou expression entrée par l'utilisateur
         days (int, optional): Nombre de jours pour les actualités récentes
         language (str, optional): Langue des articles (fr, en)
-        
+
     Returns:
         list: Liste d'articles d'actualité
     """
-    # Vérifier si nous avons un cache pour cette requête
-    cache_key = f"{keyword}_{language}_{days}.json"
+    # Nettoyer et formater le mot-clé pour NewsAPI
+    cleaned_keyword = ' '.join(keyword.strip().split())  # Supprime les espaces multiples
+    formatted_keyword = '+'.join(cleaned_keyword.split())  # Remplace les espaces par +
+
+    # Générer le nom du cache
+    cache_key = f"{formatted_keyword}_{language}_{days}.json"
     cache_path = os.path.join(cache_dir, cache_key)
-    
+
     # Vérifier si un cache valide existe (moins de 3 heures)
     if os.path.exists(cache_path):
         file_modified_time = os.path.getmtime(cache_path)
         now = datetime.now().timestamp()
-        
-        # Si le cache a moins de 3 heures
-        if now - file_modified_time < 10800:  # 3 heures en secondes
+
+        if now - file_modified_time < 10800:
             try:
                 with open(cache_path, 'r', encoding='utf-8') as f:
                     cached_data = json.load(f)
-                    logger.info(f"Utilisation du cache pour: {keyword}")
+                    logger.info(f"✅ Cache utilisé pour : {formatted_keyword}")
                     return cached_data
             except Exception as e:
-                logger.error(f"Erreur de lecture du cache: {str(e)}")
-    
-    # Si pas de cache valide, construire une requête directe à NewsAPI
+                logger.error(f"❌ Erreur de lecture du cache : {str(e)}")
+
+    # Construire la requête directe à NewsAPI
     date_from = (datetime.utcnow() - timedelta(days=days)).strftime('%Y-%m-%d')
-    
-    # Optimiser la requête avec des opérateurs de recherche
-    formatted_keyword = keyword
-    if ' ' in keyword and not (keyword.startswith('"') and keyword.endswith('"')):
-        # Ajouter des guillemets pour une recherche exacte de phrases
-        formatted_keyword = f'"{keyword}"'
-    
-    # Préparer les paramètres de la requête
+
     params = {
         'q': formatted_keyword,
         'from': date_from,
@@ -554,49 +551,45 @@ def get_news_by_keyword(keyword, days=30, language="fr"):
         'apiKey': NEWS_API_KEY,
         'pageSize': 100
     }
-    
-    logger.info(f"Requête NewsAPI par mot-clé: {NEWS_API_URL}")
-    logger.info(f"Paramètres: q={formatted_keyword}, lang={language}, from={date_from}")
-    
+
+    logger.info(f"🔍 Requête NewsAPI : {NEWS_API_URL}")
+    logger.info(f"Paramètres : q={formatted_keyword}, langue={language}, from={date_from}")
+
     try:
-        # Appel à l'API
         response = requests.get(NEWS_API_URL, params=params, timeout=15)
-        
+
         if response.status_code == 200:
             data = response.json()
             articles = data.get('articles', [])
-            
-            # Filtrer les articles sans contenu
+
             valid_articles = []
             for article in articles:
                 if article.get('title') and article.get('description'):
                     try:
-                        # Formater la date
                         date_str = article.get('publishedAt', '')
                         date_obj = datetime.strptime(date_str, '%Y-%m-%dT%H:%M:%SZ')
                         article['formatted_date'] = date_obj.strftime('%d/%m/%Y')
                     except:
                         article['formatted_date'] = 'Date inconnue'
-                    
+
                     valid_articles.append(article)
-            
-            # Sauvegarder les résultats dans le cache
+
+            # Sauvegarder en cache
             try:
                 with open(cache_path, 'w', encoding='utf-8') as f:
                     json.dump(valid_articles, f, ensure_ascii=False)
-                    logger.info(f"Cache créé pour: {keyword}")
+                    logger.info(f"💾 Cache créé pour : {formatted_keyword}")
             except Exception as e:
-                logger.error(f"Erreur d'écriture du cache: {str(e)}")
-            
+                logger.error(f"❌ Erreur d'écriture du cache : {str(e)}")
+
             return valid_articles
-            
+
         else:
-            error_text = response.text
-            logger.error(f"Erreur API {response.status_code}: {error_text}")
-            raise Exception(f"Erreur de l'API NewsAPI ({response.status_code})")
-            
+            logger.error(f"❌ Erreur API {response.status_code} : {response.text}")
+            raise Exception(f"Erreur NewsAPI ({response.status_code})")
+
     except Exception as e:
-        logger.error(f"Exception lors de la recherche par mot-clé: {str(e)}")
+        logger.error(f"❌ Exception lors de la recherche : {str(e)}")
         raise
     
 def get_cached_news(query, language, days=3):
