@@ -359,98 +359,6 @@ def search_pexels_photos(query, per_page=12, page=1):
         logger.error(f"Exception lors de la recherche Pexels: {str(e)}")
         return None
         
-def upload_pdf_to_linkedin(pdf_content, access_token, urn):
-    """
-    Upload un PDF sur LinkedIn en utilisant la nouvelle API Documents
-    
-    Args:
-        pdf_content (bytes): Contenu du PDF
-        access_token (str): Token d'accès LinkedIn
-        urn (str): URN de l'utilisateur
-        
-    Returns:
-        str: Document URN ou None en cas d'erreur
-    """
-    try:
-        # 1. Étape 1 : Enregistrer le document pour upload
-        headers = {
-            "Authorization": f"Bearer {access_token}",
-            "Content-Type": "application/json",
-            "X-Restli-Protocol-Version": "2.0.0",
-            "LinkedIn-Version": "202308"  # Version récente requise pour les documents
-        }
-
-        # Payload pour l'enregistrement du document
-        register_payload = {
-            "initializeUploadRequest": {
-                "owner": urn
-            }
-        }
-
-        # Nouvelle URL pour les documents
-        register_url = "https://api.linkedin.com/rest/documents?action=initializeUpload"
-        
-        logger.info(f"📄 Enregistrement du document PDF...")
-        reg_resp = requests.post(register_url, headers=headers, json=register_payload)
-        
-        if reg_resp.status_code != 200:
-            logger.error(f"❌ Erreur enregistrement PDF: {reg_resp.status_code} - {reg_resp.text}")
-            return None
-
-        upload_info = reg_resp.json().get("value", {})
-        upload_url = upload_info.get("uploadUrl")
-        document_urn = upload_info.get("document")
-
-        if not upload_url or not document_urn:
-            logger.error("❌ Upload URL ou document URN manquant dans la réponse")
-            logger.error(f"Réponse complète: {reg_resp.text}")
-            return None
-
-        logger.info(f"✅ Document enregistré: {document_urn}")
-        logger.info(f"📤 URL d'upload: {upload_url}")
-
-        # 2. Étape 2 : Upload du contenu PDF
-        upload_headers = {
-            "Authorization": f"Bearer {access_token}",
-            "Content-Type": "application/pdf",
-            "LinkedIn-Version": "202308"
-        }
-
-        logger.info(f"📤 Upload du contenu PDF ({len(pdf_content)} bytes)...")
-        put_resp = requests.put(upload_url, data=pdf_content, headers=upload_headers)
-
-        if put_resp.status_code not in [200, 201]:
-            logger.error(f"❌ Erreur upload contenu PDF: {put_resp.status_code} - {put_resp.text}")
-            return None
-
-        logger.info(f"✅ PDF uploadé avec succès: {document_urn}")
-
-        # 3. Étape 3 : Vérifier le statut du document
-        check_url = f"https://api.linkedin.com/rest/documents/{document_urn.replace('urn:li:document:', '')}"
-        check_resp = requests.get(check_url, headers=headers)
-        
-        if check_resp.status_code == 200:
-            doc_info = check_resp.json()
-            status = doc_info.get("status", "UNKNOWN")
-            logger.info(f"📋 Statut du document: {status}")
-            
-            if status == "AVAILABLE":
-                logger.info(f"✅ Document prêt pour publication")
-                return document_urn
-            elif status in ["PROCESSING", "WAITING_UPLOAD"]:
-                logger.info(f"⏳ Document en cours de traitement, on continue...")
-                return document_urn
-            else:
-                logger.warning(f"⚠️ Statut inattendu du document: {status}")
-                return document_urn  # On tente quand même
-        
-        # Si la vérification échoue, on retourne quand même l'URN
-        logger.warning(f"⚠️ Impossible de vérifier le statut, on continue avec: {document_urn}")
-        return document_urn
-
-    except Exception as e:
-        logger.error(f"❌ Exception lors de l'upload PDF: {str(e)}")
-        return None
 
 
 # Correction dans la fonction publish - partie PDF
@@ -1962,6 +1870,141 @@ def process_mentions_for_linkedin(content):
     
     return processed_content, mention_entities
     
+# Fonction d'upload PDF - À placer AVANT la route @app.route("/publish")
+def upload_pdf_to_linkedin(pdf_content, access_token, urn):
+    """
+    Upload un PDF sur LinkedIn - Version corrigée pour posts organiques
+    
+    Args:
+        pdf_content (bytes): Contenu du PDF
+        access_token (str): Token d'accès LinkedIn
+        urn (str): URN de l'utilisateur
+        
+    Returns:
+        str: Document URN ou None en cas d'erreur
+    """
+    try:
+        # Method 1: Essayer avec l'API Assets classique mais recette document
+        headers = {
+            "Authorization": f"Bearer {access_token}",
+            "Content-Type": "application/json",
+            "X-Restli-Protocol-Version": "2.0.0"
+        }
+
+        # Payload pour l'enregistrement du document via Assets API
+        register_payload = {
+            "registerUploadRequest": {
+                "owner": urn,
+                "recipes": ["urn:li:digitalmediaRecipe:feedshare-document"],
+                "serviceRelationships": [
+                    {"relationshipType": "OWNER", "identifier": "urn:li:userGeneratedContent"}
+                ]
+            }
+        }
+
+        # URL Assets API (même que pour les images)
+        register_url = "https://api.linkedin.com/v2/assets?action=registerUpload"
+        
+        logger.info(f"📄 Enregistrement du document PDF via Assets API...")
+        reg_resp = requests.post(register_url, headers=headers, json=register_payload)
+        
+        if reg_resp.status_code != 200:
+            logger.error(f"❌ Erreur enregistrement PDF: {reg_resp.status_code} - {reg_resp.text}")
+            
+            # Method 2: Fallback vers la nouvelle API Documents
+            logger.info(f"📄 Tentative avec la nouvelle API Documents...")
+            return upload_pdf_to_linkedin_new_api(pdf_content, access_token, urn)
+
+        upload_info = reg_resp.json().get("value", {})
+        upload_url = upload_info.get("uploadMechanism", {}).get("com.linkedin.digitalmedia.uploading.MediaUploadHttpRequest", {}).get("uploadUrl")
+        asset = upload_info.get("asset")
+
+        if not upload_url or not asset:
+            logger.error("❌ Upload URL ou asset manquant dans la réponse")
+            logger.error(f"Réponse complète: {reg_resp.text}")
+            return None
+
+        logger.info(f"✅ Document enregistré: {asset}")
+        logger.info(f"📤 URL d'upload: {upload_url}")
+
+        # 2. Étape 2 : Upload du contenu PDF
+        upload_headers = {
+            "Authorization": f"Bearer {access_token}",
+            "Content-Type": "application/pdf"
+        }
+
+        logger.info(f"📤 Upload du contenu PDF ({len(pdf_content)} bytes)...")
+        put_resp = requests.put(upload_url, data=pdf_content, headers=upload_headers)
+
+        if put_resp.status_code not in [200, 201]:
+            logger.error(f"❌ Erreur upload contenu PDF: {put_resp.status_code} - {put_resp.text}")
+            return None
+
+        logger.info(f"✅ PDF uploadé avec succès: {asset}")
+        return asset
+
+    except Exception as e:
+        logger.error(f"❌ Exception lors de l'upload PDF: {str(e)}")
+        return None
+
+
+def upload_pdf_to_linkedin_new_api(pdf_content, access_token, urn):
+    """
+    Fallback : Upload PDF avec la nouvelle API Documents
+    """
+    try:
+        headers = {
+            "Authorization": f"Bearer {access_token}",
+            "Content-Type": "application/json",
+            "X-Restli-Protocol-Version": "2.0.0",
+            "LinkedIn-Version": "202411"  # Version novembre 2024
+        }
+
+        # Payload pour l'enregistrement du document
+        register_payload = {
+            "initializeUploadRequest": {
+                "owner": urn
+            }
+        }
+
+        register_url = "https://api.linkedin.com/rest/documents?action=initializeUpload"
+        
+        logger.info(f"📄 Enregistrement du document PDF avec nouvelle API...")
+        reg_resp = requests.post(register_url, headers=headers, json=register_payload)
+        
+        if reg_resp.status_code != 200:
+            logger.error(f"❌ Erreur enregistrement PDF nouvelle API: {reg_resp.status_code} - {reg_resp.text}")
+            return None
+
+        upload_info = reg_resp.json().get("value", {})
+        upload_url = upload_info.get("uploadUrl")
+        document_urn = upload_info.get("document")
+
+        if not upload_url or not document_urn:
+            logger.error("❌ Upload URL ou document URN manquant")
+            return None
+
+        # Upload du contenu
+        upload_headers = {
+            "Authorization": f"Bearer {access_token}",
+            "Content-Type": "application/pdf",
+            "LinkedIn-Version": "202411"
+        }
+
+        put_resp = requests.put(upload_url, data=pdf_content, headers=upload_headers)
+
+        if put_resp.status_code not in [200, 201]:
+            logger.error(f"❌ Erreur upload PDF nouvelle API: {put_resp.status_code} - {put_resp.text}")
+            return None
+
+        logger.info(f"✅ PDF uploadé avec nouvelle API: {document_urn}")
+        return document_urn
+
+    except Exception as e:
+        logger.error(f"❌ Exception nouvelle API PDF: {str(e)}")
+        return None
+
+
 @app.route("/publish", methods=["POST"])
 def publish():
     access_token = session.get("access_token")
@@ -2178,162 +2221,6 @@ def publish():
         else:
             logger.error(f"❌ Erreur publication: {post_resp.status_code} - {post_resp.text}")
             return f"<h2>❌ Erreur lors de la publication :</h2><pre>{post_resp.text}</pre><p><a href='/dashboard'>Retour</a></p>"
-
-
-def upload_pdf_to_linkedin(pdf_content, access_token, urn):
-    """
-    Upload un PDF sur LinkedIn en utilisant la nouvelle API Documents
-    
-    Args:
-        pdf_content (bytes): Contenu du PDF
-        access_token (str): Token d'accès LinkedIn
-        urn (str): URN de l'utilisateur
-        
-    Returns:
-        str: Document URN ou None en cas d'erreur
-    """
-    try:
-        # 1. Étape 1 : Enregistrer le document pour upload
-        headers = {
-            "Authorization": f"Bearer {access_token}",
-            "Content-Type": "application/json",
-            "X-Restli-Protocol-Version": "2.0.0",
-            "LinkedIn-Version": "202411"  # Version novembre 2024 - la plus récente
-        }
-
-def upload_pdf_to_linkedin(pdf_content, access_token, urn):
-    """
-    Upload un PDF sur LinkedIn - Version corrigée pour posts organiques
-    
-    Args:
-        pdf_content (bytes): Contenu du PDF
-        access_token (str): Token d'accès LinkedIn
-        urn (str): URN de l'utilisateur
-        
-    Returns:
-        str: Document URN ou None en cas d'erreur
-    """
-    try:
-        # Method 1: Essayer avec l'API Assets classique mais recette document
-        headers = {
-            "Authorization": f"Bearer {access_token}",
-            "Content-Type": "application/json",
-            "X-Restli-Protocol-Version": "2.0.0"
-        }
-
-        # Payload pour l'enregistrement du document via Assets API
-        register_payload = {
-            "registerUploadRequest": {
-                "owner": urn,
-                "recipes": ["urn:li:digitalmediaRecipe:feedshare-document"],
-                "serviceRelationships": [
-                    {"relationshipType": "OWNER", "identifier": "urn:li:userGeneratedContent"}
-                ]
-            }
-        }
-
-        # URL Assets API (même que pour les images)
-        register_url = "https://api.linkedin.com/v2/assets?action=registerUpload"
-        
-        logger.info(f"📄 Enregistrement du document PDF via Assets API...")
-        reg_resp = requests.post(register_url, headers=headers, json=register_payload)
-        
-        if reg_resp.status_code != 200:
-            logger.error(f"❌ Erreur enregistrement PDF: {reg_resp.status_code} - {reg_resp.text}")
-            
-            # Method 2: Fallback vers la nouvelle API Documents
-            logger.info(f"📄 Tentative avec la nouvelle API Documents...")
-            return upload_pdf_to_linkedin_new_api(pdf_content, access_token, urn)
-
-        upload_info = reg_resp.json().get("value", {})
-        upload_url = upload_info.get("uploadMechanism", {}).get("com.linkedin.digitalmedia.uploading.MediaUploadHttpRequest", {}).get("uploadUrl")
-        asset = upload_info.get("asset")
-
-        if not upload_url or not asset:
-            logger.error("❌ Upload URL ou asset manquant dans la réponse")
-            logger.error(f"Réponse complète: {reg_resp.text}")
-            return None
-
-        logger.info(f"✅ Document enregistré: {asset}")
-        logger.info(f"📤 URL d'upload: {upload_url}")
-
-        # 2. Étape 2 : Upload du contenu PDF
-        upload_headers = {
-            "Authorization": f"Bearer {access_token}",
-            "Content-Type": "application/pdf"
-        }
-
-        logger.info(f"📤 Upload du contenu PDF ({len(pdf_content)} bytes)...")
-        put_resp = requests.put(upload_url, data=pdf_content, headers=upload_headers)
-
-        if put_resp.status_code not in [200, 201]:
-            logger.error(f"❌ Erreur upload contenu PDF: {put_resp.status_code} - {put_resp.text}")
-            return None
-
-        logger.info(f"✅ PDF uploadé avec succès: {asset}")
-        return asset
-
-    except Exception as e:
-        logger.error(f"❌ Exception lors de l'upload PDF: {str(e)}")
-        return None
-
-
-def upload_pdf_to_linkedin_new_api(pdf_content, access_token, urn):
-    """
-    Fallback : Upload PDF avec la nouvelle API Documents
-    """
-    try:
-        headers = {
-            "Authorization": f"Bearer {access_token}",
-            "Content-Type": "application/json",
-            "X-Restli-Protocol-Version": "2.0.0",
-            "LinkedIn-Version": "202411"  # Version novembre 2024
-        }
-
-        # Payload pour l'enregistrement du document
-        register_payload = {
-            "initializeUploadRequest": {
-                "owner": urn
-            }
-        }
-
-        register_url = "https://api.linkedin.com/rest/documents?action=initializeUpload"
-        
-        logger.info(f"📄 Enregistrement du document PDF avec nouvelle API...")
-        reg_resp = requests.post(register_url, headers=headers, json=register_payload)
-        
-        if reg_resp.status_code != 200:
-            logger.error(f"❌ Erreur enregistrement PDF nouvelle API: {reg_resp.status_code} - {reg_resp.text}")
-            return None
-
-        upload_info = reg_resp.json().get("value", {})
-        upload_url = upload_info.get("uploadUrl")
-        document_urn = upload_info.get("document")
-
-        if not upload_url or not document_urn:
-            logger.error("❌ Upload URL ou document URN manquant")
-            return None
-
-        # Upload du contenu
-        upload_headers = {
-            "Authorization": f"Bearer {access_token}",
-            "Content-Type": "application/pdf",
-            "LinkedIn-Version": "202411"
-        }
-
-        put_resp = requests.put(upload_url, data=pdf_content, headers=upload_headers)
-
-        if put_resp.status_code not in [200, 201]:
-            logger.error(f"❌ Erreur upload PDF nouvelle API: {put_resp.status_code} - {put_resp.text}")
-            return None
-
-        logger.info(f"✅ PDF uploadé avec nouvelle API: {document_urn}")
-        return document_urn
-
-    except Exception as e:
-        logger.error(f"❌ Exception nouvelle API PDF: {str(e)}")
-        return None
-
             
 @app.route("/edit_post/<int:post_id>", methods=["GET", "POST"])
 def edit_post(post_id):
