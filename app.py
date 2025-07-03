@@ -549,7 +549,7 @@ def get_news_by_keyword(keyword, days=30, language="fr"):
         'sortBy': 'relevancy',
         'language': language,
         'apiKey': NEWS_API_KEY,
-        'pageSize': 100
+        'pageSize': 21
     }
 
     logger.info(f"🔍 Requête NewsAPI : {NEWS_API_URL}")
