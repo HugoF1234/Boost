@@ -1870,7 +1870,6 @@ def process_mentions_for_linkedin(content):
     
     return processed_content, mention_entities
     
-# Fonction d'upload PDF - À placer AVANT la route @app.route("/publish")
 def upload_pdf_to_linkedin(pdf_content, access_token, urn):
     """
     Upload un PDF sur LinkedIn - Version corrigée pour posts organiques
@@ -2092,17 +2091,14 @@ def publish():
                 pdf_document_urn = upload_pdf_to_linkedin(pdf_content, access_token, urn)
                 
                 if pdf_document_urn:
-                    # Déterminer le type d'URN et créer la structure appropriée
+                    # Traiter le PDF comme un média image pour l'API UGC Posts
                     if pdf_document_urn.startswith("urn:li:document:"):
-                        # Nouvelle API Documents
+                        # Nouvelle API Documents - utiliser la structure "media"
                         document_media = {
                             "status": "READY",
-                            "document": pdf_document_urn,
-                            "title": {
-                                "text": pdf_file.filename
-                            },
+                            "media": pdf_document_urn,
                             "description": {
-                                "text": "Document partagé"
+                                "text": pdf_file.filename
                             }
                         }
                     else:
@@ -2110,18 +2106,15 @@ def publish():
                         document_media = {
                             "status": "READY",
                             "media": pdf_document_urn,
-                            "title": {
-                                "text": pdf_file.filename
-                            },
                             "description": {
-                                "text": "Document partagé"
+                                "text": pdf_file.filename
                             }
                         }
                     
                     media_assets = [document_media]  # SEUL le PDF
-                    share_media_category = "DOCUMENT"
+                    share_media_category = "IMAGE"  # PDF traité comme IMAGE pour l'API UGC
                     
-                    logger.info(f"✅ PDF configuré pour publication: {pdf_document_urn}")
+                    logger.info(f"✅ PDF configuré pour publication comme IMAGE: {pdf_document_urn}")
                 else:
                     logger.error(f"❌ Échec de l'upload PDF")
                     return f"<h2>❌ Erreur lors de l'upload du PDF</h2><p><a href='/dashboard'>Retour</a></p>"
