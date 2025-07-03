@@ -360,48 +360,146 @@ def search_pexels_photos(query, per_page=12, page=1):
         return None
         
 def upload_pdf_to_linkedin(pdf_content, access_token, urn):
-    headers = {
-        "Authorization": f"Bearer {access_token}",
-        "Content-Type": "application/json",
-        "X-Restli-Protocol-Version": "2.0.0"
-    }
-
-    register_payload = {
-        "registerUploadRequest": {
-            "owner": urn,
-            "recipes": ["urn:li:digitalmediaRecipe:feedshare-document"],
-            "serviceRelationships": [
-                {"relationshipType": "OWNER", "identifier": "urn:li:userGeneratedContent"}
-            ]
+    """
+    Upload un PDF sur LinkedIn en utilisant la nouvelle API Documents
+    
+    Args:
+        pdf_content (bytes): Contenu du PDF
+        access_token (str): Token d'accès LinkedIn
+        urn (str): URN de l'utilisateur
+        
+    Returns:
+        str: Document URN ou None en cas d'erreur
+    """
+    try:
+        # 1. Étape 1 : Enregistrer le document pour upload
+        headers = {
+            "Authorization": f"Bearer {access_token}",
+            "Content-Type": "application/json",
+            "X-Restli-Protocol-Version": "2.0.0",
+            "LinkedIn-Version": "202308"  # Version récente requise pour les documents
         }
-    }
 
-    reg_resp = requests.post(LINKEDIN_ASSET_REGISTRATION_URL, headers=headers, json=register_payload)
-    if reg_resp.status_code != 200:
-        logger.error(f"Erreur registre upload PDF: {reg_resp.text}")
+        # Payload pour l'enregistrement du document
+        register_payload = {
+            "initializeUploadRequest": {
+                "owner": urn
+            }
+        }
+
+        # Nouvelle URL pour les documents
+        register_url = "https://api.linkedin.com/rest/documents?action=initializeUpload"
+        
+        logger.info(f"📄 Enregistrement du document PDF...")
+        reg_resp = requests.post(register_url, headers=headers, json=register_payload)
+        
+        if reg_resp.status_code != 200:
+            logger.error(f"❌ Erreur enregistrement PDF: {reg_resp.status_code} - {reg_resp.text}")
+            return None
+
+        upload_info = reg_resp.json().get("value", {})
+        upload_url = upload_info.get("uploadUrl")
+        document_urn = upload_info.get("document")
+
+        if not upload_url or not document_urn:
+            logger.error("❌ Upload URL ou document URN manquant dans la réponse")
+            logger.error(f"Réponse complète: {reg_resp.text}")
+            return None
+
+        logger.info(f"✅ Document enregistré: {document_urn}")
+        logger.info(f"📤 URL d'upload: {upload_url}")
+
+        # 2. Étape 2 : Upload du contenu PDF
+        upload_headers = {
+            "Authorization": f"Bearer {access_token}",
+            "Content-Type": "application/pdf",
+            "LinkedIn-Version": "202308"
+        }
+
+        logger.info(f"📤 Upload du contenu PDF ({len(pdf_content)} bytes)...")
+        put_resp = requests.put(upload_url, data=pdf_content, headers=upload_headers)
+
+        if put_resp.status_code not in [200, 201]:
+            logger.error(f"❌ Erreur upload contenu PDF: {put_resp.status_code} - {put_resp.text}")
+            return None
+
+        logger.info(f"✅ PDF uploadé avec succès: {document_urn}")
+
+        # 3. Étape 3 : Vérifier le statut du document
+        check_url = f"https://api.linkedin.com/rest/documents/{document_urn.replace('urn:li:document:', '')}"
+        check_resp = requests.get(check_url, headers=headers)
+        
+        if check_resp.status_code == 200:
+            doc_info = check_resp.json()
+            status = doc_info.get("status", "UNKNOWN")
+            logger.info(f"📋 Statut du document: {status}")
+            
+            if status == "AVAILABLE":
+                logger.info(f"✅ Document prêt pour publication")
+                return document_urn
+            elif status in ["PROCESSING", "WAITING_UPLOAD"]:
+                logger.info(f"⏳ Document en cours de traitement, on continue...")
+                return document_urn
+            else:
+                logger.warning(f"⚠️ Statut inattendu du document: {status}")
+                return document_urn  # On tente quand même
+        
+        # Si la vérification échoue, on retourne quand même l'URN
+        logger.warning(f"⚠️ Impossible de vérifier le statut, on continue avec: {document_urn}")
+        return document_urn
+
+    except Exception as e:
+        logger.error(f"❌ Exception lors de l'upload PDF: {str(e)}")
         return None
 
-    upload_info = reg_resp.json().get("value", {})
-    upload_url = upload_info.get("uploadMechanism", {}).get("com.linkedin.digitalmedia.uploading.MediaUploadHttpRequest", {}).get("uploadUrl")
-    asset = upload_info.get("asset")
 
-    if not upload_url or not asset:
-        logger.error("Upload URL ou asset PDF manquant")
-        return None
-
-    # PUT du contenu PDF
-    upload_headers = {
-        "Authorization": f"Bearer {access_token}",
-        "Content-Type": "application/pdf"
-    }
-
-    put_resp = requests.put(upload_url, data=pdf_content, headers=upload_headers)
-
-    if put_resp.status_code not in [200, 201]:
-        logger.error(f"Erreur upload PDF: {put_resp.text}")
-        return None
-
-    return asset
+# Correction dans la fonction publish - partie PDF
+def handle_pdf_upload_in_publish(request, access_token, urn, media_assets, post_data):
+    """
+    Gère l'upload PDF dans la fonction publish
+    """
+    pdf_file = request.files.get("pdf_file")
+    if pdf_file and pdf_file.filename.endswith(".pdf"):
+        try:
+            logger.info(f"📄 Traitement du PDF: {pdf_file.filename}")
+            pdf_content = pdf_file.read()
+            
+            # Upload du PDF avec la fonction corrigée
+            pdf_document_urn = upload_pdf_to_linkedin(pdf_content, access_token, urn)
+            
+            if pdf_document_urn:
+                logger.info(f"✅ PDF uploadé avec succès: {pdf_document_urn}")
+                
+                # Structure correcte pour un document LinkedIn
+                document_media = {
+                    "status": "READY",
+                    "document": pdf_document_urn,
+                    "title": {
+                        "text": pdf_file.filename
+                    },
+                    "description": {
+                        "text": "Document partagé"
+                    }
+                }
+                
+                # Remplacer tous les médias par le document
+                media_assets.clear()
+                media_assets.append(document_media)
+                
+                # Modifier le shareMediaCategory pour DOCUMENT
+                post_data["specificContent"]["com.linkedin.ugc.ShareContent"]["shareMediaCategory"] = "DOCUMENT"
+                
+                logger.info(f"📄 Configuration post pour document: {pdf_document_urn}")
+                return True
+            else:
+                logger.error(f"❌ Échec de l'upload PDF")
+                return False
+                
+        except Exception as e:
+            logger.error(f"❌ Exception lors du traitement PDF: {str(e)}")
+            return False
+    
+    return False
 
 def upload_image_to_linkedin(image_content, access_token, urn, content_type='image/jpeg'):
     """
