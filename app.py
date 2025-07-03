@@ -1961,7 +1961,7 @@ def process_mentions_for_linkedin(content):
             start_offset += len(simple_format) - len(mention_format)
     
     return processed_content, mention_entities
-
+    
 @app.route("/publish", methods=["POST"])
 def publish():
     access_token = session.get("access_token")
@@ -2036,63 +2036,89 @@ def publish():
         processed_content, mention_entities = process_mentions_for_linkedin(content)
         media_assets = []
 
-        uploaded_files = request.files.getlist("images[]")
-        max_images = min(len(uploaded_files), 9)
-        for i in range(max_images):
-            file = uploaded_files[i]
-            if file and file.filename:
-                try:
-                    asset = upload_image_to_linkedin(file.read(), access_token, urn, file.content_type)
-                    if asset:
-                        media_assets.append({
-                            "status": "READY",
-                            "media": asset,
-                            "description": {"text": f"Image {i+1}"}
-                        })
-                        logger.info(f"Image locale {i+1} uploadée avec succès: {asset}")
-                except Exception as e:
-                    logger.error(f"Exception lors de l'upload de l'image locale {i+1}: {str(e)}")
-
-        pexels_photos = request.form.getlist("pexels_photos[]")
-        for i, photo_data in enumerate(pexels_photos):
-            if len(media_assets) >= 9:
-                break
+        # 1. D'ABORD : Vérifier s'il y a un PDF (priorité absolue)
+        pdf_file = request.files.get("pdf_file")
+        has_pdf = pdf_file and pdf_file.filename.endswith(".pdf")
+        
+        if has_pdf:
             try:
-                photo_info = json.loads(photo_data)
-                photo_url = photo_info.get('src', {}).get('large', '')
-                if photo_url:
-                    image_content = download_pexels_photo(photo_url)
-                    if image_content:
-                        asset = upload_image_to_linkedin(image_content, access_token, urn, 'image/jpeg')
+                logger.info(f"📄 Traitement du PDF: {pdf_file.filename}")
+                pdf_content = pdf_file.read()
+                
+                # Upload du PDF avec la nouvelle fonction
+                pdf_document_urn = upload_pdf_to_linkedin(pdf_content, access_token, urn)
+                
+                if pdf_document_urn:
+                    # Structure pour document LinkedIn
+                    document_media = {
+                        "status": "READY",
+                        "document": pdf_document_urn,
+                        "title": {
+                            "text": pdf_file.filename
+                        },
+                        "description": {
+                            "text": "Document partagé"
+                        }
+                    }
+                    
+                    media_assets = [document_media]  # SEUL le PDF
+                    share_media_category = "DOCUMENT"
+                    
+                    logger.info(f"✅ PDF configuré pour publication: {pdf_document_urn}")
+                else:
+                    logger.error(f"❌ Échec de l'upload PDF")
+                    return f"<h2>❌ Erreur lors de l'upload du PDF</h2><p><a href='/dashboard'>Retour</a></p>"
+                    
+            except Exception as e:
+                logger.error(f"❌ Exception lors du traitement PDF: {str(e)}")
+                return f"<h2>❌ Erreur PDF: {str(e)}</h2><p><a href='/dashboard'>Retour</a></p>"
+        
+        else:
+            # 2. SINON : Traiter les images (si pas de PDF)
+            
+            # Images locales
+            uploaded_files = request.files.getlist("images[]")
+            max_images = min(len(uploaded_files), 9)
+            for i in range(max_images):
+                file = uploaded_files[i]
+                if file and file.filename:
+                    try:
+                        asset = upload_image_to_linkedin(file.read(), access_token, urn, file.content_type)
                         if asset:
                             media_assets.append({
                                 "status": "READY",
                                 "media": asset,
-                                "description": {"text": f"Photo by {photo_info.get('photographer', 'Pexels')}"}
+                                "description": {"text": f"Image {i+1}"}
                             })
-                            logger.info(f"Photo Pexels {i+1} uploadée avec succès: {asset}")
-            except Exception as e:
-                logger.error(f"Exception lors de l'upload de la photo Pexels {i+1}: {str(e)}")
+                            logger.info(f"Image locale {i+1} uploadée avec succès: {asset}")
+                    except Exception as e:
+                        logger.error(f"Exception lors de l'upload de l'image locale {i+1}: {str(e)}")
 
-        pdf_file = request.files.get("pdf_file")
-        pdf_asset = None
-        if pdf_file and pdf_file.filename.endswith(".pdf"):
-            try:
-                pdf_content = pdf_file.read()
-                pdf_asset = upload_pdf_to_linkedin(pdf_content, access_token, urn)
-                if pdf_asset:
-                    media_assets.append({
-                        "status": "READY",
-                        "media": pdf_asset,
-                        "title": {"text": pdf_file.filename},
-                        "description": {"text": "Document joint"}
-                    })
-                    logger.info(f"✅ PDF joint avec succès: {pdf_asset}")
-            except Exception as e:
-                logger.error(f"❌ Erreur upload PDF : {str(e)}")
+            # Photos Pexels
+            pexels_photos = request.form.getlist("pexels_photos[]")
+            for i, photo_data in enumerate(pexels_photos):
+                if len(media_assets) >= 9:
+                    break
+                try:
+                    photo_info = json.loads(photo_data)
+                    photo_url = photo_info.get('src', {}).get('large', '')
+                    if photo_url:
+                        image_content = download_pexels_photo(photo_url)
+                        if image_content:
+                            asset = upload_image_to_linkedin(image_content, access_token, urn, 'image/jpeg')
+                            if asset:
+                                media_assets.append({
+                                    "status": "READY",
+                                    "media": asset,
+                                    "description": {"text": f"Photo by {photo_info.get('photographer', 'Pexels')}"}
+                                })
+                                logger.info(f"Photo Pexels {i+1} uploadée avec succès: {asset}")
+                except Exception as e:
+                    logger.error(f"Exception lors de l'upload de la photo Pexels {i+1}: {str(e)}")
 
-        share_media_category = "DOCUMENT" if pdf_asset else ("IMAGE" if media_assets else "NONE")
+            share_media_category = "IMAGE" if media_assets else "NONE"
 
+        # 3. Créer le post avec la bonne catégorie
         post_data = {
             "author": urn,
             "lifecycleState": "PUBLISHED",
@@ -2111,9 +2137,15 @@ def publish():
         if mention_entities:
             post_data["specificContent"]["com.linkedin.ugc.ShareContent"]["mentions"] = mention_entities
 
+        # 4. Publication
+        logger.info(f"📤 Publication avec {share_media_category}: {len(media_assets)} média(s)")
+        logger.info(f"📤 Données post: {json.dumps(post_data, indent=2)}")
+        
         post_resp = requests.post(LINKEDIN_POSTS_URL, headers=headers, json=post_data)
+        
         if post_resp.status_code == 201:
             linkedin_urn = post_resp.json().get("id")
+            logger.info(f"✅ Post publié avec succès: {linkedin_urn}")
 
             if post_to_edit:
                 post_to_edit.content = content
@@ -2130,7 +2162,7 @@ def publish():
             session.pop('editing_post_id', None)
             return redirect(url_for("historique"))
         else:
-            logger.error(f"Erreur publication: {post_resp.text}")
+            logger.error(f"❌ Erreur publication: {post_resp.status_code} - {post_resp.text}")
             return f"<h2>❌ Erreur lors de la publication :</h2><pre>{post_resp.text}</pre><p><a href='/dashboard'>Retour</a></p>"
 
             
