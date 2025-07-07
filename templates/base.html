@@ -7,30 +7,47 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Crimson+Text:wght@400;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        /* Palette noble et apaisante inspirée des tendances 2024-2025 */
+        /* Nouvelle palette vibrante inspirée des designs modernes */
         :root {
-            /* Couleurs principales - tons naturels et nobles */
+            /* Couleurs principales - tons vibrants et dynamiques */
+            --primary-coral: #FF6B6B;
+            --primary-orange: #FF8E53;
+            --primary-pink: #FF5F8D;
+            --primary-purple: #8B5CF6;
+            --primary-blue: #06D6A0;
+            --primary-cyan: #118AB2;
+            
+            /* Gradients dynamiques */
+            --gradient-main: linear-gradient(135deg, #FF6B6B 0%, #FF8E53 25%, #FF5F8D 50%, #8B5CF6 75%, #06D6A0 100%);
+            --gradient-warm: linear-gradient(135deg, #FF8E53 0%, #FF6B6B 100%);
+            --gradient-cool: linear-gradient(135deg, #8B5CF6 0%, #06D6A0 100%);
+            --gradient-pink: linear-gradient(135deg, #FF5F8D 0%, #8B5CF6 100%);
+            
+            /* Couleurs neutres modernes avec transparences */
+            --glass-white: rgba(255, 255, 255, 0.95);
+            --glass-light: rgba(255, 255, 255, 0.85);
+            --glass-medium: rgba(255, 255, 255, 0.75);
             --noble-cream: #faf9f7;
             --noble-warm: #f5f2ed;
-            --noble-sage: #8b9a7c;
-            --noble-sage-light: #a8b59a;
-            --noble-sage-dark: #6b7865;
+            --noble-sage: var(--primary-coral);
+            --noble-sage-light: var(--primary-orange);
+            --noble-sage-dark: var(--primary-pink);
             --noble-stone: #e8e4de;
             --noble-charcoal: #4a4943;
             --noble-charcoal-light: #6b6960;
             --noble-mist: #f0ede8;
-            --noble-accent: #9c8b7a;
-            --noble-accent-light: #b5a495;
+            --noble-accent: var(--primary-purple);
+            --noble-accent-light: var(--primary-blue);
             
-            /* Couleurs fonctionnelles douces */
-            --gentle-success: #7c9885;
-            --gentle-warning: #b8a082;
-            --gentle-info: #8ba3b8;
+            /* Couleurs fonctionnelles colorées */
+            --gentle-success: var(--primary-blue);
+            --gentle-warning: var(--primary-orange);
+            --gentle-info: var(--primary-cyan);
             
-            /* Ombres très subtiles */
-            --shadow-whisper: 0 2px 12px rgba(139, 154, 124, 0.08);
-            --shadow-gentle: 0 4px 20px rgba(139, 154, 124, 0.12);
-            --shadow-soft: 0 8px 32px rgba(139, 154, 124, 0.16);
+            /* Ombres colorées et modernes */
+            --shadow-whisper: 0 2px 12px rgba(255, 107, 107, 0.15);
+            --shadow-gentle: 0 4px 20px rgba(139, 92, 246, 0.15);
+            --shadow-soft: 0 8px 32px rgba(6, 214, 160, 0.12);
         }
 
         * {
@@ -53,7 +70,7 @@
             position: relative;
         }
 
-        /* Effet de texture subtile en arrière-plan */
+        /* Effet de texture vibrante en arrière-plan */
         body::before {
             content: '';
             position: fixed;
@@ -61,10 +78,18 @@
             left: 0;
             right: 0;
             bottom: 0;
-            background: radial-gradient(circle at 20% 80%, rgba(139, 154, 124, 0.03) 0%, transparent 50%),
-                        radial-gradient(circle at 80% 20%, rgba(156, 139, 122, 0.03) 0%, transparent 50%);
+            background: 
+                radial-gradient(circle at 20% 80%, rgba(255, 107, 107, 0.08) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(139, 92, 246, 0.08) 0%, transparent 50%),
+                radial-gradient(circle at 60% 60%, rgba(6, 214, 160, 0.06) 0%, transparent 50%);
             z-index: 1;
             pointer-events: none;
+            animation: gentle-pulse 15s ease-in-out infinite alternate;
+        }
+
+        @keyframes gentle-pulse {
+            0% { opacity: 0.8; }
+            100% { opacity: 1; }
         }
 
         /* Layout principal */
@@ -76,22 +101,23 @@
             z-index: 2;
         }
 
-        /* Sidebar noble et raffinée */
+        /* Sidebar moderne avec glassmorphism */
         .sidebar {
             width: 280px;
             height: 100vh;
             position: fixed;
             left: 0;
             top: 0;
-            background: linear-gradient(145deg, var(--noble-warm) 0%, var(--noble-mist) 100%);
+            background: var(--glass-white);
             backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
             z-index: 100;
             transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
             box-shadow: var(--shadow-soft);
             overflow-y: hidden;
             display: flex;
             flex-direction: column;
-            border-right: 1px solid rgba(139, 154, 124, 0.1);
+            border-right: 1px solid rgba(255, 107, 107, 0.1);
         }
 
         .sidebar-header {
@@ -100,12 +126,12 @@
             justify-content: flex-start;
             padding: 2rem 1rem;
             min-height: 80px;
-            background: rgba(255, 255, 255, 0.4);
-            backdrop-filter: blur(10px);
+            background: var(--glass-light);
+            backdrop-filter: blur(15px);
             position: relative;
             overflow: hidden;
             flex-shrink: 0;
-            border-bottom: 1px solid rgba(139, 154, 124, 0.1);
+            border-bottom: 1px solid rgba(255, 107, 107, 0.1);
         }
 
         .sidebar.collapsed {
@@ -154,14 +180,15 @@
             margin: 0 auto;
         }
 
-        /* Bouton toggle élégant */
+        /* Bouton toggle moderne et coloré */
         .sidebar-toggle {
             position: fixed;
             top: 1.5rem;
             left: 300px;
             z-index: 1001;
-            background: var(--noble-cream);
-            border: 1px solid rgba(139, 154, 124, 0.2);
+            background: var(--glass-white);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 107, 107, 0.2);
             border-radius: 12px;
             width: 44px;
             height: 44px;
@@ -175,15 +202,19 @@
             box-shadow: var(--shadow-gentle);
         }
 
-        /* Position du toggle quand la sidebar est collapsed */
         .sidebar-toggle.collapsed {
             left: 100px;
         }
 
         .sidebar-toggle:hover {
-            background: var(--noble-sage-light);
-            border-color: var(--noble-sage);
+            background: var(--gradient-warm);
+            border-color: transparent;
             transform: scale(1.05);
+            box-shadow: 0 6px 25px rgba(255, 107, 107, 0.3);
+        }
+
+        .sidebar-toggle:hover .toggle-line {
+            background: white;
         }
 
         .toggle-line {
@@ -207,20 +238,7 @@
             transform: rotate(-45deg) translate(7px, -6px);
         }
 
-        /* Header de la sidebar */
-        .sidebar-header {
-            display: flex;
-            align-items: center;
-            padding: 2rem 1rem;
-            min-height: 80px;
-            background: rgba(255, 255, 255, 0.4);
-            backdrop-filter: blur(10px);
-            position: relative;
-            overflow: hidden;
-            flex-shrink: 0;
-            border-bottom: 1px solid rgba(139, 154, 124, 0.1);
-        }
-
+        /* Header coloré avec animation */
         .sidebar-header::before {
             content: '';
             position: absolute;
@@ -228,13 +246,13 @@
             right: -50%;
             width: 200%;
             height: 200%;
-            background: radial-gradient(circle, rgba(139, 154, 124, 0.05) 0%, transparent 70%);
-            animation: gentle-float 8s ease-in-out infinite;
+            background: conic-gradient(from 0deg, transparent, rgba(255, 107, 107, 0.05), transparent);
+            animation: rotate-gentle 20s linear infinite;
         }
 
-        @keyframes gentle-float {
-            0%, 100% { transform: translateY(0px) rotate(0deg); }
-            50% { transform: translateY(-10px) rotate(180deg); }
+        @keyframes rotate-gentle {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
         }
 
         .logo-container {
@@ -254,7 +272,7 @@
             min-height: 42px;
             max-width: 42px;
             max-height: 42px;
-            background: var(--noble-sage);
+            background: var(--gradient-warm);
             border-radius: 12px;
             display: flex;
             align-items: center;
@@ -264,11 +282,29 @@
             border: 1px solid rgba(255, 255, 255, 0.2);
             transition: all 0.3s ease;
             cursor: pointer;
+            box-shadow: 0 4px 15px rgba(255, 107, 107, 0.3);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .logo-icon::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+            transition: all 0.6s ease;
+        }
+
+        .logo-icon:hover::before {
+            left: 100%;
         }
 
         .logo-icon:hover {
             transform: scale(1.05);
-            box-shadow: var(--shadow-gentle);
+            box-shadow: 0 6px 20px rgba(255, 107, 107, 0.4);
         }
 
         .logo-text {
@@ -278,12 +314,16 @@
             font-weight: 600;
             letter-spacing: -0.02em;
             transition: all 0.3s ease;
+            background: var(--gradient-main);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
         }
 
         .user-info {
             margin-top: 1.5rem;
             padding-top: 1.5rem;
-            border-top: 1px solid rgba(139, 154, 124, 0.15);
+            border-top: 1px solid rgba(255, 107, 107, 0.15);
             position: relative;
             z-index: 2;
         }
@@ -291,7 +331,7 @@
         .user-avatar {
             width: 48px;
             height: 48px;
-            background: var(--noble-accent);
+            background: var(--gradient-cool);
             border-radius: 50%;
             display: flex;
             align-items: center;
@@ -303,11 +343,12 @@
             font-size: 1.1rem;
             color: white;
             overflow: hidden;
+            box-shadow: 0 4px 15px rgba(139, 92, 246, 0.2);
         }
 
         .user-avatar:hover {
             transform: scale(1.03);
-            box-shadow: var(--shadow-gentle);
+            box-shadow: 0 6px 20px rgba(139, 92, 246, 0.3);
         }
 
         .user-name {
@@ -324,7 +365,7 @@
             transition: all 0.3s ease;
         }
 
-        /* Navigation raffinée */
+        /* Navigation moderne et colorée */
         .nav-menu {
             flex: 1;
             display: flex;
@@ -339,7 +380,7 @@
         .nav-bottom {
             margin-top: auto;
             padding-top: 1.5rem;
-            border-top: 1px solid rgba(139, 154, 124, 0.1);
+            border-top: 1px solid rgba(255, 107, 107, 0.1);
         }
 
         .nav-item {
@@ -386,7 +427,7 @@
             left: -100%;
             width: 100%;
             height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(139, 154, 124, 0.1), transparent);
+            background: linear-gradient(90deg, transparent, rgba(255, 107, 107, 0.1), transparent);
             transition: all 0.6s ease;
         }
 
@@ -395,9 +436,11 @@
         }
 
         .nav-link:hover {
-            background: rgba(139, 154, 124, 0.08);
-            color: var(--noble-sage-dark);
+            background: var(--glass-light);
+            color: var(--primary-coral);
             transform: translateX(4px);
+            backdrop-filter: blur(10px);
+            box-shadow: 0 4px 15px rgba(255, 107, 107, 0.15);
         }
 
         .sidebar.collapsed .nav-link:hover {
@@ -405,10 +448,10 @@
         }
 
         .nav-link.active {
-            background: var(--noble-sage);
+            background: var(--gradient-warm);
             color: white;
             transform: translateX(2px);
-            box-shadow: var(--shadow-gentle);
+            box-shadow: 0 4px 20px rgba(255, 107, 107, 0.3);
         }
 
         .sidebar.collapsed .nav-link.active {
@@ -443,12 +486,12 @@
         }
 
         .nav-link.danger {
-            color: var(--gentle-warning);
+            color: var(--primary-orange);
         }
 
         .nav-link.danger:hover {
-            background: rgba(184, 160, 130, 0.1);
-            color: var(--noble-accent);
+            background: rgba(255, 142, 83, 0.1);
+            color: var(--primary-coral);
             transform: translateX(4px);
         }
 
@@ -494,9 +537,9 @@
 
             .sidebar-toggle {
                 left: 1rem !important;
-                background: var(--noble-sage);
+                background: var(--gradient-warm);
                 border: none;
-                box-shadow: var(--shadow-gentle);
+                box-shadow: 0 4px 20px rgba(255, 107, 107, 0.3);
             }
 
             .sidebar-toggle .toggle-line {
@@ -505,7 +548,7 @@
 
             .sidebar-toggle:hover {
                 transform: scale(1.05);
-                background: var(--noble-sage-dark);
+                background: var(--gradient-pink);
             }
 
             .sidebar-toggle.collapsed {
@@ -542,7 +585,7 @@
             }
         }
 
-        /* Overlay pour mobile */
+        /* Overlay coloré pour mobile */
         .sidebar-overlay {
             display: none;
             position: fixed;
@@ -550,8 +593,8 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(139, 154, 124, 0.3);
-            backdrop-filter: blur(5px);
+            background: rgba(255, 107, 107, 0.2);
+            backdrop-filter: blur(8px);
             z-index: 99;
             opacity: 0;
             transition: opacity 0.3s ease;
@@ -568,27 +611,27 @@
             }
         }
 
-        /* Animations globales plus douces */
+        /* Animations modernes */
         .fade-in {
-            animation: gentle-fadeIn 0.8s ease-out;
+            animation: modern-fadeIn 0.8s ease-out;
         }
 
-        @keyframes gentle-fadeIn {
+        @keyframes modern-fadeIn {
             from {
                 opacity: 0;
-                transform: translateY(20px);
+                transform: translateY(20px) scale(0.95);
             }
             to {
                 opacity: 1;
-                transform: translateY(0);
+                transform: translateY(0) scale(1);
             }
         }
 
         .slide-in {
-            animation: gentle-slideIn 0.6s ease-out;
+            animation: modern-slideIn 0.6s ease-out;
         }
 
-        @keyframes gentle-slideIn {
+        @keyframes modern-slideIn {
             from {
                 opacity: 0;
                 transform: translateX(20px);
@@ -599,54 +642,72 @@
             }
         }
 
-        /* Scrollbar personnalisée discrète */
+        /* Scrollbar colorée */
         ::-webkit-scrollbar {
             width: 6px;
         }
 
         ::-webkit-scrollbar-track {
-            background: rgba(139, 154, 124, 0.05);
+            background: rgba(255, 107, 107, 0.05);
             border-radius: 3px;
         }
 
         ::-webkit-scrollbar-thumb {
-            background: rgba(139, 154, 124, 0.2);
+            background: var(--gradient-warm);
             border-radius: 3px;
             transition: all 0.3s ease;
         }
 
         ::-webkit-scrollbar-thumb:hover {
-            background: rgba(139, 154, 124, 0.35);
+            background: var(--gradient-pink);
         }
 
-        /* Styles pour les mentions LinkedIn */
+        /* Styles colorés pour les mentions LinkedIn */
         .mention {
-            color: var(--noble-sage);
+            color: var(--primary-coral);
             font-weight: 500;
             text-decoration: none;
-            background-color: rgba(139, 154, 124, 0.1);
+            background: linear-gradient(135deg, rgba(255, 107, 107, 0.1), rgba(255, 95, 141, 0.1));
             padding: 2px 6px;
             border-radius: 6px;
             transition: all 0.2s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .mention::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+            transition: all 0.5s ease;
+        }
+
+        .mention:hover::before {
+            left: 100%;
         }
 
         .mention:hover {
-            background-color: var(--noble-sage-light);
+            background: var(--gradient-warm);
             color: white;
             text-decoration: none;
             transform: scale(1.02);
+            box-shadow: 0 2px 10px rgba(255, 107, 107, 0.3);
         }
 
         .mention-dropdown {
-            background: white;
+            background: var(--glass-white);
+            backdrop-filter: blur(20px);
             border-radius: 16px;
             box-shadow: var(--shadow-soft);
             z-index: 1000;
             max-height: 350px;
             overflow-y: auto;
             width: 350px;
-            border: 1px solid rgba(139, 154, 124, 0.15);
-            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 107, 107, 0.15);
         }
 
         .mention-suggestion {
@@ -654,7 +715,7 @@
             cursor: pointer;
             display: flex;
             align-items: center;
-            border-bottom: 1px solid rgba(139, 154, 124, 0.08);
+            border-bottom: 1px solid rgba(255, 107, 107, 0.08);
             transition: all 0.2s ease;
             position: relative;
             overflow: hidden;
@@ -667,7 +728,7 @@
             left: -100%;
             width: 100%;
             height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(139, 154, 124, 0.08), transparent);
+            background: linear-gradient(90deg, transparent, rgba(255, 107, 107, 0.08), transparent);
             transition: all 0.3s ease;
         }
 
@@ -681,8 +742,9 @@
 
         .mention-suggestion:hover, 
         .mention-suggestion.active {
-            background: rgba(139, 154, 124, 0.05);
+            background: var(--glass-light);
             transform: translateX(2px);
+            backdrop-filter: blur(15px);
         }
 
         .mention-suggestion img,
@@ -691,11 +753,11 @@
             height: 36px;
             border-radius: 50%;
             margin-right: 12px;
-            border: 2px solid var(--noble-sage-light);
+            border: 2px solid var(--primary-coral);
         }
 
         .mention-avatar {
-            background: var(--noble-sage);
+            background: var(--gradient-warm);
             color: white;
             display: flex;
             align-items: center;
@@ -976,7 +1038,7 @@
                             <div style="font-size: 0.8rem; color: var(--noble-charcoal-light);">${user.headline || 'Professionnel LinkedIn'}</div>
                         </div>
                         <div style="opacity: 0.6;">
-                            <i class="fab fa-linkedin" style="color: var(--noble-sage);"></i>
+                            <i class="fab fa-linkedin" style="color: var(--primary-coral);"></i>
                         </div>
                     `;
                     
