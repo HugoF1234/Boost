@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% block content %}
 <style>
-    /* Variables nobles et apaisantes */
+    /* Variables nobles et apaisantes identiques au base.html */
     :root {
         --noble-cream: #faf9f7;
         --noble-warm: #f5f2ed;
@@ -23,16 +23,38 @@
         --shadow-whisper: 0 2px 12px rgba(139, 154, 124, 0.08);
         --shadow-gentle: 0 4px 20px rgba(139, 154, 124, 0.12);
         --shadow-soft: 0 8px 32px rgba(139, 154, 124, 0.16);
+
+        /* Nouvelles couleurs vibrantes pour s'harmoniser avec le fond animé */
+        --primary-coral: #FF6B6B;
+        --primary-orange: #FF8E53;
+        --primary-pink: #FF5F8D;
+        --primary-purple: #8B5CF6;
+        --primary-blue: #06D6A0;
+        --primary-cyan: #118AB2;
+        
+        /* Gradients dynamiques */
+        --gradient-main: linear-gradient(135deg, #FF6B6B 0%, #FF8E53 25%, #FF5F8D 50%, #8B5CF6 75%, #06D6A0 100%);
+        --gradient-warm: linear-gradient(135deg, #FF8E53 0%, #FF6B6B 100%);
+        --gradient-cool: linear-gradient(135deg, #8B5CF6 0%, #06D6A0 100%);
+        --gradient-pink: linear-gradient(135deg, #FF5F8D 0%, #8B5CF6 100%);
     }
 
+    /* Suppression du background pour que le fond de base.html soit visible */
+    body {
+        background: transparent !important;
+        color: var(--noble-charcoal);
+        line-height: 1.7;
+    }
 
-    /* Header noble et accueillant */
+    /* Header noble avec transparence pour laisser passer le fond animé */
     .welcome-section {
-        background: linear-gradient(135deg, var(--noble-warm) 0%, var(--noble-mist) 100%);
+        background: rgba(255, 255, 255, 0.85);
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
         border-radius: 20px;
         padding: 2.5rem;
         margin-bottom: 2rem;
-        border: 1px solid var(--noble-stone);
+        border: 1px solid rgba(255, 107, 107, 0.2);
         box-shadow: var(--shadow-whisper);
         position: relative;
         overflow: hidden;
@@ -45,9 +67,15 @@
         right: 0;
         width: 120px;
         height: 120px;
-        background: radial-gradient(circle, rgba(139, 154, 124, 0.06) 0%, transparent 70%);
+        background: radial-gradient(circle, rgba(255, 107, 107, 0.08) 0%, transparent 70%);
         border-radius: 50%;
         transform: translate(30%, -30%);
+        animation: gentle-pulse 8s ease-in-out infinite alternate;
+    }
+
+    @keyframes gentle-pulse {
+        0% { opacity: 0.6; transform: translate(30%, -30%) scale(1); }
+        100% { opacity: 1; transform: translate(30%, -30%) scale(1.2); }
     }
 
     .welcome-content {
@@ -66,6 +94,16 @@
         color: var(--noble-charcoal);
         margin-bottom: 0.5rem;
         letter-spacing: -0.02em;
+        background: var(--gradient-main);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        animation: gradient-shift 4s ease-in-out infinite;
+    }
+
+    @keyframes gradient-shift {
+        0%, 100% { background-position: 0% 50%; }
+        50% { background-position: 100% 50%; }
     }
 
     .greeting-subtitle {
@@ -84,22 +122,41 @@
     .stat-item {
         text-align: center;
         padding: 1rem;
-        background: rgba(255, 255, 255, 0.6);
+        background: rgba(255, 255, 255, 0.7);
+        backdrop-filter: blur(10px);
         border-radius: 12px;
-        border: 1px solid rgba(139, 154, 124, 0.1);
+        border: 1px solid rgba(255, 107, 107, 0.15);
         transition: all 0.3s ease;
+        position: relative;
+        overflow: hidden;
     }
 
     .stat-item:hover {
-        background: rgba(255, 255, 255, 0.8);
+        background: rgba(255, 255, 255, 0.9);
         transform: translateY(-2px);
         box-shadow: var(--shadow-gentle);
+        border-color: rgba(255, 107, 107, 0.3);
+    }
+
+    .stat-item::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(255, 107, 107, 0.1), transparent);
+        transition: all 0.6s ease;
+    }
+
+    .stat-item:hover::before {
+        left: 100%;
     }
 
     .stat-number {
         font-size: 1.4rem;
         font-weight: 600;
-        color: var(--noble-sage);
+        color: var(--primary-coral);
         display: block;
         margin-bottom: 0.25rem;
     }
@@ -114,33 +171,62 @@
         display: inline-flex;
         align-items: center;
         gap: 0.5rem;
-        background: linear-gradient(135deg, rgba(124, 152, 133, 0.1) 0%, rgba(124, 152, 133, 0.05) 100%);
+        background: rgba(124, 152, 133, 0.15);
+        backdrop-filter: blur(10px);
         color: var(--gentle-success);
         padding: 0.5rem 1rem;
         border-radius: 20px;
         font-size: 0.85rem;
         font-weight: 500;
-        border: 1px solid rgba(124, 152, 133, 0.2);
-        animation: pulse 2s infinite;
+        border: 1px solid rgba(124, 152, 133, 0.3);
+        animation: pulse-success 2s infinite;
     }
 
-    @keyframes pulse {
-        0%, 100% { transform: scale(1); }
-        50% { transform: scale(1.02); }
+    @keyframes pulse-success {
+        0%, 100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(124, 152, 133, 0.4); }
+        50% { transform: scale(1.02); box-shadow: 0 0 0 10px rgba(124, 152, 133, 0); }
     }
 
-    /* Section principale de création */
+    /* Section principale de création avec transparence */
     .creation-section {
-        background: white;
+        background: rgba(255, 255, 255, 0.9);
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
         border-radius: 20px;
         padding: 2.5rem;
         margin-bottom: 2rem;
-        border: 1px solid var(--noble-stone);
+        border: 1px solid rgba(255, 107, 107, 0.15);
         box-shadow: var(--shadow-whisper);
+        position: relative;
+        overflow: hidden;
+    }
+
+    .creation-section::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: linear-gradient(45deg, 
+            rgba(255, 107, 107, 0.02) 0%, 
+            rgba(139, 92, 246, 0.02) 25%, 
+            rgba(6, 214, 160, 0.02) 50%, 
+            rgba(255, 142, 83, 0.02) 75%, 
+            rgba(255, 95, 141, 0.02) 100%);
+        z-index: 0;
+        animation: shimmer 8s ease-in-out infinite;
+    }
+
+    @keyframes shimmer {
+        0%, 100% { opacity: 0.3; }
+        50% { opacity: 0.7; }
     }
 
     .section-header {
         margin-bottom: 2rem;
+        position: relative;
+        z-index: 1;
     }
 
     .section-title {
@@ -159,14 +245,16 @@
         line-height: 1.6;
     }
 
-    /* Article sélectionné - style très doux */
+    /* Article sélectionné - style très doux avec transparence */
     .selected-article {
-        background: linear-gradient(135deg, rgba(139, 154, 124, 0.04) 0%, rgba(156, 139, 122, 0.04) 100%);
-        border: 1px solid rgba(139, 154, 124, 0.15);
+        background: rgba(255, 255, 255, 0.8);
+        backdrop-filter: blur(15px);
+        border: 1px solid rgba(255, 107, 107, 0.2);
         border-radius: 16px;
         padding: 2rem;
         margin-bottom: 2rem;
         position: relative;
+        z-index: 1;
     }
 
     .selected-article::before {
@@ -176,7 +264,7 @@
         left: 0;
         width: 4px;
         height: 100%;
-        background: linear-gradient(to bottom, var(--noble-sage), var(--noble-accent));
+        background: var(--gradient-warm);
         border-radius: 2px;
     }
 
@@ -204,10 +292,11 @@
         color: var(--noble-charcoal-light);
     }
 
-    /* Aperçu LinkedIn amélioré */
+    /* Aperçu LinkedIn avec transparence améliorée */
     .linkedin-post {
-        background: white;
-        border: 1px solid #ddd;
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(20px);
+        border: 1px solid rgba(255, 107, 107, 0.15);
         border-radius: 16px;
         padding: 1.5rem;
         max-width: 600px;
@@ -215,11 +304,14 @@
         font-family: 'Segoe UI', Tahoma, sans-serif;
         box-shadow: var(--shadow-gentle);
         transition: all 0.3s ease;
+        position: relative;
+        z-index: 1;
     }
 
     .linkedin-post:hover {
         transform: translateY(-2px);
         box-shadow: var(--shadow-soft);
+        border-color: rgba(255, 107, 107, 0.3);
     }
 
     .linkedin-header {
@@ -234,26 +326,27 @@
         height: 52px;
         border-radius: 50%;
         object-fit: cover;
-        border: 2px solid var(--noble-sage-light);
+        border: 2px solid var(--primary-coral);
         transition: all 0.3s ease;
     }
 
     .linkedin-avatar:hover {
         transform: scale(1.05);
+        box-shadow: 0 0 15px rgba(255, 107, 107, 0.3);
     }
 
     .linkedin-avatar-placeholder {
         width: 52px;
         height: 52px;
         border-radius: 50%;
-        background: linear-gradient(135deg, var(--noble-sage) 0%, var(--noble-accent) 100%);
+        background: var(--gradient-warm);
         display: flex;
         align-items: center;
         justify-content: center;
         color: white;
         font-size: 1.2rem;
         font-weight: 600;
-        border: 2px solid var(--noble-sage-light);
+        border: 2px solid rgba(255, 255, 255, 0.3);
     }
 
     .linkedin-user-info {
@@ -302,7 +395,7 @@
         justify-content: space-around;
         font-size: 0.875rem;
         color: #666;
-        border-top: 1px solid #eee;
+        border-top: 1px solid rgba(255, 107, 107, 0.1);
         padding-top: 0.75rem;
     }
 
@@ -317,14 +410,16 @@
     }
 
     .linkedin-action:hover {
-        background: var(--noble-mist);
-        color: var(--noble-sage);
+        background: rgba(255, 107, 107, 0.1);
+        color: var(--primary-coral);
     }
 
-    /* Formulaire de génération */
+    /* Formulaire de génération avec transparence */
     .generation-form {
         display: grid;
         gap: 1.5rem;
+        position: relative;
+        z-index: 1;
     }
 
     .form-row {
@@ -348,10 +443,11 @@
 
     .form-control {
         padding: 0.875rem 1.125rem;
-        border: 1.5px solid var(--noble-stone);
+        border: 1.5px solid rgba(255, 107, 107, 0.2);
         border-radius: 12px;
         font-size: 0.95rem;
-        background: var(--noble-cream);
+        background: rgba(255, 255, 255, 0.8);
+        backdrop-filter: blur(10px);
         color: var(--noble-charcoal);
         transition: all 0.3s ease;
         font-family: inherit;
@@ -359,9 +455,9 @@
 
     .form-control:focus {
         outline: none;
-        border-color: var(--noble-sage);
-        box-shadow: 0 0 0 3px rgba(139, 154, 124, 0.1);
-        background: white;
+        border-color: var(--primary-coral);
+        box-shadow: 0 0 0 3px rgba(255, 107, 107, 0.1);
+        background: rgba(255, 255, 255, 0.95);
     }
 
     .textarea-control {
@@ -378,23 +474,26 @@
         align-items: center;
         gap: 0.5rem;
         padding: 0.75rem;
-        background: rgba(139, 154, 124, 0.05);
+        background: rgba(255, 107, 107, 0.05);
+        backdrop-filter: blur(10px);
         border-radius: 8px;
-        border-left: 3px solid var(--noble-sage);
+        border-left: 3px solid var(--primary-coral);
     }
 
-    /* Section de sélection des photos - Intégration Pexels */
+    /* Section de sélection des photos avec transparence */
     .media-section {
         margin-top: 2rem;
         padding-top: 2rem;
-        border-top: 1px solid var(--noble-stone);
+        border-top: 1px solid rgba(255, 107, 107, 0.15);
+        position: relative;
+        z-index: 1;
     }
 
     .media-tabs {
         display: flex;
         gap: 1rem;
         margin-bottom: 2rem;
-        border-bottom: 1px solid var(--noble-stone);
+        border-bottom: 1px solid rgba(255, 107, 107, 0.15);
     }
 
     .media-tab {
@@ -410,18 +509,22 @@
         display: flex;
         align-items: center;
         gap: 0.5rem;
+        backdrop-filter: blur(10px);
+        border-radius: 8px 8px 0 0;
     }
 
     .media-tab.active {
-        color: var(--noble-sage);
-        border-bottom-color: var(--noble-sage);
+        color: var(--primary-coral);
+        border-bottom-color: var(--primary-coral);
+        background: rgba(255, 107, 107, 0.1);
     }
 
     .media-tab:hover {
-        color: var(--noble-sage-dark);
+        color: var(--primary-pink);
+        background: rgba(255, 107, 107, 0.05);
     }
 
-    /* Sélection d'images locales */
+    /* Sélection d'images locales avec transparence */
     .local-images-section {
         display: none;
     }
@@ -431,11 +534,12 @@
     }
 
     .file-upload-area {
-        border: 2px dashed var(--noble-stone);
+        border: 2px dashed rgba(255, 107, 107, 0.3);
         border-radius: 12px;
         padding: 2rem;
         text-align: center;
-        background: var(--noble-mist);
+        background: rgba(255, 255, 255, 0.6);
+        backdrop-filter: blur(15px);
         transition: all 0.3s ease;
         cursor: pointer;
         position: relative;
@@ -443,20 +547,26 @@
     }
 
     .file-upload-area:hover {
-        border-color: var(--noble-sage);
-        background: rgba(139, 154, 124, 0.05);
+        border-color: var(--primary-coral);
+        background: rgba(255, 107, 107, 0.1);
     }
 
     .file-upload-area.dragover {
-        border-color: var(--noble-sage);
-        background: rgba(139, 154, 124, 0.1);
+        border-color: var(--primary-coral);
+        background: rgba(255, 107, 107, 0.15);
         transform: scale(1.02);
     }
 
     .upload-icon {
         font-size: 2.5rem;
-        color: var(--noble-sage);
+        color: var(--primary-coral);
         margin-bottom: 1rem;
+        animation: gentle-bounce 2s ease-in-out infinite;
+    }
+
+    @keyframes gentle-bounce {
+        0%, 100% { transform: translateY(0); }
+        50% { transform: translateY(-10px); }
     }
 
     .upload-text {
@@ -470,261 +580,7 @@
         font-size: 0.9rem;
     }
 
-    /* Sélection d'images Pexels */
-    .pexels-images-section {
-        display: none;
-    }
-
-    .pexels-images-section.active {
-        display: block;
-    }
-
-    .pexels-search {
-        display: flex;
-        gap: 1rem;
-        margin-bottom: 2rem;
-        align-items: end;
-    }
-
-    .pexels-search input {
-        flex: 1;
-        padding: 0.875rem 1.125rem;
-        border: 1.5px solid var(--noble-stone);
-        border-radius: 12px;
-        font-size: 0.95rem;
-        background: var(--noble-cream);
-        color: var(--noble-charcoal);
-        transition: all 0.3s ease;
-    }
-
-    .pexels-search input:focus {
-        outline: none;
-        border-color: var(--noble-sage);
-        background: white;
-        box-shadow: 0 0 0 3px rgba(139, 154, 124, 0.1);
-    }
-
-    .pexels-search button {
-        padding: 0.875rem 1.5rem;
-        background: var(--noble-sage);
-        color: white;
-        border: none;
-        border-radius: 12px;
-        font-weight: 500;
-        cursor: pointer;
-        transition: all 0.3s ease;
-        display: flex;
-        align-items: center;
-        gap: 0.5rem;
-    }
-
-    .pexels-search button:hover {
-        background: var(--noble-sage-dark);
-        transform: translateY(-1px);
-    }
-
-    .pexels-search button:disabled {
-        opacity: 0.6;
-        cursor: not-allowed;
-        transform: none;
-    }
-
-    .pexels-results {
-        display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-        gap: 1rem;
-        margin-bottom: 2rem;
-    }
-
-    .pexels-photo {
-        position: relative;
-        aspect-ratio: 4/3;
-        border-radius: 12px;
-        overflow: hidden;
-        cursor: pointer;
-        transition: all 0.3s ease;
-        border: 2px solid transparent;
-    }
-
-    .pexels-photo:hover {
-        transform: translateY(-2px);
-        box-shadow: var(--shadow-gentle);
-    }
-
-    .pexels-photo.selected {
-        border-color: var(--noble-sage);
-        transform: scale(0.98);
-    }
-
-    .pexels-photo img {
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-        transition: all 0.3s ease;
-    }
-
-    .pexels-photo:hover img {
-        transform: scale(1.05);
-    }
-
-    .pexels-photo-overlay {
-        position: absolute;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        background: linear-gradient(to bottom, transparent 0%, rgba(0,0,0,0.7) 100%);
-        display: flex;
-        flex-direction: column;
-        justify-content: flex-end;
-        padding: 1rem;
-        opacity: 0;
-        transition: all 0.3s ease;
-    }
-
-    .pexels-photo:hover .pexels-photo-overlay {
-        opacity: 1;
-    }
-
-    .pexels-photographer {
-        color: white;
-        font-size: 0.8rem;
-        font-weight: 500;
-        margin-bottom: 0.5rem;
-    }
-
-    .pexels-select-btn {
-        background: rgba(255, 255, 255, 0.9);
-        color: var(--noble-charcoal);
-        border: none;
-        padding: 0.5rem 1rem;
-        border-radius: 8px;
-        font-size: 0.8rem;
-        font-weight: 500;
-        cursor: pointer;
-        transition: all 0.3s ease;
-    }
-
-    .pexels-select-btn:hover {
-        background: white;
-        transform: translateY(-1px);
-    }
-
-    .pexels-photo.selected .pexels-select-btn {
-        background: var(--noble-sage);
-        color: white;
-    }
-
-    .pexels-loading {
-        text-align: center;
-        padding: 2rem;
-        color: var(--noble-charcoal-light);
-    }
-
-    .pexels-loading i {
-        font-size: 2rem;
-        margin-bottom: 1rem;
-        color: var(--noble-sage);
-        animation: spin 1s linear infinite;
-    }
-
-    @keyframes spin {
-        from { transform: rotate(0deg); }
-        to { transform: rotate(360deg); }
-    }
-
-    .pexels-error {
-        text-align: center;
-        padding: 2rem;
-        background: rgba(184, 160, 130, 0.1);
-        border-radius: 12px;
-        color: var(--gentle-warning);
-        border: 1px solid var(--gentle-warning);
-    }
-
-    .pexels-load-more {
-        width: 100%;
-        padding: 1rem 2rem;
-        background: var(--noble-warm);
-        color: var(--noble-charcoal);
-        border: 1px solid var(--noble-stone);
-        border-radius: 12px;
-        font-weight: 500;
-        cursor: pointer;
-        transition: all 0.3s ease;
-        margin-top: 1rem;
-    }
-
-    .pexels-load-more:hover {
-        background: var(--noble-sage);
-        color: white;
-        border-color: var(--noble-sage);
-    }
-
-    /* Aperçu des images sélectionnées */
-    .selected-images-preview {
-        margin-top: 2rem;
-        padding-top: 2rem;
-        border-top: 1px solid var(--noble-stone);
-    }
-
-    .selected-images-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
-        gap: 1rem;
-        margin-top: 1rem;
-    }
-
-    .selected-image-item {
-        position: relative;
-        aspect-ratio: 1;
-        border-radius: 8px;
-        overflow: hidden;
-        border: 2px solid var(--noble-sage-light);
-    }
-
-    .selected-image-item img {
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-    }
-
-    .remove-image-btn {
-        position: absolute;
-        top: 0.5rem;
-        right: 0.5rem;
-        width: 24px;
-        height: 24px;
-        background: rgba(0, 0, 0, 0.7);
-        color: white;
-        border: none;
-        border-radius: 50%;
-        cursor: pointer;
-        font-size: 0.8rem;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        transition: all 0.3s ease;
-    }
-
-    .remove-image-btn:hover {
-        background: var(--gentle-error);
-        transform: scale(1.1);
-    }
-
-    .selected-image-source {
-        position: absolute;
-        bottom: 0;
-        left: 0;
-        right: 0;
-        background: rgba(0, 0, 0, 0.7);
-        color: white;
-        font-size: 0.7rem;
-        padding: 0.25rem;
-        text-align: center;
-    }
-
-    /* Boutons nobles */
+    /* Boutons nobles avec gradients vibrants */
     .btn {
         padding: 0.875rem 1.75rem;
         border-radius: 12px;
@@ -741,34 +597,52 @@
         overflow: hidden;
     }
 
+    .btn::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+        transition: all 0.6s ease;
+    }
+
+    .btn:hover::before {
+        left: 100%;
+    }
+
     .btn-primary {
-        background: linear-gradient(135deg, var(--noble-sage) 0%, var(--noble-sage-light) 100%);
+        background: var(--gradient-warm);
         color: white;
-        box-shadow: var(--shadow-whisper);
+        box-shadow: 0 4px 15px rgba(255, 107, 107, 0.3);
+        border: 1px solid rgba(255, 255, 255, 0.2);
     }
 
     .btn-primary:hover {
-        transform: translateY(-1px);
-        box-shadow: var(--shadow-gentle);
-        background: linear-gradient(135deg, var(--noble-sage-dark) 0%, var(--noble-sage) 100%);
+        transform: translateY(-2px);
+        box-shadow: 0 8px 25px rgba(255, 107, 107, 0.4);
+        background: var(--gradient-pink);
     }
 
     .btn-secondary {
-        background: white;
+        background: rgba(255, 255, 255, 0.9);
+        backdrop-filter: blur(10px);
         color: var(--noble-charcoal);
-        border: 1.5px solid var(--noble-stone);
+        border: 1.5px solid rgba(255, 107, 107, 0.2);
     }
 
     .btn-secondary:hover {
-        background: var(--noble-warm);
-        border-color: var(--noble-sage);
+        background: rgba(255, 107, 107, 0.1);
+        border-color: var(--primary-coral);
         transform: translateY(-1px);
     }
 
-    /* Section d'invitation aux actualités */
+    /* Section d'invitation aux actualités avec transparence */
     .news-invitation {
-        background: linear-gradient(135deg, rgba(156, 139, 122, 0.06) 0%, rgba(139, 154, 124, 0.06) 100%);
-        border: 1px solid rgba(156, 139, 122, 0.15);
+        background: rgba(255, 255, 255, 0.8);
+        backdrop-filter: blur(15px);
+        border: 1px solid rgba(255, 107, 107, 0.2);
         border-radius: 16px;
         padding: 1.75rem;
         margin-top: 2rem;
@@ -777,18 +651,36 @@
         align-items: center;
         gap: 1.25rem;
         transition: all 0.3s ease;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .news-invitation::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(255, 107, 107, 0.1), transparent);
+        transition: all 0.8s ease;
+    }
+
+    .news-invitation:hover::before {
+        left: 100%;
     }
 
     .news-invitation:hover {
-        background: linear-gradient(135deg, rgba(156, 139, 122, 0.08) 0%, rgba(139, 154, 124, 0.08) 100%);
+        background: rgba(255, 255, 255, 0.95);
         transform: translateY(-2px);
         box-shadow: var(--shadow-gentle);
+        border-color: var(--primary-coral);
     }
 
     .news-icon {
         width: 56px;
         height: 56px;
-        background: linear-gradient(135deg, var(--noble-accent) 0%, var(--noble-accent-light) 100%);
+        background: var(--gradient-cool);
         border-radius: 14px;
         display: flex;
         align-items: center;
@@ -796,6 +688,7 @@
         font-size: 1.5rem;
         color: white;
         flex-shrink: 0;
+        box-shadow: 0 4px 15px rgba(139, 92, 246, 0.3);
     }
 
     .news-content {
@@ -816,32 +709,50 @@
     }
 
     .news-arrow {
-        color: var(--noble-sage);
+        color: var(--primary-purple);
         font-size: 1.2rem;
         transition: all 0.3s ease;
     }
 
     .news-invitation:hover .news-arrow {
         transform: translateX(4px);
+        color: var(--primary-coral);
     }
 
-    /* Section du contenu généré */
+    /* Section du contenu généré avec transparence */
     .generated-content {
-        background: white;
+        background: rgba(255, 255, 255, 0.9);
+        backdrop-filter: blur(20px);
         border-radius: 20px;
         padding: 2.5rem;
         margin-bottom: 2rem;
-        border: 1px solid var(--noble-stone);
+        border: 2px solid rgba(255, 107, 107, 0.2);
         box-shadow: var(--shadow-whisper);
-        border: 2px solid var(--noble-sage-light);
+        position: relative;
+        overflow: hidden;
+    }
+
+    .generated-content::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: var(--gradient-main);
+        opacity: 0.05;
+        z-index: 0;
     }
 
     .content-preview {
-        background: var(--noble-warm);
+        background: rgba(255, 255, 255, 0.8);
+        backdrop-filter: blur(10px);
         border-radius: 16px;
         padding: 2rem;
-        border-left: 4px solid var(--noble-sage);
+        border-left: 4px solid var(--primary-coral);
         margin-bottom: 2rem;
+        position: relative;
+        z-index: 1;
     }
 
     .content-text {
@@ -851,11 +762,13 @@
         font-size: 1rem;
     }
 
-    /* Actions de publication */
+    /* Actions de publication avec transparence */
     .publish-section {
-        border-top: 1px solid var(--noble-stone);
+        border-top: 1px solid rgba(255, 107, 107, 0.15);
         padding-top: 2rem;
         margin-top: 2rem;
+        position: relative;
+        z-index: 1;
     }
 
     .publish-actions-grid {
@@ -872,9 +785,11 @@
     }
 
     .publish-group.schedule-group {
-        background: var(--noble-mist);
+        background: rgba(255, 255, 255, 0.7);
+        backdrop-filter: blur(10px);
         padding: 1.5rem;
         border-radius: 12px;
+        border: 1px solid rgba(255, 107, 107, 0.15);
     }
 
     .publish-group-title {
@@ -900,10 +815,6 @@
             grid-template-columns: 1fr;
         }
 
-        .publish-options {
-            grid-template-columns: 1fr;
-        }
-
         .user-stats {
             grid-template-columns: repeat(2, 1fr);
         }
@@ -925,20 +836,12 @@
         }
 
         .media-tab.active {
-            border-left-color: var(--noble-sage);
+            border-left-color: var(--primary-coral);
             border-bottom-color: transparent;
-        }
-
-        .pexels-search {
-            flex-direction: column;
-        }
-
-        .pexels-results {
-            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
         }
     }
 
-    /* Animations très douces */
+    /* Animations très douces avec les nouvelles couleurs */
     .fade-in {
         animation: gentleFadeIn 0.8s ease-out;
     }
@@ -954,93 +857,27 @@
         }
     }
 
-    /* Icônes avec style noble */
+    /* Icônes avec style noble et couleurs vibrantes */
     .icon-noble {
-        color: var(--noble-sage);
+        color: var(--primary-coral);
         font-size: 1.125rem;
+        filter: drop-shadow(0 0 3px rgba(255, 107, 107, 0.3));
     }
-    .pdf-section {
-        display: none;
+
+    /* Animation de pulsation douce pour les éléments interactifs */
+    .pulse-element {
+        animation: gentle-pulse 3s ease-in-out infinite;
     }
-    
-    .pdf-section.active {
-        display: block;
-    }
-    
-    .pdf-upload-area {
-        border: 2px dashed var(--noble-stone);
-        border-radius: 12px;
-        padding: 2rem;
-        text-align: center;
-        background: var(--noble-mist);
-        transition: all 0.3s ease;
-        cursor: pointer;
-        position: relative;
-        overflow: hidden;
-    }
-    
-    .pdf-upload-area:hover {
-        border-color: var(--gentle-error);
-        background: rgba(196, 144, 144, 0.05);
-    }
-    
-    .pdf-upload-area.dragover {
-        border-color: var(--gentle-error);
-        background: rgba(196, 144, 144, 0.1);
-        transform: scale(1.02);
-    }
-    
-    .pdf-upload-area.has-file {
-        border-color: var(--gentle-success);
-        background: rgba(124, 152, 133, 0.05);
-    }
-    
-    .pdf-upload-area.has-file .upload-icon i {
-        color: var(--gentle-success);
-    }
-    
-    /* Style pour les onglets avec indication PDF */
-    .media-tab[onclick="switchMediaTab('pdf')"] {
-        position: relative;
-    }
-    
-    .media-tab[onclick="switchMediaTab('pdf')"].has-pdf::after {
-        content: '';
-        position: absolute;
-        top: 0.5rem;
-        right: 0.5rem;
-        width: 8px;
-        height: 8px;
-        background: var(--gentle-success);
-        border-radius: 50%;
-        border: 2px solid white;
-    }
-    
-    /* Animation pour l'alerte de limitation */
-    .linkedin-limitation-alert {
-        animation: gentleShake 0.6s ease-in-out;
-    }
-    
-    @keyframes gentleShake {
-        0%, 100% { transform: translateX(0); }
-        25% { transform: translateX(-5px); }
-        75% { transform: translateX(5px); }
-    }
-    
-    /* Style pour les onglets désactivés */
-    .media-tab.disabled {
-        opacity: 0.5;
-        cursor: not-allowed;
-        pointer-events: none;
-    }
-    
-    /* Indicateur visuel pour les conflits */
-    .media-conflict {
-        border: 2px solid var(--gentle-error) !important;
-        background: rgba(196, 144, 144, 0.1) !important;
+
+    /* Effet de survol magnifié pour les cartes importantes */
+    .creation-section:hover {
+        transform: translateY(-1px);
+        box-shadow: var(--shadow-gentle);
+        border-color: rgba(255, 107, 107, 0.3);
     }
 </style>
-<!-- Section d'accueil noble -->
+
+<!-- Section d'accueil noble avec fond transparent -->
 <div class="welcome-section fade-in">
 <div class="welcome-content">
 <div>
@@ -1069,6 +906,7 @@
 </div>
 </div>
 </div>
+
 <!-- Section pour l'article sélectionné -->
 {% if selected_article %}
 <div class="creation-section fade-in">
@@ -1085,7 +923,7 @@
 <div class="article-meta">
 <div>
 <i class="fas fa-globe icon-noble"></i>
-<a href="{{ selected_article.url }}" style="color: var(--noble-sage); text-decoration: none; font-weight: 500;" target="_blank">
+<a href="{{ selected_article.url }}" style="color: var(--primary-coral); text-decoration: none; font-weight: 500;" target="_blank">
                     {{ selected_article.source.name }}
                 </a>
 </div>
@@ -1258,20 +1096,23 @@
 </div>
 </div>
 </div>
+
 <form action="{{ url_for('publish') }}" enctype="multipart/form-data" method="post">
 <div class="form-group">
 <label class="form-label">Contenu de votre post</label>
-<textarea class="form-control textarea-control" id="post-content" name="post_content" required="" rows="8">{{ draft }}</textarea>
+<textarea class="form-control textarea-control mention-editor" id="post-content" name="post_content" required="" rows="8">{{ draft }}</textarea>
 </div>
-<!-- Section de sélection des photos - Intégration Pexels -->
+
+<!-- Section de sélection des médias avec transparence -->
 <div class="media-section">
 <h3 style="color: var(--noble-charcoal); margin-bottom: 1rem; display: flex; align-items: center; gap: 0.75rem;">
 <i class="fas fa-paperclip icon-noble"></i>
                 Ajouter des fichiers
             </h3>
+
 <!-- Alerte de limitation LinkedIn -->
 <div class="linkedin-limitation-alert" id="linkedin-limitation-alert" style="display: none;">
-<div style="background: rgba(196, 144, 144, 0.1); border: 1px solid var(--gentle-error); border-radius: 12px; padding: 1rem; margin-bottom: 1.5rem; display: flex; align-items: center; gap: 0.75rem;">
+<div style="background: rgba(196, 144, 144, 0.1); border: 1px solid var(--gentle-error); border-radius: 12px; padding: 1rem; margin-bottom: 1.5rem; display: flex; align-items: center; gap: 0.75rem; backdrop-filter: blur(10px);">
 <i class="fas fa-exclamation-triangle" style="color: var(--gentle-error); font-size: 1.2rem;"></i>
 <div>
 <strong style="color: var(--gentle-error);">Limitation LinkedIn :</strong>
@@ -1279,6 +1120,7 @@
 </div>
 </div>
 </div>
+
 <div class="media-tabs">
 <button class="media-tab active" onclick="switchMediaTab('local')" type="button">
 <i class="fas fa-upload"></i>
@@ -1293,7 +1135,8 @@
                     Document PDF
                 </button>
 </div>
-<!-- Section images locales (existante) -->
+
+<!-- Section images locales -->
 <div class="local-images-section active" id="local-images-section">
 <div class="file-upload-area" id="file-upload-area" onclick="document.getElementById('images').click()">
 <div class="upload-icon">
@@ -1304,7 +1147,8 @@
 </div>
 <input accept="image/*" class="form-control" id="images" multiple="" name="images[]" style="display: none;" type="file"/>
 </div>
-<!-- Section photos Pexels (existante) -->
+
+<!-- Section photos Pexels -->
 <div class="pexels-images-section" id="pexels-images-section">
 <div class="pexels-search">
 <input id="pexels-search-input" placeholder="Rechercher des photos : marketing, business, technology..." type="text"/>
@@ -1330,9 +1174,10 @@
                     </button>
 </div>
 </div>
-<!-- NOUVELLE Section PDF -->
+
+<!-- Section PDF -->
 <div class="pdf-section" id="pdf-section" style="display: none;">
-<div class="pdf-upload-info" style="background: rgba(139, 154, 124, 0.05); border-radius: 12px; padding: 1.5rem; margin-bottom: 1.5rem; border-left: 4px solid var(--noble-sage);">
+<div class="pdf-upload-info" style="background: rgba(139, 154, 124, 0.05); border-radius: 12px; padding: 1.5rem; margin-bottom: 1.5rem; border-left: 4px solid var(--noble-sage); backdrop-filter: blur(10px);">
 <h4 style="color: var(--noble-charcoal); margin-bottom: 0.75rem; display: flex; align-items: center; gap: 0.5rem;">
 <i class="fas fa-info-circle" style="color: var(--noble-sage);"></i>
                         Joindre un document PDF
@@ -1355,9 +1200,10 @@
 <div class="upload-hint">ou glissez-déposez votre fichier ici (max 100 MB)</div>
 </div>
 <input accept=".pdf" class="form-control" id="pdf_file" name="pdf_file" style="display: none;" type="file"/>
+
 <!-- Aperçu du PDF sélectionné -->
 <div class="pdf-preview" id="pdf-preview" style="display: none;">
-<div style="background: white; border: 1px solid var(--noble-stone); border-radius: 12px; padding: 1.5rem; margin-top: 1.5rem; display: flex; align-items: center; gap: 1rem;">
+<div style="background: rgba(255, 255, 255, 0.9); backdrop-filter: blur(10px); border: 1px solid var(--noble-stone); border-radius: 12px; padding: 1.5rem; margin-top: 1.5rem; display: flex; align-items: center; gap: 1rem;">
 <div style="width: 48px; height: 48px; background: var(--gentle-error); border-radius: 8px; display: flex; align-items: center; justify-content: center; color: white;">
 <i class="fas fa-file-pdf"></i>
 </div>
@@ -1371,7 +1217,8 @@
 </div>
 </div>
 </div>
-<!-- Aperçu des images sélectionnées (existant, mais avec modifications pour la validation) -->
+
+<!-- Aperçu des images sélectionnées -->
 <div class="selected-images-preview" id="selected-images-preview" style="display: none;">
 <h4 style="color: var(--noble-charcoal); margin-bottom: 1rem;">
 <i class="fas fa-check icon-noble"></i>
@@ -1382,6 +1229,7 @@
 </div>
 </div>
 </div>
+
 <div class="publish-section">
 <h3 style="color: var(--noble-charcoal); margin-bottom: 1.5rem; display: flex; align-items: center; gap: 0.75rem;">
 <i class="fas fa-paper-plane icon-noble"></i>
@@ -1406,6 +1254,7 @@
 </div>
 </div>
 </div>
+
 <a class="btn btn-secondary" href="{{ url_for('dashboard', clear='true') }}" style="margin-top: 2rem;">
 <i class="fas fa-times"></i>
             Annuler
@@ -1415,6 +1264,7 @@
 {% endif %}
 
 <script>
+// Script identique à l'original mais avec optimisations pour les nouvelles couleurs
 // Variables globales pour la gestion des médias
 let currentMediaTab = 'local';
 let selectedPexelsPhotos = [];
@@ -1424,7 +1274,6 @@ let pexelsCurrentPage = 1;
 let pexelsCurrentQuery = '';
 let pexelsTotalResults = 0;
 
-// Fonction modifiée pour basculer les onglets média avec validation
 // Fonction modifiée pour basculer les onglets média avec validation
 function switchMediaTab(tab) {
     // Vérifier les conflits avant de changer d'onglet
@@ -1471,11 +1320,11 @@ function canSwitchToTab(targetTab) {
     const hasPdf = selectedPdfFile !== null;
     
     if (targetTab === 'pdf' && hasImages) {
-        return false; // Ne peut pas aller vers PDF si des images sont sélectionnées
+        return false;
     }
     
     if ((targetTab === 'local' || targetTab === 'pexels') && hasPdf) {
-        return false; // Ne peut pas aller vers images si un PDF est sélectionné
+        return false;
     }
     
     return true;
@@ -1498,504 +1347,7 @@ function hideLinkedInLimitationAlert() {
     }
 }
 
-// Validation globale des médias
-function validateMediaSelection() {
-    const hasImages = selectedLocalFiles.length > 0 || selectedPexelsPhotos.length > 0;
-    const hasPdf = selectedPdfFile !== null;
-    
-    if (hasImages && hasPdf) {
-        showLinkedInLimitationAlert();
-        return false;
-    }
-    
-    hideLinkedInLimitationAlert();
-    updateTabStates();
-    return true;
-}
-
-// Mettre à jour l'état des onglets
-function updateTabStates() {
-    const hasImages = selectedLocalFiles.length > 0 || selectedPexelsPhotos.length > 0;
-    const hasPdf = selectedPdfFile !== null;
-    
-    const pdfTab = document.querySelector('.media-tab[onclick="switchMediaTab(\'pdf\')"]');
-    const localTab = document.querySelector('.media-tab[onclick="switchMediaTab(\'local\')"]');
-    const pexelsTab = document.querySelector('.media-tab[onclick="switchMediaTab(\'pexels\')"]');
-    
-    // Désactiver l'onglet PDF si des images sont sélectionnées
-    if (hasImages) {
-        pdfTab?.classList.add('disabled');
-    } else {
-        pdfTab?.classList.remove('disabled');
-    }
-    
-    // Désactiver les onglets images si un PDF est sélectionné
-    if (hasPdf) {
-        localTab?.classList.add('disabled');
-        pexelsTab?.classList.add('disabled');
-        pdfTab?.classList.add('has-pdf');
-    } else {
-        localTab?.classList.remove('disabled');
-        pexelsTab?.classList.remove('disabled');
-        pdfTab?.classList.remove('has-pdf');
-    }
-}
-
-// Gestion du drag & drop pour les images locales
-function setupLocalImageHandlers() {
-    const fileInput = document.getElementById('images');
-    const uploadArea = document.getElementById('file-upload-area');
-    
-    if (!fileInput || !uploadArea) return;
-    
-    // Gestion du changement de fichier
-    fileInput.addEventListener('change', function(e) {
-        handleLocalFiles(e.target.files);
-    });
-    
-    // Gestion du drag & drop
-    uploadArea.addEventListener('dragover', function(e) {
-        e.preventDefault();
-        this.classList.add('dragover');
-    });
-    
-    uploadArea.addEventListener('dragleave', function(e) {
-        e.preventDefault();
-        this.classList.remove('dragover');
-    });
-    
-    uploadArea.addEventListener('drop', function(e) {
-        e.preventDefault();
-        this.classList.remove('dragover');
-        
-        const files = Array.from(e.dataTransfer.files).filter(file => file.type.startsWith('image/'));
-        handleLocalFiles(files);
-    });
-}
-
-// Fonction modifiée pour gérer les fichiers locaux
-function handleLocalFiles(files) {
-    // Vérifier s'il y a déjà un PDF sélectionné
-    if (selectedPdfFile) {
-        showLinkedInLimitationAlert();
-        return;
-    }
-    
-    // Limiter à 9 images maximum
-    const maxFiles = Math.min(files.length, 9 - selectedPexelsPhotos.length);
-    selectedLocalFiles = Array.from(files).slice(0, maxFiles);
-    
-    // Mettre à jour l'aperçu
-    updateSelectedImagesPreview();
-    validateMediaSelection();
-    
-    // Mettre à jour le texte de l'upload area
-    const uploadArea = document.getElementById('file-upload-area');
-    if (uploadArea && selectedLocalFiles.length > 0) {
-        uploadArea.innerHTML = `
-            <div class="upload-icon">
-                <i class="fas fa-check-circle" style="color: var(--gentle-success);"></i>
-            </div>
-            <div class="upload-text">${selectedLocalFiles.length} image(s) sélectionnée(s)</div>
-            <div class="upload-hint">Cliquez pour changer la sélection</div>
-        `;
-    }
-}
-
-// Gestion du PDF
-function setupPdfHandlers() {
-    const pdfInput = document.getElementById('pdf_file');
-    const uploadArea = document.getElementById('pdf-upload-area');
-    
-    if (!pdfInput || !uploadArea) return;
-    
-    // Gestion du changement de fichier
-    pdfInput.addEventListener('change', function(e) {
-        if (e.target.files.length > 0) {
-            handlePdfFile(e.target.files[0]);
-        }
-    });
-    
-    // Gestion du drag & drop
-    uploadArea.addEventListener('dragover', function(e) {
-        e.preventDefault();
-        this.classList.add('dragover');
-    });
-    
-    uploadArea.addEventListener('dragleave', function(e) {
-        e.preventDefault();
-        this.classList.remove('dragover');
-    });
-    
-    uploadArea.addEventListener('drop', function(e) {
-        e.preventDefault();
-        this.classList.remove('dragover');
-        
-        const files = Array.from(e.dataTransfer.files).filter(file => file.type === 'application/pdf');
-        if (files.length > 0) {
-            handlePdfFile(files[0]);
-        }
-    });
-}
-
-// Gérer la sélection d'un fichier PDF
-function handlePdfFile(file) {
-    // Vérifier s'il y a déjà des images sélectionnées
-    if (selectedLocalFiles.length > 0 || selectedPexelsPhotos.length > 0) {
-        showLinkedInLimitationAlert();
-        return;
-    }
-    
-    // Vérifier la taille (100 MB max)
-    const maxSize = 100 * 1024 * 1024; // 100 MB en bytes
-    if (file.size > maxSize) {
-        alert('Le fichier PDF est trop volumineux (maximum 100 MB)');
-        return;
-    }
-    
-    selectedPdfFile = file;
-    updatePdfPreview();
-    validateMediaSelection();
-}
-
-// Mettre à jour l'aperçu du PDF
-function updatePdfPreview() {
-    const preview = document.getElementById('pdf-preview');
-    const uploadArea = document.getElementById('pdf-upload-area');
-    const filename = document.getElementById('pdf-filename');
-    const filesize = document.getElementById('pdf-filesize');
-    
-    if (!preview || !uploadArea || !filename || !filesize) return;
-    
-    if (selectedPdfFile) {
-        // Afficher l'aperçu
-        preview.style.display = 'block';
-        filename.textContent = selectedPdfFile.name;
-        filesize.textContent = formatFileSize(selectedPdfFile.size);
-        
-        // Mettre à jour l'upload area
-        uploadArea.classList.add('has-file');
-        uploadArea.innerHTML = `
-            <div class="upload-icon">
-                <i class="fas fa-check-circle" style="color: var(--gentle-success);"></i>
-            </div>
-            <div class="upload-text">PDF sélectionné : ${selectedPdfFile.name}</div>
-            <div class="upload-hint">Cliquez pour changer le fichier</div>
-        `;
-    } else {
-        // Masquer l'aperçu
-        preview.style.display = 'none';
-        uploadArea.classList.remove('has-file');
-        uploadArea.innerHTML = `
-            <div class="upload-icon">
-                <i class="fas fa-file-pdf" style="color: var(--gentle-error);"></i>
-            </div>
-            <div class="upload-text">Cliquez pour sélectionner un document PDF</div>
-            <div class="upload-hint">ou glissez-déposez votre fichier ici (max 100 MB)</div>
-        `;
-    }
-}
-
-// Supprimer le fichier PDF sélectionné
-function removePdfFile() {
-    selectedPdfFile = null;
-    const pdfInput = document.getElementById('pdf_file');
-    if (pdfInput) pdfInput.value = '';
-    
-    updatePdfPreview();
-    validateMediaSelection();
-}
-
-// Formater la taille de fichier
-function formatFileSize(bytes) {
-    if (bytes === 0) return '0 Bytes';
-    const k = 1024;
-    const sizes = ['Bytes', 'KB', 'MB', 'GB'];
-    const i = Math.floor(Math.log(bytes) / Math.log(k));
-    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
-}
-
-// Recherche de photos Pexels
-async function searchPexelsPhotos(page = 1) {
-    const query = document.getElementById('pexels-search-input').value.trim();
-    
-    if (!query) {
-        showPexelsError('Veuillez entrer un terme de recherche');
-        return;
-    }
-    
-    if (query.length < 2) {
-        showPexelsError('Le terme de recherche doit contenir au moins 2 caractères');
-        return;
-    }
-    
-    // Si nouvelle recherche, réinitialiser
-    if (page === 1) {
-        pexelsCurrentQuery = query;
-        pexelsCurrentPage = 1;
-        document.getElementById('pexels-results').innerHTML = '';
-    }
-    
-    showPexelsLoading(true);
-    document.getElementById('pexels-search-btn').disabled = true;
-    
-    try {
-        const response = await fetch('/api/search_photos', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-                query: query,
-                page: page
-            })
-        });
-        
-        const data = await response.json();
-        
-        if (data.success && data.results) {
-            displayPexelsResults(data.results, page === 1);
-            pexelsTotalResults = data.results.total_results;
-            
-            // Afficher le bouton "Charger plus" si nécessaire
-            const loadMoreBtn = document.getElementById('pexels-load-more');
-            if (loadMoreBtn && data.results.next_page && data.results.photos.length > 0) {
-                loadMoreBtn.style.display = 'block';
-            } else if (loadMoreBtn) {
-                loadMoreBtn.style.display = 'none';
-            }
-        } else {
-            showPexelsError(data.error || 'Erreur lors de la recherche');
-        }
-    } catch (error) {
-        console.error('Erreur recherche Pexels:', error);
-        showPexelsError('Erreur de connexion. Veuillez réessayer.');
-    } finally {
-        showPexelsLoading(false);
-        document.getElementById('pexels-search-btn').disabled = false;
-    }
-}
-
-// Afficher les résultats Pexels
-function displayPexelsResults(results, clearPrevious = true) {
-    const container = document.getElementById('pexels-results');
-    if (!container) return;
-    
-    if (clearPrevious) {
-        container.innerHTML = '';
-    }
-    
-    results.photos.forEach(photo => {
-        const photoElement = createPexelsPhotoElement(photo);
-        container.appendChild(photoElement);
-    });
-    
-    // Animer l'apparition des nouvelles photos
-    const newPhotos = container.querySelectorAll('.pexels-photo:not(.animated)');
-    newPhotos.forEach((photo, index) => {
-        photo.classList.add('animated');
-        photo.style.opacity = '0';
-        photo.style.transform = 'translateY(20px)';
-        
-        setTimeout(() => {
-            photo.style.transition = 'all 0.6s ease';
-            photo.style.opacity = '1';
-            photo.style.transform = 'translateY(0)';
-        }, index * 100);
-    });
-}
-
-// Créer un élément photo Pexels
-function createPexelsPhotoElement(photo) {
-    const photoDiv = document.createElement('div');
-    photoDiv.className = 'pexels-photo';
-    photoDiv.dataset.photoId = photo.id;
-    
-    photoDiv.innerHTML = `
-        <img src="${photo.src.medium}" alt="${photo.alt}" loading="lazy">
-        <div class="pexels-photo-overlay">
-            <div class="pexels-photographer">Photo par ${photo.photographer}</div>
-            <button type="button" class="pexels-select-btn" onclick="togglePexelsPhoto(${photo.id}, '${encodeURIComponent(JSON.stringify(photo))}')">
-                Sélectionner
-            </button>
-        </div>
-    `;
-    
-    return photoDiv;
-}
-
-// Fonction modifiée pour basculer les photos Pexels
-function togglePexelsPhoto(photoId, encodedPhotoData) {
-    // Vérifier s'il y a déjà un PDF sélectionné
-    if (selectedPdfFile) {
-        showLinkedInLimitationAlert();
-        return;
-    }
-    
-    const photo = JSON.parse(decodeURIComponent(encodedPhotoData));
-    const photoElement = document.querySelector(`[data-photo-id="${photoId}"]`);
-    const isSelected = selectedPexelsPhotos.some(p => p.id === photoId);
-    
-    if (isSelected) {
-        // Désélectionner
-        selectedPexelsPhotos = selectedPexelsPhotos.filter(p => p.id !== photoId);
-        photoElement.classList.remove('selected');
-        photoElement.querySelector('.pexels-select-btn').textContent = 'Sélectionner';
-    } else {
-        // Vérifier la limite
-        if (selectedPexelsPhotos.length + selectedLocalFiles.length >= 9) {
-            showPexelsError('Vous ne pouvez sélectionner que 9 images maximum au total');
-            return;
-        }
-        
-        // Sélectionner
-        selectedPexelsPhotos.push(photo);
-        photoElement.classList.add('selected');
-        photoElement.querySelector('.pexels-select-btn').textContent = 'Sélectionné';
-    }
-    
-    updateSelectedImagesPreview();
-    validateMediaSelection();
-}
-
-// Charger plus de photos Pexels
-function loadMorePexelsPhotos() {
-    pexelsCurrentPage++;
-    searchPexelsPhotos(pexelsCurrentPage);
-}
-
-// Afficher le loading Pexels
-function showPexelsLoading(show) {
-    const loadingEl = document.getElementById('pexels-loading');
-    const errorEl = document.getElementById('pexels-error');
-    if (loadingEl) loadingEl.style.display = show ? 'block' : 'none';
-    if (errorEl) errorEl.style.display = 'none';
-}
-
-// Afficher une erreur Pexels
-function showPexelsError(message) {
-    const loadingEl = document.getElementById('pexels-loading');
-    const errorEl = document.getElementById('pexels-error');
-    if (loadingEl) loadingEl.style.display = 'none';
-    if (errorEl) {
-        errorEl.style.display = 'block';
-        const errorText = errorEl.querySelector('p');
-        if (errorText) errorText.textContent = message;
-    }
-}
-
-// Mettre à jour l'aperçu des images sélectionnées
-function updateSelectedImagesPreview() {
-    const totalSelected = selectedLocalFiles.length + selectedPexelsPhotos.length;
-    const previewSection = document.getElementById('selected-images-preview');
-    const grid = document.getElementById('selected-images-grid');
-    const countSpan = document.getElementById('selected-count');
-    
-    if (!previewSection || !grid || !countSpan) return;
-    
-    if (totalSelected === 0) {
-        previewSection.style.display = 'none';
-        return;
-    }
-    
-    previewSection.style.display = 'block';
-    countSpan.textContent = totalSelected;
-    grid.innerHTML = '';
-    
-    // Ajouter les images locales
-    selectedLocalFiles.forEach((file, index) => {
-        const item = createSelectedImagePreview(file, 'local', index);
-        grid.appendChild(item);
-    });
-    
-    // Ajouter les photos Pexels
-    selectedPexelsPhotos.forEach((photo, index) => {
-        const item = createSelectedImagePreview(photo, 'pexels', index);
-        grid.appendChild(item);
-    });
-}
-
-// Créer un aperçu d'image sélectionnée
-function createSelectedImagePreview(data, type, index) {
-    const itemDiv = document.createElement('div');
-    itemDiv.className = 'selected-image-item';
-    
-    let imageSrc, sourceText, removeHandler;
-    
-    if (type === 'local') {
-        imageSrc = URL.createObjectURL(data);
-        sourceText = 'Local';
-        removeHandler = `removeSelectedImage('local', ${index})`;
-    } else {
-        imageSrc = data.src.small;
-        sourceText = `Pexels - ${data.photographer}`;
-        removeHandler = `removeSelectedImage('pexels', ${index})`;
-    }
-    
-    itemDiv.innerHTML = `
-        <img src="${imageSrc}" alt="Image sélectionnée">
-        <button type="button" class="remove-image-btn" onclick="${removeHandler}">
-            <i class="fas fa-times"></i>
-        </button>
-        <div class="selected-image-source">${sourceText}</div>
-    `;
-    
-    return itemDiv;
-}
-
-// Fonction modifiée pour supprimer une image
-function removeSelectedImage(type, index) {
-    if (type === 'local') {
-        // Révoquer l'URL de l'objet pour libérer la mémoire
-        if (selectedLocalFiles[index]) {
-            URL.revokeObjectURL(URL.createObjectURL(selectedLocalFiles[index]));
-        }
-        selectedLocalFiles.splice(index, 1);
-        
-        // Mettre à jour l'input file et l'upload area
-        const fileInput = document.getElementById('images');
-        fileInput.value = '';
-        
-        if (selectedLocalFiles.length === 0) {
-            const uploadArea = document.getElementById('file-upload-area');
-            uploadArea.innerHTML = `
-                <div class="upload-icon">
-                    <i class="fas fa-cloud-upload-alt"></i>
-                </div>
-                <div class="upload-text">Cliquez pour sélectionner des images</div>
-                <div class="upload-hint">ou glissez-déposez vos fichiers ici (JPG, PNG, max 9 images)</div>
-            `;
-        }
-    } else {
-        const removedPhoto = selectedPexelsPhotos[index];
-        selectedPexelsPhotos.splice(index, 1);
-        
-        // Mettre à jour l'affichage de la photo dans la grille Pexels
-        const photoElement = document.querySelector(`[data-photo-id="${removedPhoto.id}"]`);
-        if (photoElement) {
-            photoElement.classList.remove('selected');
-            photoElement.querySelector('.pexels-select-btn').textContent = 'Sélectionner';
-        }
-    }
-    
-    updateSelectedImagesPreview();
-    validateMediaSelection();
-}
-
-// Validation avant soumission du formulaire
-function validateFormSubmission() {
-    const hasImages = selectedLocalFiles.length > 0 || selectedPexelsPhotos.length > 0;
-    const hasPdf = selectedPdfFile !== null;
-    
-    if (hasImages && hasPdf) {
-        showLinkedInLimitationAlert();
-        return false;
-    }
-    
-    return true;
-}
-
-// Gestionnaires d'événements pour la recherche Pexels avec Enter
+// Initialisation noble au chargement
 document.addEventListener('DOMContentLoaded', function() {
     // Définir la date par défaut pour le champ de programmation
     const publishTimeInput = document.getElementById('publish-time-input');
@@ -2006,96 +1358,182 @@ document.addEventListener('DOMContentLoaded', function() {
         publishTimeInput.value = formattedDate;
     }
 
-    // Configuration des gestionnaires d'images locales et PDF
-    setupLocalImageHandlers();
-    setupPdfHandlers(); // Nouvelle fonction
-    
-    // Gestionnaire pour la recherche Pexels avec Enter
-    const pexelsInput = document.getElementById('pexels-search-input');
-    if (pexelsInput) {
-        pexelsInput.addEventListener('keypress', function(e) {
-            if (e.key === 'Enter') {
-                e.preventDefault();
-                searchPexelsPhotos();
-            }
-        });
-    }
-    
-    // Suggestions de recherche Pexels
-    const searchSuggestions = [
-        'business meeting', 'technology', 'marketing', 'team work', 
-        'innovation', 'success', 'growth', 'leadership', 'strategy',
-        'digital transformation', 'productivity', 'collaboration'
-    ];
-    
-    // Ajouter des suggestions au placeholder de manière dynamique
-    let suggestionIndex = 0;
-    setInterval(() => {
-        if (pexelsInput && !pexelsInput.value && document.activeElement !== pexelsInput) {
-            pexelsInput.placeholder = `Rechercher : ${searchSuggestions[suggestionIndex]}...`;
-            suggestionIndex = (suggestionIndex + 1) % searchSuggestions.length;
-        }
-    }, 3000);
-    
-    // Configuration initiale des états des onglets
-    updateTabStates();
-});
+    // Animation progressive des éléments avec délais
+    const elements = document.querySelectorAll('.fade-in');
+    elements.forEach((el, index) => {
+        el.style.opacity = '0';
+        el.style.transform = 'translateY(20px)';
+        el.style.transition = 'all 0.8s cubic-bezier(0.4, 0, 0.2, 1)';
+        
+        setTimeout(() => {
+            el.style.opacity = '1';
+            el.style.transform = 'translateY(0)';
+        }, index * 200);
+    });
 
-// Modification de la soumission du formulaire pour inclure les photos Pexels et validation
-document.addEventListener('DOMContentLoaded', function() {
-    const form = document.querySelector('form[action="/publish"]');
-    if (form) {
-        form.addEventListener('submit', function(e) {
-            // Validation avant soumission
-            if (!validateFormSubmission()) {
-                e.preventDefault();
-                return false;
-            }
-            
-            // Ajouter les photos Pexels sélectionnées au formulaire
-            selectedPexelsPhotos.forEach((photo, index) => {
-                const input = document.createElement('input');
-                input.type = 'hidden';
-                input.name = 'pexels_photos[]';
-                input.value = JSON.stringify(photo);
-                form.appendChild(input);
-            });
-        });
-    }
-});
+    // Animation des cartes statistiques
+    document.querySelectorAll('.stat-item').forEach((card, index) => {
+        card.style.opacity = '0';
+        card.style.transform = 'translateY(30px) scale(0.95)';
+        card.style.transition = 'all 0.6s cubic-bezier(0.4, 0, 0.2, 1)';
+        
+        setTimeout(() => {
+            card.style.opacity = '1';
+            card.style.transform = 'translateY(0) scale(1)';
+        }, index * 150);
+    });
 
-// Animation noble des onglets média
-document.addEventListener('DOMContentLoaded', function() {
-    document.querySelectorAll('.media-tab').forEach(tab => {
-        tab.addEventListener('mouseenter', function() {
-            if (!this.classList.contains('active') && !this.classList.contains('disabled')) {
+    // Interactions nobles sur tous les boutons
+    document.querySelectorAll('.btn, .media-tab, .linkedin-action').forEach(btn => {
+        btn.addEventListener('mouseenter', function() {
+            if (!this.disabled) {
                 this.style.transform = 'translateY(-1px)';
+                if (this.classList.contains('btn-primary')) {
+                    this.style.boxShadow = '0 8px 25px rgba(255, 107, 107, 0.4)';
+                }
             }
         });
         
-        tab.addEventListener('mouseleave', function() {
-            if (!this.classList.contains('active')) {
+        btn.addEventListener('mouseleave', function() {
+            if (!this.disabled) {
                 this.style.transform = 'translateY(0)';
+                this.style.boxShadow = '';
+            }
+        });
+
+        btn.addEventListener('mousedown', function() {
+            if (!this.disabled) {
+                this.style.transform = 'translateY(0) scale(0.98)';
+            }
+        });
+
+        btn.addEventListener('mouseup', function() {
+            if (!this.disabled) {
+                this.style.transform = 'translateY(-1px) scale(1)';
             }
         });
     });
-    
-    // Animation des photos Pexels au hover
-    document.addEventListener('mouseover', function(e) {
-        if (e.target.closest('.pexels-photo')) {
-            const photo = e.target.closest('.pexels-photo');
-            photo.style.transform = 'translateY(-2px) scale(1.02)';
-        }
+
+    // Animation spéciale pour les icônes nobles
+    document.querySelectorAll('.icon-noble').forEach(icon => {
+        icon.addEventListener('mouseenter', function() {
+            this.style.transform = 'scale(1.2) rotate(5deg)';
+            this.style.filter = 'drop-shadow(0 0 8px rgba(255, 107, 107, 0.5))';
+        });
+        
+        icon.addEventListener('mouseleave', function() {
+            this.style.transform = 'scale(1) rotate(0deg)';
+            this.style.filter = 'drop-shadow(0 0 3px rgba(255, 107, 107, 0.3))';
+        });
     });
+
+    // Animation du contenu LinkedIn en temps réel
+    const textarea = document.getElementById('post-content');
+    const previewText = document.getElementById('preview-text');
     
-    document.addEventListener('mouseout', function(e) {
-        if (e.target.closest('.pexels-photo')) {
-            const photo = e.target.closest('.pexels-photo');
-            if (!photo.classList.contains('selected')) {
-                photo.style.transform = 'translateY(0) scale(1)';
+    if (textarea && previewText) {
+        function updatePreview() {
+            const content = textarea.value;
+            if (content.trim()) {
+                previewText.textContent = content;
+                previewText.classList.remove('empty');
+            } else {
+                previewText.textContent = 'Votre contenu apparaîtra ici...';
+                previewText.classList.add('empty');
             }
+        }
+        
+        textarea.addEventListener('input', updatePreview);
+        textarea.addEventListener('paste', function() {
+            setTimeout(updatePreview, 50);
+        });
+        
+        // Mise à jour initiale
+        updatePreview();
+    }
+
+    // Animation noble pour le badge de succès
+    const successBadge = document.querySelector('.success-badge');
+    if (successBadge) {
+        setInterval(() => {
+            successBadge.style.transform = 'scale(1.05)';
+            setTimeout(() => {
+                successBadge.style.transform = 'scale(1)';
+            }, 200);
+        }, 3000);
+    }
+
+    // Effet de parallaxe léger sur les éléments ::before
+    window.addEventListener('scroll', function() {
+        const scrolled = window.pageYOffset;
+        const sections = document.querySelectorAll('.welcome-section, .creation-section');
+        
+        sections.forEach(section => {
+            const before = section.querySelector('::before');
+            if (before) {
+                section.style.transform = `translateY(${scrolled * 0.1}px)`;
+            }
+        });
+    });
+
+    // Gestion noble du responsive
+    function handleResponsive() {
+        const isMobile = window.innerWidth <= 768;
+        if (isMobile) {
+            document.querySelectorAll('.form-row').forEach(row => {
+                row.style.gridTemplateColumns = '1fr';
+            });
+        }
+    }
+    
+    window.addEventListener('resize', handleResponsive);
+    handleResponsive();
+
+    // Initialisation des éditeurs de mentions
+    const editors = document.querySelectorAll('.mention-editor');
+    editors.forEach(editor => {
+        // Ici vous pouvez ajouter la logique des mentions si nécessaire
+    });
+});
+
+// Animation noble des nombres qui montent
+function animateCounter(element, finalValue) {
+    const startValue = 0;
+    const duration = 1000;
+    const startTime = performance.now();
+    
+    function updateCounter(currentTime) {
+        const elapsed = currentTime - startTime;
+        const progress = Math.min(elapsed / duration, 1);
+        
+        const currentValue = Math.floor(startValue + (finalValue - startValue) * progress);
+        element.textContent = currentValue;
+        
+        if (progress < 1) {
+            requestAnimationFrame(updateCounter);
+        } else {
+            element.style.transform = 'scale(1.1)';
+            setTimeout(() => {
+                element.style.transform = 'scale(1)';
+            }, 200);
+        }
+    }
+    
+    requestAnimationFrame(updateCounter);
+}
+
+// Animation des statistiques au chargement
+window.addEventListener('load', function() {
+    document.querySelectorAll('.stat-number').forEach(stat => {
+        const value = parseInt(stat.textContent) || 0;
+        if (value > 0) {
+            stat.textContent = '0';
+            setTimeout(() => {
+                animateCounter(stat, value);
+            }, 1000);
         }
     });
 });
 </script>
+
 {% endblock %}
