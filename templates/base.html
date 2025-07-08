@@ -1,12 +1,13 @@
 <!DOCTYPE html>
+
 <html lang="fr">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{ title or "ResoBoost" }}</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Crimson+Text:wght@400;600&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <style>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>{{ title or "ResoBoost" }}</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&amp;family=Crimson+Text:wght@400;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet"/>
+<style>
         /* Nouvelle palette vibrante inspirée des designs modernes */
         :root {
             /* Couleurs principales - tons vibrants et dynamiques */
@@ -56,19 +57,33 @@
             box-sizing: border-box;
         }
 
-        html, body {
-            height: 100%;
-            width: 100%;
-            overflow-x: hidden;
-        }
+        html, 
+body {
+    background: linear-gradient(135deg, 
+        #fe7c4d 0%, 
+        #ef87f5 25%, 
+        #a37dfc 50%, 
+        #6a71e3 75%, 
+        #ffb5e8 100%);
+    background-attachment: fixed;
+    color: var(--noble-charcoal);
+    line-height: 1.7;
+}
 
-        body {
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-            background: var(--noble-cream);
-            color: var(--noble-charcoal);
-            line-height: 1.7;
-            position: relative;
-        }
+
+        
+body {
+    background: linear-gradient(135deg, 
+        #fe7c4d 0%, 
+        #ef87f5 25%, 
+        #a37dfc 50%, 
+        #6a71e3 75%, 
+        #ffb5e8 100%);
+    background-attachment: fixed;
+    color: var(--noble-charcoal);
+    line-height: 1.7;
+}
+
 
         /* Effet de texture vibrante en arrière-plan */
         body::before {
@@ -767,96 +782,84 @@
     </style>
 </head>
 <body>
-    <!-- Overlay pour mobile -->
-    <div class="sidebar-overlay" id="sidebar-overlay" onclick="toggleSidebar()"></div>
-
-    <!-- Bouton toggle pour la sidebar -->
-    <button class="sidebar-toggle" id="sidebar-toggle" onclick="toggleSidebar()">
-        <div class="toggle-line"></div>
-        <div class="toggle-line"></div>
-        <div class="toggle-line"></div>
-    </button>
-
-    <div class="app-container">
-        <!-- Sidebar noble -->
-        <aside class="sidebar" id="sidebar">
-            <div class="sidebar-header">
-                <div class="logo-container">
-                    <div class="logo-icon">
-                        <i class="fab fa-linkedin-in"></i>
-                    </div>
-                    <div class="logo-text">ResoBoost</div>
-                </div>
-            </div>
-
-            <nav class="nav-menu">
-                <div class="nav-main">
-                    <div class="nav-item">
-                        <a href="{{ url_for('dashboard') }}" 
-                           class="nav-link {% if request.endpoint == 'dashboard' %}active{% endif %}">
-                            <i class="fas fa-home nav-icon"></i>
-                            <span class="nav-text">Accueil</span>
-                        </a>
-                    </div>
-                    <div class="nav-item">
-                        <a href="{{ url_for('news_assistant') }}" 
-                           class="nav-link {% if request.endpoint == 'news_assistant' %}active{% endif %}">
-                            <i class="fas fa-newspaper nav-icon"></i>
-                            <span class="nav-text">Actualités</span>
-                        </a>
-                    </div>
-                    <div class="nav-item">
-                        <a href="{{ url_for('calendar') }}" 
-                           class="nav-link {% if request.endpoint == 'calendar' %}active{% endif %}">
-                            <i class="fas fa-calendar-alt nav-icon"></i>
-                            <span class="nav-text">Calendrier</span>
-                        </a>
-                    </div>
-                    <div class="nav-item">
-                        <a href="{{ url_for('historique') }}" 
-                           class="nav-link {% if request.endpoint == 'historique' %}active{% endif %}">
-                            <i class="fas fa-archive nav-icon"></i>
-                            <span class="nav-text">Historique</span>
-                        </a>
-                    </div>
-                    <div class="nav-item">
-                        <a href="{{ url_for('profil') }}" 
-                           class="nav-link {% if request.endpoint == 'profil' %}active{% endif %}">
-                            <i class="fas fa-user-circle nav-icon"></i>
-                            <span class="nav-text">Profil</span>
-                        </a>
-                    </div>
-                    <div class="nav-item">
-                        <a href="{{ url_for('parametres') }}" 
-                           class="nav-link {% if request.endpoint == 'parametres' %}active{% endif %}">
-                            <i class="fas fa-cog nav-icon"></i>
-                            <span class="nav-text">Paramètres</span>
-                        </a>
-                    </div>
-                </div>
-                
-                <!-- Section déconnexion en bas -->
-                <div class="nav-bottom">
-                    <div class="nav-item">
-                        <a href="{{ url_for('logout') }}" class="nav-link danger">
-                            <i class="fas fa-sign-out-alt nav-icon"></i>
-                            <span class="nav-text">Déconnexion</span>
-                        </a>
-                    </div>
-                </div>
-            </nav>
-        </aside>
-
-        <!-- Contenu principal -->
-        <main class="main-content" id="main-content">
-            <div class="content-wrapper">
+<!-- Overlay pour mobile -->
+<div class="sidebar-overlay" id="sidebar-overlay" onclick="toggleSidebar()"></div>
+<!-- Bouton toggle pour la sidebar -->
+<button class="sidebar-toggle" id="sidebar-toggle" onclick="toggleSidebar()">
+<div class="toggle-line"></div>
+<div class="toggle-line"></div>
+<div class="toggle-line"></div>
+</button>
+<div class="app-container">
+<!-- Sidebar noble -->
+<aside class="sidebar" id="sidebar">
+<div class="sidebar-header">
+<div class="logo-container">
+<div class="logo-icon">
+<i class="fab fa-linkedin-in"></i>
+</div>
+<div class="logo-text">ResoBoost</div>
+</div>
+</div>
+<nav class="nav-menu">
+<div class="nav-main">
+<div class="nav-item">
+<a class="nav-link {% if request.endpoint == 'dashboard' %}active{% endif %}" href="{{ url_for('dashboard') }}">
+<i class="fas fa-home nav-icon"></i>
+<span class="nav-text">Accueil</span>
+</a>
+</div>
+<div class="nav-item">
+<a class="nav-link {% if request.endpoint == 'news_assistant' %}active{% endif %}" href="{{ url_for('news_assistant') }}">
+<i class="fas fa-newspaper nav-icon"></i>
+<span class="nav-text">Actualités</span>
+</a>
+</div>
+<div class="nav-item">
+<a class="nav-link {% if request.endpoint == 'calendar' %}active{% endif %}" href="{{ url_for('calendar') }}">
+<i class="fas fa-calendar-alt nav-icon"></i>
+<span class="nav-text">Calendrier</span>
+</a>
+</div>
+<div class="nav-item">
+<a class="nav-link {% if request.endpoint == 'historique' %}active{% endif %}" href="{{ url_for('historique') }}">
+<i class="fas fa-archive nav-icon"></i>
+<span class="nav-text">Historique</span>
+</a>
+</div>
+<div class="nav-item">
+<a class="nav-link {% if request.endpoint == 'profil' %}active{% endif %}" href="{{ url_for('profil') }}">
+<i class="fas fa-user-circle nav-icon"></i>
+<span class="nav-text">Profil</span>
+</a>
+</div>
+<div class="nav-item">
+<a class="nav-link {% if request.endpoint == 'parametres' %}active{% endif %}" href="{{ url_for('parametres') }}">
+<i class="fas fa-cog nav-icon"></i>
+<span class="nav-text">Paramètres</span>
+</a>
+</div>
+</div>
+<!-- Section déconnexion en bas -->
+<div class="nav-bottom">
+<div class="nav-item">
+<a class="nav-link danger" href="{{ url_for('logout') }}">
+<i class="fas fa-sign-out-alt nav-icon"></i>
+<span class="nav-text">Déconnexion</span>
+</a>
+</div>
+</div>
+</nav>
+</aside>
+<!-- Contenu principal -->
+<main class="main-content" id="main-content">
+<div class="content-wrapper">
                 {% block content %}{% endblock %}
             </div>
-        </main>
-    </div>
-
-    <!-- Scripts corrigés -->
-    <script>
+</main>
+</div>
+<!-- Scripts corrigés -->
+<script>
         // Variable pour l'état de la sidebar
         let sidebarCollapsed = false;
         let lastWindowWidth = window.innerWidth;
