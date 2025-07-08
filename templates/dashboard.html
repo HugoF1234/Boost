@@ -2,35 +2,44 @@
 {% block content %}
 <style>
     /* Variables nobles et apaisantes */
-    :root {
-        --noble-cream: #fff5f7; /* Fond légèrement rosé */
-        --noble-warm: #fde2e4;  /* Rose pâle chaleureux */
-        --noble-sage: #ff6ac1; /* Rose fuchsia / accent principal */
-        --noble-sage-light: #ff92df;
-        --noble-sage-dark: #e041a1;
     
-        --noble-stone: #ffd6e0; /* Rose très pâle */
-        --noble-charcoal: #2b0a3d; /* Violet foncé élégant */
-        --noble-charcoal-light: #6e3f78;
-        --noble-mist: #fff0fb; /* Lueur rosée légère */
-        --noble-accent: #ff5e5b; /* Rouge corail */
-        --noble-accent-light: #ff927f; /* Corail clair */
-    
-        --gentle-success: #6edb8f; /* vert pastel */
-        --gentle-warning: #ffc857; /* jaune pastel */
-        --gentle-info: #7f9cf5; /* bleu lavande */
-        --gentle-error: #f56c6c; /* rouge doux */
-    
-        --shadow-whisper: 0 2px 12px rgba(255, 106, 193, 0.1);
-        --shadow-gentle: 0 4px 20px rgba(255, 106, 193, 0.2);
-        --shadow-soft: 0 8px 32px rgba(255, 106, 193, 0.3);
-    }
+:root {
+    --noble-cream: #fff0f5;
+    --noble-warm: #ffd6ec;
+    --noble-sage: #f72585;
+    --noble-sage-light: #ff85b3;
+    --noble-sage-dark: #c9184a;
+    --noble-stone: #ffe3f1;
+    --noble-charcoal: #2d033b;
+    --noble-charcoal-light: #6a0572;
+    --noble-mist: #ffeaf6;
+    --noble-accent: #fb5607;
+    --noble-accent-light: #ff9e00;
 
-    body {
-        background: var(--noble-cream);
-        color: var(--noble-charcoal);
-        line-height: 1.7;
-    }
+    --gentle-success: #00f5d4;
+    --gentle-warning: #ffbe0b;
+    --gentle-info: #3a86ff;
+    --gentle-error: #ff006e;
+
+    --shadow-whisper: 0 2px 12px rgba(247, 37, 133, 0.08);
+    --shadow-gentle: 0 4px 20px rgba(255, 94, 148, 0.12);
+    --shadow-soft: 0 8px 32px rgba(255, 94, 148, 0.16);
+}
+
+
+    
+body {
+    background: linear-gradient(135deg, 
+        #fe7c4d 0%, 
+        #ef87f5 25%, 
+        #a37dfc 50%, 
+        #6a71e3 75%, 
+        #ffb5e8 100%);
+    background-attachment: fixed;
+    color: var(--noble-charcoal);
+    line-height: 1.7;
+}
+
 
     /* Header noble et accueillant */
     .welcome-section {
@@ -1046,187 +1055,175 @@
         background: rgba(196, 144, 144, 0.1) !important;
     }
 </style>
-
 <!-- Section d'accueil noble -->
 <div class="welcome-section fade-in">
-    <div class="welcome-content">
-        <div>
-            <h1 class="greeting">Bienvenue, {{ first_name }} 🌿</h1>
-            <p class="greeting-subtitle">{{ name }} | {{ email }}</p>
-        </div>
+<div class="welcome-content">
+<div>
+<h1 class="greeting">Bienvenue, {{ first_name }} 🌿</h1>
+<p class="greeting-subtitle">{{ name }} | {{ email }}</p>
+</div>
         {% if article_success %}
         <div class="success-badge">
-            <i class="fas fa-check-circle"></i>
+<i class="fas fa-check-circle"></i>
             Article sélectionné avec succès !
         </div>
         {% endif %}
     </div>
-    <div class="user-stats">
-        <div class="stat-item">
-            <span class="stat-number">{{ scheduled_posts }}</span>
-            <span class="stat-label">En attente</span>
-        </div>
-        <div class="stat-item">
-            <span class="stat-number">{{ posts|length if posts else 0 }}</span>
-            <span class="stat-label">Total posts</span>
-        </div>
-        <div class="stat-item">
-            <span class="stat-number">100%</span>
-            <span class="stat-label">Succès</span>
-        </div>
-    </div>
+<div class="user-stats">
+<div class="stat-item">
+<span class="stat-number">{{ scheduled_posts }}</span>
+<span class="stat-label">En attente</span>
 </div>
-
+<div class="stat-item">
+<span class="stat-number">{{ posts|length if posts else 0 }}</span>
+<span class="stat-label">Total posts</span>
+</div>
+<div class="stat-item">
+<span class="stat-number">100%</span>
+<span class="stat-label">Succès</span>
+</div>
+</div>
+</div>
 <!-- Section pour l'article sélectionné -->
 {% if selected_article %}
 <div class="creation-section fade-in">
-    <div class="section-header">
-        <h2 class="section-title">
-            <i class="fas fa-feather-alt icon-noble"></i>
+<div class="section-header">
+<h2 class="section-title">
+<i class="fas fa-feather-alt icon-noble"></i>
             Créer à partir de votre article
         </h2>
-        <p class="section-subtitle">Transformons cette actualité en contenu engageant qui reflète votre expertise</p>
-    </div>
-
-    <div class="selected-article">
-        <h3 class="article-title">{{ selected_article.title|clean_html }}</h3>
-        <p class="article-description">{{ selected_article.description|clean_html }}</p>
-        <div class="article-meta">
-            <div>
-                <i class="fas fa-globe icon-noble"></i>
-                <a href="{{ selected_article.url }}" target="_blank" style="color: var(--noble-sage); text-decoration: none; font-weight: 500;">
+<p class="section-subtitle">Transformons cette actualité en contenu engageant qui reflète votre expertise</p>
+</div>
+<div class="selected-article">
+<h3 class="article-title">{{ selected_article.title|clean_html }}</h3>
+<p class="article-description">{{ selected_article.description|clean_html }}</p>
+<div class="article-meta">
+<div>
+<i class="fas fa-globe icon-noble"></i>
+<a href="{{ selected_article.url }}" style="color: var(--noble-sage); text-decoration: none; font-weight: 500;" target="_blank">
                     {{ selected_article.source.name }}
                 </a>
-            </div>
-            <div>
-                <i class="fas fa-calendar icon-noble"></i>
+</div>
+<div>
+<i class="fas fa-calendar icon-noble"></i>
                 {{ selected_article.formatted_date }}
             </div>
-        </div>
-    </div>
-    
-    <form method="post">
-        <div class="form-group">
-            <label class="form-label">
-                <i class="fas fa-magic icon-noble"></i>
+</div>
+</div>
+<form method="post">
+<div class="form-group">
+<label class="form-label">
+<i class="fas fa-magic icon-noble"></i>
                 Instructions personnalisées (optionnel)
             </label>
-            <textarea name="custom_instructions" class="form-control textarea-control" 
-                      placeholder="Partagez votre perspective unique sur ce sujet. Par exemple : 'En tant qu'expert en transformation digitale, j'aimerais mettre l'accent sur les défis d'adoption dans les PME...'"></textarea>
-            <div class="mention-tip">
-                <i class="fas fa-lightbulb icon-noble"></i>
-                <span>Personnalisez votre post avec vos propres instructions. Laissez vide pour utiliser les paramètres par défaut.</span>
-            </div>
-        </div>
-
-        <div class="form-row">
-            <div class="form-group">
-                <label class="form-label">Ton du post</label>
-                <select name="tone" class="form-control">
-                    <option value="professionnel">Professionnel bienveillant</option>
-                    <option value="familier">Conversationnel</option>
-                    <option value="inspirant">Inspirant</option>
-                    <option value="humoristique">Décontracté</option>
-                    <option value="factuel">Pédagogique</option>
-                    <option value="critique">Analytique</option>
-                </select>
-            </div>
-            
-            <div class="form-group">
-                <label class="form-label">Perspective</label>
-                <select name="perspective" class="form-control">
-                    <option value="neutre">Neutre</option>
-                    <option value="enthousiaste">Enthousiaste</option>
-                    <option value="analytique">Analytique</option>
-                    <option value="innovant">Innovateur</option>
-                    <option value="expert">Expert du domaine</option>
-                </select>
-            </div>
-            
-            <button type="submit" name="generate_from_article" class="btn btn-primary">
-                <i class="fas fa-magic"></i>
+<textarea class="form-control textarea-control" name="custom_instructions" placeholder="Partagez votre perspective unique sur ce sujet. Par exemple : 'En tant qu'expert en transformation digitale, j'aimerais mettre l'accent sur les défis d'adoption dans les PME...'"></textarea>
+<div class="mention-tip">
+<i class="fas fa-lightbulb icon-noble"></i>
+<span>Personnalisez votre post avec vos propres instructions. Laissez vide pour utiliser les paramètres par défaut.</span>
+</div>
+</div>
+<div class="form-row">
+<div class="form-group">
+<label class="form-label">Ton du post</label>
+<select class="form-control" name="tone">
+<option value="professionnel">Professionnel bienveillant</option>
+<option value="familier">Conversationnel</option>
+<option value="inspirant">Inspirant</option>
+<option value="humoristique">Décontracté</option>
+<option value="factuel">Pédagogique</option>
+<option value="critique">Analytique</option>
+</select>
+</div>
+<div class="form-group">
+<label class="form-label">Perspective</label>
+<select class="form-control" name="perspective">
+<option value="neutre">Neutre</option>
+<option value="enthousiaste">Enthousiaste</option>
+<option value="analytique">Analytique</option>
+<option value="innovant">Innovateur</option>
+<option value="expert">Expert du domaine</option>
+</select>
+</div>
+<button class="btn btn-primary" name="generate_from_article" type="submit">
+<i class="fas fa-magic"></i>
                 Créer mon contenu
             </button>
-        </div>
-    </form>
-    
-    <a href="{{ url_for('dashboard', clear='true') }}" class="btn btn-secondary" style="margin-top: 1rem;">
-        <i class="fas fa-times"></i>
+</div>
+</form>
+<a class="btn btn-secondary" href="{{ url_for('dashboard', clear='true') }}" style="margin-top: 1rem;">
+<i class="fas fa-times"></i>
         Annuler
     </a>
 </div>
 {% else %}
 <!-- Section de génération de post standard -->
 <div class="creation-section fade-in">
-    <div class="section-header">
-        <h2 class="section-title">
-            <i class="fas fa-pen-fancy icon-noble"></i>
+<div class="section-header">
+<h2 class="section-title">
+<i class="fas fa-pen-fancy icon-noble"></i>
             Créer un nouveau post
         </h2>
-        <p class="section-subtitle">Utilisez l'IA pour créer rapidement un contenu authentique et engageant pour votre audience LinkedIn</p>
-    </div>
-    
-    <form method="post">
-        <div class="form-row">
-            <div class="form-group">
-                <label class="form-label">Sujet de votre post</label>
-                <input type="text" name="prompt" class="form-control" placeholder="Ex: Partagez des conseils sur le leadership, Annoncez votre nouvel article..." required>
-            </div>
-            <div class="form-group">
-                <label class="form-label">Ton de voix</label>
-                <select name="tone" class="form-control">
-                    <option value="professionnel">Professionnel bienveillant</option>
-                    <option value="familier">Conversationnel</option>
-                    <option value="inspirant">Inspirant</option>
-                    <option value="humoristique">Décontracté</option>
-                    <option value="factuel">Pédagogique</option>
-                </select>
-            </div>
-            <button type="submit" class="btn btn-primary">
-                <i class="fas fa-magic"></i>
+<p class="section-subtitle">Utilisez l'IA pour créer rapidement un contenu authentique et engageant pour votre audience LinkedIn</p>
+</div>
+<form method="post">
+<div class="form-row">
+<div class="form-group">
+<label class="form-label">Sujet de votre post</label>
+<input class="form-control" name="prompt" placeholder="Ex: Partagez des conseils sur le leadership, Annoncez votre nouvel article..." required="" type="text"/>
+</div>
+<div class="form-group">
+<label class="form-label">Ton de voix</label>
+<select class="form-control" name="tone">
+<option value="professionnel">Professionnel bienveillant</option>
+<option value="familier">Conversationnel</option>
+<option value="inspirant">Inspirant</option>
+<option value="humoristique">Décontracté</option>
+<option value="factuel">Pédagogique</option>
+</select>
+</div>
+<button class="btn btn-primary" type="submit">
+<i class="fas fa-magic"></i>
                 Créer
             </button>
-        </div>
-    </form>
-    
-    <a href="{{ url_for('news_assistant') }}" class="news-invitation">
-        <div class="news-icon">
-            <i class="fas fa-newspaper"></i>
-        </div>
-        <div class="news-content">
-            <h3 class="news-title">Créer un post basé sur l'actualité</h3>
-            <p class="news-subtitle">Inspirez-vous des sujets tendances de votre secteur</p>
-        </div>
-        <div class="news-arrow">
-            <i class="fas fa-arrow-right"></i>
-        </div>
-    </a>
+</div>
+</form>
+<a class="news-invitation" href="{{ url_for('news_assistant') }}">
+<div class="news-icon">
+<i class="fas fa-newspaper"></i>
+</div>
+<div class="news-content">
+<h3 class="news-title">Créer un post basé sur l'actualité</h3>
+<p class="news-subtitle">Inspirez-vous des sujets tendances de votre secteur</p>
+</div>
+<div class="news-arrow">
+<i class="fas fa-arrow-right"></i>
+</div>
+</a>
 </div>
 {% endif %}
 
 {% if draft %}
 <div class="generated-content fade-in">
-    <div class="section-header">
-        <div style="display: flex; justify-content: space-between; align-items: center;">
-            <div>
-                <h2 class="section-title">
-                    <i class="fas fa-edit icon-noble"></i>
+<div class="section-header">
+<div style="display: flex; justify-content: space-between; align-items: center;">
+<div>
+<h2 class="section-title">
+<i class="fas fa-edit icon-noble"></i>
                     Votre contenu personnalisé
                 </h2>
-                <p class="section-subtitle">Relisez et ajustez votre message avant publication</p>
-            </div>
-            <div class="success-badge">
-                <i class="fas fa-circle-check"></i> 
+<p class="section-subtitle">Relisez et ajustez votre message avant publication</p>
+</div>
+<div class="success-badge">
+<i class="fas fa-circle-check"></i> 
                 Post généré avec succès
             </div>
-        </div>
-    </div>
-    
-    <!-- Aperçu LinkedIn dynamique -->
-    <div class="linkedin-post" id="linkedin-preview">
-        <div class="linkedin-header">
+</div>
+</div>
+<!-- Aperçu LinkedIn dynamique -->
+<div class="linkedin-post" id="linkedin-preview">
+<div class="linkedin-header">
             {% if picture %}
-                <img src="{{ picture }}" alt="Photo de profil" class="linkedin-avatar" id="preview-avatar">
+                <img alt="Photo de profil" class="linkedin-avatar" id="preview-avatar" src="{{ picture }}"/>
             {% else %}
                 <div class="linkedin-avatar-placeholder" id="preview-avatar">
                     {{ first_name[0]|upper if first_name else 'U' }}
@@ -1234,7 +1231,7 @@
             {% endif %}
             
             <div class="linkedin-user-info">
-                <div class="linkedin-name" id="preview-name">
+<div class="linkedin-name" id="preview-name">
                     {% if first_name and last_name %}
                         {{ first_name }} {{ last_name }}
                     {% elif name %}
@@ -1243,210 +1240,192 @@
                         Utilisateur ResoBoost
                     {% endif %}
                 </div>
-                <div class="linkedin-subline" id="preview-role">
+<div class="linkedin-subline" id="preview-role">
                     {% if secteur %}
                         {{ secteur|title }} • ResoBoost
                     {% else %}
                         Professionnel LinkedIn • ResoBoost
                     {% endif %}
                 </div>
-                <div class="linkedin-date">
-                    <i class="fas fa-globe-europe"></i>
+<div class="linkedin-date">
+<i class="fas fa-globe-europe"></i>
                     il y a quelques instants
                 </div>
-            </div>
-        </div>
-        
-        <div class="linkedin-text" id="preview-text">{{ draft | safe }}</div>
-        
-        <div class="linkedin-actions">
-            <div class="linkedin-action">
-                <i class="far fa-thumbs-up"></i>
-                <span>J'aime</span>
-            </div>
-            <div class="linkedin-action">
-                <i class="far fa-comment"></i>
-                <span>Commenter</span>
-            </div>
-            <div class="linkedin-action">
-                <i class="fas fa-share"></i>
-                <span>Partager</span>
-            </div>
-            <div class="linkedin-action">
-                <i class="fas fa-paper-plane"></i>
-                <span>Envoyer</span>
-            </div>
-        </div>
-    </div>
-
-    <form method="post" action="{{ url_for('publish') }}" enctype="multipart/form-data">
-        <div class="form-group">
-            <label class="form-label">Contenu de votre post</label>
-            <textarea name="post_content" class="form-control textarea-control" rows="8" required id="post-content">{{ draft }}</textarea>
-        </div>
-        
-        <!-- Section de sélection des photos - Intégration Pexels -->
-        <div class="media-section">
-            <h3 style="color: var(--noble-charcoal); margin-bottom: 1rem; display: flex; align-items: center; gap: 0.75rem;">
-                <i class="fas fa-paperclip icon-noble"></i>
+</div>
+</div>
+<div class="linkedin-text" id="preview-text">{{ draft | safe }}</div>
+<div class="linkedin-actions">
+<div class="linkedin-action">
+<i class="far fa-thumbs-up"></i>
+<span>J'aime</span>
+</div>
+<div class="linkedin-action">
+<i class="far fa-comment"></i>
+<span>Commenter</span>
+</div>
+<div class="linkedin-action">
+<i class="fas fa-share"></i>
+<span>Partager</span>
+</div>
+<div class="linkedin-action">
+<i class="fas fa-paper-plane"></i>
+<span>Envoyer</span>
+</div>
+</div>
+</div>
+<form action="{{ url_for('publish') }}" enctype="multipart/form-data" method="post">
+<div class="form-group">
+<label class="form-label">Contenu de votre post</label>
+<textarea class="form-control textarea-control" id="post-content" name="post_content" required="" rows="8">{{ draft }}</textarea>
+</div>
+<!-- Section de sélection des photos - Intégration Pexels -->
+<div class="media-section">
+<h3 style="color: var(--noble-charcoal); margin-bottom: 1rem; display: flex; align-items: center; gap: 0.75rem;">
+<i class="fas fa-paperclip icon-noble"></i>
                 Ajouter des fichiers
             </h3>
-            
-            <!-- Alerte de limitation LinkedIn -->
-            <div class="linkedin-limitation-alert" id="linkedin-limitation-alert" style="display: none;">
-                <div style="background: rgba(196, 144, 144, 0.1); border: 1px solid var(--gentle-error); border-radius: 12px; padding: 1rem; margin-bottom: 1.5rem; display: flex; align-items: center; gap: 0.75rem;">
-                    <i class="fas fa-exclamation-triangle" style="color: var(--gentle-error); font-size: 1.2rem;"></i>
-                    <div>
-                        <strong style="color: var(--gentle-error);">Limitation LinkedIn :</strong>
-                        <span style="color: var(--noble-charcoal-light);">Vous ne pouvez pas joindre à la fois des images et un PDF. Veuillez choisir l'un ou l'autre.</span>
-                    </div>
-                </div>
-            </div>
-            
-            <div class="media-tabs">
-                <button type="button" class="media-tab active" onclick="switchMediaTab('local')">
-                    <i class="fas fa-upload"></i>
+<!-- Alerte de limitation LinkedIn -->
+<div class="linkedin-limitation-alert" id="linkedin-limitation-alert" style="display: none;">
+<div style="background: rgba(196, 144, 144, 0.1); border: 1px solid var(--gentle-error); border-radius: 12px; padding: 1rem; margin-bottom: 1.5rem; display: flex; align-items: center; gap: 0.75rem;">
+<i class="fas fa-exclamation-triangle" style="color: var(--gentle-error); font-size: 1.2rem;"></i>
+<div>
+<strong style="color: var(--gentle-error);">Limitation LinkedIn :</strong>
+<span style="color: var(--noble-charcoal-light);">Vous ne pouvez pas joindre à la fois des images et un PDF. Veuillez choisir l'un ou l'autre.</span>
+</div>
+</div>
+</div>
+<div class="media-tabs">
+<button class="media-tab active" onclick="switchMediaTab('local')" type="button">
+<i class="fas fa-upload"></i>
                     Images locales
                 </button>
-                <button type="button" class="media-tab" onclick="switchMediaTab('pexels')">
-                    <i class="fas fa-search"></i>
+<button class="media-tab" onclick="switchMediaTab('pexels')" type="button">
+<i class="fas fa-search"></i>
                     Photos Pexels
                 </button>
-                <button type="button" class="media-tab" onclick="switchMediaTab('pdf')">
-                    <i class="fas fa-file-pdf"></i>
+<button class="media-tab" onclick="switchMediaTab('pdf')" type="button">
+<i class="fas fa-file-pdf"></i>
                     Document PDF
                 </button>
-            </div>
-            
-            <!-- Section images locales (existante) -->
-            <div class="local-images-section active" id="local-images-section">
-                <div class="file-upload-area" onclick="document.getElementById('images').click()" id="file-upload-area">
-                    <div class="upload-icon">
-                        <i class="fas fa-cloud-upload-alt"></i>
-                    </div>
-                    <div class="upload-text">Cliquez pour sélectionner des images</div>
-                    <div class="upload-hint">ou glissez-déposez vos fichiers ici (JPG, PNG, max 9 images)</div>
-                </div>
-                <input type="file" name="images[]" id="images" accept="image/*" multiple class="form-control" style="display: none;">
-            </div>
-            
-            <!-- Section photos Pexels (existante) -->
-            <div class="pexels-images-section" id="pexels-images-section">
-                <div class="pexels-search">
-                    <input type="text" id="pexels-search-input" placeholder="Rechercher des photos : marketing, business, technology...">
-                    <button type="button" onclick="searchPexelsPhotos()" id="pexels-search-btn">
-                        <i class="fas fa-search"></i>
+</div>
+<!-- Section images locales (existante) -->
+<div class="local-images-section active" id="local-images-section">
+<div class="file-upload-area" id="file-upload-area" onclick="document.getElementById('images').click()">
+<div class="upload-icon">
+<i class="fas fa-cloud-upload-alt"></i>
+</div>
+<div class="upload-text">Cliquez pour sélectionner des images</div>
+<div class="upload-hint">ou glissez-déposez vos fichiers ici (JPG, PNG, max 9 images)</div>
+</div>
+<input accept="image/*" class="form-control" id="images" multiple="" name="images[]" style="display: none;" type="file"/>
+</div>
+<!-- Section photos Pexels (existante) -->
+<div class="pexels-images-section" id="pexels-images-section">
+<div class="pexels-search">
+<input id="pexels-search-input" placeholder="Rechercher des photos : marketing, business, technology..." type="text"/>
+<button id="pexels-search-btn" onclick="searchPexelsPhotos()" type="button">
+<i class="fas fa-search"></i>
                         Rechercher
                     </button>
-                </div>
-                
-                <div id="pexels-results-container">
-                    <div class="pexels-loading" style="display: none;" id="pexels-loading">
-                        <i class="fas fa-spinner"></i>
-                        <p>Recherche en cours...</p>
-                    </div>
-                    
-                    <div class="pexels-error" style="display: none;" id="pexels-error">
-                        <i class="fas fa-exclamation-triangle"></i>
-                        <p>Erreur lors de la recherche. Veuillez réessayer.</p>
-                    </div>
-                    
-                    <div class="pexels-results" id="pexels-results">
-                        <!-- Les photos seront ajoutées dynamiquement ici -->
-                    </div>
-                    
-                    <button type="button" class="pexels-load-more" style="display: none;" onclick="loadMorePexelsPhotos()" id="pexels-load-more">
+</div>
+<div id="pexels-results-container">
+<div class="pexels-loading" id="pexels-loading" style="display: none;">
+<i class="fas fa-spinner"></i>
+<p>Recherche en cours...</p>
+</div>
+<div class="pexels-error" id="pexels-error" style="display: none;">
+<i class="fas fa-exclamation-triangle"></i>
+<p>Erreur lors de la recherche. Veuillez réessayer.</p>
+</div>
+<div class="pexels-results" id="pexels-results">
+<!-- Les photos seront ajoutées dynamiquement ici -->
+</div>
+<button class="pexels-load-more" id="pexels-load-more" onclick="loadMorePexelsPhotos()" style="display: none;" type="button">
                         Charger plus de photos
                     </button>
-                </div>
-            </div>
-            
-            <!-- NOUVELLE Section PDF -->
-            <div class="pdf-section" id="pdf-section" style="display: none;">
-                <div class="pdf-upload-info" style="background: rgba(139, 154, 124, 0.05); border-radius: 12px; padding: 1.5rem; margin-bottom: 1.5rem; border-left: 4px solid var(--noble-sage);">
-                    <h4 style="color: var(--noble-charcoal); margin-bottom: 0.75rem; display: flex; align-items: center; gap: 0.5rem;">
-                        <i class="fas fa-info-circle" style="color: var(--noble-sage);"></i>
+</div>
+</div>
+<!-- NOUVELLE Section PDF -->
+<div class="pdf-section" id="pdf-section" style="display: none;">
+<div class="pdf-upload-info" style="background: rgba(139, 154, 124, 0.05); border-radius: 12px; padding: 1.5rem; margin-bottom: 1.5rem; border-left: 4px solid var(--noble-sage);">
+<h4 style="color: var(--noble-charcoal); margin-bottom: 0.75rem; display: flex; align-items: center; gap: 0.5rem;">
+<i class="fas fa-info-circle" style="color: var(--noble-sage);"></i>
                         Joindre un document PDF
                     </h4>
-                    <p style="color: var(--noble-charcoal-light); margin-bottom: 1rem; line-height: 1.6;">
+<p style="color: var(--noble-charcoal-light); margin-bottom: 1rem; line-height: 1.6;">
                         Partagez des présentations, rapports, guides ou tout autre document professionnel. 
                         Le PDF sera visible dans votre post LinkedIn sous forme de document téléchargeable.
                     </p>
-                    <ul style="color: var(--noble-charcoal-light); font-size: 0.9rem; line-height: 1.5; padding-left: 1.5rem;">
-                        <li>Taille maximum : 100 MB</li>
-                        <li>Formats acceptés : PDF uniquement</li>
-                        <li>⚠️ <strong>Important :</strong> Un PDF exclut l'ajout d'images</li>
-                    </ul>
-                </div>
-                
-                <div class="pdf-upload-area" onclick="document.getElementById('pdf_file').click()" id="pdf-upload-area">
-                    <div class="upload-icon">
-                        <i class="fas fa-file-pdf" style="color: var(--gentle-error);"></i>
-                    </div>
-                    <div class="upload-text">Cliquez pour sélectionner un document PDF</div>
-                    <div class="upload-hint">ou glissez-déposez votre fichier ici (max 100 MB)</div>
-                </div>
-                <input type="file" name="pdf_file" id="pdf_file" accept=".pdf" class="form-control" style="display: none;">
-                
-                <!-- Aperçu du PDF sélectionné -->
-                <div class="pdf-preview" id="pdf-preview" style="display: none;">
-                    <div style="background: white; border: 1px solid var(--noble-stone); border-radius: 12px; padding: 1.5rem; margin-top: 1.5rem; display: flex; align-items: center; gap: 1rem;">
-                        <div style="width: 48px; height: 48px; background: var(--gentle-error); border-radius: 8px; display: flex; align-items: center; justify-content: center; color: white;">
-                            <i class="fas fa-file-pdf"></i>
-                        </div>
-                        <div style="flex: 1;">
-                            <div id="pdf-filename" style="font-weight: 500; color: var(--noble-charcoal); margin-bottom: 0.25rem;"></div>
-                            <div id="pdf-filesize" style="font-size: 0.9rem; color: var(--noble-charcoal-light);"></div>
-                        </div>
-                        <button type="button" onclick="removePdfFile()" style="background: var(--gentle-error); color: white; border: none; border-radius: 8px; padding: 0.5rem; cursor: pointer; transition: all 0.3s ease;">
-                            <i class="fas fa-trash"></i>
-                        </button>
-                    </div>
-                </div>
-            </div>
-            
-            <!-- Aperçu des images sélectionnées (existant, mais avec modifications pour la validation) -->
-            <div class="selected-images-preview" style="display: none;" id="selected-images-preview">
-                <h4 style="color: var(--noble-charcoal); margin-bottom: 1rem;">
-                    <i class="fas fa-check icon-noble"></i>
+<ul style="color: var(--noble-charcoal-light); font-size: 0.9rem; line-height: 1.5; padding-left: 1.5rem;">
+<li>Taille maximum : 100 MB</li>
+<li>Formats acceptés : PDF uniquement</li>
+<li>⚠️ <strong>Important :</strong> Un PDF exclut l'ajout d'images</li>
+</ul>
+</div>
+<div class="pdf-upload-area" id="pdf-upload-area" onclick="document.getElementById('pdf_file').click()">
+<div class="upload-icon">
+<i class="fas fa-file-pdf" style="color: var(--gentle-error);"></i>
+</div>
+<div class="upload-text">Cliquez pour sélectionner un document PDF</div>
+<div class="upload-hint">ou glissez-déposez votre fichier ici (max 100 MB)</div>
+</div>
+<input accept=".pdf" class="form-control" id="pdf_file" name="pdf_file" style="display: none;" type="file"/>
+<!-- Aperçu du PDF sélectionné -->
+<div class="pdf-preview" id="pdf-preview" style="display: none;">
+<div style="background: white; border: 1px solid var(--noble-stone); border-radius: 12px; padding: 1.5rem; margin-top: 1.5rem; display: flex; align-items: center; gap: 1rem;">
+<div style="width: 48px; height: 48px; background: var(--gentle-error); border-radius: 8px; display: flex; align-items: center; justify-content: center; color: white;">
+<i class="fas fa-file-pdf"></i>
+</div>
+<div style="flex: 1;">
+<div id="pdf-filename" style="font-weight: 500; color: var(--noble-charcoal); margin-bottom: 0.25rem;"></div>
+<div id="pdf-filesize" style="font-size: 0.9rem; color: var(--noble-charcoal-light);"></div>
+</div>
+<button onclick="removePdfFile()" style="background: var(--gentle-error); color: white; border: none; border-radius: 8px; padding: 0.5rem; cursor: pointer; transition: all 0.3s ease;" type="button">
+<i class="fas fa-trash"></i>
+</button>
+</div>
+</div>
+</div>
+<!-- Aperçu des images sélectionnées (existant, mais avec modifications pour la validation) -->
+<div class="selected-images-preview" id="selected-images-preview" style="display: none;">
+<h4 style="color: var(--noble-charcoal); margin-bottom: 1rem;">
+<i class="fas fa-check icon-noble"></i>
                     Images sélectionnées (<span id="selected-count">0</span>/9)
                 </h4>
-                <div class="selected-images-grid" id="selected-images-grid">
-                    <!-- Les images sélectionnées apparaîtront ici -->
-                </div>
-            </div>
-        </div>
-        
-        <div class="publish-section">
-            <h3 style="color: var(--noble-charcoal); margin-bottom: 1.5rem; display: flex; align-items: center; gap: 0.75rem;">
-                <i class="fas fa-paper-plane icon-noble"></i>
+<div class="selected-images-grid" id="selected-images-grid">
+<!-- Les images sélectionnées apparaîtront ici -->
+</div>
+</div>
+</div>
+<div class="publish-section">
+<h3 style="color: var(--noble-charcoal); margin-bottom: 1.5rem; display: flex; align-items: center; gap: 0.75rem;">
+<i class="fas fa-paper-plane icon-noble"></i>
                 Finaliser votre post
             </h3>
-            <div class="publish-actions-grid">
-                <div class="publish-group schedule-group">
-                    <label class="publish-group-title" for="publish-time-input">📅 Programmer pour plus tard</label>
-                    <input type="datetime-local" id="publish-time-input" name="publish_time" class="form-control">
-                    <button type="submit" name="action" value="schedule" class="btn btn-secondary" style="width: 100%;">
-                        <i class="fas fa-clock"></i> Programmer le post
+<div class="publish-actions-grid">
+<div class="publish-group schedule-group">
+<label class="publish-group-title" for="publish-time-input">📅 Programmer pour plus tard</label>
+<input class="form-control" id="publish-time-input" name="publish_time" type="datetime-local"/>
+<button class="btn btn-secondary" name="action" style="width: 100%;" type="submit" value="schedule">
+<i class="fas fa-clock"></i> Programmer le post
                     </button>
-                </div>
-                <div class="publish-group">
-                    <label class="publish-group-title">🚀 Actions immédiates</label>
-                    <button type="submit" name="action" value="publish_now" class="btn btn-primary" style="width: 100%;">
-                        <i class="fas fa-rocket"></i> Publier maintenant
+</div>
+<div class="publish-group">
+<label class="publish-group-title">🚀 Actions immédiates</label>
+<button class="btn btn-primary" name="action" style="width: 100%;" type="submit" value="publish_now">
+<i class="fas fa-rocket"></i> Publier maintenant
                     </button>
-                    <button type="submit" name="action" value="save_draft" class="btn btn-secondary" style="width: 100%;">
-                        <i class="fas fa-save"></i> Enregistrer en brouillon
+<button class="btn btn-secondary" name="action" style="width: 100%;" type="submit" value="save_draft">
+<i class="fas fa-save"></i> Enregistrer en brouillon
                     </button>
-                </div>
-            </div>
-        </div>
-        
-        <a href="{{ url_for('dashboard', clear='true') }}" class="btn btn-secondary" style="margin-top: 2rem;">
-            <i class="fas fa-times"></i>
+</div>
+</div>
+</div>
+<a class="btn btn-secondary" href="{{ url_for('dashboard', clear='true') }}" style="margin-top: 2rem;">
+<i class="fas fa-times"></i>
             Annuler
         </a>
-    </form>
+</form>
 </div>
 {% endif %}
 
