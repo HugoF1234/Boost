@@ -59,38 +59,20 @@
 
         html, 
 
-body {
-    background: linear-gradient(135deg, 
-        #fe7c4d 0%, 
-        #ef87f5 20%, 
-        #a37dfc 40%, 
-        #6a71e3 60%, 
-        #ffb5e8 80%, 
-        #fc9e4f 100%);
-    background-attachment: fixed;
-    font-family: 'Poppins', sans-serif;
-    color: #1a1a1a;
-    line-height: 1.6;
-}
+        body {
+            margin: 0;
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #fe7c4d, #ef87f5, #a37dfc, #6a71e3, #9db2f8, #c28bfa);
+            background-size: 400% 400%;
+            animation: gradientBG 20s ease infinite;
+            min-height: 100vh;
+        }
 
-
-
-        
-
-body {
-    background: linear-gradient(135deg, 
-        #fe7c4d 0%, 
-        #ef87f5 20%, 
-        #a37dfc 40%, 
-        #6a71e3 60%, 
-        #ffb5e8 80%, 
-        #fc9e4f 100%);
-    background-attachment: fixed;
-    font-family: 'Poppins', sans-serif;
-    color: #1a1a1a;
-    line-height: 1.6;
-}
-
+        @keyframes gradientBG {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
 
 
         /* Effet de texture vibrante en arrière-plan */
@@ -537,9 +519,9 @@ body {
         }
 
         .content-wrapper {
-            width: 100%;
-            max-width: 1200px;
-            margin: 0 auto;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
         }
 
         /* Responsive mobile amélioré */
