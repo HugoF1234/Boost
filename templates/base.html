@@ -788,7 +788,30 @@ body {
             font-weight: 500;
         }
     </style>
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&amp;display=swap" rel="stylesheet"/></head>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&amp;display=swap" rel="stylesheet"/>
+<style>
+  html, body {
+    height: 100%;
+    margin: 0;
+    font-family: 'Poppins', sans-serif;
+    background: linear-gradient(135deg, #fe7c4d, #ef87f5, #a37dfc, #6a71e3, #ffb5e8);
+    background-size: 400% 400%;
+    background-attachment: fixed;
+    animation: gradientFlow 15s ease infinite;
+  }
+
+  @keyframes gradientFlow {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+  }
+
+  .main-content, .container, .content-wrapper, .dashboard-wrapper {
+    background: transparent !important;
+  }
+</style>
+
+</head>
 <body>
 <!-- Overlay pour mobile -->
 <div class="sidebar-overlay" id="sidebar-overlay" onclick="toggleSidebar()"></div>
