@@ -357,7 +357,7 @@
         padding: 1.5rem;
         display: flex;
         flex-direction: column;
-        height: 250px;
+        /* height: 250px; supprimé pour que la hauteur s'adapte au contenu */
     }
     .article-title {
         font-size: 1.1rem;
@@ -389,44 +389,65 @@
         overflow: hidden;
     }
     .article-actions {
+        margin-top: 2.5rem;
+        gap: 0.7rem;
+        /* border-top: 1px solid var(--noble-stone); supprimé */
+        padding: 0 1rem 1rem 1rem;
         display: flex;
         flex-direction: row;
-        gap: 1rem;
-        margin-top: 2.2rem;
-        padding: 0 1rem 1rem 1rem;
-        border-top: 1px solid var(--noble-stone);
         justify-content: space-between;
     }
-    .btn-article {
-        width: 50%;
+    .btn-article,
+    .btn-use-article,
+    .btn-read-more {
+        width: 47%;
         min-width: 0;
         flex: 1 1 0;
         margin: 0;
+        padding: 0.5rem 0.7rem;
+        border-radius: 7px;
+        font-weight: 500;
+        font-size: 0.92rem;
+        min-height: 42px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.35rem;
+        box-sizing: border-box;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
     }
     .btn-use-article {
         background: var(--gradient-warm);
         color: white;
-        box-shadow: 0 4px 15px rgba(255, 107, 107, 0.3);
         border: 1px solid rgba(255, 255, 255, 0.2);
-        padding: 0.4rem 0.7rem;
-        font-size: 0.82rem;
-        border-radius: 7px;
-    }
-    .btn-use-article:hover {
-        background: var(--gradient-pink);
-        color: white;
     }
     .btn-read-more {
-        background: rgba(255, 255, 255, 0.9);
+        background: transparent;
         color: var(--primary-coral);
-        border: 1px solid var(--primary-coral);
-        font-size: 0.75rem;
-        padding: 0.3rem 0.5rem;
-        border-radius: 7px;
+        border: 1.5px solid var(--primary-coral);
+        font-size: 0.92rem;
+        font-weight: 500;
+        box-shadow: none;
+    }
+    .btn-use-article i,
+    .btn-read-more i {
+        font-size: 1em;
+        margin-right: 0.3em;
+        display: inline-block;
+    }
+    .btn-use-article:hover {
+        /* plus de transform ni de box-shadow, juste couleur */
+        background: var(--gradient-pink);
+        color: white;
     }
     .btn-read-more:hover {
         background: var(--primary-coral);
         color: white;
+    }
+    .article-actions {
+        margin-top: 2.2rem;
     }
     .selected-article-section {
         background: rgba(255,255,255,0.8);
