@@ -1,709 +1,302 @@
 {% extends "base.html" %}
 {% block content %}
 <style>
-    /* Variables pour couleurs douces */
     :root {
-        --primary: #6366f1;
-        --primary-light: #a5b4fc;
-        --primary-ultra-light: #e0e7ff;
-        --secondary: #f8fafc;
-        --accent: #10b981;
-        --accent-light: #6ee7b7;
-        --warm: #fbbf24;
-        --warm-light: #fde68a;
-        --soft-gray: #f1f5f9;
-        --text-primary: #1e293b;
-        --text-secondary: #64748b;
-        --text-light: #94a3b8;
-        --white: #ffffff;
-        --glass: rgba(255, 255, 255, 0.25);
-        --glass-border: rgba(255, 255, 255, 0.3);
-        --shadow-soft: 0 4px 20px rgba(99, 102, 241, 0.1);
-        --shadow-medium: 0 8px 30px rgba(99, 102, 241, 0.15);
-        --shadow-strong: 0 20px 40px rgba(0, 0, 0, 0.1);
-        --success: #10b981;
-        --warning: #f59e0b;
-        --danger: #ef4444;
+        --noble-cream: #faf9f7;
+        --noble-warm: #f5f2ed;
+        --noble-sage: #8b9a7c;
+        --noble-sage-light: #a8b59a;
+        --noble-sage-dark: #6b7865;
+        --noble-stone: #e8e4de;
+        --noble-charcoal: #4a4943;
+        --noble-charcoal-light: #6b6960;
+        --noble-mist: #f0ede8;
+        --noble-accent: #9c8b7a;
+        --noble-accent-light: #b5a495;
+        --gentle-success: #7c9885;
+        --gentle-warning: #b8a082;
+        --gentle-info: #8ba3b8;
+        --gentle-error: #c49090;
+        --shadow-whisper: 0 2px 12px rgba(139, 154, 124, 0.08);
+        --shadow-gentle: 0 4px 20px rgba(139, 154, 124, 0.12);
+        --shadow-soft: 0 8px 32px rgba(139, 154, 124, 0.16);
+        --primary-coral: #FF6B6B;
+        --primary-orange: #FF8E53;
+        --primary-pink: #FF5F8D;
+        --primary-purple: #8B5CF6;
+        --primary-blue: #06D6A0;
+        --primary-cyan: #118AB2;
+        --gradient-main: linear-gradient(135deg, #FF6B6B 0%, #FF8E53 25%, #FF5F8D 50%, #8B5CF6 75%, #06D6A0 100%);
+        --gradient-warm: linear-gradient(135deg, #FF8E53 0%, #FF6B6B 100%);
+        --gradient-cool: linear-gradient(135deg, #8B5CF6 0%, #06D6A0 100%);
+        --gradient-pink: linear-gradient(135deg, #FF5F8D 0%, #8B5CF6 100%);
     }
-
-    /* Header de page moderne */
-    .page-header {
-        background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 50%, var(--accent-light) 100%);
-        color: white;
-        padding: 2.5rem;
-        border-radius: 24px;
-        margin-bottom: 2rem;
-        position: relative;
-        overflow: hidden;
-        box-shadow: var(--shadow-strong);
+    body {
+        background: transparent !important;
+        color: var(--noble-charcoal);
+        line-height: 1.7;
     }
-
-    .page-header::before {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="sparkles" width="20" height="20" patternUnits="userSpaceOnUse"><circle cx="5" cy="5" r="1" fill="%23ffffff" opacity="0.3"><animate attributeName="opacity" values="0.3;0.8;0.3" dur="3s" repeatCount="indefinite"/></circle><circle cx="15" cy="15" r="0.5" fill="%23ffffff" opacity="0.5"><animate attributeName="opacity" values="0.5;1;0.5" dur="2s" repeatCount="indefinite" begin="1s"/></circle></pattern></defs><rect width="100" height="100" fill="url(%23sparkles)"/></svg>') repeat;
-    }
-
-    .page-title {
-        font-size: 2.2rem;
-        font-weight: 700;
-        margin: 0;
-        text-shadow: 0 2px 4px rgba(0,0,0,0.1);
-        letter-spacing: -0.025em;
-        display: flex;
-        align-items: center;
-        gap: 1rem;
-    }
-
-    /* Cartes de contenu */
-    .content-card {
-        background: var(--white);
-        border-radius: 24px;
-        border: 1px solid rgba(99, 102, 241, 0.1);
-        overflow: hidden;
-        transition: all 0.3s ease;
-        margin-bottom: 2rem;
-        box-shadow: var(--shadow-soft);
-    }
-
-    .content-card:hover {
-        transform: translateY(-4px);
-        box-shadow: var(--shadow-medium);
-        border-color: var(--primary-light);
-    }
-
-    .card-body {
-        padding: 2.5rem;
-    }
-
-    /* Profil utilisateur */
     .profile-section {
-        display: flex;
-        align-items: center;
-        gap: 2rem;
-        margin-bottom: 2rem;
-        padding: 2rem;
-        background: linear-gradient(135deg, var(--primary-ultra-light) 0%, rgba(16, 185, 129, 0.05) 100%);
+        background: rgba(255,255,255,0.85);
+        backdrop-filter: blur(20px);
         border-radius: 20px;
-        border-left: 5px solid var(--primary);
+        padding: 2.5rem;
+        margin-bottom: 2rem;
+        border: 1px solid rgba(255, 107, 107, 0.2);
+        box-shadow: var(--shadow-whisper);
         position: relative;
         overflow: hidden;
+        max-width: 700px;
+        margin-left: auto;
+        margin-right: auto;
     }
-
     .profile-section::before {
         content: '';
         position: absolute;
-        top: 0;
-        right: 0;
-        width: 100px;
-        height: 100px;
-        background: radial-gradient(circle, rgba(99, 102, 241, 0.1) 0%, transparent 70%);
+        top: 0; right: 0;
+        width: 120px; height: 120px;
+        background: radial-gradient(circle, rgba(255, 107, 107, 0.08) 0%, transparent 70%);
         border-radius: 50%;
         transform: translate(30%, -30%);
+        animation: gentle-pulse 8s ease-in-out infinite alternate;
     }
-
-    .profile-avatar {
-        width: 100px;
-        height: 100px;
-        border-radius: 50%;
-        border: 4px solid var(--primary-light);
-        box-shadow: var(--shadow-medium);
-        transition: all 0.3s ease;
+    @keyframes gentle-pulse {
+        0% { opacity: 0.6; transform: translate(30%, -30%) scale(1); }
+        100% { opacity: 1; transform: translate(30%, -30%) scale(1.2); }
+    }
+    .profile-header {
+        margin-bottom: 2rem;
         position: relative;
         z-index: 1;
+        text-align: center;
     }
-
-    .profile-avatar:hover {
-        transform: scale(1.05);
-        box-shadow: var(--shadow-strong);
+    .profile-title {
+        font-size: 1.75rem;
+        font-weight: 600;
+        color: var(--noble-charcoal);
+        letter-spacing: -0.02em;
+        background: var(--gradient-main);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        animation: gradient-shift 4s ease-in-out infinite;
+        margin-bottom: 0.5rem;
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        justify-content: center;
     }
-
-    .profile-avatar img {
-        width: 100%;
-        height: 100%;
+    @keyframes gradient-shift {
+        0%, 100% { background-position: 0% 50%; }
+        50% { background-position: 100% 50%; }
+    }
+    .profile-subtitle {
+        color: var(--noble-charcoal-light);
+        font-size: 1rem;
+        font-weight: 400;
+        margin-bottom: 1.5rem;
+    }
+    .profile-avatar {
+        width: 110px;
+        height: 110px;
         border-radius: 50%;
         object-fit: cover;
+        border: 3px solid var(--primary-coral);
+        margin-bottom: 1rem;
+        box-shadow: 0 4px 20px rgba(255, 107, 107, 0.12);
+        background: var(--gradient-warm);
+        display: inline-block;
     }
-
-    .profile-placeholder {
-        width: 100%;
-        height: 100%;
-        background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
-        border-radius: 50%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 2.5rem;
-        color: white;
-    }
-
     .profile-info {
-        flex: 1;
+        margin-bottom: 2rem;
+        background: rgba(255,255,255,0.7);
+        border-radius: 16px;
+        padding: 2rem;
+        box-shadow: var(--shadow-whisper);
+        border: 1px solid rgba(255, 107, 107, 0.10);
         position: relative;
         z-index: 1;
     }
-
-    .profile-name {
-        font-size: 1.8rem;
-        font-weight: 700;
-        color: var(--text-primary);
-        margin-bottom: 0.5rem;
-    }
-
-    .profile-email {
+    .profile-info-row {
         display: flex;
         align-items: center;
-        gap: 0.75rem;
-        color: var(--text-secondary);
-        font-size: 1rem;
-        margin-bottom: 1rem;
+        margin-bottom: 1.2rem;
+        gap: 1.2rem;
     }
-
-    .verified-badge {
-        display: inline-flex;
-        align-items: center;
-        gap: 0.25rem;
-        background: linear-gradient(135deg, #dcfce7 0%, #bbf7d0 100%);
-        color: var(--success);
-        padding: 0.25rem 0.75rem;
-        border-radius: 12px;
-        font-size: 0.8rem;
-        font-weight: 600;
-        border: 1px solid #86efac;
+    .profile-info-label {
+        font-weight: 500;
+        color: var(--noble-charcoal-light);
+        min-width: 120px;
+        flex-shrink: 0;
     }
-
-    .profile-details {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-        gap: 1.5rem;
-        margin-top: 1.5rem;
+    .profile-info-value {
+        color: var(--noble-charcoal);
+        font-size: 1.05rem;
+        font-weight: 500;
     }
-
-    .detail-item {
+    .profile-actions {
         display: flex;
-        align-items: center;
-        gap: 0.75rem;
-        padding: 1rem;
-        background: var(--white);
-        border-radius: 12px;
-        border: 1px solid var(--soft-gray);
-        transition: all 0.3s ease;
-    }
-
-    .detail-item:hover {
-        background: var(--primary-ultra-light);
-        border-color: var(--primary-light);
-        transform: translateY(-2px);
-    }
-
-    .detail-icon {
-        width: 40px;
-        height: 40px;
-        background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
-        border-radius: 10px;
-        display: flex;
-        align-items: center;
+        gap: 1rem;
         justify-content: center;
-        color: white;
-        font-size: 1.1rem;
-    }
-
-    .detail-content {
-        flex: 1;
-    }
-
-    .detail-label {
-        font-size: 0.8rem;
-        color: var(--text-light);
-        text-transform: uppercase;
-        letter-spacing: 0.05em;
-        font-weight: 600;
-        margin-bottom: 0.25rem;
-    }
-
-    .detail-value {
-        font-weight: 600;
-        color: var(--text-primary);
-    }
-
-    /* Formulaire moderne */
-    .form-section {
         margin-top: 2rem;
     }
-
-    .section-title {
-        font-size: 1.4rem;
-        font-weight: 600;
-        color: var(--text-primary);
-        margin-bottom: 0.5rem;
-        display: flex;
-        align-items: center;
-        gap: 0.75rem;
-    }
-
-    .section-subtitle {
-        color: var(--text-secondary);
-        font-size: 0.95rem;
-        line-height: 1.5;
-        margin-bottom: 2rem;
-    }
-
-    .form-grid {
-        display: grid;
-        grid-template-columns: 1fr;
-        gap: 1.5rem;
-        margin-bottom: 2rem;
-    }
-
-    .form-group {
-        position: relative;
-    }
-
-    .form-label {
-        display: block;
-        margin-bottom: 0.75rem;
-        font-weight: 600;
-        color: var(--text-primary);
-        font-size: 0.95rem;
-    }
-
-    .form-control {
-        width: 100%;
-        padding: 1rem 1.5rem;
-        border: 2px solid rgba(99, 102, 241, 0.1);
-        border-radius: 16px;
-        font-size: 1rem;
-        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        background: rgba(248, 250, 252, 0.5);
-        backdrop-filter: blur(10px);
-    }
-
-    .form-control:focus {
-        outline: none;
-        border-color: var(--primary);
-        box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.1);
-        transform: translateY(-2px);
-        background: var(--white);
-    }
-
-    /* Checkboxes grid */
-    .checkbox-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-        gap: 1rem;
-        margin-top: 1rem;
-    }
-
-    .checkbox-item {
-        display: flex;
-        align-items: center;
-        gap: 0.75rem;
-        padding: 1rem;
-        background: var(--soft-gray);
+    .btn {
+        padding: 0.875rem 1.75rem;
         border-radius: 12px;
-        transition: all 0.3s ease;
-        cursor: pointer;
-        border: 2px solid transparent;
-    }
-
-    .checkbox-item:hover {
-        background: var(--primary-ultra-light);
-        border-color: var(--primary-light);
-        transform: scale(1.02);
-    }
-
-    .checkbox-item input[type="checkbox"] {
-        width: 20px;
-        height: 20px;
-        accent-color: var(--primary);
-        cursor: pointer;
-    }
-
-    .checkbox-item label {
-        user-select: none;
-        cursor: pointer;
         font-weight: 500;
-        color: var(--text-primary);
-    }
-
-    /* Boutons modernes */
-    .btn-modern {
-        padding: 1rem 2rem;
-        border-radius: 16px;
-        font-weight: 600;
         font-size: 0.95rem;
-        border: none;
         cursor: pointer;
-        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        transition: all 0.3s ease;
         display: inline-flex;
         align-items: center;
-        gap: 0.75rem;
+        gap: 0.625rem;
         text-decoration: none;
+        border: none;
         position: relative;
         overflow: hidden;
     }
-
-    .btn-modern::before {
+    .btn::before {
         content: '';
         position: absolute;
         top: 0;
         left: -100%;
         width: 100%;
         height: 100%;
-        background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+        background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
         transition: all 0.6s ease;
     }
-
-    .btn-modern:hover::before {
+    .btn:hover::before {
         left: 100%;
     }
-
-    .btn-primary-modern {
-        background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+    .btn-primary {
+        background: var(--gradient-warm);
         color: white;
-        box-shadow: 0 4px 20px rgba(99, 102, 241, 0.3);
+        box-shadow: 0 4px 15px rgba(255, 107, 107, 0.3);
+        border: 1px solid rgba(255, 255, 255, 0.2);
     }
-
-    .btn-primary-modern:hover {
-        transform: translateY(-3px) scale(1.02);
-        box-shadow: 0 8px 30px rgba(99, 102, 241, 0.4);
+    .btn-primary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 25px rgba(255, 107, 107, 0.4);
+        background: var(--gradient-pink);
     }
-
-    /* Tags de profil */
-    .profile-tags {
-        margin-top: 2rem;
-        padding-top: 2rem;
-        border-top: 1px solid var(--soft-gray);
+    .btn-secondary {
+        background: rgba(255, 255, 255, 0.9);
+        backdrop-filter: blur(10px);
+        color: var(--noble-charcoal);
+        border: 1.5px solid rgba(255, 107, 107, 0.2);
     }
-
-    .tags-container {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 1rem;
-        margin-top: 1rem;
+    .btn-secondary:hover {
+        background: rgba(255, 107, 107, 0.1);
+        border-color: var(--primary-coral);
+        transform: translateY(-1px);
     }
-
-    .profile-tag {
-        display: inline-flex;
-        align-items: center;
-        gap: 0.5rem;
-        background: linear-gradient(135deg, var(--primary-ultra-light) 0%, rgba(16, 185, 129, 0.1) 100%);
-        color: var(--primary);
-        padding: 0.75rem 1.25rem;
-        border-radius: 20px;
-        font-size: 0.9rem;
-        font-weight: 600;
-        border: 1px solid var(--primary-light);
-        transition: all 0.3s ease;
-    }
-
-    .profile-tag:hover {
-        background: var(--primary);
-        color: white;
-        transform: scale(1.05) rotate(2deg);
-        box-shadow: var(--shadow-soft);
-    }
-
-    .tag-icon {
-        font-size: 1rem;
-    }
-
-    /* Responsive */
-    @media (max-width: 768px) {
-        .profile-section {
-            flex-direction: column;
-            text-align: center;
-        }
-
-        .profile-details {
-            grid-template-columns: 1fr;
-        }
-
-        .checkbox-grid {
-            grid-template-columns: 1fr;
-        }
-
-        .page-title {
-            font-size: 1.8rem;
-        }
-    }
-
-    /* Animations */
     .fade-in {
-        animation: fadeInUp 0.6s ease-out;
+        animation: gentleFadeIn 0.8s ease-out;
     }
-
-    @keyframes fadeInUp {
-        from {
-            opacity: 0;
-            transform: translateY(30px);
-        }
-        to {
-            opacity: 1;
-            transform: translateY(0);
-        }
+    @keyframes gentleFadeIn {
+        from { opacity: 0; transform: translateY(20px); }
+        to { opacity: 1; transform: translateY(0); }
     }
-
-    .slide-in {
-        animation: slideInRight 0.5s ease-out;
+    .icon-noble {
+        color: var(--primary-coral);
+        font-size: 1.125rem;
+        filter: drop-shadow(0 0 3px rgba(255, 107, 107, 0.3));
     }
-
-    @keyframes slideInRight {
-        from {
-            opacity: 0;
-            transform: translateX(30px);
+    @media (max-width: 768px) {
+        .profile-info {
+            padding: 1rem;
         }
-        to {
-            opacity: 1;
-            transform: translateX(0);
+        .profile-info-row {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 0.5rem;
+        }
+        .profile-section {
+            padding: 1rem;
         }
     }
 </style>
-
-<!-- Header de page -->
-<div class="page-header fade-in">
-    <h1 class="page-title">
-        <i class="fas fa-user-circle"></i>
-        Mon Profil
-    </h1>
-</div>
-
-<!-- Informations du profil -->
-<div class="content-card slide-in">
-    <div class="card-body">
-        <div class="profile-section">
-            <div class="profile-avatar">
-                {% if picture %}
-                    <img src="{{ picture }}" alt="Photo de profil">
-                {% else %}
-                    <div class="profile-placeholder">
-                        <i class="fas fa-user"></i>
-                    </div>
-                {% endif %}
-            </div>
-            
-            <div class="profile-info">
-                <h2 class="profile-name">{{ first_name }} {{ last_name }}</h2>
-                <div class="profile-email">
-                    <i class="fa-solid fa-envelope"></i>
-                    {{ email }}
-                    {% if email_verified %}
-                        <span class="verified-badge">
-                            <i class="fa-solid fa-circle-check"></i>
-                            Vérifié
-                        </span>
-                    {% endif %}
-                </div>
-            </div>
+<div class="profile-section fade-in">
+    <div class="profile-header">
+        <span class="profile-avatar">
+            {% if user.picture %}
+                <img src="{{ user.picture }}" alt="Photo de profil" style="width:100%;height:100%;border-radius:50%;object-fit:cover;"/>
+            {% else %}
+                <span style="display:flex;align-items:center;justify-content:center;width:100%;height:100%;font-size:2.5rem;color:white;background:var(--gradient-warm);border-radius:50%;">{{ user.first_name[0]|upper if user.first_name else 'U' }}</span>
+            {% endif %}
+        </span>
+        <h1 class="profile-title"><i class="fas fa-user icon-noble"></i> Profil utilisateur</h1>
+        <div class="profile-subtitle">Gérez vos informations personnelles et professionnelles</div>
+    </div>
+    <div class="profile-info">
+        <div class="profile-info-row">
+            <span class="profile-info-label"><i class="fas fa-user"></i> Nom :</span>
+            <span class="profile-info-value">{{ user.first_name }} {{ user.last_name }}</span>
         </div>
-        
-        <div class="profile-details">
-            <div class="detail-item">
-                <div class="detail-icon">
-                    <i class="fa-solid fa-globe"></i>
-                </div>
-                <div class="detail-content">
-                    <div class="detail-label">Pays</div>
-                    <div class="detail-value">{{ country or 'Non renseigné' }}</div>
-                </div>
-            </div>
-            
-            <div class="detail-item">
-                <div class="detail-icon">
-                    <i class="fa-solid fa-language"></i>
-                </div>
-                <div class="detail-content">
-                    <div class="detail-label">Langue</div>
-                    <div class="detail-value">{{ language or 'Non renseigné' }}</div>
-                </div>
-            </div>
-            
-            <div class="detail-item">
-                <div class="detail-icon">
-                    <i class="fa-brands fa-linkedin"></i>
-                </div>
-                <div class="detail-content">
-                    <div class="detail-label">ID LinkedIn</div>
-                    <div class="detail-value">{{ sub.split('_')[-1] if sub else 'Non disponible' }}</div>
-                </div>
-            </div>
+        <div class="profile-info-row">
+            <span class="profile-info-label"><i class="fas fa-envelope"></i> Email :</span>
+            <span class="profile-info-value">{{ user.email }}</span>
+        </div>
+        <div class="profile-info-row">
+            <span class="profile-info-label"><i class="fas fa-briefcase"></i> Secteur :</span>
+            <span class="profile-info-value">{{ user.secteur|title if user.secteur else 'Non renseigné' }}</span>
+        </div>
+        <div class="profile-info-row">
+            <span class="profile-info-label"><i class="fas fa-calendar-alt"></i> Membre depuis :</span>
+            <span class="profile-info-value">{{ user.created_at.strftime('%d/%m/%Y') if user.created_at else 'Date inconnue' }}</span>
         </div>
     </div>
-</div>
-
-<!-- Préférences de contenu -->
-<div class="content-card slide-in">
-    <div class="card-body">
-        <div class="form-section">
-            <h2 class="section-title">
-                <i class="fas fa-cogs"></i>
-                Préférences de contenu
-            </h2>
-            <p class="section-subtitle">
-                Personnalisez votre expérience en définissant votre secteur d'activité et vos centres d'intérêt pour des suggestions de contenu plus pertinentes.
-            </p>
-            
-            <form method="POST">
-                <div class="form-grid">
-                    <div class="form-group">
-                        <label for="secteur" class="form-label">Secteur d'activité</label>
-                        <select name="secteur" id="secteur" class="form-control" required>
-                            <option value="">-- Sélectionner votre secteur --</option>
-                            <option value="tech" {% if secteur == 'tech' %}selected{% endif %}>🖥️ Technologie & Informatique</option>
-                            <option value="marketing" {% if secteur == 'marketing' %}selected{% endif %}>📢 Marketing & Communication</option>
-                            <option value="finance" {% if secteur == 'finance' %}selected{% endif %}>💰 Finance & Banque</option>
-                            <option value="sante" {% if secteur == 'sante' %}selected{% endif %}>🏥 Santé & Médecine</option>
-                            <option value="education" {% if secteur == 'education' %}selected{% endif %}>🎓 Éducation & Formation</option>
-                            <option value="rh" {% if secteur == 'rh' %}selected{% endif %}>👥 Ressources Humaines</option>
-                            <option value="consulting" {% if secteur == 'consulting' %}selected{% endif %}>💼 Conseil & Stratégie</option>
-                            <option value="retail" {% if secteur == 'retail' %}selected{% endif %}>🛍️ Commerce & Distribution</option>
-                        </select>
-                    </div>
-                </div>
-                
-                <div class="form-group">
-                    <label class="form-label">Centres d'intérêt</label>
-                    <div class="checkbox-grid">
-                        {% set options = [
-                            ('IA', 'fa-brain'),
-                            ('Développement', 'fa-code'),
-                            ('Design', 'fa-palette'),
-                            ('Sport', 'fa-dumbbell'),
-                            ('Musique', 'fa-music'),
-                            ('Entreprenariat', 'fa-rocket'),
-                            ('Leadership', 'fa-crown'),
-                            ('Marketing Digital', 'fa-chart-line'),
-                            ('Innovation', 'fa-lightbulb'),
-                            ('E-commerce', 'fa-shopping-cart')
-                        ] %}
-                        {% for option, icon in options %}
-                            <div class="checkbox-item">
-                                <input type="checkbox" id="interet-{{ loop.index }}" name="interets" value="{{ option }}" 
-                                    {% if interets and option in interets %}checked{% endif %}>
-                                <i class="fas {{ icon }}"></i>
-                                <label for="interet-{{ loop.index }}">{{ option }}</label>
-                            </div>
-                        {% endfor %}
-                    </div>
-                </div>
-                
-                <div style="margin-top: 2rem;">
-                    <button type="submit" class="btn-modern btn-primary-modern">
-                        <i class="fa-solid fa-save"></i>
-                        Enregistrer mes préférences
-                    </button>
-                </div>
-            </form>
-        </div>
-
-        {% if secteur or interets %}
-            <div class="profile-tags">
-                <h3 style="color: var(--text-primary); margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem;">
-                    <i class="fas fa-tags"></i>
-                    Mon profil enrichi
-                </h3>
-                <div class="tags-container">
-                    {% if secteur %}
-                        <div class="profile-tag">
-                            <i class="fa-solid fa-briefcase tag-icon"></i>
-                            <span>{{ secteur|title }}</span>
-                        </div>
-                    {% endif %}
-                    
-                    {% if interets %}
-                        {% for interet in interets %}
-                            <div class="profile-tag">
-                                <i class="fa-solid fa-hashtag tag-icon"></i>
-                                <span>{{ interet }}</span>
-                            </div>
-                        {% endfor %}
-                    {% endif %}
-                </div>
-            </div>
-        {% endif %}
+    <div class="profile-actions">
+        <a href="{{ url_for('edit_profile') }}" class="btn btn-primary"><i class="fas fa-edit"></i> Modifier le profil</a>
+        <a href="{{ url_for('parametres') }}" class="btn btn-secondary"><i class="fas fa-cog"></i> Paramètres</a>
     </div>
 </div>
-
 <script>
-// Animation des éléments au scroll
-const observerOptions = {
-    threshold: 0.1,
-    rootMargin: '0px 0px -50px 0px'
-};
-
-const observer = new IntersectionObserver((entries) => {
-    entries.forEach(entry => {
-        if (entry.isIntersecting) {
-            entry.target.style.opacity = '1';
-            entry.target.style.transform = 'translateY(0)';
-        }
-    });
-}, observerOptions);
-
-// Observer tous les éléments avec animation
-document.querySelectorAll('.fade-in, .slide-in').forEach(el => {
-    el.style.opacity = '0';
-    el.style.transform = 'translateY(30px)';
-    el.style.transition = 'all 0.6s cubic-bezier(0.4, 0, 0.2, 1)';
-    observer.observe(el);
-});
-
-// Animation des detail items
-document.querySelectorAll('.detail-item').forEach((item, index) => {
-    item.style.opacity = '0';
-    item.style.transform = 'translateY(20px)';
-    item.style.transition = 'all 0.5s cubic-bezier(0.4, 0, 0.2, 1)';
-    
+document.addEventListener('DOMContentLoaded', function() {
+    const section = document.querySelector('.profile-section');
+    section.style.opacity = '0';
+    section.style.transform = 'translateY(20px)';
     setTimeout(() => {
-        item.style.opacity = '1';
-        item.style.transform = 'translateY(0)';
-    }, index * 100);
-});
-
-// Animation des checkbox items
-document.querySelectorAll('.checkbox-item').forEach((item, index) => {
-    item.style.opacity = '0';
-    item.style.transform = 'scale(0.9)';
-    item.style.transition = 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)';
-    
-    setTimeout(() => {
-        item.style.opacity = '1';
-        item.style.transform = 'scale(1)';
-    }, index * 50);
-});
-
-// Amélioration des interactions
-document.querySelectorAll('.btn-modern').forEach(btn => {
-    btn.addEventListener('mouseenter', function() {
-        this.style.transform = 'translateY(-3px) scale(1.02)';
+        section.style.opacity = '1';
+        section.style.transform = 'translateY(0)';
+        section.style.transition = 'all 0.8s cubic-bezier(0.4, 0, 0.2, 1)';
+    }, 200);
+    document.querySelectorAll('.btn').forEach(btn => {
+        btn.addEventListener('mouseenter', function() {
+            if (!this.disabled) {
+                this.style.transform = 'translateY(-1px)';
+                if (this.classList.contains('btn-primary')) {
+                    this.style.boxShadow = '0 8px 25px rgba(255, 107, 107, 0.4)';
+                }
+            }
+        });
+        btn.addEventListener('mouseleave', function() {
+            if (!this.disabled) {
+                this.style.transform = 'translateY(0)';
+                this.style.boxShadow = '';
+            }
+        });
+        btn.addEventListener('mousedown', function() {
+            if (!this.disabled) {
+                this.style.transform = 'translateY(0) scale(0.98)';
+            }
+        });
+        btn.addEventListener('mouseup', function() {
+            if (!this.disabled) {
+                this.style.transform = 'translateY(-1px) scale(1)';
+            }
+        });
     });
-    
-    btn.addEventListener('mouseleave', function() {
-        this.style.transform = 'translateY(0) scale(1)';
+    document.querySelectorAll('.icon-noble').forEach(icon => {
+        icon.addEventListener('mouseenter', function() {
+            this.style.transform = 'scale(1.2) rotate(5deg)';
+            this.style.filter = 'drop-shadow(0 0 8px rgba(255, 107, 107, 0.5))';
+        });
+        icon.addEventListener('mouseleave', function() {
+            this.style.transform = 'scale(1) rotate(0deg)';
+            this.style.filter = 'drop-shadow(0 0 3px rgba(255, 107, 107, 0.3))';
+        });
     });
-});
-
-// Animation des tags de profil
-document.querySelectorAll('.profile-tag').forEach(tag => {
-    tag.addEventListener('mouseenter', function() {
-        this.style.transform = 'scale(1.1) rotate(3deg)';
-    });
-    
-    tag.addEventListener('mouseleave', function() {
-        this.style.transform = 'scale(1) rotate(0deg)';
-    });
-});
-
-// Animation de l'avatar
-document.querySelector('.profile-avatar')?.addEventListener('click', function() {
-    this.style.transform = 'scale(0.95) rotate(360deg)';
-    setTimeout(() => {
-        this.style.transform = 'scale(1) rotate(0deg)';
-    }, 500);
 });
 </script>
 {% endblock %}
