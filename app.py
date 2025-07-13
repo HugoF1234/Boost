@@ -2585,7 +2585,7 @@ def debug_posts():
 def parametres():
     if 'profile' not in session:
         return redirect(url_for("index"))
-    return render_template("parametres.html")
+    return render_template("parametres.html", user=session['profile'])
 
 @app.route("/calendar")
 def calendar():
