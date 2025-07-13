@@ -1,545 +1,501 @@
 {% extends "base.html" %}
 {% block content %}
 <style>
-    /* Variables pour couleurs douces */
     :root {
-        --primary: #6366f1;
-        --primary-light: #a5b4fc;
-        --primary-ultra-light: #e0e7ff;
-        --secondary: #f8fafc;
-        --accent: #10b981;
-        --accent-light: #6ee7b7;
-        --warm: #fbbf24;
-        --warm-light: #fde68a;
-        --soft-gray: #f1f5f9;
-        --text-primary: #1e293b;
-        --text-secondary: #64748b;
-        --text-light: #94a3b8;
-        --white: #ffffff;
-        --glass: rgba(255, 255, 255, 0.25);
-        --glass-border: rgba(255, 255, 255, 0.3);
-        --shadow-soft: 0 4px 20px rgba(99, 102, 241, 0.1);
-        --shadow-medium: 0 8px 30px rgba(99, 102, 241, 0.15);
-        --shadow-strong: 0 20px 40px rgba(0, 0, 0, 0.1);
-        --success: #10b981;
-        --warning: #f59e0b;
-        --danger: #ef4444;
+        --noble-cream: #faf9f7;
+        --noble-warm: #f5f2ed;
+        --noble-sage: #8b9a7c;
+        --noble-sage-light: #a8b59a;
+        --noble-sage-dark: #6b7865;
+        --noble-stone: #e8e4de;
+        --noble-charcoal: #4a4943;
+        --noble-charcoal-light: #6b6960;
+        --noble-mist: #f0ede8;
+        --noble-accent: #9c8b7a;
+        --noble-accent-light: #b5a495;
+        --gentle-success: #7c9885;
+        --gentle-warning: #b8a082;
+        --gentle-info: #8ba3b8;
+        --gentle-error: #c49090;
+        --shadow-whisper: 0 2px 12px rgba(139, 154, 124, 0.08);
+        --shadow-gentle: 0 4px 20px rgba(139, 154, 124, 0.12);
+        --shadow-soft: 0 8px 32px rgba(139, 154, 124, 0.16);
+        --primary-coral: #FF6B6B;
+        --primary-orange: #FF8E53;
+        --primary-pink: #FF5F8D;
+        --primary-purple: #8B5CF6;
+        --primary-blue: #06D6A0;
+        --primary-cyan: #118AB2;
+        --gradient-main: linear-gradient(135deg, #FF6B6B 0%, #FF8E53 25%, #FF5F8D 50%, #8B5CF6 75%, #06D6A0 100%);
+        --gradient-warm: linear-gradient(135deg, #FF8E53 0%, #FF6B6B 100%);
+        --gradient-cool: linear-gradient(135deg, #8B5CF6 0%, #06D6A0 100%);
+        --gradient-pink: linear-gradient(135deg, #FF5F8D 0%, #8B5CF6 100%);
     }
-
-    /* Header de page moderne */
-    .page-header {
-        background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 50%, var(--accent-light) 100%);
-        color: white;
-        padding: 2rem;
-        border-radius: 24px;
+    body {
+        background: transparent !important;
+        color: var(--noble-charcoal);
+        line-height: 1.7;
+    }
+    .historique-section {
+        background: rgba(255,255,255,0.85);
+        backdrop-filter: blur(20px);
+        border-radius: 20px;
+        padding: 2.5rem;
         margin-bottom: 2rem;
+        border: 1px solid rgba(255, 107, 107, 0.2);
+        box-shadow: var(--shadow-whisper);
         position: relative;
         overflow: hidden;
-        box-shadow: var(--shadow-strong);
     }
-
-    .page-header::before {
+    .historique-section::before {
         content: '';
         position: absolute;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="sparkles" width="20" height="20" patternUnits="userSpaceOnUse"><circle cx="5" cy="5" r="1" fill="%23ffffff" opacity="0.3"><animate attributeName="opacity" values="0.3;0.8;0.3" dur="3s" repeatCount="indefinite"/></circle><circle cx="15" cy="15" r="0.5" fill="%23ffffff" opacity="0.5"><animate attributeName="opacity" values="0.5;1;0.5" dur="2s" repeatCount="indefinite" begin="1s"/></circle></pattern></defs><rect width="100" height="100" fill="url(%23sparkles)"/></svg>') repeat;
+        top: 0; right: 0;
+        width: 120px; height: 120px;
+        background: radial-gradient(circle, rgba(255, 107, 107, 0.08) 0%, transparent 70%);
+        border-radius: 50%;
+        transform: translate(30%, -30%);
+        animation: gentle-pulse 8s ease-in-out infinite alternate;
     }
-
-    .page-header-content {
+    @keyframes gentle-pulse {
+        0% { opacity: 0.6; transform: translate(30%, -30%) scale(1); }
+        100% { opacity: 1; transform: translate(30%, -30%) scale(1.2); }
+    }
+    .historique-header {
+        margin-bottom: 2rem;
         position: relative;
         z-index: 1;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        flex-wrap: wrap;
-        gap: 1.5rem;
     }
-
-    .page-title {
-        font-size: 2.2rem;
-        font-weight: 700;
-        margin: 0;
-        text-shadow: 0 2px 4px rgba(0,0,0,0.1);
-        letter-spacing: -0.025em;
+    .historique-title {
+        font-size: 1.75rem;
+        font-weight: 600;
+        color: var(--noble-charcoal);
+        letter-spacing: -0.02em;
+        background: var(--gradient-main);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        animation: gradient-shift 4s ease-in-out infinite;
+        margin-bottom: 0.5rem;
         display: flex;
         align-items: center;
         gap: 1rem;
     }
-
-    .page-subtitle {
-        opacity: 0.9;
+    @keyframes gradient-shift {
+        0%, 100% { background-position: 0% 50%; }
+        50% { background-position: 100% 50%; }
+    }
+    .historique-subtitle {
+        color: var(--noble-charcoal-light);
         font-size: 1rem;
         font-weight: 400;
-        margin-top: 0.5rem;
     }
-
-    /* Boutons modernes */
-    .btn-modern {
-        padding: 0.75rem 1.5rem;
-        border-radius: 16px;
+    .kanban-container {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 1.5rem;
+        margin-top: 1.5rem;
+    }
+    .kanban-column {
+        background: rgba(255,255,255,0.9);
+        backdrop-filter: blur(20px);
+        border-radius: 20px;
+        box-shadow: var(--shadow-whisper);
+        border: 1px solid rgba(255, 107, 107, 0.15);
+        padding: 1.5rem;
+        display: flex;
+        flex-direction: column;
+        min-height: 400px;
+        position: relative;
+        overflow: hidden;
+        transition: box-shadow 0.3s, border-color 0.3s;
+    }
+    .kanban-column:hover {
+        box-shadow: var(--shadow-gentle);
+        border-color: rgba(255, 107, 107, 0.3);
+    }
+    .column-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 1.5rem;
+        padding-bottom: 1rem;
+        border-bottom: 2px solid var(--noble-stone);
+    }
+    .column-title {
+        font-size: 1.1rem;
         font-weight: 600;
+        color: var(--noble-charcoal);
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+    .column-count {
+        background: var(--primary-coral);
+        color: white;
+        padding: 0.25rem 0.75rem;
+        border-radius: 20px;
+        font-size: 0.8rem;
+        font-weight: 500;
+        box-shadow: 0 2px 8px rgba(255, 107, 107, 0.08);
+    }
+    .column-content {
+        overflow-y: auto;
+        flex: 1;
+        padding-right: 0.5rem;
+    }
+    .post-card {
+        background: rgba(255,255,255,0.8);
+        backdrop-filter: blur(15px);
+        border-radius: 16px;
+        margin-bottom: 1rem;
+        overflow: hidden;
+        border: 1px solid rgba(255, 107, 107, 0.15);
+        transition: all 0.3s ease;
+        box-shadow: var(--shadow-whisper);
+        position: relative;
+    }
+    .post-card:hover {
+        transform: translateY(-2px);
+        box-shadow: var(--shadow-gentle);
+        border-color: rgba(255, 107, 107, 0.3);
+    }
+    .post-image-placeholder {
+        width: 100%;
+        height: 120px;
+        background: var(--gradient-warm);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-size: 2rem;
+        border-bottom: 1px solid rgba(255, 107, 107, 0.08);
+    }
+    .post-content {
+        padding: 1rem;
+    }
+    .post-date {
+        font-size: 0.85rem;
+        color: var(--noble-charcoal-light);
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        margin-bottom: 0.5rem;
+    }
+    .post-text {
+        color: var(--noble-charcoal);
+        font-size: 0.98rem;
+        line-height: 1.5;
+        margin-bottom: 1rem;
+        display: -webkit-box;
+        -webkit-line-clamp: 3;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+    }
+    .post-actions {
+        display: flex;
+        gap: 0.5rem;
+        padding-top: 0.5rem;
+        border-top: 1px solid rgba(255, 107, 107, 0.08);
+    }
+    .btn-action {
+        padding: 0.5rem 1rem;
+        border-radius: 8px;
         font-size: 0.9rem;
+        background: none;
         border: none;
+        color: var(--noble-charcoal);
         cursor: pointer;
-        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        display: inline-flex;
+        transition: all 0.2s ease;
+        display: flex;
         align-items: center;
         gap: 0.5rem;
         text-decoration: none;
-        position: relative;
-        overflow: hidden;
-    }
-
-    .btn-modern::before {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: -100%;
-        width: 100%;
-        height: 100%;
-        background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
-        transition: all 0.6s ease;
-    }
-
-    .btn-modern:hover::before {
-        left: 100%;
-    }
-
-    .btn-primary-modern {
-        background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
-        color: white;
-        box-shadow: 0 4px 20px rgba(99, 102, 241, 0.3);
-    }
-
-    .btn-primary-modern:hover {
-        transform: translateY(-3px) scale(1.02);
-        box-shadow: 0 8px 30px rgba(99, 102, 241, 0.4);
-    }
-
-    .btn-secondary-modern {
-        background: var(--glass);
-        backdrop-filter: blur(10px);
-        color: white;
-        border: 1px solid var(--glass-border);
-        box-shadow: var(--shadow-soft);
-    }
-
-    .btn-secondary-modern:hover {
-        background: rgba(255, 255, 255, 0.4);
-        transform: translateY(-3px);
-        box-shadow: var(--shadow-medium);
-    }
-
-    /* Cartes de contenu */
-    .content-card {
-        background: var(--white);
-        border-radius: 24px;
-        border: 1px solid rgba(99, 102, 241, 0.1);
-        overflow: hidden;
-        transition: all 0.3s ease;
-        margin-bottom: 2rem;
-        box-shadow: var(--shadow-soft);
-    }
-
-    .content-card:hover {
-        transform: translateY(-4px);
-        box-shadow: var(--shadow-medium);
-        border-color: var(--primary-light);
-    }
-
-    /* Post items */
-    .post-item {
-        padding: 2rem;
-        border-bottom: 1px solid var(--soft-gray);
-        position: relative;
-        transition: all 0.3s ease;
-    }
-
-    .post-item:last-child {
-        border-bottom: none;
-    }
-
-    .post-item:hover {
-        background: linear-gradient(135deg, var(--primary-ultra-light) 0%, rgba(16, 185, 129, 0.02) 100%);
-        transform: translateX(8px);
-    }
-
-    .post-header {
-        display: flex;
-        justify-content: space-between;
-        align-items: flex-start;
-        margin-bottom: 1rem;
-        flex-wrap: wrap;
-        gap: 1rem;
-    }
-
-    .post-meta {
-        display: flex;
-        align-items: center;
-        gap: 1rem;
-        font-size: 0.9rem;
-        color: var(--text-light);
-        flex-wrap: wrap;
-    }
-
-    .post-date {
-        display: flex;
-        align-items: center;
-        gap: 0.5rem;
         font-weight: 500;
     }
-
+    .btn-action:hover {
+        background: rgba(255, 107, 107, 0.08);
+        color: var(--primary-coral);
+    }
+    .btn-edit:hover { color: var(--primary-purple); }
+    .btn-delete:hover { color: var(--gentle-error); }
+    .btn-view:hover { color: #0a66c2; }
     .post-status {
         display: inline-flex;
         align-items: center;
         gap: 0.5rem;
-        padding: 0.5rem 1rem;
+        padding: 0.25rem 0.75rem;
         border-radius: 20px;
         font-size: 0.8rem;
-        font-weight: 600;
-        text-transform: uppercase;
-        letter-spacing: 0.05em;
+        font-weight: 500;
+        margin-bottom: 0.5rem;
     }
-
-    .status-published {
-        background: linear-gradient(135deg, #dcfce7 0%, #bbf7d0 100%);
-        color: var(--success);
-        border: 1px solid #86efac;
+    .status-draft {
+        background: rgba(184, 160, 130, 0.1);
+        color: var(--gentle-warning);
+        border: 1px solid var(--gentle-warning);
     }
-
     .status-scheduled {
-        background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
-        color: var(--warning);
-        border: 1px solid #facc15;
+        background: rgba(139, 163, 184, 0.1);
+        color: var(--gentle-info);
+        border: 1px solid var(--gentle-info);
     }
-
-    .post-content {
-        margin-bottom: 1.5rem;
-        padding: 1.5rem;
-        background: var(--soft-gray);
-        border-radius: 16px;
-        line-height: 1.7;
-        color: var(--text-primary);
-        position: relative;
-        border-left: 4px solid var(--primary);
+    .status-published {
+        background: rgba(124, 152, 133, 0.1);
+        color: var(--gentle-success);
+        border: 1px solid var(--gentle-success);
     }
-
-    .post-content::before {
-        content: '';
-        position: absolute;
-        top: 0;
-        right: 0;
-        width: 60px;
-        height: 60px;
-        background: radial-gradient(circle, rgba(99, 102, 241, 0.1) 0%, transparent 70%);
-        border-radius: 50%;
-        transform: translate(20%, -20%);
-    }
-
-    .post-hashtags {
-        margin-top: 1rem;
-        display: flex;
-        flex-wrap: wrap;
-        gap: 0.5rem;
-    }
-
-    .hashtag {
-        display: inline-block;
-        background: linear-gradient(135deg, var(--primary-ultra-light) 0%, rgba(16, 185, 129, 0.1) 100%);
-        color: var(--primary);
-        padding: 0.25rem 0.75rem;
-        border-radius: 12px;
-        font-size: 0.8rem;
-        font-weight: 500;
-        border: 1px solid var(--primary-light);
-        transition: all 0.2s ease;
-    }
-
-    .hashtag:hover {
-        background: var(--primary);
-        color: white;
-        transform: scale(1.05);
-    }
-
-    .post-actions {
-        display: flex;
-        gap: 0.75rem;
-        flex-wrap: wrap;
-    }
-
-    .btn-action {
-        padding: 0.5rem 1rem;
-        border-radius: 12px;
-        font-size: 0.8rem;
-        font-weight: 500;
-        text-decoration: none;
-        display: inline-flex;
-        align-items: center;
-        gap: 0.5rem;
-        transition: all 0.3s ease;
-        border: 1px solid;
-    }
-
-    .btn-edit {
-        background: var(--primary-ultra-light);
-        color: var(--primary);
-        border-color: var(--primary-light);
-    }
-
-    .btn-edit:hover {
-        background: var(--primary);
-        color: white;
-        transform: translateY(-2px);
-        box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
-    }
-
-    .btn-delete {
-        background: #fef2f2;
-        color: var(--danger);
-        border-color: #fca5a5;
-    }
-
-    .btn-delete:hover {
-        background: var(--danger);
-        color: white;
-        transform: translateY(-2px);
-        box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
-    }
-
-    /* État vide */
-    .empty-state {
+    .column-empty {
         text-align: center;
-        padding: 4rem 2rem;
-        color: var(--text-light);
+        padding: 2rem 1rem;
+        color: var(--noble-charcoal-light);
     }
-
-    .empty-state-icon {
-        font-size: 4rem;
-        margin-bottom: 1.5rem;
-        opacity: 0.5;
+    .empty-icon {
+        font-size: 2rem;
+        color: var(--primary-coral);
+        margin-bottom: 1rem;
     }
-
-    .empty-state h3 {
-        font-size: 1.5rem;
-        margin-bottom: 0.75rem;
-        color: var(--text-primary);
+    .empty-text {
+        font-size: 0.98rem;
     }
-
-    .empty-state p {
-        font-size: 1rem;
-        margin-bottom: 2rem;
-        line-height: 1.6;
-    }
-
-    /* Responsive */
-    @media (max-width: 768px) {
-        .page-header-content {
-            flex-direction: column;
-            text-align: center;
-        }
-
-        .page-title {
-            font-size: 1.8rem;
-        }
-
-        .post-item {
-            padding: 1.5rem;
-        }
-
-        .post-header {
-            flex-direction: column;
-            align-items: flex-start;
-        }
-
-        .post-actions {
-            justify-content: center;
-            width: 100%;
-        }
-    }
-
-    /* Animations */
     .fade-in {
-        animation: fadeInUp 0.6s ease-out;
+        animation: gentleFadeIn 0.8s ease-out;
     }
-
-    @keyframes fadeInUp {
-        from {
-            opacity: 0;
-            transform: translateY(30px);
-        }
-        to {
-            opacity: 1;
-            transform: translateY(0);
-        }
+    @keyframes gentleFadeIn {
+        from { opacity: 0; transform: translateY(20px); }
+        to { opacity: 1; transform: translateY(0); }
     }
-
-    .slide-in {
-        animation: slideInRight 0.5s ease-out;
+    .icon-noble {
+        color: var(--primary-coral);
+        font-size: 1.125rem;
+        filter: drop-shadow(0 0 3px rgba(255, 107, 107, 0.3));
     }
-
-    @keyframes slideInRight {
-        from {
-            opacity: 0;
-            transform: translateX(30px);
-        }
-        to {
-            opacity: 1;
-            transform: translateX(0);
-        }
+    @media (max-width: 992px) {
+        .kanban-container { grid-template-columns: 1fr; }
+    }
+    @media (max-width: 768px) {
+        .kanban-container { grid-template-columns: 1fr; }
+        .column-header { flex-direction: column; align-items: flex-start; gap: 0.5rem; }
     }
 </style>
 
-<!-- Header de page -->
-<div class="page-header fade-in">
-    <div class="page-header-content">
-        <div>
-            <h1 class="page-title">
-                <i class="fas fa-history"></i>
-                Historique des publications
-            </h1>
-            <p class="page-subtitle">Consultez et gérez vos posts LinkedIn publiés et programmés</p>
-        </div>
-        <a href="{{ url_for('dashboard') }}" class="btn-modern btn-secondary-modern">
-            <i class="fa-solid fa-plus"></i>
-            Nouveau post
-        </a>
+<div class="historique-section fade-in">
+    <div class="historique-header">
+        <h1 class="historique-title">
+            <i class="fas fa-history icon-noble"></i>
+            Historique des publications
+        </h1>
+        <p class="historique-subtitle">Gérez vos publications LinkedIn par statut</p>
     </div>
-</div>
-
-<!-- Contenu principal -->
-<div class="content-card slide-in">
-    {% if posts and posts|length > 0 %}
-        <!-- Liste des posts -->
-        {% for post in posts %}
-            <div class="post-item">
-                <div class="post-header">
-                    <div class="post-meta">
-                        <div class="post-date">
-                            <i class="fa-regular fa-clock"></i>
-                            {{ post.published_at.strftime("%d/%m/%Y à %H:%M") if post.published_at else "Date inconnue" }}
-                        </div>
-                        <div class="post-status {% if post.scheduled %}status-scheduled{% else %}status-published{% endif %}">
-                            <i class="fa-solid {% if post.scheduled %}fa-calendar{% else %}fa-check-circle{% endif %}"></i>
-                            {% if post.scheduled %}Programmé{% else %}Publié{% endif %}
+    <div class="kanban-container">
+        <!-- Brouillons -->
+        <div class="kanban-column fade-in">
+            <div class="column-header">
+                <h2 class="column-title"><i class="fas fa-edit icon-noble"></i> Brouillons</h2>
+                <span class="column-count">{{ draft_posts|length if draft_posts else 0 }}</span>
+            </div>
+            <div class="column-content">
+                {% if draft_posts %}
+                    {% for post in draft_posts %}
+                    <div class="post-card">
+                        <div class="post-image-placeholder"><i class="fas fa-file-alt"></i></div>
+                        <div class="post-content">
+                            <div class="post-status status-draft"><i class="fas fa-edit"></i> Brouillon</div>
+                            <div class="post-date"><i class="fas fa-calendar"></i> Créé le {{ post.published_at.strftime('%d/%m/%Y à %H:%M') if post.published_at else 'Date inconnue' }}</div>
+                            <div class="post-text">{{ post.content }}</div>
+                            <div class="post-actions">
+                                <a href="{{ url_for('edit_post', post_id=post.id) }}" class="btn-action btn-edit"><i class="fas fa-edit"></i> Modifier</a>
+                                <a href="{{ url_for('delete_post', post_id=post.id) }}" class="btn-action btn-delete" onclick="return confirm('Êtes-vous sûr de vouloir supprimer ce brouillon ?')"><i class="fas fa-trash"></i> Supprimer</a>
+                            </div>
                         </div>
                     </div>
-                </div>
-                
-                <div class="post-content">
-                    {{ post.content }}
-                    
-                    <!-- Hashtags -->
-                    {% if post.content and '#' in post.content %}
-                        <div class="post-hashtags">
-                            {% set hashtags = post.content|findhashtags %}
-                            {% if hashtags %}
-                                {% for tag in hashtags %}
-                                    <span class="hashtag">{{ tag }}</span>
-                                {% endfor %}
-                            {% endif %}
-                        </div>
-                    {% endif %}
-                </div>
-                
-                <!-- Actions -->
-                <div class="post-actions">
-                    {% if post.scheduled %}
-                        <a href="{{ url_for('edit_post', post_id=post.id) }}" class="btn-action btn-edit">
-                            <i class="fa-solid fa-pen"></i>
-                            Éditer
-                        </a>
-                    {% endif %}
-                    
-                    <a href="{{ url_for('delete_post', post_id=post.id) }}" class="btn-action btn-delete">
-                        <i class="fa-solid fa-trash"></i>
-                        Supprimer
-                    </a>
-                </div>
+                    {% endfor %}
+                {% else %}
+                    <div class="column-empty">
+                        <div class="empty-icon"><i class="fas fa-edit"></i></div>
+                        <p class="empty-text">Aucun brouillon<br><small>Créez du contenu depuis le dashboard</small></p>
+                    </div>
+                {% endif %}
             </div>
-        {% endfor %}
-    {% else %}
-        <!-- État vide -->
-        <div class="empty-state">
-            <div class="empty-state-icon">
-                <i class="fa-solid fa-file-circle-question"></i>
-            </div>
-            <h3>Aucun post publié</h3>
-            <p>Vous n'avez pas encore publié de contenu sur LinkedIn.<br>Créez votre premier post pour commencer à développer votre présence professionnelle.</p>
-            <a href="{{ url_for('dashboard') }}" class="btn-modern btn-primary-modern">
-                <i class="fa-solid fa-pen-to-square"></i>
-                Créer mon premier post
-            </a>
         </div>
-    {% endif %}
+        <!-- Programmés -->
+        <div class="kanban-column fade-in">
+            <div class="column-header">
+                <h2 class="column-title"><i class="fas fa-clock icon-noble"></i> Programmés</h2>
+                <span class="column-count">{{ scheduled_posts|length if scheduled_posts else 0 }}</span>
+            </div>
+            <div class="column-content">
+                {% if scheduled_posts %}
+                    {% for post in scheduled_posts %}
+                    <div class="post-card">
+                        <div class="post-image-placeholder"><i class="fas fa-clock"></i></div>
+                        <div class="post-content">
+                            <div class="post-status status-scheduled"><i class="fas fa-clock"></i> Programmé</div>
+                            <div class="post-date"><i class="fas fa-calendar-alt"></i> {% if post.published_at %}{{ post.published_at.strftime('%d/%m/%Y à %H:%M') }}{% else %}Date inconnue{% endif %}</div>
+                            <div class="post-text">{{ post.content }}</div>
+                            <div class="post-actions">
+                                <a href="{{ url_for('edit_post', post_id=post.id) }}" class="btn-action btn-edit"><i class="fas fa-edit"></i> Modifier</a>
+                                <a href="{{ url_for('delete_post', post_id=post.id) }}" class="btn-action btn-delete" onclick="return confirm('Êtes-vous sûr de vouloir annuler cette programmation ?')"><i class="fas fa-times"></i> Annuler</a>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                {% else %}
+                    <div class="column-empty">
+                        <div class="empty-icon"><i class="fas fa-clock"></i></div>
+                        <p class="empty-text">Aucun post programmé<br><small>Programmez vos publications à l'avance</small></p>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+        <!-- Publiés -->
+        <div class="kanban-column fade-in">
+            <div class="column-header">
+                <h2 class="column-title"><i class="fas fa-check-circle icon-noble"></i> Publiés</h2>
+                <span class="column-count">{{ published_posts|length if published_posts else 0 }}</span>
+            </div>
+            <div class="column-content">
+                {% if published_posts %}
+                    {% for post in published_posts %}
+                    <div class="post-card">
+                        <div class="post-image-placeholder" style="background: var(--gradient-cool);"><i class="fas fa-check-circle"></i></div>
+                        <div class="post-content">
+                            <div class="post-status status-published"><i class="fas fa-check-circle"></i> Publié</div>
+                            <div class="post-date"><i class="fas fa-calendar-check"></i> {{ post.published_at.strftime('%d/%m/%Y à %H:%M') if post.published_at else 'Date inconnue' }}</div>
+                            <div class="post-text">{{ post.content }}</div>
+                            <div class="post-actions">
+                                {% if post.linkedin_post_urn %}
+                                <a href="https://www.linkedin.com/feed/" target="_blank" class="btn-action btn-view"><i class="fab fa-linkedin"></i> Voir sur LinkedIn</a>
+                                {% else %}
+                                <span class="btn-action" style="color: var(--noble-charcoal-light); cursor: default;"><i class="fas fa-link"></i> Lien indisponible</span>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                {% else %}
+                    <div class="column-empty">
+                        <div class="empty-icon"><i class="fas fa-check-circle"></i></div>
+                        <p class="empty-text">Aucune publication<br><small>Vos posts publiés apparaîtront ici</small></p>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
 </div>
-
+<a href="{{ url_for('dashboard') }}" class="floating-btn" title="Créer un nouveau post">
+    <i class="fas fa-plus"></i>
+</a>
+<style>
+.floating-btn {
+    position: fixed;
+    bottom: 2rem;
+    right: 2rem;
+    width: 60px;
+    height: 60px;
+    background: var(--gradient-main);
+    color: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-decoration: none;
+    font-size: 1.5rem;
+    box-shadow: var(--shadow-gentle);
+    transition: all 0.3s ease;
+    z-index: 1000;
+}
+.floating-btn:hover {
+    transform: translateY(-2px) scale(1.05);
+    box-shadow: var(--shadow-soft);
+    background: var(--gradient-pink);
+}
+.floating-btn:active {
+    transform: translateY(0) scale(1);
+}
+</style>
 <script>
-// Animation des éléments au scroll
-const observerOptions = {
-    threshold: 0.1,
-    rootMargin: '0px 0px -50px 0px'
-};
-
-const observer = new IntersectionObserver((entries) => {
-    entries.forEach(entry => {
-        if (entry.isIntersecting) {
-            entry.target.style.opacity = '1';
-            entry.target.style.transform = 'translateY(0)';
-        }
+document.addEventListener('DOMContentLoaded', function() {
+    document.querySelectorAll('.kanban-column').forEach((column, index) => {
+        column.style.opacity = '0';
+        column.style.transform = 'translateY(20px)';
+        setTimeout(() => {
+            column.style.opacity = '1';
+            column.style.transform = 'translateY(0)';
+            column.style.transition = 'all 0.6s ease';
+        }, index * 200);
     });
-}, observerOptions);
-
-// Observer tous les éléments avec animation
-document.querySelectorAll('.fade-in, .slide-in').forEach(el => {
-    el.style.opacity = '0';
-    el.style.transform = 'translateY(30px)';
-    el.style.transition = 'all 0.6s cubic-bezier(0.4, 0, 0.2, 1)';
-    observer.observe(el);
-});
-
-// Animation des post items
-document.querySelectorAll('.post-item').forEach((item, index) => {
-    item.style.opacity = '0';
-    item.style.transform = 'translateX(-20px)';
-    item.style.transition = 'all 0.5s cubic-bezier(0.4, 0, 0.2, 1)';
-    
     setTimeout(() => {
-        item.style.opacity = '1';
-        item.style.transform = 'translateX(0)';
-    }, index * 100);
-});
-
-// Amélioration des interactions des boutons
-document.querySelectorAll('.btn-modern, .btn-action').forEach(btn => {
-    btn.addEventListener('mouseenter', function() {
-        this.style.transform = 'translateY(-3px) scale(1.02)';
+        document.querySelectorAll('.post-card').forEach((card, index) => {
+            card.style.opacity = '0';
+            card.style.transform = 'translateY(20px)';
+            setTimeout(() => {
+                card.style.opacity = '1';
+                card.style.transform = 'translateY(0)';
+                card.style.transition = 'all 0.4s ease';
+            }, index * 100);
+        });
+    }, 600);
+    setTimeout(() => {
+        const floatingBtn = document.querySelector('.floating-btn');
+        if (floatingBtn) {
+            floatingBtn.style.opacity = '0';
+            floatingBtn.style.transform = 'translateY(20px) scale(0.8)';
+            setTimeout(() => {
+                floatingBtn.style.opacity = '1';
+                floatingBtn.style.transform = 'translateY(0) scale(1)';
+                floatingBtn.style.transition = 'all 0.6s ease';
+            }, 100);
+        }
+    }, 1200);
+    document.querySelectorAll('.column-count').forEach(counter => {
+        const finalCount = parseInt(counter.textContent);
+        counter.textContent = '0';
+        let currentCount = 0;
+        const increment = Math.ceil(finalCount / 20);
+        const timer = setInterval(() => {
+            currentCount += increment;
+            if (currentCount >= finalCount) {
+                counter.textContent = finalCount;
+                clearInterval(timer);
+            } else {
+                counter.textContent = currentCount;
+            }
+        }, 50);
     });
-    
-    btn.addEventListener('mouseleave', function() {
-        this.style.transform = 'translateY(0) scale(1)';
+    document.querySelectorAll('.post-card').forEach(card => {
+        card.addEventListener('mouseenter', function() {
+            this.style.transform = 'translateY(-4px)';
+            this.style.boxShadow = 'var(--shadow-soft)';
+        });
+        card.addEventListener('mouseleave', function() {
+            this.style.transform = 'translateY(-2px)';
+            this.style.boxShadow = 'var(--shadow-gentle)';
+        });
     });
-    
-    btn.addEventListener('mousedown', function() {
-        this.style.transform = 'translateY(-1px) scale(0.98)';
+    document.querySelectorAll('.btn-delete').forEach(btn => {
+        btn.addEventListener('click', function(e) {
+            e.preventDefault();
+            const postCard = this.closest('.post-card');
+            const postText = postCard.querySelector('.post-text').textContent.substring(0, 50) + '...';
+            if (confirm(`Êtes-vous sûr de vouloir supprimer ce post ?\n\n"${postText}"\n\nCette action est irréversible.`)) {
+                window.location.href = this.href;
+            }
+        });
     });
-    
-    btn.addEventListener('mouseup', function() {
-        this.style.transform = 'translateY(-3px) scale(1.02)';
-    });
-});
-
-// Animation des hashtags
-document.querySelectorAll('.hashtag').forEach(hashtag => {
-    hashtag.addEventListener('mouseenter', function() {
-        this.style.transform = 'scale(1.1) rotate(2deg)';
-    });
-    
-    hashtag.addEventListener('mouseleave', function() {
-        this.style.transform = 'scale(1) rotate(0deg)';
-    });
+    setInterval(() => {
+        const scheduledColumn = document.querySelector('.kanban-column:nth-child(2) .column-content');
+        if (scheduledColumn && scheduledColumn.children.length > 1) {
+            fetch('/publish_scheduled', { method: 'GET' })
+                .then(response => response.text())
+                .then(data => {
+                    if (data.includes('publiés automatiquement')) {
+                        window.location.reload();
+                    }
+                })
+                .catch(error => console.log('Auto-refresh check failed:', error));
+        }
+    }, 300000);
 });
 </script>
 {% endblock %}
