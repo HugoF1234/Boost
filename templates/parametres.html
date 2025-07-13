@@ -1,7 +1,6 @@
 {% extends "base.html" %}
 {% block content %}
 <style>
-    /* Variables nobles et apaisantes identiques au dashboard */
     :root {
         --noble-cream: #faf9f7;
         --noble-warm: #f5f2ed;
@@ -14,301 +13,133 @@
         --noble-mist: #f0ede8;
         --noble-accent: #9c8b7a;
         --noble-accent-light: #b5a495;
-        
         --gentle-success: #7c9885;
         --gentle-warning: #b8a082;
         --gentle-info: #8ba3b8;
-        
+        --gentle-error: #c49090;
         --shadow-whisper: 0 2px 12px rgba(139, 154, 124, 0.08);
         --shadow-gentle: 0 4px 20px rgba(139, 154, 124, 0.12);
         --shadow-soft: 0 8px 32px rgba(139, 154, 124, 0.16);
+        --primary-coral: #FF6B6B;
+        --primary-orange: #FF8E53;
+        --primary-pink: #FF5F8D;
+        --primary-purple: #8B5CF6;
+        --primary-blue: #06D6A0;
+        --primary-cyan: #118AB2;
+        --gradient-main: linear-gradient(135deg, #FF6B6B 0%, #FF8E53 25%, #FF5F8D 50%, #8B5CF6 75%, #06D6A0 100%);
+        --gradient-warm: linear-gradient(135deg, #FF8E53 0%, #FF6B6B 100%);
+        --gradient-cool: linear-gradient(135deg, #8B5CF6 0%, #06D6A0 100%);
+        --gradient-pink: linear-gradient(135deg, #FF5F8D 0%, #8B5CF6 100%);
     }
-
     body {
-        background: var(--noble-cream);
+        background: transparent !important;
         color: var(--noble-charcoal);
         line-height: 1.7;
     }
-
-    /* Header noble et accueillant identique au dashboard */
-    .welcome-section {
-        background: linear-gradient(135deg, var(--noble-warm) 0%, var(--noble-mist) 100%);
+    .settings-section {
+        background: rgba(255,255,255,0.85);
+        backdrop-filter: blur(20px);
         border-radius: 20px;
         padding: 2.5rem;
         margin-bottom: 2rem;
-        border: 1px solid var(--noble-stone);
+        border: 1px solid rgba(255, 107, 107, 0.2);
         box-shadow: var(--shadow-whisper);
         position: relative;
         overflow: hidden;
+        max-width: 700px;
+        margin-left: auto;
+        margin-right: auto;
     }
-
-    .welcome-section::before {
+    .settings-section::before {
         content: '';
         position: absolute;
-        top: 0;
-        right: 0;
-        width: 120px;
-        height: 120px;
-        background: radial-gradient(circle, rgba(139, 154, 124, 0.06) 0%, transparent 70%);
+        top: 0; right: 0;
+        width: 120px; height: 120px;
+        background: radial-gradient(circle, rgba(255, 107, 107, 0.08) 0%, transparent 70%);
         border-radius: 50%;
         transform: translate(30%, -30%);
+        animation: gentle-pulse 8s ease-in-out infinite alternate;
     }
-
-    .welcome-content {
+    @keyframes gentle-pulse {
+        0% { opacity: 0.6; transform: translate(30%, -30%) scale(1); }
+        100% { opacity: 1; transform: translate(30%, -30%) scale(1.2); }
+    }
+    .settings-header {
+        margin-bottom: 2rem;
         position: relative;
         z-index: 1;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        flex-wrap: wrap;
-        gap: 1.5rem;
+        text-align: center;
     }
-
-    .greeting {
+    .settings-title {
         font-size: 1.75rem;
         font-weight: 600;
         color: var(--noble-charcoal);
-        margin-bottom: 0.5rem;
         letter-spacing: -0.02em;
+        background: var(--gradient-main);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        animation: gradient-shift 4s ease-in-out infinite;
+        margin-bottom: 0.5rem;
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        justify-content: center;
     }
-
-    .greeting-subtitle {
+    @keyframes gradient-shift {
+        0%, 100% { background-position: 0% 50%; }
+        50% { background-position: 100% 50%; }
+    }
+    .settings-subtitle {
         color: var(--noble-charcoal-light);
         font-size: 1rem;
         font-weight: 400;
-    }
-
-    /* Section principale identique au dashboard */
-    .creation-section {
-        background: white;
-        border-radius: 20px;
-        padding: 2.5rem;
-        margin-bottom: 2rem;
-        border: 1px solid var(--noble-stone);
-        box-shadow: var(--shadow-whisper);
-    }
-
-    .section-header {
-        margin-bottom: 2rem;
-    }
-
-    .section-title {
-        font-size: 1.4rem;
-        font-weight: 600;
-        color: var(--noble-charcoal);
-        margin-bottom: 0.5rem;
-        display: flex;
-        align-items: center;
-        gap: 0.75rem;
-    }
-
-    .section-subtitle {
-        color: var(--noble-charcoal-light);
-        font-size: 0.95rem;
-        line-height: 1.6;
-    }
-
-    /* Informations de compte */
-    .account-info {
-        background: linear-gradient(135deg, rgba(139, 154, 124, 0.04) 0%, rgba(156, 139, 122, 0.04) 100%);
-        border: 1px solid rgba(139, 154, 124, 0.15);
-        border-radius: 16px;
-        padding: 2rem;
-        margin-bottom: 2rem;
-        position: relative;
-    }
-
-    .account-info::before {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 4px;
-        height: 100%;
-        background: linear-gradient(to bottom, var(--noble-sage), var(--noble-accent));
-        border-radius: 2px;
-    }
-
-    .account-header {
-        display: flex;
-        align-items: center;
-        gap: 1.5rem;
         margin-bottom: 1.5rem;
     }
-
-    .account-avatar {
-        width: 60px;
-        height: 60px;
-        border-radius: 50%;
-        border: 2px solid var(--noble-sage-light);
-        overflow: hidden;
-        flex-shrink: 0;
-    }
-
-    .account-avatar img {
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-    }
-
-    .account-placeholder {
-        width: 100%;
-        height: 100%;
-        background: linear-gradient(135deg, var(--noble-sage) 0%, var(--noble-accent) 100%);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 1.5rem;
-        color: white;
-        font-weight: 600;
-    }
-
-    .account-details h3 {
-        font-size: 1.2rem;
-        font-weight: 600;
-        color: var(--noble-charcoal);
-        margin-bottom: 0.25rem;
-    }
-
-    .account-details p {
-        color: var(--noble-charcoal-light);
-        font-size: 0.9rem;
-    }
-
-    .account-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-        gap: 1.5rem;
-    }
-
-    .account-item {
-        padding: 1.5rem;
-        background: white;
-        border-radius: 12px;
-        border: 1px solid var(--noble-stone);
-        transition: all 0.3s ease;
-    }
-
-    .account-item:hover {
-        background: var(--noble-mist);
-        border-color: var(--noble-sage-light);
-        transform: translateY(-2px);
-    }
-
-    .account-item h4 {
-        font-size: 0.9rem;
-        color: var(--noble-charcoal-light);
-        margin-bottom: 0.5rem;
-        text-transform: uppercase;
-        letter-spacing: 0.5px;
-        font-weight: 500;
-        display: flex;
-        align-items: center;
-        gap: 0.5rem;
-    }
-
-    .account-item p {
-        font-weight: 600;
-        color: var(--noble-charcoal);
-        font-size: 1rem;
-    }
-
-    /* Intégrations - style noble */
-    .integration-list {
-        display: flex;
-        flex-direction: column;
-        gap: 1rem;
-    }
-
-    .integration-item {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        padding: 1.5rem;
-        background: var(--noble-warm);
-        border: 1px solid var(--noble-stone);
+    .settings-form {
+        background: rgba(255,255,255,0.7);
         border-radius: 16px;
-        transition: all 0.3s ease;
+        padding: 2rem;
+        box-shadow: var(--shadow-whisper);
+        border: 1px solid rgba(255, 107, 107, 0.10);
+        position: relative;
+        z-index: 1;
+        margin-bottom: 2rem;
     }
-
-    .integration-item:hover {
-        background: var(--noble-mist);
-        border-color: var(--noble-sage-light);
-        transform: translateY(-1px);
+    .form-group {
+        margin-bottom: 1.5rem;
     }
-
-    .integration-info {
-        display: flex;
-        align-items: center;
-        gap: 1rem;
-        flex: 1;
-    }
-
-    .integration-icon {
-        width: 50px;
-        height: 50px;
-        border-radius: 12px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 1.3rem;
-        color: white;
-        transition: all 0.3s ease;
-    }
-
-    .linkedin-icon {
-        background: linear-gradient(135deg, #0a66c2 0%, #004182 100%);
-    }
-
-    .twitter-icon {
-        background: linear-gradient(135deg, #1da1f2 0%, #0d8bd9 100%);
-    }
-
-    .slack-icon {
-        background: linear-gradient(135deg, #4a154b 0%, #ff5722 100%);
-    }
-
-    .integration-details {
-        flex: 1;
-    }
-
-    .integration-name {
-        font-weight: 600;
-        font-size: 1rem;
-        color: var(--noble-charcoal);
-        margin-bottom: 0.25rem;
-    }
-
-    .integration-description {
-        color: var(--noble-charcoal-light);
-        font-size: 0.85rem;
-    }
-
-    .status-badge {
-        display: inline-flex;
-        align-items: center;
-        gap: 0.5rem;
-        padding: 0.5rem 1rem;
-        border-radius: 20px;
-        font-size: 0.8rem;
+    .form-label {
+        font-size: 0.9rem;
         font-weight: 500;
-        text-transform: uppercase;
-        letter-spacing: 0.5px;
+        color: var(--noble-charcoal);
+        margin-bottom: 0.75rem;
+        display: block;
     }
-
-    .status-connected {
-        background: linear-gradient(135deg, rgba(124, 152, 133, 0.1) 0%, rgba(124, 152, 133, 0.05) 100%);
-        color: var(--gentle-success);
-        border: 1px solid var(--gentle-success);
+    .form-control {
+        width: 100%;
+        padding: 0.875rem 1.125rem;
+        border: 1.5px solid rgba(255, 107, 107, 0.2);
+        border-radius: 12px;
+        font-size: 0.95rem;
+        background: rgba(255, 255, 255, 0.8);
+        backdrop-filter: blur(10px);
+        color: var(--noble-charcoal);
+        transition: all 0.3s ease;
+        font-family: inherit;
     }
-
-    .status-soon {
-        background: linear-gradient(135deg, rgba(184, 160, 130, 0.1) 0%, rgba(184, 160, 130, 0.05) 100%);
-        color: var(--gentle-warning);
-        border: 1px solid var(--gentle-warning);
+    .form-control:focus {
+        outline: none;
+        border-color: var(--primary-coral);
+        box-shadow: 0 0 0 3px rgba(255, 107, 107, 0.1);
+        background: rgba(255, 255, 255, 0.95);
     }
-
-    /* Boutons nobles identiques au dashboard */
+    .settings-actions {
+        display: flex;
+        gap: 1rem;
+        justify-content: center;
+        margin-top: 2rem;
+    }
     .btn {
         padding: 0.875rem 1.75rem;
         border-radius: 12px;
@@ -324,454 +155,141 @@
         position: relative;
         overflow: hidden;
     }
-
+    .btn::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+        transition: all 0.6s ease;
+    }
+    .btn:hover::before {
+        left: 100%;
+    }
     .btn-primary {
-        background: linear-gradient(135deg, var(--noble-sage) 0%, var(--noble-sage-light) 100%);
+        background: var(--gradient-warm);
         color: white;
-        box-shadow: var(--shadow-whisper);
+        box-shadow: 0 4px 15px rgba(255, 107, 107, 0.3);
+        border: 1px solid rgba(255, 255, 255, 0.2);
     }
-
     .btn-primary:hover {
-        transform: translateY(-1px);
-        box-shadow: var(--shadow-gentle);
-        background: linear-gradient(135deg, var(--noble-sage-dark) 0%, var(--noble-sage) 100%);
+        transform: translateY(-2px);
+        box-shadow: 0 8px 25px rgba(255, 107, 107, 0.4);
+        background: var(--gradient-pink);
     }
-
     .btn-secondary {
-        background: white;
+        background: rgba(255, 255, 255, 0.9);
+        backdrop-filter: blur(10px);
         color: var(--noble-charcoal);
-        border: 1.5px solid var(--noble-stone);
+        border: 1.5px solid rgba(255, 107, 107, 0.2);
     }
-
     .btn-secondary:hover {
-        background: var(--noble-warm);
-        border-color: var(--noble-sage);
+        background: rgba(255, 107, 107, 0.1);
+        border-color: var(--primary-coral);
         transform: translateY(-1px);
     }
-
-    .btn-danger {
-        background: linear-gradient(135deg, var(--gentle-warning) 0%, #d4a574 100%);
-        color: white;
-        box-shadow: var(--shadow-whisper);
-    }
-
-    .btn-danger:hover {
-        transform: translateY(-1px);
-        box-shadow: var(--shadow-gentle);
-        background: linear-gradient(135deg, #a68660 0%, var(--gentle-warning) 100%);
-    }
-
-    .btn:disabled {
-        opacity: 0.6;
-        cursor: not-allowed;
-        transform: none !important;
-    }
-
-    /* Notice d'information noble */
-    .info-notice {
-        margin-top: 1.5rem;
-        padding: 1.5rem;
-        background: linear-gradient(135deg, rgba(139, 154, 124, 0.05) 0%, rgba(156, 139, 122, 0.05) 100%);
-        border: 1px solid rgba(139, 154, 124, 0.15);
-        border-radius: 16px;
-        display: flex;
-        align-items: center;
-        gap: 1rem;
-        position: relative;
-    }
-
-    .info-notice::before {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 4px;
-        height: 100%;
-        background: var(--noble-sage);
-        border-radius: 2px;
-    }
-
-    .info-icon {
-        width: 40px;
-        height: 40px;
-        background: linear-gradient(135deg, var(--noble-sage) 0%, var(--noble-accent) 100%);
-        border-radius: 50%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        color: white;
-        font-size: 1.1rem;
-        flex-shrink: 0;
-    }
-
-    .info-content {
-        flex: 1;
-        color: var(--noble-charcoal-light);
-        font-size: 0.9rem;
-        line-height: 1.5;
-    }
-
-    /* Section de sécurité */
-    .security-items {
-        display: flex;
-        flex-direction: column;
-        gap: 1rem;
-    }
-
-    .security-item {
-        padding: 1.5rem;
-        background: var(--noble-warm);
-        border: 1px solid var(--noble-stone);
-        border-radius: 16px;
-        position: relative;
-    }
-
-    .security-item::before {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 4px;
-        height: 100%;
-        border-radius: 2px;
-    }
-
-    .security-item.security { border-left-color: var(--gentle-success); }
-    .security-item.security::before { background: var(--gentle-success); }
-
-    .security-item.data { border-left-color: var(--gentle-info); }
-    .security-item.data::before { background: var(--gentle-info); }
-
-    .security-item h4 {
-        font-size: 1rem;
-        font-weight: 600;
-        color: var(--noble-charcoal);
-        margin-bottom: 0.5rem;
-        display: flex;
-        align-items: center;
-        gap: 0.5rem;
-    }
-
-    .security-item p {
-        color: var(--noble-charcoal-light);
-        font-size: 0.9rem;
-        line-height: 1.5;
-        margin: 0;
-    }
-
-    /* Responsive */
-    @media (max-width: 768px) {
-        .welcome-content {
-            flex-direction: column;
-            text-align: center;
-        }
-
-        .account-header {
-            flex-direction: column;
-            text-align: center;
-        }
-
-        .account-grid {
-            grid-template-columns: 1fr;
-        }
-
-        .integration-item {
-            flex-direction: column;
-            gap: 1rem;
-        }
-    }
-
-    /* Animations nobles */
     .fade-in {
         animation: gentleFadeIn 0.8s ease-out;
     }
-
     @keyframes gentleFadeIn {
-        from {
-            opacity: 0;
-            transform: translateY(20px);
-        }
-        to {
-            opacity: 1;
-            transform: translateY(0);
-        }
+        from { opacity: 0; transform: translateY(20px); }
+        to { opacity: 1; transform: translateY(0); }
     }
-
-    /* Icônes nobles */
     .icon-noble {
-        color: var(--noble-sage);
+        color: var(--primary-coral);
         font-size: 1.125rem;
+        filter: drop-shadow(0 0 3px rgba(255, 107, 107, 0.3));
+    }
+    @media (max-width: 768px) {
+        .settings-form {
+            padding: 1rem;
+        }
+        .settings-section {
+            padding: 1rem;
+        }
     }
 </style>
-
-<!-- Section d'accueil noble -->
-<div class="welcome-section fade-in">
-    <div class="welcome-content">
-        <div>
-            <h1 class="greeting">Paramètres 🌿</h1>
-            <p class="greeting-subtitle">Gérez votre compte et vos préférences</p>
-        </div>
+<div class="settings-section fade-in">
+    <div class="settings-header">
+        <h1 class="settings-title"><i class="fas fa-cog icon-noble"></i> Paramètres</h1>
+        <div class="settings-subtitle">Gérez vos préférences de compte et de confidentialité</div>
     </div>
+    <form class="settings-form" method="post">
+        <div class="form-group">
+            <label class="form-label" for="email_notifications"><i class="fas fa-envelope icon-noble"></i> Notifications par email</label>
+            <select class="form-control" id="email_notifications" name="email_notifications">
+                <option value="all" {% if user.email_notifications == 'all' %}selected{% endif %}>Toutes les notifications</option>
+                <option value="important" {% if user.email_notifications == 'important' %}selected{% endif %}>Seulement les importantes</option>
+                <option value="none" {% if user.email_notifications == 'none' %}selected{% endif %}>Aucune notification</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label class="form-label" for="theme"><i class="fas fa-palette icon-noble"></i> Thème</label>
+            <select class="form-control" id="theme" name="theme">
+                <option value="clair" {% if user.theme == 'clair' %}selected{% endif %}>Clair</option>
+                <option value="sombre" {% if user.theme == 'sombre' %}selected{% endif %}>Sombre</option>
+                <option value="auto" {% if user.theme == 'auto' %}selected{% endif %}>Automatique</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label class="form-label" for="lang"><i class="fas fa-language icon-noble"></i> Langue</label>
+            <select class="form-control" id="lang" name="lang">
+                <option value="fr" {% if user.lang == 'fr' %}selected{% endif %}>Français</option>
+                <option value="en" {% if user.lang == 'en' %}selected{% endif %}>Anglais</option>
+            </select>
+        </div>
+        <div class="settings-actions">
+            <button type="submit" class="btn btn-primary"><i class="fas fa-save"></i> Enregistrer</button>
+            <a href="{{ url_for('profil') }}" class="btn btn-secondary"><i class="fas fa-arrow-left"></i> Retour au profil</a>
+        </div>
+    </form>
 </div>
-
-<!-- Informations du compte -->
-<div class="creation-section fade-in">
-    <div class="section-header">
-        <h2 class="section-title">
-            <i class="fas fa-user-cog icon-noble"></i>
-            Mon compte
-        </h2>
-        <p class="section-subtitle">Informations de votre compte ResoBoost et LinkedIn</p>
-    </div>
-
-    <div class="account-info">
-        <div class="account-header">
-            <div class="account-avatar">
-                {% if picture %}
-                    <img src="{{ picture }}" alt="Photo de profil">
-                {% else %}
-                    <div class="account-placeholder">
-                        {{ first_name[0]|upper if first_name else 'U' }}
-                    </div>
-                {% endif %}
-            </div>
-            
-            <div class="account-details">
-                <h3>{{ first_name }} {{ last_name }}</h3>
-                <p>{{ email }}</p>
-            </div>
-        </div>
-        
-        <div class="account-grid">
-            <div class="account-item">
-                <h4>
-                    <i class="fas fa-globe icon-noble"></i>
-                    Pays
-                </h4>
-                <p>{{ country or 'Non renseigné' }}</p>
-            </div>
-            
-            <div class="account-item">
-                <h4>
-                    <i class="fas fa-language icon-noble"></i>
-                    Langue
-                </h4>
-                <p>{{ language or 'Non renseigné' }}</p>
-            </div>
-            
-            <div class="account-item">
-                <h4>
-                    <i class="fas fa-shield-alt icon-noble"></i>
-                    Email vérifié
-                </h4>
-                <p>{{ 'Oui' if email_verified else 'Non' }}</p>
-            </div>
-            
-            <div class="account-item">
-                <h4>
-                    <i class="fab fa-linkedin icon-noble"></i>
-                    LinkedIn ID
-                </h4>
-                <p>{{ sub.split('_')[-1] if sub else 'Non disponible' }}</p>
-            </div>
-        </div>
-    </div>
-</div>
-
-<!-- Intégrations -->
-<div class="creation-section fade-in">
-    <div class="section-header">
-        <h2 class="section-title">
-            <i class="fas fa-plug icon-noble"></i>
-            Intégrations
-        </h2>
-        <p class="section-subtitle">Connectez votre compte à d'autres plateformes pour étendre les fonctionnalités</p>
-    </div>
-    
-    <div class="integration-list">
-        <div class="integration-item">
-            <div class="integration-info">
-                <div class="integration-icon linkedin-icon">
-                    <i class="fab fa-linkedin-in"></i>
-                </div>
-                <div class="integration-details">
-                    <div class="integration-name">LinkedIn</div>
-                    <div class="integration-description">Connecté en tant que {{ first_name }} {{ last_name }}</div>
-                </div>
-            </div>
-            <div class="status-badge status-connected">
-                <i class="fas fa-check-circle"></i>
-                Connecté
-            </div>
-        </div>
-        
-        <div class="integration-item">
-            <div class="integration-info">
-                <div class="integration-icon twitter-icon">
-                    <i class="fab fa-twitter"></i>
-                </div>
-                <div class="integration-details">
-                    <div class="integration-name">Twitter / X</div>
-                    <div class="integration-description">Publiez simultanément sur Twitter pour maximiser votre portée</div>
-                </div>
-            </div>
-            <div class="status-badge status-soon">
-                <i class="fas fa-clock"></i>
-                Bientôt
-            </div>
-        </div>
-        
-        <div class="integration-item">
-            <div class="integration-info">
-                <div class="integration-icon slack-icon">
-                    <i class="fab fa-slack"></i>
-                </div>
-                <div class="integration-details">
-                    <div class="integration-name">Slack</div>
-                    <div class="integration-description">Recevez des notifications de vos publications dans Slack</div>
-                </div>
-            </div>
-            <div class="status-badge status-soon">
-                <i class="fas fa-clock"></i>
-                Bientôt
-            </div>
-        </div>
-    </div>
-    
-    <div class="info-notice">
-        <div class="info-icon">
-            <i class="fas fa-rocket"></i>
-        </div>
-        <div class="info-content">
-            Ces intégrations seront disponibles dans une version future pour automatiser votre workflow social media et vous faire gagner encore plus de temps.
-        </div>
-    </div>
-</div>
-
-<!-- Sécurité et confidentialité -->
-<div class="creation-section fade-in">
-    <div class="section-header">
-        <h2 class="section-title">
-            <i class="fas fa-shield-halved icon-noble"></i>
-            Sécurité et confidentialité
-        </h2>
-        <p class="section-subtitle">Gérez les paramètres de sécurité de votre compte</p>
-    </div>
-    
-    <div class="security-items">
-        <div class="security-item security">
-            <h4>
-                <i class="fas fa-lock"></i>
-                Sécurité du compte
-            </h4>
-            <p>
-                Votre compte est sécurisé via l'authentification LinkedIn OAuth 2.0. 
-                Vos données de connexion sont protégées par les standards de sécurité les plus élevés.
-            </p>
-        </div>
-        
-        <div class="security-item data">
-            <h4>
-                <i class="fas fa-database"></i>
-                Protection des données
-            </h4>
-            <p>
-                Vos données personnelles sont stockées de manière sécurisée et chiffrée. 
-                Nous ne partageons jamais vos informations avec des tiers sans votre consentement explicite.
-            </p>
-        </div>
-    </div>
-    
-    <div style="margin-top: 2rem; text-align: center;">
-        <a href="{{ url_for('logout') }}" class="btn btn-danger">
-            <i class="fas fa-sign-out-alt"></i>
-            Se déconnecter
-        </a>
-    </div>
-</div>
-
 <script>
-// Animations nobles au chargement
 document.addEventListener('DOMContentLoaded', function() {
-    // Animation progressive des éléments
-    const elements = document.querySelectorAll('.fade-in');
-    elements.forEach((el, index) => {
-        el.style.opacity = '0';
-        el.style.transform = 'translateY(20px)';
-        el.style.transition = 'all 0.8s ease';
-        
-        setTimeout(() => {
-            el.style.opacity = '1';
-            el.style.transform = 'translateY(0)';
-        }, index * 200);
-    });
-
-    // Animation des items de compte
-    document.querySelectorAll('.account-item').forEach((item, index) => {
-        item.style.opacity = '0';
-        item.style.transform = 'translateY(20px)';
-        item.style.transition = 'all 0.6s ease';
-        
-        setTimeout(() => {
-            item.style.opacity = '1';
-            item.style.transform = 'translateY(0)';
-        }, index * 100);
-    });
-
-    // Animation des intégrations
-    document.querySelectorAll('.integration-item').forEach((item, index) => {
-        item.style.opacity = '0';
-        item.style.transform = 'translateX(-20px)';
-        item.style.transition = 'all 0.6s ease';
-        
-        setTimeout(() => {
-            item.style.opacity = '1';
-            item.style.transform = 'translateX(0)';
-        }, index * 150);
-    });
-
-    // Animation des items de sécurité
-    document.querySelectorAll('.security-item').forEach((item, index) => {
-        item.style.opacity = '0';
-        item.style.transform = 'translateY(20px)';
-        item.style.transition = 'all 0.6s ease';
-        
-        setTimeout(() => {
-            item.style.opacity = '1';
-            item.style.transform = 'translateY(0)';
-        }, 800 + (index * 100));
-    });
-
-    // Interactions nobles sur les boutons
+    const section = document.querySelector('.settings-section');
+    section.style.opacity = '0';
+    section.style.transform = 'translateY(20px)';
+    setTimeout(() => {
+        section.style.opacity = '1';
+        section.style.transform = 'translateY(0)';
+        section.style.transition = 'all 0.8s cubic-bezier(0.4, 0, 0.2, 1)';
+    }, 200);
     document.querySelectorAll('.btn').forEach(btn => {
         btn.addEventListener('mouseenter', function() {
-            this.style.transform = 'translateY(-1px)';
+            if (!this.disabled) {
+                this.style.transform = 'translateY(-1px)';
+                if (this.classList.contains('btn-primary')) {
+                    this.style.boxShadow = '0 8px 25px rgba(255, 107, 107, 0.4)';
+                }
+            }
         });
-        
         btn.addEventListener('mouseleave', function() {
-            this.style.transform = 'translateY(0)';
+            if (!this.disabled) {
+                this.style.transform = 'translateY(0)';
+                this.style.boxShadow = '';
+            }
+        });
+        btn.addEventListener('mousedown', function() {
+            if (!this.disabled) {
+                this.style.transform = 'translateY(0) scale(0.98)';
+            }
+        });
+        btn.addEventListener('mouseup', function() {
+            if (!this.disabled) {
+                this.style.transform = 'translateY(-1px) scale(1)';
+            }
         });
     });
-
-    // Animation de l'avatar
-    const avatar = document.querySelector('.account-avatar');
-    if (avatar) {
-        avatar.addEventListener('click', function() {
-            this.style.transform = 'scale(0.95) rotate(5deg)';
-            setTimeout(() => {
-                this.style.transform = 'scale(1) rotate(0deg)';
-            }, 200);
-        });
-    }
-
-    // Animation des icônes d'intégration
-    document.querySelectorAll('.integration-icon').forEach(icon => {
+    document.querySelectorAll('.icon-noble').forEach(icon => {
         icon.addEventListener('mouseenter', function() {
-            this.style.transform = 'scale(1.1) rotate(5deg)';
+            this.style.transform = 'scale(1.2) rotate(5deg)';
+            this.style.filter = 'drop-shadow(0 0 8px rgba(255, 107, 107, 0.5))';
         });
-        
         icon.addEventListener('mouseleave', function() {
             this.style.transform = 'scale(1) rotate(0deg)';
+            this.style.filter = 'drop-shadow(0 0 3px rgba(255, 107, 107, 0.3))';
         });
     });
 });
