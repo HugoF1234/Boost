@@ -1,7 +1,6 @@
 {% extends "base.html" %}
 {% block content %}
 <style>
-    /* Variables nobles et apaisantes identiques au dashboard */
     :root {
         --noble-cream: #faf9f7;
         --noble-warm: #f5f2ed;
@@ -14,34 +13,42 @@
         --noble-mist: #f0ede8;
         --noble-accent: #9c8b7a;
         --noble-accent-light: #b5a495;
-        
         --gentle-success: #7c9885;
         --gentle-warning: #b8a082;
         --gentle-info: #8ba3b8;
-        
+        --gentle-error: #c49090;
         --shadow-whisper: 0 2px 12px rgba(139, 154, 124, 0.08);
         --shadow-gentle: 0 4px 20px rgba(139, 154, 124, 0.12);
         --shadow-soft: 0 8px 32px rgba(139, 154, 124, 0.16);
+        --primary-coral: #FF6B6B;
+        --primary-orange: #FF8E53;
+        --primary-pink: #FF5F8D;
+        --primary-purple: #8B5CF6;
+        --primary-blue: #06D6A0;
+        --primary-cyan: #118AB2;
+        --gradient-main: linear-gradient(135deg, #FF6B6B 0%, #FF8E53 25%, #FF5F8D 50%, #8B5CF6 75%, #06D6A0 100%);
+        --gradient-warm: linear-gradient(135deg, #FF8E53 0%, #FF6B6B 100%);
+        --gradient-cool: linear-gradient(135deg, #8B5CF6 0%, #06D6A0 100%);
+        --gradient-pink: linear-gradient(135deg, #FF5F8D 0%, #8B5CF6 100%);
     }
-
     body {
-        background: var(--noble-cream);
+        background: transparent !important;
         color: var(--noble-charcoal);
         line-height: 1.7;
     }
-
-    /* Header noble et accueillant identique au dashboard */
+    /* Header noble avec transparence pour laisser passer le fond animé */
     .welcome-section {
-        background: linear-gradient(135deg, var(--noble-warm) 0%, var(--noble-mist) 100%);
+        background: rgba(255, 255, 255, 0.85);
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
         border-radius: 20px;
         padding: 2.5rem;
         margin-bottom: 2rem;
-        border: 1px solid var(--noble-stone);
+        border: 1px solid rgba(255, 107, 107, 0.2);
         box-shadow: var(--shadow-whisper);
         position: relative;
         overflow: hidden;
     }
-
     .welcome-section::before {
         content: '';
         position: absolute;
@@ -49,11 +56,15 @@
         right: 0;
         width: 120px;
         height: 120px;
-        background: radial-gradient(circle, rgba(139, 154, 124, 0.06) 0%, transparent 70%);
+        background: radial-gradient(circle, rgba(255, 107, 107, 0.08) 0%, transparent 70%);
         border-radius: 50%;
         transform: translate(30%, -30%);
+        animation: gentle-pulse 8s ease-in-out infinite alternate;
     }
-
+    @keyframes gentle-pulse {
+        0% { opacity: 0.6; transform: translate(30%, -30%) scale(1); }
+        100% { opacity: 1; transform: translate(30%, -30%) scale(1.2); }
+    }
     .welcome-content {
         position: relative;
         z-index: 1;
@@ -63,35 +74,44 @@
         flex-wrap: wrap;
         gap: 1.5rem;
     }
-
     .greeting {
         font-size: 1.75rem;
         font-weight: 600;
         color: var(--noble-charcoal);
         margin-bottom: 0.5rem;
         letter-spacing: -0.02em;
+        background: var(--gradient-main);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        animation: gradient-shift 4s ease-in-out infinite;
     }
-
+    @keyframes gradient-shift {
+        0%, 100% { background-position: 0% 50%; }
+        50% { background-position: 100% 50%; }
+    }
     .greeting-subtitle {
         color: var(--noble-charcoal-light);
         font-size: 1rem;
         font-weight: 400;
     }
-
-    /* Section principale identique au dashboard */
-    .creation-section {
-        background: white;
+    /* Section principale de paramètres avec transparence et arrondis */
+    .settings-section, .creation-section {
+        background: rgba(255,255,255,0.9);
+        backdrop-filter: blur(20px);
         border-radius: 20px;
         padding: 2.5rem;
         margin-bottom: 2rem;
-        border: 1px solid var(--noble-stone);
+        border: 1px solid rgba(255, 107, 107, 0.15);
         box-shadow: var(--shadow-whisper);
+        position: relative;
+        overflow: hidden;
     }
-
     .section-header {
         margin-bottom: 2rem;
+        position: relative;
+        z-index: 1;
     }
-
     .section-title {
         font-size: 1.4rem;
         font-weight: 600;
@@ -101,214 +121,12 @@
         align-items: center;
         gap: 0.75rem;
     }
-
     .section-subtitle {
         color: var(--noble-charcoal-light);
         font-size: 0.95rem;
         line-height: 1.6;
     }
-
-    /* Informations de compte */
-    .account-info {
-        background: linear-gradient(135deg, rgba(139, 154, 124, 0.04) 0%, rgba(156, 139, 122, 0.04) 100%);
-        border: 1px solid rgba(139, 154, 124, 0.15);
-        border-radius: 16px;
-        padding: 2rem;
-        margin-bottom: 2rem;
-        position: relative;
-    }
-
-    .account-info::before {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 4px;
-        height: 100%;
-        background: linear-gradient(to bottom, var(--noble-sage), var(--noble-accent));
-        border-radius: 2px;
-    }
-
-    .account-header {
-        display: flex;
-        align-items: center;
-        gap: 1.5rem;
-        margin-bottom: 1.5rem;
-    }
-
-    .account-avatar {
-        width: 60px;
-        height: 60px;
-        border-radius: 50%;
-        border: 2px solid var(--noble-sage-light);
-        overflow: hidden;
-        flex-shrink: 0;
-    }
-
-    .account-avatar img {
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-    }
-
-    .account-placeholder {
-        width: 100%;
-        height: 100%;
-        background: linear-gradient(135deg, var(--noble-sage) 0%, var(--noble-accent) 100%);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 1.5rem;
-        color: white;
-        font-weight: 600;
-    }
-
-    .account-details h3 {
-        font-size: 1.2rem;
-        font-weight: 600;
-        color: var(--noble-charcoal);
-        margin-bottom: 0.25rem;
-    }
-
-    .account-details p {
-        color: var(--noble-charcoal-light);
-        font-size: 0.9rem;
-    }
-
-    .account-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-        gap: 1.5rem;
-    }
-
-    .account-item {
-        padding: 1.5rem;
-        background: white;
-        border-radius: 12px;
-        border: 1px solid var(--noble-stone);
-        transition: all 0.3s ease;
-    }
-
-    .account-item:hover {
-        background: var(--noble-mist);
-        border-color: var(--noble-sage-light);
-        transform: translateY(-2px);
-    }
-
-    .account-item h4 {
-        font-size: 0.9rem;
-        color: var(--noble-charcoal-light);
-        margin-bottom: 0.5rem;
-        text-transform: uppercase;
-        letter-spacing: 0.5px;
-        font-weight: 500;
-        display: flex;
-        align-items: center;
-        gap: 0.5rem;
-    }
-
-    .account-item p {
-        font-weight: 600;
-        color: var(--noble-charcoal);
-        font-size: 1rem;
-    }
-
-    /* Intégrations - style noble */
-    .integration-list {
-        display: flex;
-        flex-direction: column;
-        gap: 1rem;
-    }
-
-    .integration-item {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        padding: 1.5rem;
-        background: var(--noble-warm);
-        border: 1px solid var(--noble-stone);
-        border-radius: 16px;
-        transition: all 0.3s ease;
-    }
-
-    .integration-item:hover {
-        background: var(--noble-mist);
-        border-color: var(--noble-sage-light);
-        transform: translateY(-1px);
-    }
-
-    .integration-info {
-        display: flex;
-        align-items: center;
-        gap: 1rem;
-        flex: 1;
-    }
-
-    .integration-icon {
-        width: 50px;
-        height: 50px;
-        border-radius: 12px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 1.3rem;
-        color: white;
-        transition: all 0.3s ease;
-    }
-
-    .linkedin-icon {
-        background: linear-gradient(135deg, #0a66c2 0%, #004182 100%);
-    }
-
-    .twitter-icon {
-        background: linear-gradient(135deg, #1da1f2 0%, #0d8bd9 100%);
-    }
-
-    .slack-icon {
-        background: linear-gradient(135deg, #4a154b 0%, #ff5722 100%);
-    }
-
-    .integration-details {
-        flex: 1;
-    }
-
-    .integration-name {
-        font-weight: 600;
-        font-size: 1rem;
-        color: var(--noble-charcoal);
-        margin-bottom: 0.25rem;
-    }
-
-    .integration-description {
-        color: var(--noble-charcoal-light);
-        font-size: 0.85rem;
-    }
-
-    .status-badge {
-        display: inline-flex;
-        align-items: center;
-        gap: 0.5rem;
-        padding: 0.5rem 1rem;
-        border-radius: 20px;
-        font-size: 0.8rem;
-        font-weight: 500;
-        text-transform: uppercase;
-        letter-spacing: 0.5px;
-    }
-
-    .status-connected {
-        background: linear-gradient(135deg, rgba(124, 152, 133, 0.1) 0%, rgba(124, 152, 133, 0.05) 100%);
-        color: var(--gentle-success);
-        border: 1px solid var(--gentle-success);
-    }
-
-    .status-soon {
-        background: linear-gradient(135deg, rgba(184, 160, 130, 0.1) 0%, rgba(184, 160, 130, 0.05) 100%);
-        color: var(--gentle-warning);
-        border: 1px solid var(--gentle-warning);
-    }
-
-    /* Boutons nobles identiques au dashboard */
+    /* Boutons nobles avec gradients vibrants */
     .btn {
         padding: 0.875rem 1.75rem;
         border-radius: 12px;
@@ -324,183 +142,47 @@
         position: relative;
         overflow: hidden;
     }
-
     .btn-primary {
-        background: linear-gradient(135deg, var(--noble-sage) 0%, var(--noble-sage-light) 100%);
+        background: var(--gradient-warm);
         color: white;
-        box-shadow: var(--shadow-whisper);
+        box-shadow: 0 4px 15px rgba(255, 107, 107, 0.3);
+        border: 1px solid rgba(255, 255, 255, 0.2);
     }
-
     .btn-primary:hover {
-        transform: translateY(-1px);
-        box-shadow: var(--shadow-gentle);
-        background: linear-gradient(135deg, var(--noble-sage-dark) 0%, var(--noble-sage) 100%);
+        transform: translateY(-2px);
+        box-shadow: 0 8px 25px rgba(255, 107, 107, 0.4);
+        background: var(--gradient-pink);
     }
-
     .btn-secondary {
-        background: white;
+        background: rgba(255, 255, 255, 0.9);
+        backdrop-filter: blur(10px);
         color: var(--noble-charcoal);
-        border: 1.5px solid var(--noble-stone);
+        border: 1.5px solid rgba(255, 107, 107, 0.2);
     }
-
     .btn-secondary:hover {
-        background: var(--noble-warm);
-        border-color: var(--noble-sage);
+        background: rgba(255, 107, 107, 0.1);
+        border-color: var(--primary-coral);
         transform: translateY(-1px);
     }
-
-    .btn-danger {
-        background: linear-gradient(135deg, var(--gentle-warning) 0%, #d4a574 100%);
-        color: white;
-        box-shadow: var(--shadow-whisper);
-    }
-
-    .btn-danger:hover {
-        transform: translateY(-1px);
-        box-shadow: var(--shadow-gentle);
-        background: linear-gradient(135deg, #a68660 0%, var(--gentle-warning) 100%);
-    }
-
-    .btn:disabled {
-        opacity: 0.6;
-        cursor: not-allowed;
-        transform: none !important;
-    }
-
-    /* Notice d'information noble */
-    .info-notice {
-        margin-top: 1.5rem;
-        padding: 1.5rem;
-        background: linear-gradient(135deg, rgba(139, 154, 124, 0.05) 0%, rgba(156, 139, 122, 0.05) 100%);
-        border: 1px solid rgba(139, 154, 124, 0.15);
-        border-radius: 16px;
-        display: flex;
-        align-items: center;
-        gap: 1rem;
-        position: relative;
-    }
-
-    .info-notice::before {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 4px;
-        height: 100%;
-        background: var(--noble-sage);
-        border-radius: 2px;
-    }
-
-    .info-icon {
-        width: 40px;
-        height: 40px;
-        background: linear-gradient(135deg, var(--noble-sage) 0%, var(--noble-accent) 100%);
-        border-radius: 50%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        color: white;
-        font-size: 1.1rem;
-        flex-shrink: 0;
-    }
-
-    .info-content {
-        flex: 1;
-        color: var(--noble-charcoal-light);
-        font-size: 0.9rem;
-        line-height: 1.5;
-    }
-
-    /* Section de sécurité */
-    .security-items {
-        display: flex;
-        flex-direction: column;
-        gap: 1rem;
-    }
-
-    .security-item {
-        padding: 1.5rem;
-        background: var(--noble-warm);
-        border: 1px solid var(--noble-stone);
-        border-radius: 16px;
-        position: relative;
-    }
-
-    .security-item::before {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 4px;
-        height: 100%;
-        border-radius: 2px;
-    }
-
-    .security-item.security { border-left-color: var(--gentle-success); }
-    .security-item.security::before { background: var(--gentle-success); }
-
-    .security-item.data { border-left-color: var(--gentle-info); }
-    .security-item.data::before { background: var(--gentle-info); }
-
-    .security-item h4 {
-        font-size: 1rem;
-        font-weight: 600;
-        color: var(--noble-charcoal);
-        margin-bottom: 0.5rem;
-        display: flex;
-        align-items: center;
-        gap: 0.5rem;
-    }
-
-    .security-item p {
-        color: var(--noble-charcoal-light);
-        font-size: 0.9rem;
-        line-height: 1.5;
-        margin: 0;
-    }
-
     /* Responsive */
     @media (max-width: 768px) {
         .welcome-content {
             flex-direction: column;
             text-align: center;
         }
-
-        .account-header {
-            flex-direction: column;
-            text-align: center;
-        }
-
-        .account-grid {
-            grid-template-columns: 1fr;
-        }
-
-        .integration-item {
-            flex-direction: column;
-            gap: 1rem;
-        }
     }
-
     /* Animations nobles */
     .fade-in {
         animation: gentleFadeIn 0.8s ease-out;
     }
-
     @keyframes gentleFadeIn {
-        from {
-            opacity: 0;
-            transform: translateY(20px);
-        }
-        to {
-            opacity: 1;
-            transform: translateY(0);
-        }
+        from { opacity: 0; transform: translateY(20px); }
+        to { opacity: 1; transform: translateY(0); }
     }
-
-    /* Icônes nobles */
     .icon-noble {
-        color: var(--noble-sage);
+        color: var(--primary-coral);
         font-size: 1.125rem;
+        filter: drop-shadow(0 0 3px rgba(255, 107, 107, 0.3));
     }
 </style>
 
@@ -508,7 +190,7 @@
 <div class="welcome-section fade-in">
     <div class="welcome-content">
         <div>
-            <h1 class="greeting">Paramètres 🌿</h1>
+            <h1 class="greeting">Paramètres </h1>
             <p class="greeting-subtitle">Gérez votre compte et vos préférences</p>
         </div>
     </div>
