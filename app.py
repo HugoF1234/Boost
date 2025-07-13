@@ -1743,7 +1743,7 @@ def dashboard():
                 article_prompt = f"""
                 Tu es un expert LinkedIn reconnu pour tes posts pertinents et percutants.
                 
-                Rédige un post LinkedIn complet à partir de l’article suivant :
+                Rédige un post LinkedIn complet à partir de l'article suivant :
                 
                 📰 **Titre** : {selected_article.get('title')}
                 📄 **Résumé** : {selected_article.get('description')}
@@ -2464,7 +2464,7 @@ def profil():
             profile['interets'] = user.interets or []
             session['profile'] = profile
 
-    return render_template("profil.html", **session['profile'])
+    return render_template("profil.html", user=session['profile'])
 
 @app.route("/historique")
 def historique():
