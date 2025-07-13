@@ -220,24 +220,24 @@
         <div class="form-group">
             <label class="form-label" for="email_notifications"><i class="fas fa-envelope icon-noble"></i> Notifications par email</label>
             <select class="form-control" id="email_notifications" name="email_notifications">
-                <option value="all" {% if user.email_notifications == 'all' %}selected{% endif %}>Toutes les notifications</option>
-                <option value="important" {% if user.email_notifications == 'important' %}selected{% endif %}>Seulement les importantes</option>
-                <option value="none" {% if user.email_notifications == 'none' %}selected{% endif %}>Aucune notification</option>
+                <option value="all" {% if (user.email_notifications|default('all')) == 'all' %}selected{% endif %}>Toutes les notifications</option>
+                <option value="important" {% if (user.email_notifications|default('all')) == 'important' %}selected{% endif %}>Seulement les importantes</option>
+                <option value="none" {% if (user.email_notifications|default('all')) == 'none' %}selected{% endif %}>Aucune notification</option>
             </select>
         </div>
         <div class="form-group">
             <label class="form-label" for="theme"><i class="fas fa-palette icon-noble"></i> Thème</label>
             <select class="form-control" id="theme" name="theme">
-                <option value="clair" {% if user.theme == 'clair' %}selected{% endif %}>Clair</option>
-                <option value="sombre" {% if user.theme == 'sombre' %}selected{% endif %}>Sombre</option>
-                <option value="auto" {% if user.theme == 'auto' %}selected{% endif %}>Automatique</option>
+                <option value="clair" {% if (user.theme|default('clair')) == 'clair' %}selected{% endif %}>Clair</option>
+                <option value="sombre" {% if (user.theme|default('clair')) == 'sombre' %}selected{% endif %}>Sombre</option>
+                <option value="auto" {% if (user.theme|default('clair')) == 'auto' %}selected{% endif %}>Automatique</option>
             </select>
         </div>
         <div class="form-group">
             <label class="form-label" for="lang"><i class="fas fa-language icon-noble"></i> Langue</label>
             <select class="form-control" id="lang" name="lang">
-                <option value="fr" {% if user.lang == 'fr' %}selected{% endif %}>Français</option>
-                <option value="en" {% if user.lang == 'en' %}selected{% endif %}>Anglais</option>
+                <option value="fr" {% if (user.lang|default('fr')) == 'fr' %}selected{% endif %}>Français</option>
+                <option value="en" {% if (user.lang|default('fr')) == 'en' %}selected{% endif %}>Anglais</option>
             </select>
         </div>
         <div class="settings-actions">
