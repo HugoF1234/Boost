@@ -1,6 +1,7 @@
 {% extends "base.html" %}
 {% block content %}
 <style>
+    /* Variables nobles et apaisantes identiques au dashboard */
     :root {
         --noble-cream: #faf9f7;
         --noble-warm: #f5f2ed;
@@ -16,35 +17,21 @@
         --gentle-success: #7c9885;
         --gentle-warning: #b8a082;
         --gentle-info: #8ba3b8;
-        --gentle-error: #c49090;
         --shadow-whisper: 0 2px 12px rgba(139, 154, 124, 0.08);
         --shadow-gentle: 0 4px 20px rgba(139, 154, 124, 0.12);
         --shadow-soft: 0 8px 32px rgba(139, 154, 124, 0.16);
-        --primary-coral: #FF6B6B;
-        --primary-orange: #FF8E53;
-        --primary-pink: #FF5F8D;
-        --primary-purple: #8B5CF6;
-        --primary-blue: #06D6A0;
-        --primary-cyan: #118AB2;
-        --gradient-main: linear-gradient(135deg, #FF6B6B 0%, #FF8E53 25%, #FF5F8D 50%, #8B5CF6 75%, #06D6A0 100%);
-        --gradient-warm: linear-gradient(135deg, #FF8E53 0%, #FF6B6B 100%);
-        --gradient-cool: linear-gradient(135deg, #8B5CF6 0%, #06D6A0 100%);
-        --gradient-pink: linear-gradient(135deg, #FF5F8D 0%, #8B5CF6 100%);
     }
     body {
-        background: transparent !important;
+        background: var(--noble-cream);
         color: var(--noble-charcoal);
         line-height: 1.7;
     }
-    /* Header noble avec transparence pour laisser passer le fond animé */
     .welcome-section {
-        background: rgba(255, 255, 255, 0.85);
-        backdrop-filter: blur(20px);
-        -webkit-backdrop-filter: blur(20px);
+        background: linear-gradient(135deg, var(--noble-warm) 0%, var(--noble-mist) 100%);
         border-radius: 20px;
         padding: 2.5rem;
         margin-bottom: 2rem;
-        border: 1px solid rgba(255, 107, 107, 0.2);
+        border: 1px solid var(--noble-stone);
         box-shadow: var(--shadow-whisper);
         position: relative;
         overflow: hidden;
@@ -56,14 +43,9 @@
         right: 0;
         width: 120px;
         height: 120px;
-        background: radial-gradient(circle, rgba(255, 107, 107, 0.08) 0%, transparent 70%);
+        background: radial-gradient(circle, rgba(139, 154, 124, 0.06) 0%, transparent 70%);
         border-radius: 50%;
         transform: translate(30%, -30%);
-        animation: gentle-pulse 8s ease-in-out infinite alternate;
-    }
-    @keyframes gentle-pulse {
-        0% { opacity: 0.6; transform: translate(30%, -30%) scale(1); }
-        100% { opacity: 1; transform: translate(30%, -30%) scale(1.2); }
     }
     .welcome-content {
         position: relative;
@@ -80,37 +62,22 @@
         color: var(--noble-charcoal);
         margin-bottom: 0.5rem;
         letter-spacing: -0.02em;
-        background: var(--gradient-main);
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-        background-clip: text;
-        animation: gradient-shift 4s ease-in-out infinite;
-    }
-    @keyframes gradient-shift {
-        0%, 100% { background-position: 0% 50%; }
-        50% { background-position: 100% 50%; }
     }
     .greeting-subtitle {
         color: var(--noble-charcoal-light);
         font-size: 1rem;
         font-weight: 400;
     }
-    /* Section principale de profil avec transparence et arrondis */
-    .profile-section, .creation-section {
-        background: rgba(255,255,255,0.9);
-        backdrop-filter: blur(20px);
+    .creation-section {
+        background: white;
         border-radius: 20px;
         padding: 2.5rem;
         margin-bottom: 2rem;
-        border: 1px solid rgba(255, 107, 107, 0.15);
+        border: 1px solid var(--noble-stone);
         box-shadow: var(--shadow-whisper);
-        position: relative;
-        overflow: hidden;
     }
     .section-header {
         margin-bottom: 2rem;
-        position: relative;
-        z-index: 1;
     }
     .section-title {
         font-size: 1.4rem;
@@ -126,7 +93,30 @@
         font-size: 0.95rem;
         line-height: 1.6;
     }
-    /* Avatar et infos utilisateur */
+    .profile-display {
+        background: linear-gradient(135deg, rgba(139, 154, 124, 0.04) 0%, rgba(156, 139, 122, 0.04) 100%);
+        border: 1px solid rgba(139, 154, 124, 0.15);
+        border-radius: 16px;
+        padding: 2rem;
+        margin-bottom: 2rem;
+        position: relative;
+    }
+    .profile-display::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 4px;
+        height: 100%;
+        background: linear-gradient(to bottom, var(--noble-sage), var(--noble-accent));
+        border-radius: 2px;
+    }
+    .profile-info {
+        display: flex;
+        align-items: center;
+        gap: 2rem;
+        margin-bottom: 1.5rem;
+    }
     .profile-avatar {
         width: 80px;
         height: 80px;
@@ -136,6 +126,10 @@
         flex-shrink: 0;
         transition: all 0.3s ease;
     }
+    .profile-avatar:hover {
+        transform: scale(1.05);
+        box-shadow: var(--shadow-gentle);
+    }
     .profile-avatar img {
         width: 100%;
         height: 100%;
@@ -144,12 +138,12 @@
     .profile-placeholder {
         width: 100%;
         height: 100%;
-        background: var(--gradient-warm);
+        background: linear-gradient(135deg, var(--noble-sage) 0%, var(--noble-accent) 100%);
         display: flex;
         align-items: center;
         justify-content: center;
-        color: white;
         font-size: 2rem;
+        color: white;
         font-weight: 600;
     }
     .profile-details {
@@ -181,7 +175,67 @@
         font-size: 0.9rem;
         color: var(--noble-charcoal-light);
     }
-    /* Boutons nobles avec gradients vibrants */
+    .form-group {
+        margin-bottom: 1.5rem;
+    }
+    .form-label {
+        font-size: 0.9rem;
+        font-weight: 500;
+        color: var(--noble-charcoal);
+        margin-bottom: 0.75rem;
+        display: block;
+    }
+    .form-control {
+        width: 100%;
+        padding: 0.875rem 1.125rem;
+        border: 1.5px solid var(--noble-stone);
+        border-radius: 12px;
+        font-size: 0.95rem;
+        background: var(--noble-cream);
+        color: var(--noble-charcoal);
+        transition: all 0.3s ease;
+        font-family: inherit;
+    }
+    .form-control:focus {
+        outline: none;
+        border-color: var(--noble-sage);
+        box-shadow: 0 0 0 3px rgba(139, 154, 124, 0.1);
+        background: white;
+    }
+    .interests-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 1rem;
+        margin-top: 1rem;
+    }
+    .interest-item {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        padding: 0.875rem 1rem;
+        background: var(--noble-warm);
+        border: 1px solid var(--noble-stone);
+        border-radius: 12px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+    .interest-item:hover {
+        background: var(--noble-mist);
+        border-color: var(--noble-sage-light);
+        transform: translateY(-1px);
+    }
+    .interest-item input[type="checkbox"] {
+        width: 18px;
+        height: 18px;
+        accent-color: var(--noble-sage);
+    }
+    .interest-item label {
+        font-size: 0.9rem;
+        color: var(--noble-charcoal);
+        font-weight: 500;
+        cursor: pointer;
+        flex: 1;
+    }
     .btn {
         padding: 0.875rem 1.75rem;
         border-radius: 12px;
@@ -198,28 +252,48 @@
         overflow: hidden;
     }
     .btn-primary {
-        background: var(--gradient-warm);
+        background: linear-gradient(135deg, var(--noble-sage) 0%, var(--noble-sage-light) 100%);
         color: white;
-        box-shadow: 0 4px 15px rgba(255, 107, 107, 0.3);
-        border: 1px solid rgba(255, 255, 255, 0.2);
+        box-shadow: var(--shadow-whisper);
     }
     .btn-primary:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 8px 25px rgba(255, 107, 107, 0.4);
-        background: var(--gradient-pink);
+        transform: translateY(-1px);
+        box-shadow: var(--shadow-gentle);
+        background: linear-gradient(135deg, var(--noble-sage-dark) 0%, var(--noble-sage) 100%);
     }
     .btn-secondary {
-        background: rgba(255, 255, 255, 0.9);
-        backdrop-filter: blur(10px);
+        background: white;
         color: var(--noble-charcoal);
-        border: 1.5px solid rgba(255, 107, 107, 0.2);
+        border: 1.5px solid var(--noble-stone);
     }
     .btn-secondary:hover {
-        background: rgba(255, 107, 107, 0.1);
-        border-color: var(--primary-coral);
+        background: var(--noble-warm);
+        border-color: var(--noble-sage);
         transform: translateY(-1px);
     }
-    /* Responsive */
+    .current-interests {
+        margin-top: 1.5rem;
+        padding-top: 1.5rem;
+        border-top: 1px solid var(--noble-stone);
+    }
+    .interests-tags {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.75rem;
+        margin-top: 1rem;
+    }
+    .interest-tag {
+        background: linear-gradient(135deg, rgba(139, 154, 124, 0.1) 0%, rgba(156, 139, 122, 0.1) 100%);
+        color: var(--noble-sage);
+        padding: 0.5rem 1rem;
+        border-radius: 20px;
+        font-size: 0.85rem;
+        font-weight: 500;
+        border: 1px solid var(--noble-sage-light);
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
     @media (max-width: 768px) {
         .welcome-content {
             flex-direction: column;
@@ -232,23 +306,29 @@
         .profile-meta {
             grid-template-columns: 1fr;
         }
+        .interests-grid {
+            grid-template-columns: 1fr;
+        }
     }
-    /* Animations nobles */
     .fade-in {
         animation: gentleFadeIn 0.8s ease-out;
     }
     @keyframes gentleFadeIn {
-        from { opacity: 0; transform: translateY(20px); }
-        to { opacity: 1; transform: translateY(0); }
+        from {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
     }
     .icon-noble {
-        color: var(--primary-coral);
+        color: var(--noble-sage);
         font-size: 1.125rem;
-        filter: drop-shadow(0 0 3px rgba(255, 107, 107, 0.3));
     }
 </style>
 
-<!-- Section d'accueil noble -->
 <div class="welcome-section fade-in">
     <div class="welcome-content">
         <div>
@@ -258,7 +338,6 @@
     </div>
 </div>
 
-<!-- Affichage du profil actuel -->
 <div class="creation-section fade-in">
     <div class="section-header">
         <h2 class="section-title">
@@ -267,7 +346,6 @@
         </h2>
         <p class="section-subtitle">Vos informations LinkedIn synchronisées automatiquement</p>
     </div>
-
     <div class="profile-display">
         <div class="profile-info">
             <div class="profile-avatar">
@@ -279,7 +357,6 @@
                     </div>
                 {% endif %}
             </div>
-            
             <div class="profile-details">
                 <h3 class="profile-name">
                     {{ first_name }} {{ last_name }} {% if name and name != (first_name + ' ' + last_name) %}({{ name }}){% endif %}
@@ -295,7 +372,6 @@
                 </div>
             </div>
         </div>
-        
         <div class="profile-meta">
             <div class="meta-item">
                 <i class="fas fa-globe icon-noble"></i>
@@ -313,7 +389,6 @@
     </div>
 </div>
 
-<!-- Préférences de contenu -->
 <div class="creation-section fade-in">
     <div class="section-header">
         <h2 class="section-title">
@@ -322,7 +397,6 @@
         </h2>
         <p class="section-subtitle">Personnalisez votre expérience pour des suggestions de contenu plus pertinentes</p>
     </div>
-    
     <form method="POST">
         <div class="form-group">
             <label for="secteur" class="form-label">
@@ -341,7 +415,6 @@
                 <option value="retail" {% if secteur == 'retail' %}selected{% endif %}>🛍️ Commerce & Distribution</option>
             </select>
         </div>
-        
         <div class="form-group">
             <label class="form-label">
                 <i class="fas fa-heart icon-noble"></i>
@@ -372,7 +445,6 @@
                 {% endfor %}
             </div>
         </div>
-        
         <div style="margin-top: 2rem;">
             <button type="submit" class="btn btn-primary">
                 <i class="fas fa-save"></i>
@@ -380,7 +452,6 @@
             </button>
         </div>
     </form>
-
     {% if secteur or interets %}
         <div class="current-interests">
             <h3 style="color: var(--noble-charcoal); margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem;">
@@ -394,7 +465,6 @@
                         <span>{{ secteur|title }}</span>
                     </div>
                 {% endif %}
-                
                 {% if interets %}
                     {% for interet in interets %}
                         <div class="interest-tag">
@@ -407,47 +477,35 @@
         </div>
     {% endif %}
 </div>
-
 <script>
-// Animations nobles au chargement
 document.addEventListener('DOMContentLoaded', function() {
-    // Animation progressive des éléments
     const elements = document.querySelectorAll('.fade-in');
     elements.forEach((el, index) => {
         el.style.opacity = '0';
         el.style.transform = 'translateY(20px)';
         el.style.transition = 'all 0.8s ease';
-        
         setTimeout(() => {
             el.style.opacity = '1';
             el.style.transform = 'translateY(0)';
         }, index * 200);
     });
-
-    // Interactions nobles sur les boutons
     document.querySelectorAll('.btn').forEach(btn => {
         btn.addEventListener('mouseenter', function() {
             this.style.transform = 'translateY(-1px)';
         });
-        
         btn.addEventListener('mouseleave', function() {
             this.style.transform = 'translateY(0)';
         });
     });
-
-    // Animation des items d'intérêts
     document.querySelectorAll('.interest-item').forEach((item, index) => {
         item.style.opacity = '0';
         item.style.transform = 'translateY(20px)';
         item.style.transition = 'all 0.6s ease';
-        
         setTimeout(() => {
             item.style.opacity = '1';
             item.style.transform = 'translateY(0)';
         }, index * 100);
     });
-
-    // Animation de l'avatar
     const avatar = document.querySelector('.profile-avatar');
     if (avatar) {
         avatar.addEventListener('click', function() {
