@@ -227,15 +227,72 @@
     }
     .news-article-actions {
         display: flex;
-        gap: 1em;
+        gap: 1.2em;
         margin-top: auto;
         width: 100%;
+        justify-content: space-between;
+        align-items: flex-end;
     }
-    .news-article-actions .btn-noble {
+    .btn-glass {
         flex: 1 1 0;
+        display: flex;
+        align-items: center;
         justify-content: center;
-        font-size: 0.98em;
-        padding: 0.7em 0;
+        gap: 0.7em;
+        font-size: 1.08em;
+        font-weight: 700;
+        border-radius: 2em;
+        border: none;
+        padding: 1em 0;
+        margin: 0;
+        box-shadow: 0 4px 24px 0 rgba(139,154,124,0.08);
+        transition: all 0.18s cubic-bezier(.4,0,.2,1);
+        cursor: pointer;
+        outline: none;
+        min-width: 0;
+        min-height: 56px;
+        text-align: center;
+        letter-spacing: -0.01em;
+        user-select: none;
+    }
+    .btn-glass-article {
+        background: rgba(255,255,255,0.7);
+        color: var(--primary-coral);
+        border: 2px solid #e8e4de;
+        box-shadow: 0 2px 12px 0 rgba(255,107,107,0.07);
+        font-weight: 700;
+    }
+    .btn-glass-article:hover, .btn-glass-article:focus {
+        background: #fff;
+        color: var(--primary-coral);
+        border-color: var(--primary-coral);
+        box-shadow: 0 4px 24px 0 rgba(255,107,107,0.13);
+    }
+    .btn-glass-use {
+        background: linear-gradient(90deg, #8B5CF6 0%, #06D6A0 100%);
+        color: #fff;
+        font-weight: 700;
+        border: none;
+        box-shadow: 0 2px 12px 0 rgba(139,92,246,0.10);
+    }
+    .btn-glass-use:hover, .btn-glass-use:focus {
+        background: linear-gradient(90deg, #06D6A0 0%, #8B5CF6 100%);
+        color: #fff;
+        box-shadow: 0 4px 24px 0 rgba(16,185,129,0.13);
+    }
+    .btn-glass i {
+        font-size: 1.1em;
+        margin-right: 0.4em;
+        margin-left: 0;
+    }
+    @media (max-width: 600px) {
+        .news-article-actions {
+            flex-direction: column;
+            gap: 0.7em;
+        }
+        .btn-glass {
+            width: 100%;
+        }
     }
     @media (max-width: 900px) {
         .news-section { padding: 1.2rem;}
@@ -307,20 +364,24 @@
                     <span><i class="fa-solid fa-newspaper"></i> {{ article.source.name if article.source.name else article.source }}</span>
                 </div>
                 <div class="news-article-actions">
-                    <a href="{{ article.url }}" target="_blank" class="btn-noble" style="background:var(--noble-mist); color:var(--primary-coral); border:1.5px solid var(--noble-accent-light); box-shadow:none;"><i class="fas fa-external-link"></i> Lire l’article</a>
-                    <button onclick='selectArticle({{ loop.index0 }})' class="btn-noble" style="background:var(--gradient-cool); color:#fff;"><i class="fas fa-feather-alt"></i> Utiliser cet article</button>
-                    <script type="application/json" class="article-data-{{ loop.index0 }}">
-                    {
-                        "title": {{ article.title | tojson }},
-                        "description": {{ article.description | tojson }},
-                        "url": {{ article.url | tojson }},
-                        "source": {{ article.source | tojson }},
-                        "formatted_date": {{ article.formatted_date | tojson }},
-                        "urlToImage": {{ article.urlToImage | tojson }}
-                    }
-                    </script>
+                    <a href="{{ article.url }}" target="_blank" class="btn-glass btn-glass-article">
+                        <i class="fas fa-external-link"></i> Lire l’article
+                    </a>
+                    <button onclick='selectArticle({{ loop.index0 }})' class="btn-glass btn-glass-use">
+                        <i class="fas fa-feather-alt"></i> Utiliser cet article
+                    </button>
                 </div>
             </div>
+            <script type="application/json" class="article-data-{{ loop.index0 }}">
+            {
+                "title": {{ article.title | tojson }},
+                "description": {{ article.description | tojson }},
+                "url": {{ article.url | tojson }},
+                "source": {{ article.source | tojson }},
+                "formatted_date": {{ article.formatted_date | tojson }},
+                "urlToImage": {{ article.urlToImage | tojson }}
+            }
+            </script>
         </div>
         {% endfor %}
     </div>
