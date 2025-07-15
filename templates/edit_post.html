@@ -14,7 +14,6 @@
 {% endwith %}
 
 <style>
-    /* Variables nobles identiques au dashboard */
     :root {
         --noble-cream: #faf9f7;
         --noble-warm: #f5f2ed;
@@ -27,12 +26,20 @@
         --noble-mist: #f0ede8;
         --noble-accent: #9c8b7a;
         --noble-accent-light: #b5a495;
-        
+        --primary-coral: #FF6B6B;
+        --primary-orange: #FF8E53;
+        --primary-pink: #FF5F8D;
+        --primary-purple: #8B5CF6;
+        --primary-blue: #06D6A0;
+        --primary-cyan: #118AB2;
+        --gradient-main: linear-gradient(135deg, #FF6B6B 0%, #FF8E53 25%, #FF5F8D 50%, #8B5CF6 75%, #06D6A0 100%);
+        --gradient-warm: linear-gradient(135deg, #FF8E53 0%, #FF6B6B 100%);
+        --gradient-cool: linear-gradient(135deg, #8B5CF6 0%, #06D6A0 100%);
+        --gradient-pink: linear-gradient(135deg, #FF5F8D 0%, #8B5CF6 100%);
         --gentle-success: #7c9885;
         --gentle-warning: #b8a082;
         --gentle-info: #8ba3b8;
         --gentle-error: #c49090;
-        
         --shadow-whisper: 0 2px 12px rgba(139, 154, 124, 0.08);
         --shadow-gentle: 0 4px 20px rgba(139, 154, 124, 0.12);
         --shadow-soft: 0 8px 32px rgba(139, 154, 124, 0.16);
@@ -325,32 +332,30 @@
     }
 
     .btn-primary {
-        background: var(--noble-sage);
-        color: white;
-        box-shadow: var(--shadow-whisper);
+        background: var(--gradient-warm);
+        color: #fff;
+        box-shadow: 0 4px 15px rgba(255, 107, 107, 0.18);
     }
 
     .btn-primary:hover {
-        transform: translateY(-1px);
-        box-shadow: var(--shadow-gentle);
-        background: var(--noble-sage-dark);
+        background: var(--gradient-pink);
+        color: #fff;
     }
 
     .btn-secondary {
-        background: white;
-        color: var(--noble-charcoal);
-        border: 1.5px solid var(--noble-stone);
+        background: #fff;
+        color: var(--primary-coral);
+        border: 1.5px solid var(--primary-coral);
     }
 
     .btn-secondary:hover {
-        background: var(--noble-warm);
-        border-color: var(--noble-sage);
-        transform: translateY(-1px);
+        background: var(--primary-coral);
+        color: #fff;
     }
 
     .btn-danger {
-        background: var(--gentle-error);
-        color: white;
+        background: var(--primary-coral);
+        color: #fff;
         box-shadow: var(--shadow-whisper);
     }
 
@@ -405,17 +410,17 @@
     /* Compteur de caractères */
     .character-counter {
         font-size: 0.8rem;
-        color: var(--noble-charcoal-light);
+        color: var(--primary-coral);
         text-align: right;
         margin-top: 0.5rem;
     }
 
     .character-counter.warning {
-        color: var(--gentle-warning);
+        color: var(--primary-orange);
     }
 
     .character-counter.error {
-        color: var(--gentle-error);
+        color: var(--primary-coral);
     }
 
     /* Responsive */
@@ -455,8 +460,72 @@
 
     /* Icônes avec style noble */
     .icon-noble {
-        color: var(--noble-sage);
+        color: var(--primary-coral);
         font-size: 1.125rem;
+    }
+    .section-title, .greeting {
+        color: var(--primary-coral);
+        background: var(--gradient-main);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+    }
+    .form-label, .publish-group-title {
+        color: var(--noble-charcoal);
+    }
+    .btn-primary {
+        background: var(--gradient-warm);
+        color: #fff;
+        border: none;
+        box-shadow: 0 4px 15px rgba(255, 107, 107, 0.18);
+    }
+    .btn-primary:hover {
+        background: var(--gradient-pink);
+        color: #fff;
+    }
+    .btn-secondary {
+        background: #fff;
+        color: var(--primary-coral);
+        border: 1.5px solid var(--primary-coral);
+    }
+    .btn-secondary:hover {
+        background: var(--primary-coral);
+        color: #fff;
+    }
+    .btn-danger {
+        background: var(--primary-coral);
+        color: #fff;
+        border: none;
+    }
+    .btn-danger:hover {
+        background: #b87d7d;
+        color: #fff;
+    }
+    .character-counter {
+        color: var(--primary-coral);
+    }
+    .character-counter.warning {
+        color: var(--primary-orange);
+    }
+    .character-counter.error {
+        color: var(--primary-coral);
+    }
+    .alert-success {
+        background: var(--primary-blue);
+        color: #fff;
+    }
+    .alert-danger {
+        background: var(--primary-coral);
+        color: #fff;
+    }
+    a, a:visited {
+        color: var(--primary-coral);
+    }
+    a:hover {
+        color: var(--primary-blue);
+    }
+    .icon-noble {
+        color: var(--primary-coral);
     }
 </style>
 
