@@ -29,8 +29,13 @@ services:
         value: GRfBXoBp4ZxiaHejhH03WWpuSm07btLzWxyBq6Q9dnVFPr6BrJ8xpFlg
 
 databases:
-  - name: resoboost  # Nom de votre nouvelle base de données
+  - name: resoboost
     databaseName: resoboost
     user: resoboost_user
     region: frankfurt
     plan: basic
+
+cron:
+  - name: publish-scheduled-posts
+    path: /publish_scheduled
+    schedule: "*/10 * * * *"  # Toutes les 10 minutes
