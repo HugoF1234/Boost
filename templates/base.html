@@ -873,6 +873,91 @@
             </div>
 </main>
 </div>
+<!-- Bouton flottant global pour créer un nouveau post -->
+{% if request.endpoint in ['calendar', 'historique', 'profil', 'parametres', 'news_assistant'] %}
+<a href="{{ url_for('dashboard') }}" class="floating-btn" title="Créer un nouveau post">
+    <i class="fas fa-plus"></i>
+    <span class="floating-label">Créer un nouveau post</span>
+</a>
+<style>
+.floating-btn {
+    position: fixed;
+    bottom: 2rem;
+    right: 2rem;
+    width: 60px;
+    height: 60px;
+    background: var(--gradient-main);
+    color: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-decoration: none;
+    font-size: 1.5rem;
+    box-shadow: var(--shadow-gentle);
+    transition: all 0.3s cubic-bezier(.4,1.4,.6,1);
+    z-index: 1000;
+    overflow: visible;
+}
+.floating-btn .floating-label {
+    opacity: 0;
+    pointer-events: none;
+    position: absolute;
+    right: 70px;
+    bottom: 50%;
+    transform: translateY(50%) scale(0.95);
+    background: var(--glass-white);
+    color: var(--primary-coral);
+    padding: 0.7em 1.2em;
+    border-radius: 12px;
+    font-size: 1rem;
+    font-weight: 500;
+    box-shadow: 0 4px 20px rgba(255, 107, 107, 0.10);
+    white-space: nowrap;
+    transition: opacity 0.3s, transform 0.3s, right 0.3s;
+    border: 1px solid rgba(255, 107, 107, 0.10);
+    letter-spacing: -0.01em;
+}
+.floating-btn:hover {
+    transform: translateY(-2px) scale(1.08) rotate(-6deg);
+    box-shadow: var(--shadow-soft);
+    background: var(--gradient-pink);
+}
+.floating-btn:hover .floating-label {
+    opacity: 1;
+    right: 80px;
+    transform: translateY(50%) scale(1.05) rotate(-2deg);
+    pointer-events: auto;
+}
+.floating-btn:active {
+    transform: translateY(0) scale(0.98);
+}
+.floating-btn i {
+    transition: transform 0.3s cubic-bezier(.4,1.4,.6,1);
+}
+.floating-btn:hover i {
+    transform: rotate(20deg) scale(1.15);
+    filter: drop-shadow(0 0 8px rgba(255, 107, 107, 0.25));
+}
+@media (max-width: 600px) {
+    .floating-btn {
+        width: 48px;
+        height: 48px;
+        font-size: 1.1rem;
+        bottom: 1.2rem;
+        right: 1.2rem;
+    }
+    .floating-btn .floating-label {
+        font-size: 0.95rem;
+        right: 55px;
+        padding: 0.5em 0.9em;
+    }
+    .floating-btn:hover .floating-label {
+        right: 65px;
+    }
+}
+</style>
+{% endif %}
 <!-- Scripts corrigés -->
 <script>
         // Variable pour l'état de la sidebar
