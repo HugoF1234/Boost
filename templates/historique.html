@@ -147,46 +147,44 @@
     .post-card {
         background: rgba(255,255,255,0.8);
         backdrop-filter: blur(15px);
-        border-radius: 16px;
-        margin-bottom: 1rem;
+        border-radius: 12px; /* réduit de 16px */
+        margin-bottom: 0.75rem; /* réduit */
         overflow: hidden;
         border: 1px solid rgba(255, 107, 107, 0.15);
         transition: all 0.3s ease;
         box-shadow: var(--shadow-whisper);
         position: relative;
-    }
-    .post-card:hover {
-        transform: translateY(-2px);
-        box-shadow: var(--shadow-gentle);
-        border-color: rgba(255, 107, 107, 0.3);
+        padding: 0.5rem 0.5rem 0.25rem 0.5rem; /* padding réduit */
+        font-size: 0.93rem; /* police plus petite */
+        min-width: 0;
     }
     .post-image-placeholder {
         width: 100%;
-        height: 120px;
+        height: 60px; /* réduit de 120px */
         background: var(--gradient-warm);
         display: flex;
         align-items: center;
         justify-content: center;
         color: white;
-        font-size: 2rem;
+        font-size: 1.2rem; /* réduit */
         border-bottom: 1px solid rgba(255, 107, 107, 0.08);
     }
     .post-content {
-        padding: 1rem;
+        padding: 0.5rem 0.25rem 0.25rem 0.25rem; /* réduit */
     }
     .post-date {
-        font-size: 0.85rem;
+        font-size: 0.78rem; /* réduit */
         color: var(--noble-charcoal-light);
         display: flex;
         align-items: center;
-        gap: 0.5rem;
-        margin-bottom: 0.5rem;
+        gap: 0.4rem;
+        margin-bottom: 0.3rem;
     }
     .post-text {
         color: var(--noble-charcoal);
-        font-size: 0.98rem;
-        line-height: 1.5;
-        margin-bottom: 1rem;
+        font-size: 0.93rem; /* réduit */
+        line-height: 1.4;
+        margin-bottom: 0.7rem;
         display: -webkit-box;
         -webkit-line-clamp: 3;
         -webkit-box-orient: vertical;
@@ -194,14 +192,16 @@
     }
     .post-actions {
         display: flex;
-        gap: 0.5rem;
-        padding-top: 0.5rem;
+        flex-wrap: wrap;
+        gap: 0.25rem; /* réduit */
+        padding-top: 0.25rem;
         border-top: 1px solid rgba(255, 107, 107, 0.08);
+        justify-content: flex-start;
     }
     .btn-action {
-        padding: 0.5rem 1rem;
-        border-radius: 8px;
-        font-size: 0.9rem;
+        padding: 0.35rem 0.7rem; /* réduit */
+        border-radius: 7px; /* réduit */
+        font-size: 0.85rem; /* réduit */
         background: none;
         border: none;
         color: var(--noble-charcoal);
@@ -209,9 +209,17 @@
         transition: all 0.2s ease;
         display: flex;
         align-items: center;
-        gap: 0.5rem;
+        gap: 0.3rem; /* réduit */
         text-decoration: none;
         font-weight: 500;
+        min-width: 0;
+        flex: 1 1 110px; /* permet de wrap sur mobile */
+        justify-content: center;
+        max-width: 100%;
+        box-sizing: border-box;
+    }
+    .btn-action i {
+        font-size: 1em;
     }
     .btn-action:hover {
         background: rgba(255, 107, 107, 0.08);
@@ -223,12 +231,12 @@
     .post-status {
         display: inline-flex;
         align-items: center;
-        gap: 0.5rem;
-        padding: 0.25rem 0.75rem;
-        border-radius: 20px;
-        font-size: 0.8rem;
+        gap: 0.4rem;
+        padding: 0.18rem 0.6rem; /* réduit */
+        border-radius: 14px; /* réduit */
+        font-size: 0.78rem; /* réduit */
         font-weight: 500;
-        margin-bottom: 0.5rem;
+        margin-bottom: 0.3rem;
     }
     .status-draft {
         background: rgba(184, 160, 130, 0.1);
@@ -276,6 +284,18 @@
     @media (max-width: 768px) {
         .kanban-container { grid-template-columns: 1fr; }
         .column-header { flex-direction: column; align-items: flex-start; gap: 0.5rem; }
+    }
+    /* Responsive: sur mobile, les boutons passent à la ligne */
+    @media (max-width: 600px) {
+        .post-actions {
+            flex-direction: column;
+            gap: 0.15rem;
+        }
+        .btn-action {
+            width: 100%;
+            justify-content: center;
+            font-size: 0.95em;
+        }
     }
 </style>
 
@@ -383,37 +403,6 @@
         </div>
     </div>
 </div>
-<a href="{{ url_for('dashboard') }}" class="floating-btn" title="Créer un nouveau post">
-    <i class="fas fa-plus"></i>
-</a>
-<style>
-.floating-btn {
-    position: fixed;
-    bottom: 2rem;
-    right: 2rem;
-    width: 60px;
-    height: 60px;
-    background: var(--gradient-main);
-    color: white;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    text-decoration: none;
-    font-size: 1.5rem;
-    box-shadow: var(--shadow-gentle);
-    transition: all 0.3s ease;
-    z-index: 1000;
-}
-.floating-btn:hover {
-    transform: translateY(-2px) scale(1.05);
-    box-shadow: var(--shadow-soft);
-    background: var(--gradient-pink);
-}
-.floating-btn:active {
-    transform: translateY(0) scale(1);
-}
-</style>
 <script>
 document.addEventListener('DOMContentLoaded', function() {
     document.querySelectorAll('.kanban-column').forEach((column, index) => {
