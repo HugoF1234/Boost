@@ -114,13 +114,13 @@
             position: fixed;
             left: 0;
             top: 0;
-            background: var(--glass-white);
+            background: #fff;
             backdrop-filter: blur(20px);
             -webkit-backdrop-filter: blur(20px);
-            z-index: 100;
+            z-index: 1002;
             transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
             box-shadow: var(--shadow-soft);
-            overflow-y: hidden;
+            overflow-y: auto;
             display: flex;
             flex-direction: column;
             border-right: 1px solid rgba(255, 107, 107, 0.1);
@@ -390,6 +390,10 @@
             border-top: 1px solid rgba(255, 107, 107, 0.1);
             background: none !important;
             box-shadow: none !important;
+            min-height: 80px;
+            display: flex;
+            align-items: flex-end;
+            justify-content: flex-start;
         }
 
         .nav-item {
@@ -499,6 +503,11 @@
             background: none !important;
             box-shadow: none !important;
             border: none !important;
+            width: 100%;
+            margin-bottom: 0;
+            border-radius: 12px;
+            align-items: center;
+            justify-content: flex-start;
         }
 
         .nav-link.danger:hover {
