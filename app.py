@@ -743,7 +743,7 @@ import logging
 from datetime import datetime
 
 def extract_articles_from_perplexity(keyword, language):
-    api_key = os.getenv("PERPLEXITY_API_KEY")  # ou ta clé directement ici
+    api_key = os.getenv("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")  # ou ta clé directement ici
     if not api_key:
         raise ValueError("API key Perplexity manquante")
 
