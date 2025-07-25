@@ -733,7 +733,60 @@ def get_news_by_keyword(keyword, days=30, language="fr"):
     except Exception as e:
         logger.error(f"❌ Exception lors de la recherche : {str(e)}")
         raise
-    
+
+
+def extract_articles_from_perplexity(keyword, language):
+    prompt = (
+        f"Fais une recherche web sur « {keyword} » en {language}. "
+        f"Donne-moi une liste d'articles récents sous la forme : "
+        f"titre, description, lien, image, source, date. "
+        f"Donne-moi les résultats sous forme de liste claire, sans texte autour."
+    )
+
+    payload = {
+        "model": "sonar-pro",
+        "messages": [{"role": "user", "content": prompt}]
+    }
+
+    headers = {
+        "Authorization": "Bearer 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",  # 👈 mets ta clé
+        "Content-Type": "application/json"
+    }
+
+    try:
+        res = requests.post("https://api.perplexity.ai/chat/completions", headers=headers, json=payload)
+        data = res.json()
+        content = data["choices"][0]["message"]["content"]
+    except Exception as e:
+        return [], str(e)
+
+    # 🧠 Extraction manuelle des articles
+    articles = []
+    for block in content.split("\n\n"):
+        lines = block.strip().split("\n")
+        article = {
+            "title": "", "description": "", "url": "", "urlToImage": "",
+            "source": {"name": ""}, "formatted_date": datetime.today().strftime("%d/%m/%Y")
+        }
+        for line in lines:
+            if "titre" in line.lower():
+                article["title"] = line.split(":", 1)[-1].strip()
+            elif "description" in line.lower():
+                article["description"] = line.split(":", 1)[-1].strip()
+            elif "lien" in line.lower():
+                article["url"] = line.split(":", 1)[-1].strip()
+            elif "image" in line.lower():
+                article["urlToImage"] = line.split(":", 1)[-1].strip()
+            elif "source" in line.lower():
+                article["source"]["name"] = line.split(":", 1)[-1].strip()
+            elif "date" in line.lower():
+                article["formatted_date"] = line.split(":", 1)[-1].strip()
+        if article["title"] and article["url"]:
+            articles.append(article)
+
+    return articles, None
+
+
 def get_cached_news(query, language, days=3):
     """
     Récupère les résultats mis en cache ou effectue un nouvel appel API
@@ -1141,41 +1194,36 @@ def search_linkedin_users_alternative(query):
 def news_assistant():
     if 'profile' not in session:
         return redirect(url_for("index"))
-    
+
     # Récupérer l'utilisateur
     user = User.query.filter_by(sub=session['profile'].get("sub", "")).first()
     if not user:
         return redirect(url_for("dashboard"))
-    
+
     # Récupérer le secteur de l'utilisateur ou utiliser une valeur par défaut
     sector = user.secteur or "general"
     news_articles = []
     selected_article = None
     error_message = None
     success_message = None
-    
+
     # Récupérer les paramètres de recherche
     search_keyword = request.args.get('keyword', '')
     language = request.args.get('language', 'fr')
-    
+
     # Traitement des actions POST
     if request.method == "POST":
         logger.info(f"POST reçu avec données: {request.form}")
-        
+
         if 'search' in request.form:
-            # Recherche d'actualités avec un mot-clé
             search_keyword = request.form.get('keyword', '')
             language = request.form.get('language', 'fr')
-            
-            # Rediriger vers GET avec les paramètres pour permettre le partage d'URL
             return redirect(url_for('news_assistant', keyword=search_keyword, language=language))
-            
+
         elif 'select_article' in request.form:
-            # L'utilisateur a sélectionné un article
             try:
                 logger.info("Traitement de la sélection d'article")
-                
-                # Récupérer les données directement depuis le formulaire
+
                 article_data = {
                     'title': request.form.get('article_title', ''),
                     'description': request.form.get('article_description', ''),
@@ -1187,59 +1235,41 @@ def news_assistant():
                     'tone': request.form.get('tone', 'professionnel'),
                     'perspective': request.form.get('perspective', 'neutre')
                 }
-                
+
                 logger.info(f"Données article récupérées: {article_data}")
-                
-                # Vérifier que l'article a un titre et une description
+
                 if not article_data['title'] or not article_data['description']:
                     error_message = "L'article sélectionné est incomplet. Veuillez réessayer."
                     logger.error("Article incomplet détecté")
                 else:
-                    # Stocker l'article dans la session
                     session['selected_article'] = article_data
                     logger.info("Article stocké dans la session avec succès")
-                    
-                    # Rediriger vers le dashboard avec un paramètre de succès
                     session['article_success'] = True
                     return redirect(url_for("dashboard"))
-                    
+
             except Exception as e:
                 error_message = f"Erreur lors de la sélection de l'article: {str(e)}"
                 logger.error(f"Erreur de sélection d'article: {str(e)}")
-    
+
     # Pour les requêtes GET ou si POST n'a pas redirigé
     try:
-        # Récupérer les actualités avec gestion d'erreurs améliorée
         logger.info(f"Recherche d'actualités: secteur={sector}, keyword={search_keyword}, langue={language}")
-        
+
         if search_keyword:
-            # Si l'utilisateur a entré un mot-clé, effectuer une recherche générale (ignorer le secteur)
-            news_articles = get_news_by_keyword(search_keyword, language=language, days=30)
+            news_articles, error_message = extract_articles_from_perplexity(search_keyword, language)
         else:
-            # Sinon, afficher les actualités du secteur de l'utilisateur
-            news_articles = get_news_by_sector(sector, language=language, days=30)
-        
-        # Log du nombre d'articles trouvés
-        logger.info(f"Nombre d'articles trouvés: {len(news_articles)}")
-        
-        # Si aucun article n'est trouvé, faire une recherche de secours
+            news_articles, error_message = extract_articles_from_perplexity(sector, language)
+
         if not news_articles:
-            if search_keyword:
-                logger.info(f"Aucun article trouvé avec mot-clé, tentative avec secteur général")
-                news_articles = get_news_by_sector("general", search_keyword, language=language, days=30)
-            else:
-                logger.info(f"Aucun article trouvé pour le secteur, tentative avec le secteur 'general'")
-                news_articles = get_news_by_sector("general", language=language, days=30)
-        
+            logger.info("Aucun article renvoyé par Perplexity.")
     except Exception as e:
         error_message = f"Erreur lors de la récupération des actualités: {str(e)}"
         logger.error(f"Exception lors de la récupération des actualités: {str(e)}")
         news_articles = []
-    
-    # Récupérer l'article sélectionné depuis la session si disponible
+
     if not selected_article and 'selected_article' in session:
         selected_article = session.get('selected_article')
-    
+
     return render_template(
         "news_assistant.html",
         news=news_articles,
