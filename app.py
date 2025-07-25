@@ -734,13 +734,15 @@ def get_news_by_keyword(keyword, days=30, language="fr"):
         logger.error(f"❌ Exception lors de la recherche : {str(e)}")
         raise
 
+from datetime import datetime
+import requests
 
 def extract_articles_from_perplexity(keyword, language):
     prompt = (
         f"Fais une recherche web sur « {keyword} » en {language}. "
-        f"Donne-moi une liste d'articles récents sous la forme : "
-        f"titre, description, lien, image, source, date. "
-        f"Donne-moi les résultats sous forme de liste claire, sans texte autour."
+        f"Donne-moi une liste de 3 à 5 articles récents au format suivant :\n"
+        f"- Titre: ...\n- Description: ...\n- Lien: ...\n- Image: ...\n- Source: ...\n- Date: ...\n"
+        f"Formate-les clairement avec un saut de ligne entre chaque article, sans texte supplémentaire autour."
     )
 
     payload = {
@@ -749,42 +751,58 @@ def extract_articles_from_perplexity(keyword, language):
     }
 
     headers = {
-        "Authorization": "Bearer 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",  # 👈 mets ta clé
+        "Authorization": "Bearer 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",  # 🛑 remplace par ta vraie clé API
         "Content-Type": "application/json"
     }
 
     try:
         res = requests.post("https://api.perplexity.ai/chat/completions", headers=headers, json=payload)
-        data = res.json()
-        content = data["choices"][0]["message"]["content"]
+        res.raise_for_status()
+        content = res.json()["choices"][0]["message"]["content"]
     except Exception as e:
         return [], str(e)
 
-    # 🧠 Extraction manuelle des articles
+    # 📦 Parser la réponse générée
     articles = []
-    for block in content.split("\n\n"):
-        lines = block.strip().split("\n")
+    for block in content.strip().split('---'):
         article = {
-            "title": "", "description": "", "url": "", "urlToImage": "",
-            "source": {"name": ""}, "formatted_date": datetime.today().strftime("%d/%m/%Y")
+            "title": "",
+            "description": "",
+            "url": "",
+            "urlToImage": None,
+            "source": {"name": ""},
+            "formatted_date": datetime.today().strftime("%d/%m/%Y")
         }
-        for line in lines:
-            if "titre" in line.lower():
-                article["title"] = line.split(":", 1)[-1].strip()
-            elif "description" in line.lower():
-                article["description"] = line.split(":", 1)[-1].strip()
-            elif "lien" in line.lower():
-                article["url"] = line.split(":", 1)[-1].strip()
-            elif "image" in line.lower():
-                article["urlToImage"] = line.split(":", 1)[-1].strip()
-            elif "source" in line.lower():
-                article["source"]["name"] = line.split(":", 1)[-1].strip()
-            elif "date" in line.lower():
-                article["formatted_date"] = line.split(":", 1)[-1].strip()
+        for line in block.strip().split("\n"):
+            key, _, value = line.partition(":")
+            key = key.strip().lower()
+            value = value.strip()
+            if key.startswith("titre"):
+                article["title"] = value
+            elif key.startswith("description"):
+                article["description"] = value
+            elif key.startswith("lien") or key.startswith("url"):
+                article["url"] = value
+            elif key.startswith("image"):
+                # fallback to placeholder if image isn't provided
+                article["urlToImage"] = (
+                    value if value and value.startswith("http") else
+                    "https://upload.wikimedia.org/wikipedia/commons/1/13/Perplexity_AI_logo.png"
+                )
+            elif key.startswith("source"):
+                article["source"]["name"] = value
+            elif key.startswith("date"):
+                try:
+                    # Essayer de formater la date si elle est bien formée
+                    parsed_date = datetime.strptime(value, "%d %B %Y")
+                    article["formatted_date"] = parsed_date.strftime("%d/%m/%Y")
+                except:
+                    article["formatted_date"] = value
         if article["title"] and article["url"]:
             articles.append(article)
 
     return articles, None
+
 
 
 def get_cached_news(query, language, days=3):
