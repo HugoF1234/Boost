@@ -737,71 +737,87 @@ def get_news_by_keyword(keyword, days=30, language="fr"):
 from datetime import datetime
 import requests
 
+import requests
+import os
+import logging
+from datetime import datetime
+
 def extract_articles_from_perplexity(keyword, language):
+    api_key = os.getenv("PERPLEXITY_API_KEY")  # ou ta clé directement ici
+    if not api_key:
+        raise ValueError("API key Perplexity manquante")
+
+    headers = {
+        "Authorization": f"Bearer {api_key}",
+        "Content-Type": "application/json"
+    }
+
     prompt = (
-        f"Fais une recherche web sur « {keyword} » en {language}. "
-        f"Donne-moi une liste de 3 à 5 articles récents au format suivant :\n"
-        f"- Titre: ...\n- Description: ...\n- Lien: ...\n- Image: ...\n- Source: ...\n- Date: ...\n"
-        f"Formate-les clairement avec un saut de ligne entre chaque article, sans texte supplémentaire autour."
+        f"Donne-moi une liste de 10 articles récents sur « {keyword} », "
+        f"en langue {language}, au format JSON : title, description, url, image, source, date. "
+        f"Pas d’introduction, pas de conclusion."
     )
 
     payload = {
         "model": "sonar-pro",
-        "messages": [{"role": "user", "content": prompt}]
-    }
-
-    headers = {
-        "Authorization": "Bearer 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",  # 🛑 remplace par ta vraie clé API
-        "Content-Type": "application/json"
+        "messages": [
+            {"role": "user", "content": prompt}
+        ]
     }
 
     try:
-        res = requests.post("https://api.perplexity.ai/chat/completions", headers=headers, json=payload)
-        res.raise_for_status()
-        content = res.json()["choices"][0]["message"]["content"]
-    except Exception as e:
-        return [], str(e)
+        response = requests.post("https://api.perplexity.ai/chat/completions", headers=headers, json=payload, timeout=25)
+        response.raise_for_status()
+        data = response.json()
+        message = data["choices"][0]["message"]["content"]
+        search_results = data.get("search_results", [])
 
-    # 📦 Parser la réponse générée
-    articles = []
-    for block in content.strip().split('---'):
-        article = {
-            "title": "",
-            "description": "",
-            "url": "",
-            "urlToImage": None,
-            "source": {"name": ""},
-            "formatted_date": datetime.today().strftime("%d/%m/%Y")
-        }
-        for line in block.strip().split("\n"):
-            key, _, value = line.partition(":")
-            key = key.strip().lower()
-            value = value.strip()
-            if key.startswith("titre"):
-                article["title"] = value
-            elif key.startswith("description"):
-                article["description"] = value
-            elif key.startswith("lien") or key.startswith("url"):
-                article["url"] = value
-            elif key.startswith("image"):
-                # fallback to placeholder if image isn't provided
-                article["urlToImage"] = (
-                    value if value and value.startswith("http") else
-                    "https://upload.wikimedia.org/wikipedia/commons/1/13/Perplexity_AI_logo.png"
-                )
-            elif key.startswith("source"):
-                article["source"]["name"] = value
-            elif key.startswith("date"):
-                try:
-                    # Essayer de formater la date si elle est bien formée
-                    parsed_date = datetime.strptime(value, "%d %B %Y")
-                    article["formatted_date"] = parsed_date.strftime("%d/%m/%Y")
-                except:
-                    article["formatted_date"] = value
-        if article["title"] and article["url"]:
+        articles = []
+
+        # 1. On ajoute les résultats bruts de search_results (rapide)
+        for item in search_results:
+            article = {
+                "title": item.get("title", "Titre non disponible"),
+                "description": "",  # pas présent ici
+                "url": item.get("url"),
+                "urlToImage": None,
+                "source": {"name": item.get("url", "").split("/")[2]},
+                "publishedAt": item.get("date", datetime.utcnow().isoformat())
+            }
             articles.append(article)
 
-    return articles, None
+        # 2. On tente d'extraire des articles structurés depuis le message AI (fallback)
+        import re, json
+
+        json_like = re.findall(r'\{[^{}]+\}', message)
+        for j in json_like:
+            try:
+                obj = json.loads(j)
+                article = {
+                    "title": obj.get("title", "Titre non disponible"),
+                    "description": obj.get("description", ""),
+                    "url": obj.get("url"),
+                    "urlToImage": obj.get("image", None),
+                    "source": {"name": obj.get("source", "Perplexity")},
+                    "publishedAt": obj.get("date", datetime.utcnow().isoformat())
+                }
+                articles.append(article)
+            except:
+                continue
+
+        # On supprime les doublons par URL
+        seen = set()
+        unique_articles = []
+        for a in articles:
+            if a["url"] and a["url"] not in seen:
+                seen.add(a["url"])
+                unique_articles.append(a)
+
+        return unique_articles[:10]
+
+    except Exception as e:
+        logging.error(f"[Perplexity] Erreur extraction actualités: {e}")
+        return []
 
 
 
