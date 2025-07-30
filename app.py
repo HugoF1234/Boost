@@ -647,10 +647,76 @@ def clean_html(text):
     
     return text
 
+def optimize_query_with_gemini(raw_query, language="fr"):
+    """
+    Agent hybride : utilise Gemini pour optimiser la requête avant l'envoi à NewsAPI.
+    Corrige les fautes, reformule et génère plusieurs requêtes optimisées.
+    
+    Args:
+        raw_query (str): Requête brute de l'utilisateur
+        language (str): Langue de la requête
+        
+    Returns:
+        list: Liste de requêtes optimisées
+    """
+    try:
+        prompt = f"""
+Tu es un expert en recherche d'actualités. Optimise cette requête pour l'API NewsAPI.
+
+Requête utilisateur : "{raw_query}"
+Langue : {language}
+
+Tâches :
+1. Corrige les fautes d'orthographe et de grammaire
+2. Identifie les concepts clés et génère des synonymes pertinents
+3. Crée 3-5 requêtes optimisées différentes pour maximiser la pertinence
+4. Utilise des termes spécifiques et des variations intelligentes
+
+Exemples de transformation :
+- "IA" → "intelligence artificielle", "artificial intelligence", "AI"
+- "tech" → "technologie", "innovation technologique", "startup tech"
+- "crypto" → "cryptomonnaie", "bitcoin", "blockchain"
+
+Format de réponse JSON uniquement :
+{{
+    "original_query": "requête originale",
+    "corrected_query": "requête corrigée",
+    "optimized_queries": [
+        "requête optimisée 1",
+        "requête optimisée 2",
+        "requête optimisée 3"
+    ],
+    "reasoning": "explication de l'optimisation"
+}}
+
+Réponds uniquement en JSON valide.
+"""
+
+        model = genai.GenerativeModel('gemini-1.5-flash')
+        response = model.generate_content(prompt)
+        
+        # Extraire le JSON de la réponse
+        response_text = response.text.strip()
+        if response_text.startswith('```json'):
+            response_text = response_text[7:-3]
+        elif response_text.startswith('```'):
+            response_text = response_text[3:-3]
+            
+        result = json.loads(response_text)
+        
+        logger.info(f"🤖 Gemini optimisation - Original: '{raw_query}' → Optimisé: {result['optimized_queries']}")
+        
+        return result['optimized_queries']
+        
+    except Exception as e:
+        logger.error(f"❌ Erreur Gemini optimisation: {str(e)}")
+        # Fallback : retourner la requête originale nettoyée
+        return [raw_query.strip()]
+
 def get_news_by_keyword(keyword, days=30, language="fr"):
     """
-    Récupère les actualités en fonction d'un mot-clé, sans filtrage par secteur.
-    Transforme les espaces en '+' pour forcer une recherche AND sur NewsAPI.
+    Agent hybride : utilise Gemini pour optimiser les requêtes avant NewsAPI.
+    Corrige les fautes, reformule et génère plusieurs requêtes pour maximiser la pertinence.
 
     Args:
         keyword (str): Mot-clé ou expression entrée par l'utilisateur
@@ -658,14 +724,10 @@ def get_news_by_keyword(keyword, days=30, language="fr"):
         language (str, optional): Langue des articles (fr, en)
 
     Returns:
-        list: Liste d'articles d'actualité
+        list: Liste d'articles d'actualité optimisés
     """
-    # Nettoyer et formater le mot-clé pour NewsAPI
-    cleaned_keyword = ' '.join(keyword.strip().split())  # Supprime les espaces multiples
-    formatted_keyword = '+'.join(cleaned_keyword.split())  # Remplace les espaces par +
-
-    # Générer le nom du cache
-    cache_key = f"{formatted_keyword}_{language}_{days}.json"
+    # Générer le nom du cache basé sur la requête originale
+    cache_key = f"{keyword.strip().replace(' ', '_')}_{language}_{days}.json"
     cache_path = os.path.join(cache_dir, cache_key)
 
     # Vérifier si un cache valide existe (moins de 3 heures)
@@ -677,62 +739,77 @@ def get_news_by_keyword(keyword, days=30, language="fr"):
             try:
                 with open(cache_path, 'r', encoding='utf-8') as f:
                     cached_data = json.load(f)
-                    logger.info(f"✅ Cache utilisé pour : {formatted_keyword}")
+                    logger.info(f"✅ Cache utilisé pour : {keyword}")
                     return cached_data
             except Exception as e:
                 logger.error(f"❌ Erreur de lecture du cache : {str(e)}")
 
-    # Construire la requête directe à NewsAPI
+    # 🚀 AGENT HYBRIDE : Optimiser avec Gemini
+    optimized_queries = optimize_query_with_gemini(keyword, language)
+    
+    all_articles = []
     date_from = (datetime.utcnow() - timedelta(days=days)).strftime('%Y-%m-%d')
+    
+    # Exécuter chaque requête optimisée
+    for i, optimized_query in enumerate(optimized_queries):
+        try:
+            # Formater pour NewsAPI (espaces → +)
+            formatted_query = '+'.join(optimized_query.split())
+            
+            params = {
+                'q': formatted_query,
+                'from': date_from,
+                'sortBy': 'relevancy',
+                'language': language,
+                'apiKey': NEWS_API_KEY,
+                'pageSize': 15  # Réduit pour éviter les doublons
+            }
 
-    params = {
-        'q': formatted_keyword,
-        'from': date_from,
-        'sortBy': 'relevancy',
-        'language': language,
-        'apiKey': NEWS_API_KEY,
-        'pageSize': 21
-    }
+            logger.info(f"🔍 Requête {i+1}/{len(optimized_queries)} NewsAPI : {formatted_query}")
 
-    logger.info(f"🔍 Requête NewsAPI : {NEWS_API_URL}")
-    logger.info(f"Paramètres : q={formatted_keyword}, langue={language}, from={date_from}")
+            response = requests.get(NEWS_API_URL, params=params, timeout=15)
 
-    try:
-        response = requests.get(NEWS_API_URL, params=params, timeout=15)
+            if response.status_code == 200:
+                data = response.json()
+                articles = data.get('articles', [])
 
-        if response.status_code == 200:
-            data = response.json()
-            articles = data.get('articles', [])
+                for article in articles:
+                    if article.get('title') and article.get('description'):
+                        # Éviter les doublons basés sur l'URL
+                        if not any(existing.get('url') == article.get('url') for existing in all_articles):
+                            try:
+                                date_str = article.get('publishedAt', '')
+                                date_obj = datetime.strptime(date_str, '%Y-%m-%dT%H:%M:%SZ')
+                                article['formatted_date'] = date_obj.strftime('%d/%m/%Y')
+                                article['query_source'] = optimized_query  # Traçabilité
+                            except:
+                                article['formatted_date'] = 'Date inconnue'
+                                article['query_source'] = optimized_query
 
-            valid_articles = []
-            for article in articles:
-                if article.get('title') and article.get('description'):
-                    try:
-                        date_str = article.get('publishedAt', '')
-                        date_obj = datetime.strptime(date_str, '%Y-%m-%dT%H:%M:%SZ')
-                        article['formatted_date'] = date_obj.strftime('%d/%m/%Y')
-                    except:
-                        article['formatted_date'] = 'Date inconnue'
+                            all_articles.append(article)
 
-                    valid_articles.append(article)
+            else:
+                logger.warning(f"⚠️ Erreur API {response.status_code} pour requête '{optimized_query}'")
 
-            # Sauvegarder en cache
-            try:
-                with open(cache_path, 'w', encoding='utf-8') as f:
-                    json.dump(valid_articles, f, ensure_ascii=False)
-                    logger.info(f"💾 Cache créé pour : {formatted_keyword}")
-            except Exception as e:
-                logger.error(f"❌ Erreur d'écriture du cache : {str(e)}")
+        except Exception as e:
+            logger.error(f"❌ Erreur requête '{optimized_query}': {str(e)}")
+            continue
 
-            return valid_articles
+    # Trier par date (plus récent en premier) et limiter à 21 articles
+    all_articles.sort(key=lambda x: x.get('publishedAt', ''), reverse=True)
+    final_articles = all_articles[:21]
 
-        else:
-            logger.error(f"❌ Erreur API {response.status_code} : {response.text}")
-            raise Exception(f"Erreur NewsAPI ({response.status_code})")
+    # Sauvegarder en cache
+    if final_articles:
+        try:
+            with open(cache_path, 'w', encoding='utf-8') as f:
+                json.dump(final_articles, f, ensure_ascii=False)
+                logger.info(f"💾 Cache créé pour : {keyword} ({len(final_articles)} articles)")
+        except Exception as e:
+            logger.error(f"❌ Erreur d'écriture du cache : {str(e)}")
 
-    except Exception as e:
-        logger.error(f"❌ Exception lors de la recherche : {str(e)}")
-        raise
+    logger.info(f"🎯 Agent hybride terminé : {len(final_articles)} articles trouvés via {len(optimized_queries)} requêtes optimisées")
+    return final_articles
     
 def get_cached_news(query, language, days=3):
     """
