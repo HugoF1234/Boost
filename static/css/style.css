@@ -1037,65 +1037,6 @@ html, body {
     animation: gentleFadeIn 0.6s ease-out;
 }
 
-/* Vue d'ensemble avec scroll horizontal */
-.kanban-container {
-    display: flex;
-    gap: 1.5rem;
-    overflow-x: auto;
-    padding-bottom: 1rem;
-    scroll-behavior: smooth;
-}
-
-.kanban-column {
-    flex: 0 0 350px; /* Largeur fixe pour permettre le scroll */
-    min-width: 350px;
-}
-
-/* Styliser la scrollbar horizontale */
-.kanban-container::-webkit-scrollbar {
-    height: 8px;
-}
-
-.kanban-container::-webkit-scrollbar-track {
-    background: rgba(0, 0, 0, 0.05);
-    border-radius: 4px;
-}
-
-.kanban-container::-webkit-scrollbar-thumb {
-    background: var(--primary-coral);
-    border-radius: 4px;
-}
-
-.kanban-container::-webkit-scrollbar-thumb:hover {
-    background: var(--primary-orange);
-}
-
-/* Scroll horizontal pour les colonnes individuelles */
-.column-content {
-    max-height: 600px;
-    overflow-y: auto;
-    overflow-x: hidden;
-    padding-right: 0.5rem;
-}
-
-.column-content::-webkit-scrollbar {
-    width: 6px;
-}
-
-.column-content::-webkit-scrollbar-track {
-    background: rgba(0, 0, 0, 0.05);
-    border-radius: 3px;
-}
-
-.column-content::-webkit-scrollbar-thumb {
-    background: rgba(255, 107, 107, 0.3);
-    border-radius: 3px;
-}
-
-.column-content::-webkit-scrollbar-thumb:hover {
-    background: rgba(255, 107, 107, 0.5);
-}
-
 /* Style LinkedIn pour les cartes de posts */
 .linkedin-post-card {
     background: var(--white);
@@ -1374,12 +1315,6 @@ html, body {
     
     .kanban-container {
         flex-direction: column;
-        overflow-x: visible; /* Pas de scroll horizontal sur mobile */
-    }
-    
-    .kanban-column {
-        flex: 1;
-        min-width: auto;
     }
     
     .linkedin-post-card {
@@ -1398,14 +1333,6 @@ html, body {
     .linkedin-actions {
         flex-wrap: wrap;
         gap: 0.5rem;
-    }
-    
-    .empty-state {
-        padding: 2rem 1rem;
-    }
-    
-    .column-content {
-        max-height: 500px; /* Réduire sur mobile */
     }
 }
 
