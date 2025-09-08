@@ -29,27 +29,21 @@
                     <i class="fas fa-th-large"></i>
                     Vue d'ensemble
                 </button>
-                {% if total_drafts > 2 %}
                 <button class="nav-tab" data-tab="drafts">
                     <i class="fas fa-edit"></i>
                     Brouillons
                     <span class="tab-count">{{ total_drafts }}</span>
                 </button>
-                {% endif %}
-                {% if total_scheduled > 2 %}
                 <button class="nav-tab" data-tab="scheduled">
                     <i class="fas fa-clock"></i>
                     Programmés
                     <span class="tab-count">{{ total_scheduled }}</span>
                 </button>
-                {% endif %}
-                {% if total_published > 2 %}
                 <button class="nav-tab" data-tab="published">
                     <i class="fas fa-check-circle"></i>
                     Publiés
                     <span class="tab-count">{{ total_published }}</span>
                 </button>
-                {% endif %}
             </div>
         </div>
     {% endif %}
@@ -249,14 +243,15 @@
             </div>
         </div>
         
-        <!-- Pages dédiées (conditionnelles) -->
-        {% if total_drafts > 2 %}
+        <!-- Pages dédiées (toujours présentes si navigation active) -->
+        {% if show_navigation %}
         <div id="tab-drafts" class="tab-content">
             <div class="dedicated-page">
                 <h2 class="page-title">
                     <i class="fas fa-edit" style="color: var(--primary-coral);"></i>
                     Tous les brouillons ({{ total_drafts }})
                 </h2>
+                {% if draft_posts %}
                 <div class="posts-grid">
                     {% for post in draft_posts %}
                     <div class="linkedin-post-card">
@@ -292,17 +287,23 @@
                     </div>
                     {% endfor %}
                 </div>
+                {% else %}
+                <div class="empty-state">
+                    <div class="empty-icon"><i class="fas fa-edit"></i></div>
+                    <p class="empty-text">Aucun brouillon</p>
+                    <small>Créez du contenu depuis le dashboard</small>
+                </div>
+                {% endif %}
             </div>
         </div>
-        {% endif %}
         
-        {% if total_scheduled > 2 %}
         <div id="tab-scheduled" class="tab-content">
             <div class="dedicated-page">
                 <h2 class="page-title">
                     <i class="fas fa-clock" style="color: var(--primary-coral);"></i>
                     Tous les posts programmés ({{ total_scheduled }})
                 </h2>
+                {% if scheduled_posts %}
                 <div class="posts-grid">
                     {% for post in scheduled_posts %}
                     <div class="linkedin-post-card">
@@ -338,17 +339,23 @@
                     </div>
                     {% endfor %}
                 </div>
+                {% else %}
+                <div class="empty-state">
+                    <div class="empty-icon"><i class="fas fa-clock"></i></div>
+                    <p class="empty-text">Aucun post programmé</p>
+                    <small>Programmez vos publications à l'avance</small>
+                </div>
+                {% endif %}
             </div>
         </div>
-        {% endif %}
         
-        {% if total_published > 2 %}
         <div id="tab-published" class="tab-content">
             <div class="dedicated-page">
                 <h2 class="page-title">
                     <i class="fas fa-check-circle" style="color: var(--primary-coral);"></i>
                     Tous les posts publiés ({{ total_published }})
                 </h2>
+                {% if published_posts %}
                 <div class="posts-grid">
                     {% for post in published_posts %}
                     <div class="linkedin-post-card">
@@ -386,6 +393,13 @@
                     </div>
                     {% endfor %}
                 </div>
+                {% else %}
+                <div class="empty-state">
+                    <div class="empty-icon"><i class="fas fa-check-circle"></i></div>
+                    <p class="empty-text">Aucune publication</p>
+                    <small>Vos posts publiés apparaîtront ici</small>
+                </div>
+                {% endif %}
             </div>
         </div>
         {% endif %}
