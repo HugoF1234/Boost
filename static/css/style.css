@@ -1,0 +1,444 @@
+/* 
+ * ResoBoost - Direction Artistique Centralisée
+ * Fichier CSS principal pour une gestion facilitée des styles
+ */
+
+/* ========================================
+   VARIABLES CSS - NOUVELLE DIRECTION ARTISTIQUE
+   ======================================== */
+:root {
+    /* Palette principale - Version affinée pour plus d'harmonie */
+    --primary-orange: #FF9A62;   /* Orange vibrant */
+    --primary-pink: #FF55A1;     /* Rose dynamique */
+    --primary-purple: #6B47FF;   /* Violet profond (CTA) */
+    
+    /* Dégradés - Version plus douce */
+    --gradient-main: linear-gradient(135deg, 
+        rgba(255, 154, 98, 0.1) 0%, 
+        rgba(255, 85, 161, 0.1) 50%, 
+        rgba(107, 71, 255, 0.15) 100%);
+    --gradient-main-intense: linear-gradient(135deg, #FF9A62, #FF55A1, #6B47FF);
+    --gradient-warm: linear-gradient(135deg, #FF9A62, #FF55A1);
+    --gradient-cool: linear-gradient(135deg, #FF55A1, #6B47FF);
+    
+    /* Couleurs complémentaires */
+    --white: #FFFFFF;           /* Blanc pur pour cartes */
+    --black: #000000;           /* Noir profond pour titres */
+    --gray-dark: #444444;       /* Gris foncé pour texte secondaire */
+    --gray-light: #AAAAAA;      /* Gris clair pour placeholders */
+    --gray-lighter: #F8F9FA;    /* Gris très clair pour arrière-plans */
+    
+    /* Ombres légères selon consignes */
+    --shadow-soft: 0 4px 10px rgba(0, 0, 0, 0.05);
+    --shadow-gentle: 0 8px 20px rgba(0, 0, 0, 0.08);
+    --shadow-strong: 0 20px 40px rgba(0, 0, 0, 0.12);
+    
+    /* Couleurs fonctionnelles */
+    --success: #10B981;
+    --warning: #F59E0B;
+    --error: #EF4444;
+    --info: #3B82F6;
+}
+
+/* ========================================
+   BASE STYLES
+   ======================================== */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html, body {
+    margin: 0;
+    font-family: 'Inter', 'Poppins', sans-serif;
+    background: var(--gradient-main); /* Dégradé très doux en arrière-plan */
+    background-size: 400% 400%;
+    animation: gradientBG 20s ease infinite;
+    min-height: 100vh;
+    color: var(--black);
+    line-height: 1.7;
+}
+
+@keyframes gradientBG {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+
+/* ========================================
+   LAYOUT PRINCIPAL
+   ======================================== */
+.app-container {
+    display: flex;
+    min-height: 100vh;
+    width: 100%;
+    position: relative;
+    z-index: 2;
+}
+
+/* ========================================
+   SIDEBAR - BLANCHE ÉPURÉE
+   ======================================== */
+.sidebar {
+    width: 280px;
+    height: 100vh;
+    position: fixed;
+    left: 0;
+    top: 0;
+    background: var(--white);
+    z-index: 1002;
+    transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    box-shadow: var(--shadow-soft);
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    border-right: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.sidebar-header {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    padding: 2rem 1rem;
+    min-height: 80px;
+    background: transparent;
+    position: relative;
+    overflow: hidden;
+    flex-shrink: 0;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+/* Logo */
+.logo-container {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    position: relative;
+    z-index: 2;
+    justify-content: flex-start;
+    width: 100%;
+}
+
+.logo-icon {
+    width: 42px;
+    height: 42px;
+    background: var(--gradient-main-intense);
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.3rem;
+    color: white;
+    transition: all 0.3s ease;
+    cursor: pointer;
+    box-shadow: var(--shadow-soft);
+}
+
+.logo-icon:hover {
+    transform: scale(1.05);
+    box-shadow: var(--shadow-gentle);
+}
+
+.logo-text {
+    color: var(--black);
+    font-family: 'Inter', 'Poppins', Arial, sans-serif;
+    font-size: 1.4rem;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+}
+
+/* ========================================
+   NAVIGATION
+   ======================================== */
+.nav-menu {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    padding: 1.5rem 0;
+}
+
+.nav-main {
+    flex: 1;
+}
+
+.nav-item {
+    margin: 0.25rem 0;
+}
+
+.nav-link {
+    display: flex;
+    align-items: center;
+    gap: 0.875rem;
+    padding: 16px 1.25rem; /* espacement généreux */
+    color: var(--gray-dark);
+    text-decoration: none;
+    font-weight: 400; /* typographie légère */
+    font-size: 0.9rem;
+    border-radius: 12px;
+    transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    position: relative;
+    overflow: hidden;
+    min-height: 48px;
+}
+
+.nav-link:hover {
+    background: rgba(255, 255, 255, 0.8);
+    color: var(--primary-orange);
+    transform: translateX(4px);
+    box-shadow: var(--shadow-soft);
+}
+
+.nav-link.active {
+    background: var(--primary-purple);
+    color: white;
+    transform: translateX(2px);
+    box-shadow: var(--shadow-gentle);
+}
+
+.nav-icon {
+    font-size: 1.1rem;
+    width: 20px;
+    min-width: 20px;
+    text-align: center;
+    transition: all 0.3s ease;
+}
+
+/* ========================================
+   CONTENU PRINCIPAL
+   ======================================== */
+.main-content {
+    flex: 1;
+    margin-left: 280px;
+    min-height: 100vh;
+    width: calc(100% - 280px);
+    transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    display: flex;
+    justify-content: center;
+    padding: 2rem;
+    background: transparent;
+}
+
+/* ========================================
+   CARTES - BLANCHES AVEC COINS ARRONDIS
+   ======================================== */
+.card, .welcome-section, .creation-section, .news-section, 
+.settings-card, .calendar-header {
+    background: var(--white);
+    border-radius: 12px; /* coins arrondis */
+    padding: 2.5rem;
+    margin-bottom: 2rem;
+    border: 1px solid rgba(0, 0, 0, 0.05);
+    box-shadow: var(--shadow-soft); /* ombres légères */
+    position: relative;
+    overflow: hidden;
+}
+
+/* ========================================
+   COMPOSANTS - STATISTIQUES
+   ======================================== */
+.stat-item {
+    text-align: center;
+    padding: 1rem;
+    background: var(--white);
+    border-radius: 12px;
+    border: 1px solid rgba(0, 0, 0, 0.05);
+    box-shadow: var(--shadow-soft);
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.stat-item:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-gentle);
+}
+
+.stat-number {
+    font-size: 1.4rem;
+    font-weight: 600; /* typographie bold pour chiffres importants */
+    color: var(--primary-orange);
+    display: block;
+    margin-bottom: 0.25rem;
+}
+
+.stat-label {
+    font-size: 0.8rem;
+    color: var(--gray-dark);
+    font-weight: 500;
+}
+
+/* ========================================
+   BOUTONS - CTA VIOLET PROFOND
+   ======================================== */
+.btn {
+    padding: 0.875rem 1.75rem;
+    border-radius: 12px;
+    font-weight: 500;
+    font-size: 0.95rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.625rem;
+    text-decoration: none;
+    border: none;
+    position: relative;
+    overflow: hidden;
+}
+
+.btn-primary {
+    background: var(--primary-purple); /* violet profond pour CTA */
+    color: white;
+    box-shadow: var(--shadow-soft);
+}
+
+.btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-gentle);
+    filter: brightness(1.05);
+}
+
+.btn-secondary {
+    background: var(--white);
+    color: var(--black);
+    border: 1.5px solid rgba(0, 0, 0, 0.1);
+}
+
+.btn-secondary:hover {
+    background: rgba(255, 154, 98, 0.1);
+    border-color: var(--primary-orange);
+    transform: translateY(-1px);
+}
+
+/* ========================================
+   TYPOGRAPHIE
+   ======================================== */
+.section-title, .greeting, .news-header, .calendar-title {
+    font-size: 1.4rem;
+    font-weight: 600; /* typographie bold pour titres */
+    color: var(--black); /* noir profond pour titres */
+    margin-bottom: 0.5rem;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.section-subtitle, .greeting-subtitle, .news-subtitle {
+    color: var(--gray-dark); /* gris foncé pour texte secondaire */
+    font-size: 0.95rem;
+    line-height: 1.6;
+}
+
+/* ========================================
+   FORMES ORGANIQUES (BLOBS)
+   ======================================== */
+.decor-blobs {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 1;
+    overflow: hidden;
+}
+
+.decor-blobs .blob {
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(60px);
+    opacity: 0.15; /* Encore plus subtil */
+    will-change: transform;
+    transition: transform 8s ease-in-out;
+}
+
+/* Blobs positionnés selon consignes mais plus discrets */
+.blob-left-1 {
+    top: -120px; left: -180px;
+    width: 300px; height: 300px;
+    background: radial-gradient(circle at 30% 30%, rgba(255, 154, 98, 0.3), transparent 60%);
+    animation: float-slow 18s ease-in-out infinite alternate;
+}
+
+.blob-left-2 {
+    top: 35%; left: -220px;
+    width: 320px; height: 320px;
+    background: radial-gradient(circle at 40% 40%, rgba(255, 85, 161, 0.25), transparent 60%);
+    animation: float-slow 22s ease-in-out infinite alternate;
+}
+
+.blob-right-1 {
+    top: -140px; right: -200px;
+    width: 310px; height: 310px;
+    background: radial-gradient(circle at 30% 30%, rgba(255, 85, 161, 0.25), transparent 60%);
+    animation: float-slow 19s ease-in-out infinite alternate;
+}
+
+.blob-right-2 {
+    top: 45%; right: -240px;
+    width: 290px; height: 290px;
+    background: radial-gradient(circle at 35% 35%, rgba(255, 154, 98, 0.2), transparent 60%);
+    animation: float-slow 23s ease-in-out infinite alternate;
+}
+
+.blob-bottom {
+    bottom: -220px; left: 50%; transform: translateX(-50%);
+    width: 350px; height: 350px; opacity: 0.1;
+    background: radial-gradient(circle at 50% 40%, rgba(107, 71, 255, 0.2), transparent 60%);
+    animation: float-slow 24s ease-in-out infinite alternate;
+}
+
+@keyframes float-slow {
+    0% { transform: translate(0, 0) scale(1); }
+    100% { transform: translate(10px, -12px) scale(1.02); }
+}
+
+/* ========================================
+   ANIMATIONS ET TRANSITIONS
+   ======================================== */
+.fade-in {
+    animation: modern-fadeIn 0.8s ease-out;
+}
+
+@keyframes modern-fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px) scale(0.95);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+/* ========================================
+   RESPONSIVE
+   ======================================== */
+@media (max-width: 768px) {
+    .sidebar {
+        transform: translateX(-280px);
+    }
+    
+    .sidebar.open {
+        transform: translateX(0);
+    }
+    
+    .main-content {
+        margin-left: 0;
+        width: 100%;
+        padding: 1rem;
+    }
+    
+    .decor-blobs .blob {
+        opacity: 0.1;
+        filter: blur(40px);
+    }
+}
+
+/* ========================================
+   UTILITAIRES
+   ======================================== */
+.text-center { text-align: center; }
+.mb-2 { margin-bottom: 2rem; }
+.p-2 { padding: 2rem; }
+.shadow-soft { box-shadow: var(--shadow-soft); }
+.shadow-gentle { box-shadow: var(--shadow-gentle); }
+.border-radius-12 { border-radius: 12px; }
