@@ -4,46 +4,60 @@
  */
 
 /* ========================================
-   VARIABLES CSS - NOUVELLE DA HARMONIEUSE
+   VARIABLES CSS - STYLE NOBLE D'HISTORIQUE
    ======================================== */
 :root {
-    /* Palette inspirée de l'image de référence */
-    --primary-orange: #FF8A65;   /* Orange doux */
-    --primary-pink: #F06292;     /* Rose élégant */
-    --primary-purple: #7986CB;   /* Violet moderne */
-    --primary-blue: #64B5F6;     /* Bleu clair */
+    /* Palette noble inspirée d'historique.html */
+    --noble-cream: #faf9f7;
+    --noble-warm: #f5f2ed;
+    --noble-sage: #8b9a7c;
+    --noble-sage-light: #a8b59a;
+    --noble-sage-dark: #6b7865;
+    --noble-stone: #e8e4de;
+    --noble-charcoal: #4a4943;
+    --noble-charcoal-light: #6b6960;
+    --noble-mist: #f0ede8;
+    --noble-accent: #9c8b7a;
+    --noble-accent-light: #b5a495;
     
-    /* Dégradé de fond ultra-subtil comme la référence */
-    --gradient-main: linear-gradient(135deg, 
-        rgba(255, 138, 101, 0.05) 0%, 
-        rgba(240, 98, 146, 0.07) 30%, 
-        rgba(121, 134, 203, 0.09) 70%, 
-        rgba(100, 181, 246, 0.06) 100%);
+    /* Couleurs principales colorées */
+    --primary-coral: #FF6B6B;
+    --primary-orange: #FF8E53;
+    --primary-pink: #FF5F8D;
+    --primary-purple: #8B5CF6;
+    --primary-blue: #06D6A0;
+    --primary-cyan: #118AB2;
     
-    /* Dégradés pour les éléments interactifs */
-    --gradient-warm: linear-gradient(135deg, #FF8A65, #F06292);
-    --gradient-cool: linear-gradient(135deg, #7986CB, #64B5F6);
-    --gradient-button: linear-gradient(135deg, #7986CB 0%, #5C6BC0 100%);
+    /* Dégradés nobles */
+    --gradient-main: linear-gradient(135deg, #FF6B6B 0%, #FF8E53 25%, #FF5F8D 50%, #8B5CF6 75%, #06D6A0 100%);
+    --gradient-warm: linear-gradient(135deg, #FF8E53 0%, #FF6B6B 100%);
+    --gradient-cool: linear-gradient(135deg, #8B5CF6 0%, #06D6A0 100%);
+    --gradient-pink: linear-gradient(135deg, #FF5F8D 0%, #8B5CF6 100%);
+    --gradient-button: linear-gradient(135deg, #8B5CF6 0%, #6B47FF 100%);
     
-    /* Couleurs neutres élégantes */
+    /* Couleurs neutres nobles */
     --white: #FFFFFF;
-    --black: #212121;           /* Noir plus doux */
-    --gray-dark: #424242;       /* Gris foncé élégant */
-    --gray-medium: #757575;     /* Gris moyen */
-    --gray-light: #BDBDBD;      /* Gris clair */
-    --gray-lighter: #F5F5F5;    /* Gris très clair */
+    --black: #4a4943;           /* Noble charcoal */
+    --gray-dark: #6b6960;       /* Noble charcoal light */
+    --gray-medium: #9c8b7a;     /* Noble accent */
+    --gray-light: #e8e4de;      /* Noble stone */
+    --gray-lighter: #f5f2ed;    /* Noble warm */
     
-    /* Ombres douces et modernes */
-    --shadow-soft: 0 2px 12px rgba(0, 0, 0, 0.04);
-    --shadow-gentle: 0 4px 24px rgba(0, 0, 0, 0.06);
-    --shadow-strong: 0 8px 32px rgba(0, 0, 0, 0.08);
-    --shadow-card: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
+    /* Ombres nobles */
+    --shadow-whisper: 0 2px 12px rgba(139, 154, 124, 0.08);
+    --shadow-gentle: 0 4px 20px rgba(139, 154, 124, 0.12);
+    --shadow-soft: 0 8px 32px rgba(139, 154, 124, 0.16);
+    --shadow-card: var(--shadow-whisper);
     
-    /* Couleurs fonctionnelles harmonieuses */
-    --success: #66BB6A;
-    --warning: #FFA726;
-    --error: #EF5350;
-    --info: #42A5F5;
+    /* Couleurs fonctionnelles nobles */
+    --gentle-success: #7c9885;
+    --gentle-warning: #b8a082;
+    --gentle-info: #8ba3b8;
+    --gentle-error: #c49090;
+    --success: var(--gentle-success);
+    --warning: var(--gentle-warning);
+    --error: var(--gentle-error);
+    --info: var(--gentle-info);
 }
 
 /* ========================================
@@ -72,6 +86,45 @@ html, body {
     0% { background-position: 0% 50%; }
     50% { background-position: 100% 50%; }
     100% { background-position: 0% 50%; }
+}
+
+/* Animations nobles inspirées d'historique.html */
+@keyframes gentle-pulse {
+    0% { opacity: 0.6; transform: translate(30%, -30%) scale(1); }
+    100% { opacity: 1; transform: translate(30%, -30%) scale(1.2); }
+}
+
+@keyframes gentleFadeIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes gradient-shift {
+    0%, 100% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+}
+
+.fade-in {
+    animation: gentleFadeIn 0.8s ease-out;
+}
+
+/* Classes nobles pour icônes et éléments décoratifs */
+.icon-noble {
+    color: var(--primary-purple);
+    font-size: 1.125rem;
+    filter: drop-shadow(0 0 3px rgba(139, 92, 246, 0.25));
+}
+
+/* Effet décoratif noble sur les sections */
+.noble-section::before {
+    content: '';
+    position: absolute;
+    top: 0; right: 0;
+    width: 120px; height: 120px;
+    background: radial-gradient(circle, rgba(255, 107, 107, 0.08) 0%, transparent 70%);
+    border-radius: 50%;
+    transform: translate(30%, -30%);
+    animation: gentle-pulse 8s ease-in-out infinite alternate;
 }
 
 /* ========================================
@@ -228,24 +281,39 @@ html, body {
 }
 
 /* ========================================
-   CARTES - ÉLÉGANTES COMME LA RÉFÉRENCE
+   CARTES - STYLE NOBLE D'HISTORIQUE
    ======================================== */
 .card, .welcome-section, .creation-section, .news-section, 
-.settings-card, .calendar-header {
+.settings-card, .calendar-header, .historique-section {
     background: var(--white);
-    border-radius: 16px; /* coins plus arrondis pour plus d'élégance */
-    padding: 2rem;
-    margin-bottom: 1.5rem;
-    border: none; /* pas de bordure pour plus de modernité */
-    box-shadow: var(--shadow-card); /* ombres Material Design */
+    border-radius: 12px; /* coins arrondis nobles */
+    padding: 2.5rem;
+    margin-bottom: 2rem;
+    border: 1px solid rgba(0, 0, 0, 0.05); /* bordure subtile */
+    box-shadow: var(--shadow-whisper); /* ombres nobles */
     position: relative;
     overflow: hidden;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    transition: all 0.3s ease;
 }
 
-.card:hover, .welcome-section:hover, .creation-section:hover {
+.card:hover, .welcome-section:hover, .creation-section:hover,
+.news-section:hover, .settings-card:hover {
     box-shadow: var(--shadow-gentle);
+    border-color: rgba(0, 0, 0, 0.08);
     transform: translateY(-2px);
+}
+
+/* Effet décoratif noble sur toutes les sections principales */
+.welcome-section::before, .creation-section::before, 
+.news-section::before, .settings-card::before {
+    content: '';
+    position: absolute;
+    top: 0; right: 0;
+    width: 120px; height: 120px;
+    background: radial-gradient(circle, rgba(255, 107, 107, 0.08) 0%, transparent 70%);
+    border-radius: 50%;
+    transform: translate(30%, -30%);
+    animation: gentle-pulse 8s ease-in-out infinite alternate;
 }
 
 /* ========================================
@@ -286,6 +354,280 @@ html, body {
     font-weight: 500;
     text-transform: uppercase;
     letter-spacing: 0.5px;
+}
+
+/* Badges de compteur nobles comme historique.html */
+.column-count, .count-badge {
+    background: var(--primary-coral);
+    color: white;
+    padding: 0.25rem 0.75rem;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: 500;
+    box-shadow: 0 2px 8px rgba(255, 107, 107, 0.08);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 24px;
+    height: 24px;
+}
+
+/* Classes pour NEWS ASSISTANT */
+.news-header {
+    font-size: 1.75rem;
+    font-weight: 600;
+    color: var(--black);
+    margin-bottom: 0.75rem;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.news-subtitle {
+    color: var(--gray-medium);
+    font-size: 1.1rem;
+    margin-bottom: 2rem;
+}
+
+.news-form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr auto;
+    gap: 1rem;
+    align-items: end;
+    margin-bottom: 1.5rem;
+}
+
+.news-form-group {
+    display: flex;
+    flex-direction: column;
+}
+
+.news-form-group label {
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: var(--black);
+    margin-bottom: 0.5rem;
+}
+
+.news-form-control {
+    width: 100%;
+    padding: 0.875rem 1rem;
+    border: 2px solid rgba(0, 0, 0, 0.08);
+    border-radius: 8px;
+    font-size: 0.95rem;
+    background: var(--white);
+    color: var(--black);
+    transition: all 0.3s ease;
+}
+
+.news-form-control:focus {
+    outline: none;
+    border-color: var(--primary-purple);
+    box-shadow: 0 0 0 3px rgba(107, 71, 255, 0.1);
+}
+
+.btn-noble {
+    padding: 0.875rem 1.75rem;
+    background: var(--primary-purple);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.btn-noble:hover {
+    background: var(--primary-pink);
+    transform: translateY(-1px);
+}
+
+.news-articles-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 1.5rem;
+    margin-top: 2rem;
+}
+
+.news-article-card {
+    background: var(--white);
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: var(--shadow-whisper);
+    transition: all 0.3s ease;
+    border: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.news-article-card:hover {
+    box-shadow: var(--shadow-gentle);
+    transform: translateY(-2px);
+}
+
+.news-article-image {
+    width: 100%;
+    height: 150px;
+    object-fit: cover;
+}
+
+.news-article-image-placeholder {
+    width: 100%;
+    height: 150px;
+    background: var(--gray-lighter);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--gray-light);
+    font-size: 2rem;
+}
+
+.news-article-content {
+    padding: 1.5rem;
+}
+
+.news-article-title {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--black);
+    margin-bottom: 0.75rem;
+    line-height: 1.4;
+}
+
+.news-article-description {
+    color: var(--gray-medium);
+    font-size: 0.95rem;
+    line-height: 1.5;
+    margin-bottom: 1rem;
+}
+
+.news-article-meta {
+    display: flex;
+    gap: 1rem;
+    font-size: 0.85rem;
+    color: var(--gray-light);
+    margin-bottom: 1rem;
+}
+
+.news-article-actions {
+    padding: 0 1.5rem 1.5rem;
+    display: flex;
+    gap: 0.75rem;
+}
+
+.btn-glass {
+    padding: 0.5rem 1rem;
+    background: rgba(255, 255, 255, 0.8);
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    border-radius: 6px;
+    font-size: 0.85rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    text-decoration: none;
+    color: var(--gray-dark);
+}
+
+.btn-glass:hover {
+    background: var(--primary-purple);
+    color: white;
+    border-color: var(--primary-purple);
+}
+
+/* Classes pour PROFIL */
+.welcome-content {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 1.5rem;
+}
+
+.greeting {
+    font-size: 1.75rem;
+    font-weight: 600;
+    color: var(--black);
+    margin-bottom: 0.5rem;
+    letter-spacing: -0.02em;
+}
+
+.greeting-subtitle {
+    color: var(--gray-medium);
+    font-size: 1rem;
+    font-weight: 400;
+}
+
+.profile-display {
+    background: var(--white);
+    border-radius: 12px;
+    padding: 2rem;
+    margin-bottom: 2rem;
+    box-shadow: var(--shadow-whisper);
+    border: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.profile-info {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    margin-bottom: 1.5rem;
+}
+
+.profile-avatar {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    overflow: hidden;
+    background: var(--gradient-cool);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 2rem;
+    font-weight: 600;
+}
+
+.profile-avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.profile-name {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: var(--black);
+    margin-bottom: 0.5rem;
+}
+
+.profile-email {
+    color: var(--gray-medium);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.user-stats {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1rem;
+    margin-top: 1.5rem;
+}
+
+@media (max-width: 768px) {
+    .user-stats {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    
+    .news-form-row {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+    }
 }
 
 /* ========================================
