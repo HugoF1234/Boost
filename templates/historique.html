@@ -37,12 +37,11 @@
         line-height: 1.7;
     }
     .historique-section {
-        background: rgba(255,255,255,0.85);
-        backdrop-filter: blur(20px);
-        border-radius: 20px;
+        background: #ffffff;
+        border-radius: 12px;
         padding: 2.5rem;
         margin-bottom: 2rem;
-        border: 1px solid rgba(255, 107, 107, 0.2);
+        border: 1px solid rgba(0, 0, 0, 0.05);
         box-shadow: var(--shadow-whisper);
         position: relative;
         overflow: hidden;
@@ -68,14 +67,9 @@
     }
     .historique-title {
         font-size: 1.75rem;
-        font-weight: 600;
+        font-weight: 700;
         color: var(--noble-charcoal);
         letter-spacing: -0.02em;
-        background: var(--gradient-main);
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-        background-clip: text;
-        animation: gradient-shift 4s ease-in-out infinite;
         margin-bottom: 0.5rem;
         display: flex;
         align-items: center;
@@ -97,11 +91,10 @@
         margin-top: 1.5rem;
     }
     .kanban-column {
-        background: rgba(255,255,255,0.9);
-        backdrop-filter: blur(20px);
-        border-radius: 20px;
+        background: #ffffff;
+        border-radius: 12px;
         box-shadow: var(--shadow-whisper);
-        border: 1px solid rgba(255, 107, 107, 0.15);
+        border: 1px solid rgba(0, 0, 0, 0.05);
         padding: 1.5rem;
         display: flex;
         flex-direction: column;
@@ -112,7 +105,7 @@
     }
     .kanban-column:hover {
         box-shadow: var(--shadow-gentle);
-        border-color: rgba(255, 107, 107, 0.3);
+        border-color: rgba(0, 0, 0, 0.08);
     }
     .column-header {
         display: flex;
@@ -145,17 +138,16 @@
         padding-right: 0.5rem;
     }
     .post-card {
-        background: rgba(255,255,255,0.8);
-        backdrop-filter: blur(15px);
-        border-radius: 12px; /* réduit de 16px */
-        margin-bottom: 0.75rem; /* réduit */
+        background: #ffffff;
+        border-radius: 12px;
+        margin-bottom: 0.75rem;
         overflow: hidden;
-        border: 1px solid rgba(255, 107, 107, 0.15);
+        border: 1px solid rgba(0, 0, 0, 0.05);
         transition: all 0.3s ease;
         box-shadow: var(--shadow-whisper);
         position: relative;
-        padding: 0.5rem 0.5rem 0.25rem 0.5rem; /* padding réduit */
-        font-size: 0.93rem; /* police plus petite */
+        padding: 0.5rem 0.5rem 0.25rem 0.5rem;
+        font-size: 0.93rem;
         min-width: 0;
     }
     .post-image-placeholder {
@@ -222,8 +214,8 @@
         font-size: 1em;
     }
     .btn-action:hover {
-        background: rgba(255, 107, 107, 0.08);
-        color: var(--primary-coral);
+        background: rgba(107, 71, 255, 0.08);
+        color: var(--primary-purple);
     }
     .btn-edit:hover { color: var(--primary-purple); }
     .btn-delete:hover { color: var(--gentle-error); }
@@ -274,9 +266,9 @@
         to { opacity: 1; transform: translateY(0); }
     }
     .icon-noble {
-        color: var(--primary-coral);
+        color: var(--primary-purple);
         font-size: 1.125rem;
-        filter: drop-shadow(0 0 3px rgba(255, 107, 107, 0.3));
+        filter: drop-shadow(0 0 3px rgba(107, 71, 255, 0.25));
     }
     @media (max-width: 992px) {
         .kanban-container { grid-template-columns: 1fr; }
