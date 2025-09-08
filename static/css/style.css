@@ -1664,3 +1664,22 @@ html, body {
   align-items: center;
   justify-content: center;
 }
+
+/* === Correctif largeur onglets vides === */
+.tab-content.active,
+.dedicated-page {
+  display: block !important;
+  width: 100% !important;
+  max-width: 100% !important;
+  flex-grow: 1 !important;   /* autorise à s'étirer */
+  flex-shrink: 1 !important; /* autorise à s'adapter */
+  box-sizing: border-box;
+}
+
+.empty-state {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100% !important; /* occupe toute la largeur */
+  margin: 0 auto;         /* centré */
+}
