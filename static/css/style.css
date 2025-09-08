@@ -982,6 +982,7 @@ html, body {
 /* Navigation des onglets */
 .posts-navigation {
     margin-bottom: 2rem;
+    width: 100%; /* Forcer la largeur complète */
 }
 
 .nav-tabs {
@@ -989,6 +990,13 @@ html, body {
     gap: 0.5rem;
     border-bottom: 1px solid var(--gray-lighter);
     margin-bottom: 2rem;
+    width: 100%; /* Forcer la largeur complète */
+}
+
+/* Container des posts avec largeur forcée */
+.posts-content {
+    width: 100%; /* Forcer la largeur complète */
+    min-width: 100%; /* Largeur minimale complète */
 }
 
 .nav-tab {
@@ -1030,7 +1038,8 @@ html, body {
 /* Contenu des onglets */
 .tab-content {
     display: none;
-    min-height: 1000px; /* Hauteur très élevée pour forcer l'égalisation */
+    width: 100%; /* Forcer la largeur à 100% */
+    min-width: 100%; /* Largeur minimale à 100% */
 }
 
 .tab-content.active {
@@ -1279,7 +1288,7 @@ html, body {
     text-align: center;
     padding: 3rem 1rem;
     color: var(--gray-medium);
-    min-height: 800px; /* Hauteur très élevée pour forcer l'égalisation */
+    width: 100%; /* Forcer la largeur à 100% */
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -1303,13 +1312,15 @@ html, body {
     opacity: 0.7;
 }
 
-/* Pages dédiées avec hauteur égalisée */
+/* Pages dédiées avec largeur égalisée */
 .dedicated-page {
-    min-height: 900px; /* Hauteur très élevée pour forcer l'égalisation */
+    width: 100%; /* Forcer la largeur à 100% */
+    min-width: 100%; /* Largeur minimale à 100% */
 }
 
 .posts-grid {
-    min-height: 800px; /* Hauteur très élevée pour forcer l'égalisation */
+    width: 100%; /* Forcer la largeur à 100% */
+    min-width: 100%; /* Largeur minimale à 100% */
 }
 
 /* Responsive */
@@ -1333,11 +1344,11 @@ html, body {
     }
     
     .tab-content {
-        min-height: 800px; /* Hauteur élevée même sur mobile */
+        width: 100%; /* Largeur complète sur mobile */
     }
     
     .empty-state {
-        min-height: 600px; /* Hauteur élevée sur mobile pour égalisation */
+        width: 100%; /* Largeur complète sur mobile */
         padding: 2rem 1rem;
     }
     
