@@ -1273,6 +1273,7 @@ let selectedPdfFile = null;
 let pexelsCurrentPage = 1;
 let pexelsCurrentQuery = '';
 let pexelsTotalResults = 0;
+let selectedPexelsPhotos = [];
 
 // Fonction modifiée pour basculer les onglets média avec validation
 function switchMediaTab(tab) {
@@ -1494,6 +1495,14 @@ document.addEventListener('DOMContentLoaded', function() {
     editors.forEach(editor => {
         // Ici vous pouvez ajouter la logique des mentions si nécessaire
     });
+    // Pexels search wiring
+    const searchInput = document.getElementById('pexels-search-input');
+    const searchBtn = document.getElementById('pexels-search-btn');
+    if (searchInput && searchBtn) {
+        searchInput.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') { searchPexelsPhotos(); }
+        });
+    }
 });
 
 // Animation noble des nombres qui montent
@@ -1534,6 +1543,105 @@ window.addEventListener('load', function() {
         }
     });
 });
+</script>
+
+<script>
+async function searchPexelsPhotos(page = 1) {
+    const query = (document.getElementById('pexels-search-input')?.value || '').trim();
+    if (!query || query.length < 2) { return; }
+    pexelsCurrentQuery = query;
+    pexelsCurrentPage = page;
+    const loading = document.getElementById('pexels-loading');
+    const errorEl = document.getElementById('pexels-error');
+    const resultsEl = document.getElementById('pexels-results');
+    const loadMoreBtn = document.getElementById('pexels-load-more');
+    if (!resultsEl) return;
+    if (page === 1) { resultsEl.innerHTML = ''; selectedPexelsPhotos = []; }
+    loading && (loading.style.display = 'block');
+    errorEl && (errorEl.style.display = 'none');
+    try {
+        const res = await fetch('/api/search_photos', {
+            method: 'POST', headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ query, page })
+        });
+        const data = await res.json();
+        if (!res.ok || !data.success || !data.results) { throw new Error('Erreur recherche'); }
+        const photos = data.results.photos || [];
+        pexelsTotalResults = data.results.total_results || 0;
+        renderPexelsResults(photos);
+        // toggle Load more
+        const perPage = data.results.per_page || 12;
+        const shown = page * perPage;
+        if (shown < pexelsTotalResults) {
+            loadMoreBtn && (loadMoreBtn.style.display = 'block');
+        } else {
+            loadMoreBtn && (loadMoreBtn.style.display = 'none');
+        }
+    } catch (e) {
+        errorEl && (errorEl.style.display = 'block');
+    } finally {
+        loading && (loading.style.display = 'none');
+    }
+}
+
+function renderPexelsResults(photos) {
+    const resultsEl = document.getElementById('pexels-results');
+    if (!resultsEl) return;
+    photos.forEach(photo => {
+        const thumb = photo.src && (photo.src.medium || photo.src.small || photo.src.tiny);
+        const large = photo.src && (photo.src.large || photo.src.original);
+        const card = document.createElement('div');
+        card.style.display = 'inline-block';
+        card.style.margin = '6px';
+        card.style.position = 'relative';
+        card.style.cursor = 'pointer';
+        card.style.borderRadius = '12px';
+        card.style.overflow = 'hidden';
+        card.style.boxShadow = '0 4px 10px rgba(0,0,0,0.05)';
+        card.innerHTML = `
+            <img src="${thumb}" alt="pexels" style="width:180px; height:120px; object-fit:cover; display:block;">
+            <div class="overlay-select" style="position:absolute; inset:0; background:rgba(0,0,0,0.35); opacity:0; transition:opacity .2s;"></div>
+            <div class="check-badge" style="position:absolute; top:8px; right:8px; background:#06D6A0; color:#fff; font-size:12px; padding:4px 6px; border-radius:8px; display:none;">Sélectionné</div>
+        `;
+        let selected = false;
+        const toggle = () => {
+            selected = !selected;
+            const overlay = card.querySelector('.overlay-select');
+            const badge = card.querySelector('.check-badge');
+            overlay.style.opacity = selected ? '1' : '0';
+            badge.style.display = selected ? 'block' : 'none';
+            if (selected) {
+                selectedPexelsPhotos.push(photo);
+            } else {
+                selectedPexelsPhotos = selectedPexelsPhotos.filter(p => p.id !== photo.id);
+            }
+            ensureHiddenInputsForPexels();
+        };
+        card.addEventListener('mouseenter', () => card.querySelector('.overlay-select').style.opacity = selected ? '1' : '0.4');
+        card.addEventListener('mouseleave', () => card.querySelector('.overlay-select').style.opacity = selected ? '1' : '0');
+        card.addEventListener('click', toggle);
+        resultsEl.appendChild(card);
+    });
+}
+
+function loadMorePexelsPhotos() {
+    searchPexelsPhotos(pexelsCurrentPage + 1);
+}
+
+function ensureHiddenInputsForPexels() {
+    // Attach selected photo JSON to the publish form as hidden inputs
+    const publishForm = document.querySelector('form[action*="/publish"]') || document.querySelector('form[action*="edit_post"]') || document.querySelector('form');
+    if (!publishForm) return;
+    // Remove existing
+    publishForm.querySelectorAll('input[name="pexels_photos[]"]').forEach(n => n.remove());
+    selectedPexelsPhotos.forEach(photo => {
+        const input = document.createElement('input');
+        input.type = 'hidden';
+        input.name = 'pexels_photos[]';
+        input.value = JSON.stringify(photo);
+        publishForm.appendChild(input);
+    });
+}
 </script>
 
 {% endblock %}
