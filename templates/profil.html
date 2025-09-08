@@ -35,7 +35,7 @@
                     {{ first_name }} {{ last_name }} {% if name and name != (first_name + ' ' + last_name) %}({{ name }}){% endif %}
                 </h3>
                 <div class="profile-email" style="margin-bottom: 0.25rem;">
-                    <i class="fas fa-envelope" style="color: var(--primary-orange);"></i>
+                    <i class="fas fa-envelope" style="color: var(--primary-coral);"></i>
                     {{ email }}
                     {% if email_verified %}
                         <span style="color: var(--gentle-success); font-size: 0.8rem;">
@@ -47,15 +47,15 @@
         </div>
         <div class="profile-meta" style="margin-top: 1rem; display: flex; gap: 2rem; flex-wrap: wrap;">
             <div class="meta-item">
-                <i class="fas fa-globe" style="color: var(--primary-blue);"></i>
+                <i class="fas fa-globe" style="color: var(--primary-coral);"></i>
                 <span>{{ country or 'Non renseigné' }}</span>
             </div>
             <div class="meta-item">
-                <i class="fas fa-language" style="color: var(--primary-orange);"></i>
+                <i class="fas fa-language" style="color: var(--primary-coral);"></i>
                 <span>{{ language or 'Non renseigné' }}</span>
             </div>
             <div class="meta-item">
-                <i class="fab fa-linkedin" style="color: var(--primary-cyan);"></i>
+                <i class="fab fa-linkedin" style="color: var(--primary-coral);"></i>
                 <span>Connecté</span>
             </div>
         </div>
@@ -73,7 +73,7 @@
     <form method="POST" action="{{ url_for('profil') }}">
         <div class="form-group">
             <label for="secteur" class="form-label">
-                <i class="fas fa-briefcase" style="color: var(--primary-orange);"></i>
+                <i class="fas fa-briefcase" style="color: var(--primary-coral);"></i>
                 Secteur d'activité principal
             </label>
             <select name="secteur" id="secteur" class="form-control" required>
@@ -98,7 +98,7 @@
         </div>
         <div class="form-group">
             <label class="form-label">
-                <i class="fas fa-heart" style="color: var(--primary-blue);"></i>
+                <i class="fas fa-heart" style="color: var(--primary-coral);"></i>
                 Centres d'intérêt professionnels
             </label>
             <div class="interests-grid">
@@ -136,19 +136,19 @@
     {% if secteur or interets %}
         <div class="current-interests">
             <h3 style="color: var(--noble-charcoal); margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem;">
-                <i class="fas fa-tags" style="color: var(--primary-blue);"></i>
+                <i class="fas fa-tags" style="color: var(--primary-coral);"></i>
                 Mon profil actuel
             </h3>
             <div class="interests-tags">
                 {% if secteur %}
-                    <div class="interest-tag" style="background: var(--primary-orange); border: 1px solid var(--primary-orange);">
+                    <div class="interest-tag" style="background: var(--primary-coral); border: 1px solid var(--primary-coral);">
                         <i class="fas fa-briefcase"></i>
                         <span>{{ secteur|title }}</span>
                     </div>
                 {% endif %}
                 {% if interets %}
                     {% for interet in interets %}
-                        <div class="interest-tag" style="background: var(--primary-blue); border: 1px solid var(--primary-blue);">
+                        <div class="interest-tag" style="background: var(--primary-coral); border: 1px solid var(--primary-coral);">
                             <i class="fas fa-heart"></i>
                             <span>{{ interet }}</span>
                         </div>
@@ -219,11 +219,11 @@ document.addEventListener('DOMContentLoaded', function() {
         item.setAttribute('data-checked', isChecked);
         
         if (isChecked) {
-            item.style.background = 'rgba(6, 214, 160, 0.1)';
-            item.style.borderColor = 'var(--primary-blue)';
+            item.style.background = 'rgba(255, 107, 107, 0.1)';
+            item.style.borderColor = 'var(--primary-coral)';
             item.style.borderWidth = '2px';
-            item.style.boxShadow = '0 2px 8px rgba(6, 214, 160, 0.15)';
-            icon.style.color = 'var(--primary-blue)';
+            item.style.boxShadow = '0 2px 8px rgba(255, 107, 107, 0.15)';
+            icon.style.color = 'var(--primary-coral)';
         } else {
             item.style.background = 'var(--white)';
             item.style.borderColor = 'var(--gray-lighter)';
