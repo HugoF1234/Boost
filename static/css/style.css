@@ -999,10 +999,11 @@ html, body {
     min-width: 100%; /* Largeur minimale complète */
 }
 
-/* SOLUTION UNIVERSELLE: Forcer largeur maximale */
+/* SOLUTION UNIVERSELLE: Forcer largeur maximale FIXE */
 .main-content {
     width: calc(100% - 280px) !important; /* Utiliser toute la largeur disponible */
     max-width: none !important; /* Supprimer toute limite de largeur */
+    min-width: calc(100% - 280px) !important; /* FORCER largeur minimale égale */
 }
 
 /* SOLUTION KANBAN: Styles manquants pour les colonnes */
@@ -1035,7 +1036,7 @@ html, body {
     box-sizing: border-box !important;
 }
 
-/* Forcer la largeur sur les autres éléments historique */
+/* SOLUTION ANTI-SAUT: Forcer largeur FIXE constante */
 .posts-navigation,
 .posts-content,
 .tab-content,
@@ -1043,9 +1044,11 @@ html, body {
 .posts-grid,
 .linkedin-post-card {
     width: 100% !important; /* Forcer largeur maximale */
-    max-width: none !important; /* Supprimer toute limite */
-    min-width: 100% !important; /* Largeur minimale */
+    max-width: 100% !important; /* Limiter à 100% exact */
+    min-width: 100% !important; /* Largeur minimale exacte */
     box-sizing: border-box !important; /* Inclure padding/border */
+    flex-shrink: 0 !important; /* EMPÊCHER le rétrécissement */
+    flex-grow: 0 !important; /* EMPÊCHER l'agrandissement */
 }
 
 .nav-tab {
@@ -1089,6 +1092,7 @@ html, body {
     display: none;
     width: 100%; /* Forcer la largeur à 100% */
     min-width: 100%; /* Largeur minimale à 100% */
+    min-height: 700px; /* FORCER hauteur minimale pour tous les onglets */
 }
 
 .tab-content.active {
@@ -1332,16 +1336,21 @@ html, body {
     transform: translateX(5px);
 }
 
-/* État vide amélioré */
+/* État vide amélioré - ANTI-SAUT */
 .empty-state {
     text-align: center;
     padding: 3rem 1rem;
     color: var(--gray-medium);
-    width: 100%; /* Forcer la largeur à 100% */
+    width: 100% !important; /* Forcer la largeur à 100% */
+    max-width: 100% !important; /* Largeur maximale fixe */
+    min-width: 100% !important; /* Largeur minimale fixe */
+    min-height: 600px; /* FORCER hauteur minimale pour égaler onglets pleins */
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
+    flex-shrink: 0 !important; /* EMPÊCHER le rétrécissement horizontal */
+    box-sizing: border-box !important; /* Inclure padding */
 }
 
 .empty-state .empty-icon {
@@ -1365,6 +1374,7 @@ html, body {
 .dedicated-page {
     width: 100%; /* Forcer la largeur à 100% */
     min-width: 100%; /* Largeur minimale à 100% */
+    min-height: 600px; /* FORCER hauteur minimale pour pages dédiées */
 }
 
 .posts-grid {
