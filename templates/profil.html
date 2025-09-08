@@ -35,7 +35,7 @@
                     {{ first_name }} {{ last_name }} {% if name and name != (first_name + ' ' + last_name) %}({{ name }}){% endif %}
                 </h3>
                 <div class="profile-email" style="margin-bottom: 0.25rem;">
-                    <i class="fas fa-envelope" style="color: var(--primary-orange);"></i>
+                    <i class="fas fa-envelope" style="color: var(--gray-medium);"></i>
                     {{ email }}
                     {% if email_verified %}
                         <span style="color: var(--gentle-success); font-size: 0.8rem;">
@@ -47,15 +47,15 @@
         </div>
         <div class="profile-meta" style="margin-top: 1rem; display: flex; gap: 2rem; flex-wrap: wrap;">
             <div class="meta-item">
-                <i class="fas fa-globe" style="color: var(--primary-blue);"></i>
+                <i class="fas fa-globe" style="color: var(--gray-medium);"></i>
                 <span>{{ country or 'Non renseigné' }}</span>
             </div>
             <div class="meta-item">
-                <i class="fas fa-language" style="color: var(--primary-orange);"></i>
+                <i class="fas fa-language" style="color: var(--gray-medium);"></i>
                 <span>{{ language or 'Non renseigné' }}</span>
             </div>
             <div class="meta-item">
-                <i class="fab fa-linkedin" style="color: var(--primary-blue);"></i>
+                <i class="fab fa-linkedin" style="color: var(--primary-cyan);"></i>
                 <span>Connecté</span>
             </div>
         </div>
@@ -70,10 +70,10 @@
         </h2>
         <p class="section-subtitle">Personnalisez votre expérience pour des suggestions de contenu plus pertinentes</p>
     </div>
-    <form method="POST">
+    <form method="POST" action="{{ url_for('profil') }}">
         <div class="form-group">
             <label for="secteur" class="form-label">
-                <i class="fas fa-briefcase" style="color: var(--primary-orange);"></i>
+                <i class="fas fa-briefcase" style="color: var(--gray-medium);"></i>
                 Secteur d'activité principal
             </label>
             <p style="font-size: 0.85rem; color: var(--gray-medium); margin-bottom: 0.75rem;">Choisissez le secteur qui correspond le mieux à votre domaine professionnel</p>
@@ -99,7 +99,7 @@
         </div>
         <div class="form-group">
             <label class="form-label">
-                <i class="fas fa-heart" style="color: var(--primary-blue);"></i>
+                <i class="fas fa-heart" style="color: var(--gray-medium);"></i>
                 Centres d'intérêt professionnels
             </label>
             <p style="font-size: 0.85rem; color: var(--gray-medium); margin-bottom: 0.75rem;">Sélectionnez vos domaines d'intérêt pour des suggestions de contenu personnalisées</p>
@@ -119,18 +119,17 @@
                     ('Durabilité', 'fa-leaf')
                 ] %}
                 {% for option, icon in options %}
-                    {% set colors = ['var(--primary-orange)', 'var(--primary-blue)'] %}
                     <div class="interest-item">
                         <input type="checkbox" id="interet-{{ loop.index }}" name="interets" value="{{ option }}" 
                             {% if interets and option in interets %}checked{% endif %}>
-                        <i class="fas {{ icon }}" style="color: {{ colors[loop.index0 % colors|length] }};"></i>
+                        <i class="fas {{ icon }}" style="color: var(--gray-medium);"></i>
                         <label for="interet-{{ loop.index }}">{{ option }}</label>
                     </div>
                 {% endfor %}
             </div>
         </div>
         <div style="margin-top: 2rem;">
-            <button type="submit" class="btn btn-primary">
+            <button type="submit" class="btn btn-primary" id="save-btn">
                 <i class="fas fa-save"></i>
                 Enregistrer mes préférences
             </button>
@@ -139,20 +138,19 @@
     {% if secteur or interets %}
         <div class="current-interests">
             <h3 style="color: var(--noble-charcoal); margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem;">
-                <i class="fas fa-tags" style="color: var(--primary-orange);"></i>
+                <i class="fas fa-tags" style="color: var(--gray-medium);"></i>
                 Mon profil actuel
             </h3>
             <div class="interests-tags">
                 {% if secteur %}
-                    <div class="interest-tag" style="background: var(--primary-orange); border: 1px solid var(--primary-orange);">
+                    <div class="interest-tag" style="background: var(--gray-medium); border: 1px solid var(--gray-medium);">
                         <i class="fas fa-briefcase"></i>
                         <span>{{ secteur|title }}</span>
                     </div>
                 {% endif %}
                 {% if interets %}
                     {% for interet in interets %}
-                        {% set tag_colors = ['var(--primary-blue)', 'var(--primary-orange)'] %}
-                        <div class="interest-tag" style="background: {{ tag_colors[loop.index0 % tag_colors|length] }}; border: 1px solid {{ tag_colors[loop.index0 % tag_colors|length] }};">
+                        <div class="interest-tag" style="background: var(--gray-medium); border: 1px solid var(--gray-medium);">
                             <i class="fas fa-heart"></i>
                             <span>{{ interet }}</span>
                         </div>
@@ -174,6 +172,7 @@ document.addEventListener('DOMContentLoaded', function() {
             el.style.transform = 'translateY(0)';
         }, index * 200);
     });
+    
     document.querySelectorAll('.btn').forEach(btn => {
         btn.addEventListener('mouseenter', function() {
             this.style.transform = 'translateY(-1px)';
@@ -182,6 +181,7 @@ document.addEventListener('DOMContentLoaded', function() {
             this.style.transform = 'translateY(0)';
         });
     });
+    
     document.querySelectorAll('.interest-item').forEach((item, index) => {
         item.style.opacity = '0';
         item.style.transform = 'translateY(20px)';
@@ -191,6 +191,7 @@ document.addEventListener('DOMContentLoaded', function() {
             item.style.transform = 'translateY(0)';
         }, index * 100);
     });
+    
     const avatar = document.querySelector('.profile-avatar');
     if (avatar) {
         avatar.addEventListener('click', function() {
@@ -198,6 +199,56 @@ document.addEventListener('DOMContentLoaded', function() {
             setTimeout(() => {
                 this.style.transform = 'scale(1) rotate(0deg)';
             }, 200);
+        });
+    }
+    
+    // Feedback visuel pour la sauvegarde
+    const form = document.querySelector('form');
+    const saveBtn = document.getElementById('save-btn');
+    
+    if (form && saveBtn) {
+        form.addEventListener('submit', function(e) {
+            saveBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Sauvegarde...';
+            saveBtn.disabled = true;
+            
+            // Simuler un délai puis feedback
+            setTimeout(() => {
+                // Créer un message de succès temporaire
+                const successMsg = document.createElement('div');
+                successMsg.innerHTML = '<i class="fas fa-check-circle"></i> Préférences sauvegardées !';
+                successMsg.style.cssText = `
+                    position: fixed;
+                    top: 20px;
+                    right: 20px;
+                    background: var(--gentle-success);
+                    color: white;
+                    padding: 1rem 1.5rem;
+                    border-radius: 8px;
+                    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+                    z-index: 9999;
+                    opacity: 0;
+                    transform: translateX(100%);
+                    transition: all 0.3s ease;
+                `;
+                document.body.appendChild(successMsg);
+                
+                // Animer l'apparition
+                setTimeout(() => {
+                    successMsg.style.opacity = '1';
+                    successMsg.style.transform = 'translateX(0)';
+                }, 100);
+                
+                // Supprimer après 3 secondes
+                setTimeout(() => {
+                    successMsg.style.opacity = '0';
+                    successMsg.style.transform = 'translateX(100%)';
+                    setTimeout(() => document.body.removeChild(successMsg), 300);
+                }, 3000);
+                
+                // Restaurer le bouton
+                saveBtn.innerHTML = '<i class="fas fa-save"></i> Enregistrer mes préférences';
+                saveBtn.disabled = false;
+            }, 1500);
         });
     }
 });
