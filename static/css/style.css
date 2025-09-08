@@ -1,43 +1,49 @@
 /* 
- * ResoBoost - Direction Artistique Centralisée
- * Fichier CSS principal pour une gestion facilitée des styles
+ * ResoBoost - Direction Artistique Inspirée de la Référence
+ * Design moderne, élégant et subtil
  */
 
 /* ========================================
-   VARIABLES CSS - NOUVELLE DIRECTION ARTISTIQUE
+   VARIABLES CSS - NOUVELLE DA HARMONIEUSE
    ======================================== */
 :root {
-    /* Palette principale - Version affinée pour plus d'harmonie */
-    --primary-orange: #FF9A62;   /* Orange vibrant */
-    --primary-pink: #FF55A1;     /* Rose dynamique */
-    --primary-purple: #6B47FF;   /* Violet profond (CTA) */
+    /* Palette inspirée de l'image de référence */
+    --primary-orange: #FF8A65;   /* Orange doux */
+    --primary-pink: #F06292;     /* Rose élégant */
+    --primary-purple: #7986CB;   /* Violet moderne */
+    --primary-blue: #64B5F6;     /* Bleu clair */
     
-    /* Dégradés - Version plus douce */
+    /* Dégradé de fond ultra-subtil comme la référence */
     --gradient-main: linear-gradient(135deg, 
-        rgba(255, 154, 98, 0.1) 0%, 
-        rgba(255, 85, 161, 0.1) 50%, 
-        rgba(107, 71, 255, 0.15) 100%);
-    --gradient-main-intense: linear-gradient(135deg, #FF9A62, #FF55A1, #6B47FF);
-    --gradient-warm: linear-gradient(135deg, #FF9A62, #FF55A1);
-    --gradient-cool: linear-gradient(135deg, #FF55A1, #6B47FF);
+        rgba(255, 138, 101, 0.05) 0%, 
+        rgba(240, 98, 146, 0.07) 30%, 
+        rgba(121, 134, 203, 0.09) 70%, 
+        rgba(100, 181, 246, 0.06) 100%);
     
-    /* Couleurs complémentaires */
-    --white: #FFFFFF;           /* Blanc pur pour cartes */
-    --black: #000000;           /* Noir profond pour titres */
-    --gray-dark: #444444;       /* Gris foncé pour texte secondaire */
-    --gray-light: #AAAAAA;      /* Gris clair pour placeholders */
-    --gray-lighter: #F8F9FA;    /* Gris très clair pour arrière-plans */
+    /* Dégradés pour les éléments interactifs */
+    --gradient-warm: linear-gradient(135deg, #FF8A65, #F06292);
+    --gradient-cool: linear-gradient(135deg, #7986CB, #64B5F6);
+    --gradient-button: linear-gradient(135deg, #7986CB 0%, #5C6BC0 100%);
     
-    /* Ombres légères selon consignes */
-    --shadow-soft: 0 4px 10px rgba(0, 0, 0, 0.05);
-    --shadow-gentle: 0 8px 20px rgba(0, 0, 0, 0.08);
-    --shadow-strong: 0 20px 40px rgba(0, 0, 0, 0.12);
+    /* Couleurs neutres élégantes */
+    --white: #FFFFFF;
+    --black: #212121;           /* Noir plus doux */
+    --gray-dark: #424242;       /* Gris foncé élégant */
+    --gray-medium: #757575;     /* Gris moyen */
+    --gray-light: #BDBDBD;      /* Gris clair */
+    --gray-lighter: #F5F5F5;    /* Gris très clair */
     
-    /* Couleurs fonctionnelles */
-    --success: #10B981;
-    --warning: #F59E0B;
-    --error: #EF4444;
-    --info: #3B82F6;
+    /* Ombres douces et modernes */
+    --shadow-soft: 0 2px 12px rgba(0, 0, 0, 0.04);
+    --shadow-gentle: 0 4px 24px rgba(0, 0, 0, 0.06);
+    --shadow-strong: 0 8px 32px rgba(0, 0, 0, 0.08);
+    --shadow-card: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
+    
+    /* Couleurs fonctionnelles harmonieuses */
+    --success: #66BB6A;
+    --warning: #FFA726;
+    --error: #EF5350;
+    --info: #42A5F5;
 }
 
 /* ========================================
@@ -51,13 +57,15 @@
 
 html, body {
     margin: 0;
-    font-family: 'Inter', 'Poppins', sans-serif;
-    background: var(--gradient-main); /* Dégradé très doux en arrière-plan */
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    background: var(--gradient-main);
+    background-attachment: fixed;
     background-size: 400% 400%;
-    animation: gradientBG 20s ease infinite;
+    animation: gradientBG 25s ease infinite;
     min-height: 100vh;
     color: var(--black);
-    line-height: 1.7;
+    line-height: 1.6;
+    font-weight: 400;
 }
 
 @keyframes gradientBG {
@@ -220,18 +228,24 @@ html, body {
 }
 
 /* ========================================
-   CARTES - BLANCHES AVEC COINS ARRONDIS
+   CARTES - ÉLÉGANTES COMME LA RÉFÉRENCE
    ======================================== */
 .card, .welcome-section, .creation-section, .news-section, 
 .settings-card, .calendar-header {
     background: var(--white);
-    border-radius: 12px; /* coins arrondis */
-    padding: 2.5rem;
-    margin-bottom: 2rem;
-    border: 1px solid rgba(0, 0, 0, 0.05);
-    box-shadow: var(--shadow-soft); /* ombres légères */
+    border-radius: 16px; /* coins plus arrondis pour plus d'élégance */
+    padding: 2rem;
+    margin-bottom: 1.5rem;
+    border: none; /* pas de bordure pour plus de modernité */
+    box-shadow: var(--shadow-card); /* ombres Material Design */
     position: relative;
     overflow: hidden;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.card:hover, .welcome-section:hover, .creation-section:hover {
+    box-shadow: var(--shadow-gentle);
+    transform: translateY(-2px);
 }
 
 /* ========================================
@@ -239,99 +253,110 @@ html, body {
    ======================================== */
 .stat-item {
     text-align: center;
-    padding: 1rem;
+    padding: 1.5rem 1rem;
     background: var(--white);
-    border-radius: 12px;
-    border: 1px solid rgba(0, 0, 0, 0.05);
-    box-shadow: var(--shadow-soft);
-    transition: all 0.3s ease;
+    border-radius: 16px;
+    border: none;
+    box-shadow: var(--shadow-card);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     position: relative;
     overflow: hidden;
 }
 
 .stat-item:hover {
-    transform: translateY(-2px);
+    transform: translateY(-3px);
     box-shadow: var(--shadow-gentle);
 }
 
 .stat-number {
-    font-size: 1.4rem;
-    font-weight: 600; /* typographie bold pour chiffres importants */
-    color: var(--primary-orange);
+    font-size: 2rem;
+    font-weight: 600;
+    color: var(--primary-purple);
     display: block;
-    margin-bottom: 0.25rem;
+    margin-bottom: 0.5rem;
+    background: var(--gradient-cool);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
 }
 
 .stat-label {
-    font-size: 0.8rem;
-    color: var(--gray-dark);
+    font-size: 0.875rem;
+    color: var(--gray-medium);
     font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
 }
 
 /* ========================================
    BOUTONS - CTA VIOLET PROFOND
    ======================================== */
 .btn {
-    padding: 0.875rem 1.75rem;
+    padding: 12px 24px;
     border-radius: 12px;
     font-weight: 500;
-    font-size: 0.95rem;
+    font-size: 0.9rem;
     cursor: pointer;
-    transition: all 0.3s ease;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     display: inline-flex;
     align-items: center;
-    gap: 0.625rem;
+    gap: 8px;
     text-decoration: none;
     border: none;
     position: relative;
     overflow: hidden;
+    letter-spacing: 0.02em;
 }
 
 .btn-primary {
-    background: var(--primary-purple); /* violet profond pour CTA */
+    background: var(--gradient-button);
     color: white;
-    box-shadow: var(--shadow-soft);
+    box-shadow: var(--shadow-card);
 }
 
 .btn-primary:hover {
     transform: translateY(-2px);
     box-shadow: var(--shadow-gentle);
-    filter: brightness(1.05);
+    filter: brightness(1.1);
 }
 
 .btn-secondary {
     background: var(--white);
-    color: var(--black);
-    border: 1.5px solid rgba(0, 0, 0, 0.1);
+    color: var(--gray-dark);
+    border: 1px solid var(--gray-light);
+    box-shadow: var(--shadow-soft);
 }
 
 .btn-secondary:hover {
-    background: rgba(255, 154, 98, 0.1);
-    border-color: var(--primary-orange);
+    background: var(--gray-lighter);
+    border-color: var(--primary-purple);
     transform: translateY(-1px);
+    box-shadow: var(--shadow-card);
 }
 
 /* ========================================
    TYPOGRAPHIE
    ======================================== */
 .section-title, .greeting, .news-header, .calendar-title {
-    font-size: 1.4rem;
-    font-weight: 600; /* typographie bold pour titres */
-    color: var(--black); /* noir profond pour titres */
-    margin-bottom: 0.5rem;
+    font-size: 1.75rem;
+    font-weight: 600;
+    color: var(--black);
+    margin-bottom: 0.75rem;
     display: flex;
     align-items: center;
-    gap: 0.75rem;
+    gap: 12px;
+    letter-spacing: -0.025em;
 }
 
 .section-subtitle, .greeting-subtitle, .news-subtitle {
-    color: var(--gray-dark); /* gris foncé pour texte secondaire */
-    font-size: 0.95rem;
+    color: var(--gray-medium);
+    font-size: 1rem;
     line-height: 1.6;
+    font-weight: 400;
 }
 
 /* ========================================
-   FORMES ORGANIQUES (BLOBS)
+   FORMES ORGANIQUES (BLOBS) - INSPIRÉES DE LA RÉFÉRENCE
    ======================================== */
 .decor-blobs {
     position: fixed;
@@ -343,52 +368,71 @@ html, body {
 
 .decor-blobs .blob {
     position: absolute;
-    border-radius: 50%;
-    filter: blur(60px);
-    opacity: 0.15; /* Encore plus subtil */
+    border-radius: 60% 40% 30% 70% / 60% 30% 70% 40%;
+    filter: blur(80px);
+    opacity: 0.08; /* Ultra-subtil comme la référence */
     will-change: transform;
-    transition: transform 8s ease-in-out;
+    transition: transform 12s ease-in-out;
 }
 
-/* Blobs positionnés selon consignes mais plus discrets */
+/* Blobs organiques comme dans l'image de référence */
 .blob-left-1 {
-    top: -120px; left: -180px;
-    width: 300px; height: 300px;
-    background: radial-gradient(circle at 30% 30%, rgba(255, 154, 98, 0.3), transparent 60%);
-    animation: float-slow 18s ease-in-out infinite alternate;
-}
-
-.blob-left-2 {
-    top: 35%; left: -220px;
-    width: 320px; height: 320px;
-    background: radial-gradient(circle at 40% 40%, rgba(255, 85, 161, 0.25), transparent 60%);
-    animation: float-slow 22s ease-in-out infinite alternate;
+    top: -200px; left: -200px;
+    width: 500px; height: 400px;
+    background: radial-gradient(ellipse at 40% 50%, 
+        rgba(255, 138, 101, 0.4) 0%, 
+        rgba(240, 98, 146, 0.3) 50%, 
+        transparent 100%);
+    animation: morph-float 25s ease-in-out infinite;
 }
 
 .blob-right-1 {
-    top: -140px; right: -200px;
-    width: 310px; height: 310px;
-    background: radial-gradient(circle at 30% 30%, rgba(255, 85, 161, 0.25), transparent 60%);
-    animation: float-slow 19s ease-in-out infinite alternate;
+    top: -150px; right: -250px;
+    width: 600px; height: 450px;
+    background: radial-gradient(ellipse at 60% 40%, 
+        rgba(121, 134, 203, 0.4) 0%, 
+        rgba(100, 181, 246, 0.3) 50%, 
+        transparent 100%);
+    animation: morph-float 30s ease-in-out infinite reverse;
 }
 
-.blob-right-2 {
-    top: 45%; right: -240px;
-    width: 290px; height: 290px;
-    background: radial-gradient(circle at 35% 35%, rgba(255, 154, 98, 0.2), transparent 60%);
-    animation: float-slow 23s ease-in-out infinite alternate;
+.blob-bottom-left {
+    bottom: -200px; left: -100px;
+    width: 400px; height: 350px;
+    background: radial-gradient(ellipse at 30% 60%, 
+        rgba(240, 98, 146, 0.35) 0%, 
+        rgba(255, 138, 101, 0.25) 50%, 
+        transparent 100%);
+    animation: morph-float 28s ease-in-out infinite;
 }
 
-.blob-bottom {
-    bottom: -220px; left: 50%; transform: translateX(-50%);
-    width: 350px; height: 350px; opacity: 0.1;
-    background: radial-gradient(circle at 50% 40%, rgba(107, 71, 255, 0.2), transparent 60%);
-    animation: float-slow 24s ease-in-out infinite alternate;
+.blob-bottom-right {
+    bottom: -180px; right: -150px;
+    width: 450px; height: 380px;
+    background: radial-gradient(ellipse at 70% 50%, 
+        rgba(100, 181, 246, 0.35) 0%, 
+        rgba(121, 134, 203, 0.3) 50%, 
+        transparent 100%);
+    animation: morph-float 35s ease-in-out infinite reverse;
 }
 
-@keyframes float-slow {
-    0% { transform: translate(0, 0) scale(1); }
-    100% { transform: translate(10px, -12px) scale(1.02); }
+@keyframes morph-float {
+    0%, 100% { 
+        transform: translate(0, 0) rotate(0deg) scale(1);
+        border-radius: 60% 40% 30% 70% / 60% 30% 70% 40%;
+    }
+    25% { 
+        transform: translate(20px, -20px) rotate(5deg) scale(1.1);
+        border-radius: 30% 60% 70% 40% / 50% 60% 30% 60%;
+    }
+    50% { 
+        transform: translate(-15px, 15px) rotate(-3deg) scale(0.9);
+        border-radius: 40% 60% 60% 40% / 60% 40% 60% 30%;
+    }
+    75% { 
+        transform: translate(10px, -10px) rotate(3deg) scale(1.05);
+        border-radius: 70% 30% 40% 60% / 40% 70% 60% 30%;
+    }
 }
 
 /* ========================================
