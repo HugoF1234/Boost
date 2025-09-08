@@ -11,35 +11,35 @@
 <style>
         /* Nouvelle palette vibrante inspirée des designs modernes */
         :root {
-            /* Couleurs principales - tons vibrants et dynamiques */
-            --primary-coral: #FF6B6B;
-            --primary-orange: #FF8E53;
-            --primary-pink: #FF5F8D;
-            --primary-purple: #8B5CF6;
+            /* Palette - brief */
+            --primary-coral: #FF9A62;   /* Orange vibrant */
+            --primary-orange: #FF9A62;
+            --primary-pink: #FF55A1;    /* Rose dynamique */
+            --primary-purple: #6B47FF;  /* Violet profond (CTA) */
             --primary-blue: #06D6A0;
             --primary-cyan: #118AB2;
-            
-            /* Gradients dynamiques */
-            --gradient-main: linear-gradient(135deg, #FF6B6B 0%, #FF8E53 25%, #FF5F8D 50%, #8B5CF6 75%, #06D6A0 100%);
-            --gradient-warm: linear-gradient(135deg, #FF8E53 0%, #FF6B6B 100%);
-            --gradient-cool: linear-gradient(135deg, #8B5CF6 0%, #06D6A0 100%);
-            --gradient-pink: linear-gradient(135deg, #FF5F8D 0%, #8B5CF6 100%);
+
+            /* Dégradé principal demandé */
+            --gradient-main: linear-gradient(135deg, #FF9A62, #FF55A1, #6B47FF);
+            --gradient-warm: linear-gradient(135deg, #FF9A62, #FF55A1);
+            --gradient-cool: linear-gradient(135deg, #FF55A1, #6B47FF);
+            --gradient-pink: linear-gradient(135deg, #FF55A1, #6B47FF);
             
             /* Couleurs neutres modernes avec transparences */
             --glass-white: rgba(255, 255, 255, 0.95);
             --glass-light: rgba(255, 255, 255, 0.85);
             --glass-medium: rgba(255, 255, 255, 0.75);
-            --noble-cream: #faf9f7;
+            --noble-cream: #ffffff; /* cartes blanches */
             --noble-warm: #f5f2ed;
-            --noble-sage: var(--primary-coral);
-            --noble-sage-light: var(--primary-orange);
-            --noble-sage-dark: var(--primary-pink);
+            --noble-sage: var(--primary-purple);
+            --noble-sage-light: var(--primary-pink);
+            --noble-sage-dark: var(--primary-coral);
             --noble-stone: #e8e4de;
-            --noble-charcoal: #4a4943;
-            --noble-charcoal-light: #6b6960;
+            --noble-charcoal: #000000; /* titres noir profond */
+            --noble-charcoal-light: #444444; /* texte secondaire */
             --noble-mist: #f0ede8;
             --noble-accent: var(--primary-purple);
-            --noble-accent-light: var(--primary-blue);
+            --noble-accent-light: var(--primary-pink);
             
             /* Couleurs fonctionnelles colorées */
             --gentle-success: var(--primary-blue);
@@ -47,9 +47,10 @@
             --gentle-info: var(--primary-cyan);
             
             /* Ombres colorées et modernes */
-            --shadow-whisper: 0 2px 12px rgba(255, 107, 107, 0.15);
-            --shadow-gentle: 0 4px 20px rgba(139, 92, 246, 0.15);
-            --shadow-soft: 0 8px 32px rgba(6, 214, 160, 0.12);
+            --shadow-whisper: 0 4px 10px rgba(0, 0, 0, 0.05);
+            --shadow-gentle: 0 8px 20px rgba(0, 0, 0, 0.08);
+            --shadow-soft: 0 20px 40px rgba(0, 0, 0, 0.10);
+            --placeholder-gray: #AAAAAA;
         }
 
         * {
@@ -63,7 +64,7 @@
         body {
             margin: 0;
             font-family: 'Poppins', sans-serif;
-            background: linear-gradient(135deg, #fe7c4d, #ef87f5, #a37dfc, #6a71e3, #9db2f8, #c28bfa);
+            background: var(--gradient-main);
             background-size: 400% 400%;
             animation: gradientBG 20s ease infinite;
             min-height: 100vh;
@@ -84,10 +85,10 @@
             left: 0;
             right: 0;
             bottom: 0;
-            background: 
-                radial-gradient(circle at 20% 80%, rgba(255, 107, 107, 0.08) 0%, transparent 50%),
-                radial-gradient(circle at 80% 20%, rgba(139, 92, 246, 0.08) 0%, transparent 50%),
-                radial-gradient(circle at 60% 60%, rgba(6, 214, 160, 0.06) 0%, transparent 50%);
+            background:
+                radial-gradient(circle at 20% 80%, rgba(255, 154, 98, 0.12) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(255, 85, 161, 0.12) 0%, transparent 50%),
+                radial-gradient(circle at 60% 60%, rgba(107, 71, 255, 0.12) 0%, transparent 50%);
             z-index: 1;
             pointer-events: none;
             animation: gentle-pulse 15s ease-in-out infinite alternate;
@@ -116,7 +117,7 @@
             position: fixed;
             left: 0;
             top: 0;
-            background: #fff;
+            background: #fff; /* sidebar blanche */
             backdrop-filter: blur(20px);
             -webkit-backdrop-filter: blur(20px);
             z-index: 1002;
