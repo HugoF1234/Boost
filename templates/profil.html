@@ -35,7 +35,7 @@
                     {{ first_name }} {{ last_name }} {% if name and name != (first_name + ' ' + last_name) %}({{ name }}){% endif %}
                 </h3>
                 <div class="profile-email" style="margin-bottom: 0.25rem;">
-                    <i class="fas fa-envelope" style="color: var(--primary-coral);"></i>
+                    <i class="fas fa-envelope" style="color: var(--primary-orange);"></i>
                     {{ email }}
                     {% if email_verified %}
                         <span style="color: var(--gentle-success); font-size: 0.8rem;">
@@ -45,7 +45,7 @@
                 </div>
             </div>
         </div>
-        <div class="profile-meta" style="margin-top: 1rem;">
+        <div class="profile-meta" style="margin-top: 1rem; display: flex; gap: 2rem; flex-wrap: wrap;">
             <div class="meta-item">
                 <i class="fas fa-globe" style="color: var(--primary-blue);"></i>
                 <span>{{ country or 'Non renseigné' }}</span>
@@ -55,7 +55,7 @@
                 <span>{{ language or 'Non renseigné' }}</span>
             </div>
             <div class="meta-item">
-                <i class="fab fa-linkedin" style="color: var(--primary-cyan);"></i>
+                <i class="fab fa-linkedin" style="color: var(--primary-blue);"></i>
                 <span>Connecté</span>
             </div>
         </div>
@@ -99,7 +99,7 @@
         </div>
         <div class="form-group">
             <label class="form-label">
-                <i class="fas fa-heart" style="color: var(--primary-pink);"></i>
+                <i class="fas fa-heart" style="color: var(--primary-blue);"></i>
                 Centres d'intérêt professionnels
             </label>
             <p style="font-size: 0.85rem; color: var(--gray-medium); margin-bottom: 0.75rem;">Sélectionnez vos domaines d'intérêt pour des suggestions de contenu personnalisées</p>
@@ -119,7 +119,7 @@
                     ('Durabilité', 'fa-leaf')
                 ] %}
                 {% for option, icon in options %}
-                    {% set colors = ['var(--primary-coral)', 'var(--primary-orange)', 'var(--primary-pink)', 'var(--primary-purple)', 'var(--primary-blue)', 'var(--primary-cyan)'] %}
+                    {% set colors = ['var(--primary-orange)', 'var(--primary-blue)'] %}
                     <div class="interest-item">
                         <input type="checkbox" id="interet-{{ loop.index }}" name="interets" value="{{ option }}" 
                             {% if interets and option in interets %}checked{% endif %}>
@@ -139,7 +139,7 @@
     {% if secteur or interets %}
         <div class="current-interests">
             <h3 style="color: var(--noble-charcoal); margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem;">
-                <i class="fas fa-tags" style="color: var(--primary-purple);"></i>
+                <i class="fas fa-tags" style="color: var(--primary-orange);"></i>
                 Mon profil actuel
             </h3>
             <div class="interests-tags">
@@ -151,7 +151,7 @@
                 {% endif %}
                 {% if interets %}
                     {% for interet in interets %}
-                        {% set tag_colors = ['var(--primary-coral)', 'var(--primary-pink)', 'var(--primary-purple)', 'var(--primary-blue)', 'var(--primary-cyan)'] %}
+                        {% set tag_colors = ['var(--primary-blue)', 'var(--primary-orange)'] %}
                         <div class="interest-tag" style="background: {{ tag_colors[loop.index0 % tag_colors|length] }}; border: 1px solid {{ tag_colors[loop.index0 % tag_colors|length] }};">
                             <i class="fas fa-heart"></i>
                             <span>{{ interet }}</span>
