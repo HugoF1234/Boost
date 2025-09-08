@@ -9,48 +9,40 @@
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&amp;family=Crimson+Text:wght@400;600&amp;display=swap" rel="stylesheet"/>
 <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet"/>
 <style>
-        /* Nouvelle palette vibrante inspirée des designs modernes */
+        /* Nouvelle Direction Artistique ResoBoost */
         :root {
-            /* Palette - brief */
-            --primary-coral: #FF9A62;   /* Orange vibrant */
-            --primary-orange: #FF9A62;
-            --primary-pink: #FF55A1;    /* Rose dynamique */
-            --primary-purple: #6B47FF;  /* Violet profond (CTA) */
-            --primary-blue: #06D6A0;
-            --primary-cyan: #118AB2;
-
+            /* Palette principale selon consignes */
+            --primary-orange: #FF9A62;   /* Orange vibrant */
+            --primary-pink: #FF55A1;     /* Rose dynamique */
+            --primary-purple: #6B47FF;   /* Violet profond (CTA) */
+            
             /* Dégradé principal demandé */
             --gradient-main: linear-gradient(135deg, #FF9A62, #FF55A1, #6B47FF);
             --gradient-warm: linear-gradient(135deg, #FF9A62, #FF55A1);
             --gradient-cool: linear-gradient(135deg, #FF55A1, #6B47FF);
-            --gradient-pink: linear-gradient(135deg, #FF55A1, #6B47FF);
             
-            /* Couleurs neutres modernes avec transparences */
-            --glass-white: rgba(255, 255, 255, 0.95);
-            --glass-light: rgba(255, 255, 255, 0.85);
-            --glass-medium: rgba(255, 255, 255, 0.75);
-            --noble-cream: #ffffff; /* cartes blanches */
-            --noble-warm: #f5f2ed;
-            --noble-sage: var(--primary-purple);
-            --noble-sage-light: var(--primary-pink);
-            --noble-sage-dark: var(--primary-coral);
-            --noble-stone: #e8e4de;
-            --noble-charcoal: #000000; /* titres noir profond */
-            --noble-charcoal-light: #444444; /* texte secondaire */
-            --noble-mist: #f0ede8;
-            --noble-accent: var(--primary-purple);
-            --noble-accent-light: var(--primary-pink);
+            /* Couleurs complémentaires selon consignes */
+            --white: #FFFFFF;           /* Blanc pur pour cartes et composants */
+            --black: #000000;           /* Noir profond pour titres */
+            --gray-dark: #444444;       /* Gris foncé pour texte secondaire */
+            --gray-light: #AAAAAA;      /* Gris clair pour placeholders */
             
-            /* Couleurs fonctionnelles colorées */
-            --gentle-success: var(--primary-blue);
-            --gentle-warning: var(--primary-orange);
-            --gentle-info: var(--primary-cyan);
+            /* Variables pour compatibilité */
+            --noble-cream: var(--white);
+            --noble-charcoal: var(--black);
+            --noble-charcoal-light: var(--gray-dark);
+            --placeholder-gray: var(--gray-light);
             
-            /* Ombres colorées et modernes */
-            --shadow-whisper: 0 4px 10px rgba(0, 0, 0, 0.05);
+            /* Ombres légères selon consignes */
+            --shadow-soft: 0 4px 10px rgba(0, 0, 0, 0.05);
             --shadow-gentle: 0 8px 20px rgba(0, 0, 0, 0.08);
-            --shadow-soft: 0 20px 40px rgba(0, 0, 0, 0.10);
-            --placeholder-gray: #AAAAAA;
+            --shadow-strong: 0 20px 40px rgba(0, 0, 0, 0.12);
+            
+            /* Couleurs fonctionnelles */
+            --success: #10B981;
+            --warning: #F59E0B;
+            --error: #EF4444;
+            --info: #3B82F6;
         }
 
         * {
@@ -99,66 +91,59 @@
             100% { opacity: 1; }
         }
 
-        /* Blobs décoratifs site-wide (non intrusifs) */
+        /* Formes organiques (blobs) selon nouvelle DA */
         .decor-blobs {
             position: fixed;
             inset: 0;
             pointer-events: none;
-            z-index: 1; /* derrière le contenu (app-container z-index:2) */
+            z-index: 1; /* derrière le contenu */
             overflow: hidden;
         }
         .decor-blobs .blob {
             position: absolute;
-            width: 460px;
-            height: 460px;
             border-radius: 50%;
-            filter: blur(60px);
-            opacity: 0.25;
+            filter: blur(60px); /* effet de flou doux */
+            opacity: 0.2; /* tailles réduites */
             will-change: transform;
             transition: transform 8s ease-in-out;
         }
-        .decor-blobs .blob:hover { opacity: 0.28; }
+        /* 2-3 blobs à gauche selon consignes */
         .blob-left-1 {
             top: -120px; left: -180px;
-            background:
-                radial-gradient(circle at 30% 30%, rgba(255, 154, 98, 0.55), transparent 60%),
-                radial-gradient(circle at 70% 70%, rgba(255, 85, 161, 0.45), transparent 60%);
+            width: 360px; height: 360px; /* tailles réduites */
+            background: radial-gradient(circle at 30% 30%, rgba(255, 154, 98, 0.4), transparent 60%);
             animation: float-slow 18s ease-in-out infinite alternate;
         }
         .blob-left-2 {
             top: 35%; left: -220px;
-            background:
-                radial-gradient(circle at 40% 40%, rgba(255, 85, 161, 0.5), transparent 60%),
-                radial-gradient(circle at 60% 60%, rgba(107, 71, 255, 0.4), transparent 60%);
+            width: 380px; height: 380px;
+            background: radial-gradient(circle at 40% 40%, rgba(255, 85, 161, 0.35), transparent 60%);
             animation: float-slow 22s ease-in-out infinite alternate;
         }
         .blob-left-3 {
             bottom: 18%; left: -200px;
-            background:
-                radial-gradient(circle at 35% 35%, rgba(107, 71, 255, 0.45), transparent 60%),
-                radial-gradient(circle at 65% 65%, rgba(255, 154, 98, 0.4), transparent 60%);
+            width: 340px; height: 340px;
+            background: radial-gradient(circle at 35% 35%, rgba(107, 71, 255, 0.3), transparent 60%);
             animation: float-slow 20s ease-in-out infinite alternate;
         }
+        /* 2 blobs à droite selon consignes */
         .blob-right-1 {
             top: -140px; right: -200px;
-            background:
-                radial-gradient(circle at 30% 30%, rgba(255, 85, 161, 0.5), transparent 60%),
-                radial-gradient(circle at 70% 70%, rgba(107, 71, 255, 0.45), transparent 60%);
+            width: 370px; height: 370px;
+            background: radial-gradient(circle at 30% 30%, rgba(255, 85, 161, 0.35), transparent 60%);
             animation: float-slow 19s ease-in-out infinite alternate;
         }
         .blob-right-2 {
             top: 45%; right: -240px;
-            background:
-                radial-gradient(circle at 35% 35%, rgba(255, 154, 98, 0.45), transparent 60%),
-                radial-gradient(circle at 65% 65%, rgba(255, 85, 161, 0.4), transparent 60%);
+            width: 350px; height: 350px;
+            background: radial-gradient(circle at 35% 35%, rgba(255, 154, 98, 0.3), transparent 60%);
             animation: float-slow 23s ease-in-out infinite alternate;
         }
+        /* 1 blob en bas selon consignes */
         .blob-bottom {
             bottom: -220px; left: 50%; transform: translateX(-50%);
-            width: 560px; height: 560px; opacity: 0.2;
-            background:
-                radial-gradient(circle at 50% 40%, rgba(107, 71, 255, 0.45), transparent 60%),
-                radial-gradient(circle at 55% 65%, rgba(255, 154, 98, 0.35), transparent 60%);
+            width: 420px; height: 420px; opacity: 0.15;
+            background: radial-gradient(circle at 50% 40%, rgba(107, 71, 255, 0.3), transparent 60%);
             animation: float-slow 24s ease-in-out infinite alternate;
         }
         @keyframes float-slow {
@@ -180,7 +165,7 @@
             z-index: 2;
         }
 
-        /* Sidebar moderne avec glassmorphism */
+        /* Sidebar blanche selon nouvelle DA */
         .sidebar {
             width: 280px;
             height: 100vh;
@@ -189,16 +174,14 @@
             position: fixed;
             left: 0;
             top: 0;
-            background: #fff; /* sidebar blanche */
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
+            background: var(--white); /* sidebar blanche pure */
             z-index: 1002;
             transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
             box-shadow: var(--shadow-soft);
             overflow-y: auto;
             display: flex;
             flex-direction: column;
-            border-right: 1px solid rgba(255, 107, 107, 0.1);
+            border-right: 1px solid rgba(0, 0, 0, 0.05);
         }
 
         .sidebar-header {
@@ -207,12 +190,11 @@
             justify-content: flex-start;
             padding: 2rem 1rem;
             min-height: 80px;
-            background: var(--glass-light);
-            backdrop-filter: blur(15px);
+            background: transparent; /* header transparent selon consignes */
             position: relative;
             overflow: hidden;
             flex-shrink: 0;
-            border-bottom: 1px solid rgba(255, 107, 107, 0.1);
+            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
         }
 
         .sidebar.collapsed {
@@ -353,7 +335,7 @@
             min-height: 42px;
             max-width: 42px;
             max-height: 42px;
-            background: var(--gradient-warm);
+            background: var(--gradient-main);
             border-radius: 12px;
             display: flex;
             align-items: center;
@@ -363,7 +345,7 @@
             border: 1px solid rgba(255, 255, 255, 0.2);
             transition: all 0.3s ease;
             cursor: pointer;
-            box-shadow: 0 4px 15px rgba(255, 107, 107, 0.3);
+            box-shadow: var(--shadow-soft);
             position: relative;
             overflow: hidden;
         }
@@ -389,23 +371,18 @@
         }
 
         .logo-text {
-            color: var(--noble-charcoal);
+            color: var(--black); /* noir profond selon consignes */
             font-family: 'Inter', 'Poppins', Arial, sans-serif;
             font-size: 1.4rem;
             font-weight: 700;
             letter-spacing: -0.02em;
             transition: all 0.3s ease;
-            background: var(--gradient-main);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            animation: gradient-shift 4s ease-in-out infinite;
         }
 
         .user-info {
             margin-top: 1.5rem;
             padding-top: 1.5rem;
-            border-top: 1px solid rgba(255, 107, 107, 0.15);
+            border-top: 1px solid rgba(0, 0, 0, 0.05);
             position: relative;
             z-index: 2;
         }
@@ -434,14 +411,14 @@
         }
 
         .user-name {
-            color: var(--noble-charcoal);
+            color: var(--black); /* noir profond pour les titres */
             font-weight: 500;
             font-size: 0.9rem;
             transition: all 0.3s ease;
         }
 
         .user-role {
-            color: var(--noble-charcoal-light);
+            color: var(--gray-dark); /* gris foncé pour le texte secondaire */
             font-size: 0.75rem;
             margin-top: 0.25rem;
             transition: all 0.3s ease;
@@ -462,7 +439,7 @@
         .nav-bottom {
             margin-top: auto;
             padding-top: 1.5rem;
-            border-top: 1px solid rgba(255, 107, 107, 0.1);
+            border-top: 1px solid rgba(0, 0, 0, 0.05);
             background: none !important;
             box-shadow: none !important;
             min-height: 80px;
@@ -483,12 +460,12 @@
             display: flex;
             align-items: center;
             gap: 0.875rem;
-            padding: 0.875rem 1.25rem;
-            color: var(--noble-charcoal-light);
+            padding: 16px 1.25rem; /* espacement généreux selon consignes */
+            color: var(--gray-dark); /* gris foncé pour texte secondaire */
             text-decoration: none;
-            font-weight: 500;
+            font-weight: 400; /* typographie légère selon consignes */
             font-size: 0.9rem;
-            border-radius: 12px;
+            border-radius: 12px; /* coins arrondis */
             transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
             position: relative;
             overflow: hidden;
@@ -524,11 +501,10 @@
         }
 
         .nav-link:hover {
-            background: var(--glass-light);
-            color: var(--primary-coral);
+            background: rgba(255, 255, 255, 0.8);
+            color: var(--primary-orange);
             transform: translateX(4px);
-            backdrop-filter: blur(10px);
-            box-shadow: 0 4px 15px rgba(255, 107, 107, 0.15);
+            box-shadow: var(--shadow-soft);
         }
 
         .sidebar.collapsed .nav-link:hover {
@@ -536,10 +512,10 @@
         }
 
         .nav-link.active {
-            background: var(--gradient-warm);
+            background: var(--primary-purple); /* violet profond pour les CTA */
             color: white;
             transform: translateX(2px);
-            box-shadow: 0 4px 20px rgba(255, 107, 107, 0.3);
+            box-shadow: var(--shadow-gentle);
         }
 
         .sidebar.collapsed .nav-link.active {
@@ -592,7 +568,7 @@
             box-shadow: none !important;
         }
 
-        /* Contenu principal */
+        /* Contenu principal avec fond transparent */
         .main-content {
             flex: 1;
             margin-left: 280px;
@@ -602,7 +578,7 @@
             display: flex;
             justify-content: center;
             padding: 2rem;
-            background: var(--noble-cream);
+            background: transparent; /* transparent pour voir le dégradé */
         }
 
         .main-content.expanded {
