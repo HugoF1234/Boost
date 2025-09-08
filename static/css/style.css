@@ -1030,7 +1030,7 @@ html, body {
 /* Contenu des onglets */
 .tab-content {
     display: none;
-    min-height: 500px; /* Hauteur minimale pour égaliser */
+    min-height: 800px; /* Hauteur plus grande pour égaliser avec les onglets pleins */
 }
 
 .tab-content.active {
@@ -1279,7 +1279,7 @@ html, body {
     text-align: center;
     padding: 3rem 1rem;
     color: var(--gray-medium);
-    min-height: 300px; /* Hauteur minimale pour égaliser */
+    min-height: 600px; /* Hauteur plus grande pour égaliser avec contenu */
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -1305,11 +1305,11 @@ html, body {
 
 /* Pages dédiées avec hauteur égalisée */
 .dedicated-page {
-    min-height: 400px;
+    min-height: 700px; /* Augmenté pour égaler les pages avec contenu */
 }
 
 .posts-grid {
-    min-height: 300px;
+    min-height: 600px; /* Augmenté pour égaler les grilles avec contenu */
 }
 
 /* Responsive */
@@ -1333,11 +1333,11 @@ html, body {
     }
     
     .tab-content {
-        min-height: 400px; /* Réduire un peu sur mobile */
+        min-height: 600px; /* Garder une bonne hauteur sur mobile */
     }
     
     .empty-state {
-        min-height: 250px; /* Réduire sur mobile */
+        min-height: 400px; /* Réduire un peu sur mobile mais garder égalisation */
         padding: 2rem 1rem;
     }
     
