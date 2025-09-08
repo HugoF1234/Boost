@@ -1683,3 +1683,20 @@ html, body {
   width: 100% !important; /* occupe toute la largeur */
   margin: 0 auto;         /* centré */
 }
+
+/* === FORCER TOUS LES CONTENEURS PARENTS === */
+.creation-section,
+.posts-content,
+.welcome-section {
+  width: 100% !important;
+  max-width: none !important;
+  min-width: 100% !important;
+  margin: 0 !important;
+  box-sizing: border-box !important;
+}
+
+/* Forcer le conteneur principal à utiliser TOUTE la largeur */
+.main-content > * {
+  width: 100% !important;
+  max-width: none !important;
+}
