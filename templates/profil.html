@@ -1,12 +1,12 @@
 {% extends "base.html" %}
 {% block content %}
 
-<!-- Section d'accueil noble avec fond transparent -->
-<div class="welcome-section fade-in">
+<!-- Section d'accueil compacte -->
+<div class="welcome-section fade-in" style="padding: 1.5rem; margin-bottom: 1.5rem;">
     <div class="welcome-content">
         <div>
-            <h1 class="greeting">Mon Profil 🌿</h1>
-            <p class="greeting-subtitle">Gérez vos informations personnelles et préférences</p>
+            <h1 class="greeting" style="font-size: 1.5rem; margin-bottom: 0.25rem;">Mon Profil 🌿</h1>
+            <p class="greeting-subtitle" style="font-size: 0.9rem;">Gérez vos informations personnelles et préférences</p>
         </div>
     </div>
 </div>
@@ -19,23 +19,23 @@
         </h2>
         <p class="section-subtitle">Vos informations LinkedIn synchronisées automatiquement</p>
     </div>
-    <div class="profile-display">
-        <div class="profile-info">
-            <div class="profile-avatar">
+    <div class="profile-display" style="padding: 1.5rem; margin-bottom: 1.5rem;">
+        <div class="profile-info" style="margin-bottom: 1rem;">
+            <div class="profile-avatar" style="width: 60px; height: 60px;">
                 {% if picture %}
                     <img src="{{ picture }}" alt="Photo de profil">
                 {% else %}
-                    <div class="profile-placeholder">
+                    <div class="profile-placeholder" style="font-size: 1.5rem;">
                         {{ first_name[0]|upper if first_name else 'U' }}
                     </div>
                 {% endif %}
             </div>
             <div class="profile-details">
-                <h3 class="profile-name">
+                <h3 class="profile-name" style="font-size: 1.1rem; margin-bottom: 0.25rem;">
                     {{ first_name }} {{ last_name }} {% if name and name != (first_name + ' ' + last_name) %}({{ name }}){% endif %}
                 </h3>
-                <div class="profile-email">
-                    <i class="fas fa-envelope icon-noble"></i>
+                <div class="profile-email" style="margin-bottom: 0.25rem;">
+                    <i class="fas fa-envelope" style="color: var(--primary-coral);"></i>
                     {{ email }}
                     {% if email_verified %}
                         <span style="color: var(--gentle-success); font-size: 0.8rem;">
@@ -45,17 +45,17 @@
                 </div>
             </div>
         </div>
-        <div class="profile-meta">
+        <div class="profile-meta" style="margin-top: 1rem;">
             <div class="meta-item">
-                <i class="fas fa-globe icon-noble"></i>
+                <i class="fas fa-globe" style="color: var(--primary-blue);"></i>
                 <span>{{ country or 'Non renseigné' }}</span>
             </div>
             <div class="meta-item">
-                <i class="fas fa-language icon-noble"></i>
+                <i class="fas fa-language" style="color: var(--primary-orange);"></i>
                 <span>{{ language or 'Non renseigné' }}</span>
             </div>
             <div class="meta-item">
-                <i class="fab fa-linkedin icon-noble"></i>
+                <i class="fab fa-linkedin" style="color: var(--primary-cyan);"></i>
                 <span>Connecté</span>
             </div>
         </div>
@@ -73,26 +73,36 @@
     <form method="POST">
         <div class="form-group">
             <label for="secteur" class="form-label">
-                <i class="fas fa-briefcase icon-noble"></i>
-                Secteur d'activité
+                <i class="fas fa-briefcase" style="color: var(--primary-orange);"></i>
+                Secteur d'activité principal
             </label>
+            <p style="font-size: 0.85rem; color: var(--gray-medium); margin-bottom: 0.75rem;">Choisissez le secteur qui correspond le mieux à votre domaine professionnel</p>
             <select name="secteur" id="secteur" class="form-control" required>
-                <option value="">-- Sélectionner votre secteur --</option>
+                <option value="">-- Sélectionner votre secteur d'activité --</option>
                 <option value="tech" {% if secteur == 'tech' %}selected{% endif %}>🖥️ Technologie & Informatique</option>
-                <option value="marketing" {% if secteur == 'marketing' %}selected{% endif %}>📢 Marketing & Communication</option>
                 <option value="finance" {% if secteur == 'finance' %}selected{% endif %}>💰 Finance & Banque</option>
                 <option value="sante" {% if secteur == 'sante' %}selected{% endif %}>🏥 Santé & Médecine</option>
                 <option value="education" {% if secteur == 'education' %}selected{% endif %}>🎓 Éducation & Formation</option>
+                <option value="marketing" {% if secteur == 'marketing' %}selected{% endif %}>📢 Marketing & Communication</option>
                 <option value="rh" {% if secteur == 'rh' %}selected{% endif %}>👥 Ressources Humaines</option>
                 <option value="consulting" {% if secteur == 'consulting' %}selected{% endif %}>💼 Conseil & Stratégie</option>
                 <option value="retail" {% if secteur == 'retail' %}selected{% endif %}>🛍️ Commerce & Distribution</option>
+                <option value="tourisme" {% if secteur == 'tourisme' %}selected{% endif %}>✈️ Tourisme & Hospitality</option>
+                <option value="industrie" {% if secteur == 'industrie' %}selected{% endif %}>🏭 Industrie & Manufacturing</option>
+                <option value="immobilier" {% if secteur == 'immobilier' %}selected{% endif %}>🏠 Immobilier & Construction</option>
+                <option value="transport" {% if secteur == 'transport' %}selected{% endif %}>🚛 Transport & Logistique</option>
+                <option value="energie" {% if secteur == 'energie' %}selected{% endif %}>⚡ Énergie & Environnement</option>
+                <option value="media" {% if secteur == 'media' %}selected{% endif %}>📺 Médias & Divertissement</option>
+                <option value="juridique" {% if secteur == 'juridique' %}selected{% endif %}>⚖️ Juridique & Droit</option>
+                <option value="agriculture" {% if secteur == 'agriculture' %}selected{% endif %}>🌾 Agriculture & Agroalimentaire</option>
             </select>
         </div>
         <div class="form-group">
             <label class="form-label">
-                <i class="fas fa-heart icon-noble"></i>
-                Centres d'intérêt
+                <i class="fas fa-heart" style="color: var(--primary-pink);"></i>
+                Centres d'intérêt professionnels
             </label>
+            <p style="font-size: 0.85rem; color: var(--gray-medium); margin-bottom: 0.75rem;">Sélectionnez vos domaines d'intérêt pour des suggestions de contenu personnalisées</p>
             <div class="interests-grid">
                 {% set options = [
                     ('Intelligence Artificielle', 'fa-brain'),
@@ -109,10 +119,11 @@
                     ('Durabilité', 'fa-leaf')
                 ] %}
                 {% for option, icon in options %}
+                    {% set colors = ['var(--primary-coral)', 'var(--primary-orange)', 'var(--primary-pink)', 'var(--primary-purple)', 'var(--primary-blue)', 'var(--primary-cyan)'] %}
                     <div class="interest-item">
                         <input type="checkbox" id="interet-{{ loop.index }}" name="interets" value="{{ option }}" 
                             {% if interets and option in interets %}checked{% endif %}>
-                        <i class="fas {{ icon }} icon-noble"></i>
+                        <i class="fas {{ icon }}" style="color: {{ colors[loop.index0 % colors|length] }};"></i>
                         <label for="interet-{{ loop.index }}">{{ option }}</label>
                     </div>
                 {% endfor %}
@@ -128,19 +139,20 @@
     {% if secteur or interets %}
         <div class="current-interests">
             <h3 style="color: var(--noble-charcoal); margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem;">
-                <i class="fas fa-tags icon-noble"></i>
+                <i class="fas fa-tags" style="color: var(--primary-purple);"></i>
                 Mon profil actuel
             </h3>
             <div class="interests-tags">
                 {% if secteur %}
-                    <div class="interest-tag">
+                    <div class="interest-tag" style="background: var(--primary-orange); border: 1px solid var(--primary-orange);">
                         <i class="fas fa-briefcase"></i>
                         <span>{{ secteur|title }}</span>
                     </div>
                 {% endif %}
                 {% if interets %}
                     {% for interet in interets %}
-                        <div class="interest-tag">
+                        {% set tag_colors = ['var(--primary-coral)', 'var(--primary-pink)', 'var(--primary-purple)', 'var(--primary-blue)', 'var(--primary-cyan)'] %}
+                        <div class="interest-tag" style="background: {{ tag_colors[loop.index0 % tag_colors|length] }}; border: 1px solid {{ tag_colors[loop.index0 % tag_colors|length] }};">
                             <i class="fas fa-heart"></i>
                             <span>{{ interet }}</span>
                         </div>
