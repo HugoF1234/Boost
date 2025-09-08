@@ -1626,3 +1626,41 @@ html, body {
 .shadow-soft { box-shadow: var(--shadow-soft); }
 .shadow-gentle { box-shadow: var(--shadow-gentle); }
 .border-radius-12 { border-radius: 12px; }
+
+/* === Onglets de même largeur === */
+.posts-navigation .nav-tabs{
+  display: grid !important;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)) !important;
+  gap: 0.75rem;
+  align-items: stretch;
+}
+
+.posts-navigation .nav-tab{
+  width: 100% !important;
+  display: flex !important;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  box-sizing: border-box;
+  min-height: 44px;
+}
+
+/* Forcer tous les onglets à prendre toute la largeur disponible */
+.tab-content,
+.dedicated-page {
+  width: 100% !important;
+  max-width: 100% !important;
+  min-width: 100% !important;
+  flex: 1 0 100% !important; /* occupe toujours toute la largeur */
+  align-items: stretch !important;
+}
+
+/* État vide = pleine largeur */
+.empty-state {
+  width: 100% !important;
+  max-width: 100% !important;
+  min-width: 100% !important;
+  flex: 1 0 100% !important;
+  align-items: center;
+  justify-content: center;
+}
