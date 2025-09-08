@@ -8,68 +8,11 @@
 <link rel="icon" type="image/png" href="{{ url_for('static', filename='logo.png') }}">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&amp;family=Crimson+Text:wght@400;600&amp;display=swap" rel="stylesheet"/>
 <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet"/>
+<link href="{{ url_for('static', filename='css/style.css') }}" rel="stylesheet"/>
 <style>
-        /* Nouvelle Direction Artistique ResoBoost */
-        :root {
-            /* Palette principale selon consignes */
-            --primary-orange: #FF9A62;   /* Orange vibrant */
-            --primary-pink: #FF55A1;     /* Rose dynamique */
-            --primary-purple: #6B47FF;   /* Violet profond (CTA) */
-            
-            /* Dégradé principal demandé */
-            --gradient-main: linear-gradient(135deg, #FF9A62, #FF55A1, #6B47FF);
-            --gradient-warm: linear-gradient(135deg, #FF9A62, #FF55A1);
-            --gradient-cool: linear-gradient(135deg, #FF55A1, #6B47FF);
-            
-            /* Couleurs complémentaires selon consignes */
-            --white: #FFFFFF;           /* Blanc pur pour cartes et composants */
-            --black: #000000;           /* Noir profond pour titres */
-            --gray-dark: #444444;       /* Gris foncé pour texte secondaire */
-            --gray-light: #AAAAAA;      /* Gris clair pour placeholders */
-            
-            /* Variables pour compatibilité */
-            --noble-cream: var(--white);
-            --noble-charcoal: var(--black);
-            --noble-charcoal-light: var(--gray-dark);
-            --placeholder-gray: var(--gray-light);
-            
-            /* Ombres légères selon consignes */
-            --shadow-soft: 0 4px 10px rgba(0, 0, 0, 0.05);
-            --shadow-gentle: 0 8px 20px rgba(0, 0, 0, 0.08);
-            --shadow-strong: 0 20px 40px rgba(0, 0, 0, 0.12);
-            
-            /* Couleurs fonctionnelles */
-            --success: #10B981;
-            --warning: #F59E0B;
-            --error: #EF4444;
-            --info: #3B82F6;
-        }
-
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        html, 
-
-        body {
-            margin: 0;
-            font-family: 'Poppins', sans-serif;
-            background: var(--gradient-main);
-            background-size: 400% 400%;
-            animation: gradientBG 20s ease infinite;
-            min-height: 100vh;
-        }
-
-        @keyframes gradientBG {
-            0% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-            100% { background-position: 0% 50%; }
-        }
-
-
-        /* Effet de texture vibrante en arrière-plan */
+        /* Styles spécifiques au layout base - Le CSS principal est dans style.css */
+        
+        /* Effet de texture supplémentaire pour plus de profondeur */
         body::before {
             content: '';
             position: fixed;
@@ -78,125 +21,20 @@
             right: 0;
             bottom: 0;
             background:
-                radial-gradient(circle at 20% 80%, rgba(255, 154, 98, 0.12) 0%, transparent 50%),
-                radial-gradient(circle at 80% 20%, rgba(255, 85, 161, 0.12) 0%, transparent 50%),
-                radial-gradient(circle at 60% 60%, rgba(107, 71, 255, 0.12) 0%, transparent 50%);
+                radial-gradient(circle at 20% 80%, rgba(255, 154, 98, 0.03) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(255, 85, 161, 0.03) 0%, transparent 50%),
+                radial-gradient(circle at 60% 60%, rgba(107, 71, 255, 0.05) 0%, transparent 50%);
             z-index: 1;
             pointer-events: none;
             animation: gentle-pulse 15s ease-in-out infinite alternate;
         }
 
         @keyframes gentle-pulse {
-            0% { opacity: 0.8; }
-            100% { opacity: 1; }
+            0% { opacity: 0.2; }
+            100% { opacity: 0.4; }
         }
 
-        /* Formes organiques (blobs) selon nouvelle DA */
-        .decor-blobs {
-            position: fixed;
-            inset: 0;
-            pointer-events: none;
-            z-index: 1; /* derrière le contenu */
-            overflow: hidden;
-        }
-        .decor-blobs .blob {
-            position: absolute;
-            border-radius: 50%;
-            filter: blur(60px); /* effet de flou doux */
-            opacity: 0.2; /* tailles réduites */
-            will-change: transform;
-            transition: transform 8s ease-in-out;
-        }
-        /* 2-3 blobs à gauche selon consignes */
-        .blob-left-1 {
-            top: -120px; left: -180px;
-            width: 360px; height: 360px; /* tailles réduites */
-            background: radial-gradient(circle at 30% 30%, rgba(255, 154, 98, 0.4), transparent 60%);
-            animation: float-slow 18s ease-in-out infinite alternate;
-        }
-        .blob-left-2 {
-            top: 35%; left: -220px;
-            width: 380px; height: 380px;
-            background: radial-gradient(circle at 40% 40%, rgba(255, 85, 161, 0.35), transparent 60%);
-            animation: float-slow 22s ease-in-out infinite alternate;
-        }
-        .blob-left-3 {
-            bottom: 18%; left: -200px;
-            width: 340px; height: 340px;
-            background: radial-gradient(circle at 35% 35%, rgba(107, 71, 255, 0.3), transparent 60%);
-            animation: float-slow 20s ease-in-out infinite alternate;
-        }
-        /* 2 blobs à droite selon consignes */
-        .blob-right-1 {
-            top: -140px; right: -200px;
-            width: 370px; height: 370px;
-            background: radial-gradient(circle at 30% 30%, rgba(255, 85, 161, 0.35), transparent 60%);
-            animation: float-slow 19s ease-in-out infinite alternate;
-        }
-        .blob-right-2 {
-            top: 45%; right: -240px;
-            width: 350px; height: 350px;
-            background: radial-gradient(circle at 35% 35%, rgba(255, 154, 98, 0.3), transparent 60%);
-            animation: float-slow 23s ease-in-out infinite alternate;
-        }
-        /* 1 blob en bas selon consignes */
-        .blob-bottom {
-            bottom: -220px; left: 50%; transform: translateX(-50%);
-            width: 420px; height: 420px; opacity: 0.15;
-            background: radial-gradient(circle at 50% 40%, rgba(107, 71, 255, 0.3), transparent 60%);
-            animation: float-slow 24s ease-in-out infinite alternate;
-        }
-        @keyframes float-slow {
-            0% { transform: translate(0, 0) scale(1); }
-            100% { transform: translate(10px, -12px) scale(1.02); }
-        }
-        @media (max-width: 768px) {
-            .decor-blobs .blob { opacity: 0.16; filter: blur(50px); }
-            .blob-left-1, .blob-left-2, .blob-left-3, .blob-right-1, .blob-right-2 { width: 360px; height: 360px; }
-            .blob-bottom { width: 420px; height: 420px; bottom: -180px; }
-        }
-
-        /* Layout principal */
-        .app-container {
-            display: flex;
-            min-height: 100vh;
-            width: 100%;
-            position: relative;
-            z-index: 2;
-        }
-
-        /* Sidebar blanche selon nouvelle DA */
-        .sidebar {
-            width: 280px;
-            height: 100vh;
-            min-height: 100vh;
-            max-height: 100vh;
-            position: fixed;
-            left: 0;
-            top: 0;
-            background: var(--white); /* sidebar blanche pure */
-            z-index: 1002;
-            transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-            box-shadow: var(--shadow-soft);
-            overflow-y: auto;
-            display: flex;
-            flex-direction: column;
-            border-right: 1px solid rgba(0, 0, 0, 0.05);
-        }
-
-        .sidebar-header {
-            display: flex;
-            align-items: center;
-            justify-content: flex-start;
-            padding: 2rem 1rem;
-            min-height: 80px;
-            background: transparent; /* header transparent selon consignes */
-            position: relative;
-            overflow: hidden;
-            flex-shrink: 0;
-            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
-        }
-
+        /* Styles pour sidebar collapsed */
         .sidebar.collapsed {
             width: 80px;
         }
@@ -204,43 +42,16 @@
             padding: 2rem 0;
             justify-content: center;
         }
-        .sidebar.collapsed .logo-container {
-            justify-content: center;
-            gap: 0;
-        }
         .sidebar.collapsed .nav-text,
-        .sidebar.collapsed .logo-text,
-        .sidebar.collapsed .user-name,
-        .sidebar.collapsed .user-role,
-        .sidebar.collapsed .user-avatar {
+        .sidebar.collapsed .logo-text {
             opacity: 0 !important;
             visibility: hidden !important;
             width: 0 !important;
-            min-width: 0 !important;
-            max-width: 0 !important;
-            height: auto !important;
-            margin: 0 !important;
-            padding: 0 !important;
-            pointer-events: none !important;
             transition: all 0.3s;
-            display: inline-block !important;
         }
         .sidebar.collapsed .nav-link {
             justify-content: center;
             padding: 0.875rem;
-            min-height: 48px;
-            height: 48px;
-        }
-        .sidebar.collapsed .nav-icon {
-            margin: 0;
-        }
-        .sidebar.collapsed .user-info {
-            padding: 0;
-            margin: 0;
-            border: none;
-        }
-        .sidebar.collapsed .logo-icon {
-            margin: 0 auto;
         }
 
         /* Bouton toggle moderne et coloré */
