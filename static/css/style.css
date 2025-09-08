@@ -1087,23 +1087,19 @@ html, body {
     font-weight: 600;
 }
 
-/* Contenu des onglets FORCÉ expansion complète */
+/* Uniformiser largeur et hauteur des onglets */
 .tab-content {
     display: none;
-    width: 100% !important; /* Forcer la largeur à 100% */
-    max-width: none !important; /* SUPPRIMER toute limite */
-    min-width: 100% !important; /* Largeur minimale à 100% */
-    min-height: 700px; /* FORCER hauteur minimale pour tous les onglets */
-    box-sizing: border-box !important;
-    margin: 0 !important;
-    padding: 0 !important;
 }
 
 .tab-content.active {
-    display: flex !important; /* FLEX pour expansion totale */
-    flex-direction: column !important;
-    flex-grow: 1 !important; /* FORCER l'expansion */
-    align-items: stretch !important; /* S'ÉTENDRE horizontalement */
+    flex: 1 0 100% !important;   /* occupe 100% de la largeur disponible */
+    display: flex !important;    /* permet à empty-state de s'étirer */
+    flex-direction: column;
+    align-items: stretch;        /* s'étend sur la largeur */
+    justify-content: flex-start; /* contenu en haut */
+    min-height: 600px;           /* même hauteur minimale */
+    box-sizing: border-box;
     animation: gentleFadeIn 0.6s ease-out;
 }
 
@@ -1343,23 +1339,16 @@ html, body {
     transform: translateX(5px);
 }
 
-/* État vide FORCÉ à prendre TOUTE la largeur */
+/* État vide optimisé */
 .empty-state {
     text-align: center;
     padding: 3rem 1rem;
     color: var(--gray-medium);
-    width: 100% !important; /* Forcer la largeur à 100% */
-    max-width: none !important; /* SUPPRIMER toute limite */
-    min-width: 100% !important; /* Largeur minimale fixe */
-    min-height: 600px; /* FORCER hauteur minimale pour égaler onglets pleins */
-    display: flex !important;
+    flex: 1;              /* occupe tout l'espace restant */
+    display: flex;
     flex-direction: column;
+    align-items: center;  /* contenu centré horizontalement */
     justify-content: center;
-    align-items: stretch !important; /* S'ÉTENDRE sur toute la largeur */
-    flex-shrink: 0 !important; /* EMPÊCHER le rétrécissement horizontal */
-    flex-grow: 1 !important; /* FORCER l'expansion */
-    box-sizing: border-box !important; /* Inclure padding */
-    margin: 0 !important; /* Supprimer toute marge */
 }
 
 .empty-state .empty-icon {
@@ -1379,19 +1368,11 @@ html, body {
     opacity: 0.7;
 }
 
-/* Pages dédiées FORCÉES à prendre toute la largeur */
+/* Pages dédiées */
 .dedicated-page {
-    width: 100% !important; /* Forcer la largeur à 100% */
-    max-width: none !important; /* SUPPRIMER toute limite */
-    min-width: 100% !important; /* Largeur minimale à 100% */
-    min-height: 600px; /* FORCER hauteur minimale pour pages dédiées */
-    display: flex !important;
-    flex-direction: column !important;
-    flex-grow: 1 !important; /* FORCER l'expansion */
-    flex-shrink: 0 !important;
-    box-sizing: border-box !important;
-    margin: 0 !important;
-    padding: 0 !important; /* Supprimer padding qui pourrait limiter */
+    flex: 1;
+    display: flex;
+    flex-direction: column;
 }
 
 .posts-grid {
