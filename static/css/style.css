@@ -847,6 +847,7 @@ html, body {
     margin-bottom: 0.75rem;
     font-size: 0.95rem;
     color: var(--gray-medium);
+    flex-shrink: 0;
 }
 
 .interests-grid {
@@ -949,6 +950,11 @@ html, body {
         flex-direction: column;
         text-align: center;
         gap: 1rem;
+    }
+    
+    .profile-meta {
+        flex-direction: column !important;
+        gap: 0.75rem !important;
     }
 }
 
