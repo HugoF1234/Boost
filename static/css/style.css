@@ -6,7 +6,7 @@
 /* ========================================
    VARIABLES CSS - STYLE NOBLE D'HISTORIQUE
    ======================================== */
-:root {
+   :root {
     /* Palette noble inspirée d'historique.html */
     --noble-cream: #faf9f7;
     --noble-warm: #f5f2ed;
@@ -1030,6 +1030,7 @@ html, body {
 /* Contenu des onglets */
 .tab-content {
     display: none;
+    min-height: 500px; /* Hauteur minimale pour égaliser */
 }
 
 .tab-content.active {
@@ -1278,6 +1279,11 @@ html, body {
     text-align: center;
     padding: 3rem 1rem;
     color: var(--gray-medium);
+    min-height: 300px; /* Hauteur minimale pour égaliser */
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
 }
 
 .empty-state .empty-icon {
@@ -1295,6 +1301,15 @@ html, body {
 .empty-state small {
     font-size: 0.9rem;
     opacity: 0.7;
+}
+
+/* Pages dédiées avec hauteur égalisée */
+.dedicated-page {
+    min-height: 400px;
+}
+
+.posts-grid {
+    min-height: 300px;
 }
 
 /* Responsive */
@@ -1315,6 +1330,15 @@ html, body {
     
     .kanban-container {
         flex-direction: column;
+    }
+    
+    .tab-content {
+        min-height: 400px; /* Réduire un peu sur mobile */
+    }
+    
+    .empty-state {
+        min-height: 250px; /* Réduire sur mobile */
+        padding: 2rem 1rem;
     }
     
     .linkedin-post-card {
