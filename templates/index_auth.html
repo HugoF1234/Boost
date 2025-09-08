@@ -8,23 +8,15 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         :root {
-            --primary: #a8956b;
-            --primary-light: #c4b085;
-            --primary-ultra-light: #e8e0d1;
-            --secondary: #f5f3ef;
-            --accent: #b8a082;
-            --accent-light: #d1c4a8;
-            --warm: #d4c4a8;
-            --warm-light: #e2d6bf;
-            --soft-gray: #f0ede7;
-            --beige-main: #f2e8d8;
-            --text-primary: #2d2a24;
-            --text-secondary: #5a5449;
-            --text-light: #8a7d6f;
+            --gradient-main: linear-gradient(135deg, #FF9A62, #FF55A1, #6B47FF);
+            --primary: #6B47FF; --primary-light: #8C6BFF; --primary-ultra-light: #EFEAFF;
+            --secondary: #FFFFFF; --accent: #FF55A1; --accent-light: #FFC2E0;
+            --warm: #FF9A62; --warm-light: #FFD1B5; --soft-gray: #AAAAAA;
+            --text-primary: #000000; --text-secondary: #444444; --text-light: #8a7d6f;
             --white: #ffffff;
-            --shadow-soft: 0 4px 20px rgba(168, 149, 107, 0.1);
-            --shadow-medium: 0 8px 30px rgba(168, 149, 107, 0.15);
-            --shadow-strong: 0 20px 40px rgba(0, 0, 0, 0.1);
+            --shadow-soft: 0 4px 10px rgba(0,0,0,0.05);
+            --shadow-medium: 0 8px 20px rgba(0,0,0,0.08);
+            --shadow-strong: 0 20px 40px rgba(0, 0, 0, 0.12);
         }
 
         * {
@@ -40,7 +32,7 @@
         
         body {
             font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-            background: var(--beige-main);
+            background: var(--gradient-main);
             color: var(--text-primary);
             line-height: 1.6;
             min-height: 100vh;
@@ -96,7 +88,7 @@
         .hero-header {
             padding: 4rem 3rem 2rem;
             text-align: center;
-            background: var(--secondary);
+            background: transparent; /* header transparent */
             border-bottom: 1px solid var(--accent-light);
             position: relative;
             overflow: hidden;
