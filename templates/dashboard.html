@@ -1,814 +1,5 @@
 {% extends "base.html" %}
 {% block content %}
-<style>
-    /* Styles spécifiques à la page dashboard - Les styles principaux sont dans style.css */
-
-    /* Animation spécifique pour la page dashboard */
-    .welcome-section::before {
-        content: '';
-        position: absolute;
-        top: 0;
-        right: 0;
-        width: 120px;
-        height: 120px;
-        background: radial-gradient(circle, rgba(255, 154, 98, 0.08) 0%, transparent 70%);
-        border-radius: 50%;
-        transform: translate(30%, -30%);
-        animation: gentle-pulse 8s ease-in-out infinite alternate;
-    }
-
-    @keyframes gentle-pulse {
-        0% { opacity: 0.6; transform: translate(30%, -30%) scale(1); }
-        100% { opacity: 1; transform: translate(30%, -30%) scale(1.2); }
-    }
-
-    .welcome-content {
-        position: relative;
-        z-index: 1;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        flex-wrap: wrap;
-        gap: 1.5rem;
-    }
-
-    .greeting {
-        font-size: 1.75rem;
-        font-weight: 600; /* typographie bold pour éléments importants */
-        color: var(--black); /* noir profond pour titres selon consignes */
-        margin-bottom: 0.5rem;
-        letter-spacing: -0.02em;
-    }
-
-    @keyframes gradient-shift {
-        0%, 100% { background-position: 0% 50%; }
-        50% { background-position: 100% 50%; }
-    }
-
-    .greeting-subtitle {
-        color: var(--gray-dark); /* gris foncé pour texte secondaire selon consignes */
-        font-size: 1rem;
-        font-weight: 400;
-    }
-
-    .user-stats {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
-        gap: 1rem;
-        margin-top: 1.5rem;
-    }
-
-    .stat-item {
-        text-align: center;
-        padding: 1rem;
-        background: var(--white); /* blanc pur pour cartes */
-        border-radius: 12px; /* coins arrondis */
-        border: 1px solid rgba(0, 0, 0, 0.05);
-        box-shadow: var(--shadow-soft); /* ombres légères */
-        transition: all 0.3s ease;
-        position: relative;
-        overflow: hidden;
-    }
-
-    .stat-item:hover {
-        background: #ffffff;
-        transform: translateY(-2px);
-        box-shadow: var(--shadow-gentle);
-        border-color: rgba(0, 0, 0, 0.08);
-    }
-
-    .stat-item::before {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: -100%;
-        width: 100%;
-        height: 100%;
-        background: linear-gradient(90deg, transparent, rgba(255, 107, 107, 0.1), transparent);
-        transition: all 0.6s ease;
-    }
-
-    .stat-item:hover::before {
-        left: 100%;
-    }
-
-    .stat-number {
-        font-size: 1.4rem;
-        font-weight: 600; /* typographie bold pour chiffres importants */
-        color: var(--primary-orange); /* orange vibrant */
-        display: block;
-        margin-bottom: 0.25rem;
-    }
-
-    .stat-label {
-        font-size: 0.8rem;
-        color: var(--gray-dark); /* gris foncé pour texte secondaire */
-        font-weight: 500;
-    }
-
-    .success-badge {
-        display: inline-flex;
-        align-items: center;
-        gap: 0.5rem;
-        background: rgba(124, 152, 133, 0.15);
-        backdrop-filter: blur(10px);
-        color: var(--gentle-success);
-        padding: 0.5rem 1rem;
-        border-radius: 20px;
-        font-size: 0.85rem;
-        font-weight: 500;
-        border: 1px solid rgba(124, 152, 133, 0.3);
-        animation: pulse-success 2s infinite;
-    }
-
-    @keyframes pulse-success {
-        0%, 100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(124, 152, 133, 0.4); }
-        50% { transform: scale(1.02); box-shadow: 0 0 0 10px rgba(124, 152, 133, 0); }
-    }
-
-    /* Section de création avec cartes blanches */
-    .creation-section {
-        background: var(--white); /* blanc pur pour cartes */
-        border-radius: 12px; /* coins arrondis */
-        padding: 2.5rem;
-        margin-bottom: 2rem;
-        border: 1px solid rgba(0, 0, 0, 0.05);
-        box-shadow: var(--shadow-soft); /* ombres légères */
-        position: relative;
-        overflow: hidden;
-    }
-
-    .creation-section::before {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        background: linear-gradient(45deg, 
-            rgba(255, 107, 107, 0.02) 0%, 
-            rgba(139, 92, 246, 0.02) 25%, 
-            rgba(6, 214, 160, 0.02) 50%, 
-            rgba(255, 142, 83, 0.02) 75%, 
-            rgba(255, 95, 141, 0.02) 100%);
-        z-index: 0;
-        animation: shimmer 8s ease-in-out infinite;
-    }
-
-    @keyframes shimmer {
-        0%, 100% { opacity: 0.3; }
-        50% { opacity: 0.7; }
-    }
-
-    .section-header {
-        margin-bottom: 2rem;
-        position: relative;
-        z-index: 1;
-    }
-
-    .section-title {
-        font-size: 1.4rem;
-        font-weight: 600; /* typographie bold pour titres */
-        color: var(--black); /* noir profond pour titres */
-        margin-bottom: 0.5rem;
-        display: flex;
-        align-items: center;
-        gap: 0.75rem;
-    }
-
-    .section-subtitle {
-        color: var(--gray-dark); /* gris foncé pour texte secondaire */
-        font-size: 0.95rem;
-        line-height: 1.6;
-    }
-
-    /* Article sélectionné - style très doux avec transparence */
-    .selected-article {
-        background: #ffffff;
-        border: 1px solid rgba(0, 0, 0, 0.05);
-        border-radius: 12px;
-        padding: 2rem;
-        margin-bottom: 2rem;
-        position: relative;
-        z-index: 1;
-    }
-
-    .selected-article::before {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 4px;
-        height: 100%;
-        background: var(--gradient-warm);
-        border-radius: 2px;
-    }
-
-    .article-title {
-        font-size: 1.2rem;
-        font-weight: 600;
-        color: var(--noble-charcoal);
-        margin-bottom: 1rem;
-        line-height: 1.5;
-    }
-
-    .article-description {
-        color: var(--noble-charcoal-light);
-        line-height: 1.6;
-        margin-bottom: 1.5rem;
-    }
-
-    .article-meta {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        flex-wrap: wrap;
-        gap: 1rem;
-        font-size: 0.9rem;
-        color: var(--noble-charcoal-light);
-    }
-
-    /* Aperçu LinkedIn avec transparence améliorée */
-    .linkedin-post {
-        background: #ffffff;
-        border: 1px solid rgba(0, 0, 0, 0.05);
-        border-radius: 12px;
-        padding: 1.5rem;
-        max-width: 600px;
-        margin: 2rem auto;
-        font-family: 'Segoe UI', Tahoma, sans-serif;
-        box-shadow: var(--shadow-gentle);
-        transition: all 0.3s ease;
-        position: relative;
-        z-index: 1;
-    }
-
-    .linkedin-post:hover {
-        transform: translateY(-2px);
-        box-shadow: var(--shadow-soft);
-        border-color: rgba(0, 0, 0, 0.1);
-    }
-
-    .linkedin-header {
-        display: flex;
-        align-items: center;
-        gap: 1rem;
-        margin-bottom: 1rem;
-    }
-
-    .linkedin-avatar {
-        width: 52px;
-        height: 52px;
-        border-radius: 50%;
-        object-fit: cover;
-        border: 2px solid var(--primary-coral);
-        transition: all 0.3s ease;
-    }
-
-    .linkedin-avatar:hover {
-        transform: scale(1.05);
-        box-shadow: 0 0 15px rgba(255, 107, 107, 0.3);
-    }
-
-    .linkedin-avatar-placeholder {
-        width: 52px;
-        height: 52px;
-        border-radius: 50%;
-        background: var(--gradient-warm);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        color: white;
-        font-size: 1.2rem;
-        font-weight: 600;
-        border: 2px solid rgba(255, 255, 255, 0.3);
-    }
-
-    .linkedin-user-info {
-        flex: 1;
-    }
-
-    .linkedin-name {
-        font-weight: 600;
-        font-size: 1rem;
-        color: #0a66c2;
-        margin-bottom: 0.25rem;
-    }
-
-    .linkedin-subline {
-        font-size: 0.875rem;
-        color: #555;
-        margin-bottom: 0.25rem;
-    }
-
-    .linkedin-date {
-        font-size: 0.75rem;
-        color: #888;
-        display: flex;
-        align-items: center;
-        gap: 0.25rem;
-    }
-
-    .linkedin-text {
-        font-size: 1rem;
-        color: #222;
-        line-height: 1.5;
-        margin-bottom: 1rem;
-        white-space: pre-wrap;
-        word-wrap: break-word;
-        min-height: 60px;
-        transition: all 0.3s ease;
-    }
-
-    .linkedin-text.empty {
-        color: #999;
-        font-style: italic;
-    }
-
-    .linkedin-actions {
-        display: flex;
-        justify-content: space-around;
-        font-size: 0.875rem;
-        color: #666;
-        border-top: 1px solid rgba(255, 107, 107, 0.1);
-        padding-top: 0.75rem;
-    }
-
-    .linkedin-action {
-        display: flex;
-        align-items: center;
-        gap: 0.5rem;
-        padding: 0.5rem 1rem;
-        border-radius: 8px;
-        transition: all 0.3s ease;
-        cursor: pointer;
-    }
-
-    .linkedin-action:hover {
-        background: rgba(255, 107, 107, 0.1);
-        color: var(--primary-coral);
-    }
-
-    /* Formulaire de génération avec transparence */
-    .generation-form {
-        display: grid;
-        gap: 1.5rem;
-        position: relative;
-        z-index: 1;
-    }
-
-    .form-row {
-        display: grid;
-        grid-template-columns: 1fr 1fr auto;
-        gap: 1.5rem;
-        align-items: end;
-    }
-
-    .form-group {
-        display: flex;
-        flex-direction: column;
-    }
-
-    .form-label {
-        font-size: 0.9rem;
-        font-weight: 500;
-        color: var(--noble-charcoal);
-        margin-bottom: 0.75rem;
-    }
-
-    .form-control {
-        padding: 0.875rem 1.125rem;
-        border: 1.5px solid rgba(255, 107, 107, 0.2);
-        border-radius: 12px;
-        font-size: 0.95rem;
-        background: rgba(255, 255, 255, 0.8);
-        backdrop-filter: blur(10px);
-        color: var(--noble-charcoal);
-        transition: all 0.3s ease;
-        font-family: inherit;
-    }
-
-    .form-control:focus {
-        outline: none;
-        border-color: var(--primary-coral);
-        box-shadow: 0 0 0 3px rgba(255, 107, 107, 0.1);
-        background: rgba(255, 255, 255, 0.95);
-    }
-
-    .textarea-control {
-        min-height: 120px;
-        resize: vertical;
-        line-height: 1.6;
-    }
-
-    .mention-tip {
-        margin-top: 0.5rem;
-        font-size: 0.8rem;
-        color: var(--noble-charcoal-light);
-        display: flex;
-        align-items: center;
-        gap: 0.5rem;
-        padding: 0.75rem;
-        background: rgba(255, 107, 107, 0.05);
-        backdrop-filter: blur(10px);
-        border-radius: 8px;
-        border-left: 3px solid var(--primary-coral);
-    }
-
-    /* Section de sélection des photos avec transparence */
-    .media-section {
-        margin-top: 2rem;
-        padding-top: 2rem;
-        border-top: 1px solid rgba(255, 107, 107, 0.15);
-        position: relative;
-        z-index: 1;
-    }
-
-    .media-tabs {
-        display: flex;
-        gap: 1rem;
-        margin-bottom: 2rem;
-        border-bottom: 1px solid rgba(255, 107, 107, 0.15);
-    }
-
-    .media-tab {
-        padding: 0.75rem 1.5rem;
-        background: transparent;
-        border: none;
-        border-bottom: 2px solid transparent;
-        cursor: pointer;
-        font-weight: 500;
-        color: var(--noble-charcoal-light);
-        transition: all 0.3s ease;
-        font-size: 0.9rem;
-        display: flex;
-        align-items: center;
-        gap: 0.5rem;
-        backdrop-filter: blur(10px);
-        border-radius: 8px 8px 0 0;
-    }
-
-    .media-tab.active {
-        color: var(--primary-purple);
-        border-bottom-color: var(--primary-purple);
-        background: rgba(107, 71, 255, 0.08);
-    }
-
-    .media-tab:hover {
-        color: var(--primary-pink);
-        background: rgba(255, 107, 107, 0.05);
-    }
-
-    /* Sélection d'images locales avec transparence */
-    .local-images-section {
-        display: none;
-    }
-
-    .local-images-section.active {
-        display: block;
-    }
-
-    .file-upload-area {
-        border: 2px dashed rgba(255, 107, 107, 0.3);
-        border-radius: 12px;
-        padding: 2rem;
-        text-align: center;
-        background: rgba(255, 255, 255, 0.6);
-        backdrop-filter: blur(15px);
-        transition: all 0.3s ease;
-        cursor: pointer;
-        position: relative;
-        overflow: hidden;
-    }
-
-    .file-upload-area:hover {
-        border-color: var(--primary-coral);
-        background: rgba(255, 107, 107, 0.1);
-    }
-
-    .file-upload-area.dragover {
-        border-color: var(--primary-coral);
-        background: rgba(255, 107, 107, 0.15);
-        transform: scale(1.02);
-    }
-
-    .upload-icon {
-        font-size: 2.5rem;
-        color: var(--primary-coral);
-        margin-bottom: 1rem;
-        animation: gentle-bounce 2s ease-in-out infinite;
-    }
-
-    @keyframes gentle-bounce {
-        0%, 100% { transform: translateY(0); }
-        50% { transform: translateY(-10px); }
-    }
-
-    .upload-text {
-        color: var(--noble-charcoal);
-        font-weight: 500;
-        margin-bottom: 0.5rem;
-    }
-
-    .upload-hint {
-        color: var(--noble-charcoal-light);
-        font-size: 0.9rem;
-    }
-
-    /* Boutons nobles avec gradients vibrants */
-    .btn {
-        padding: 0.875rem 1.75rem;
-        border-radius: 12px;
-        font-weight: 500;
-        font-size: 0.95rem;
-        cursor: pointer;
-        transition: all 0.3s ease;
-        display: inline-flex;
-        align-items: center;
-        gap: 0.625rem;
-        text-decoration: none;
-        border: none;
-        position: relative;
-        overflow: hidden;
-    }
-
-    .btn::before {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: -100%;
-        width: 100%;
-        height: 100%;
-        background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
-        transition: all 0.6s ease;
-    }
-
-    .btn:hover::before {
-        left: 100%;
-    }
-
-    .btn-primary {
-        background: var(--primary-purple); /* violet profond pour CTA */
-        color: #fff;
-        box-shadow: var(--shadow-soft);
-        border: none;
-    }
-
-    .btn-primary:hover {
-        transform: translateY(-2px);
-        box-shadow: var(--shadow-gentle);
-        filter: brightness(1.05);
-    }
-
-    .btn-secondary {
-        background: var(--white);
-        color: var(--black);
-        border: 1.5px solid rgba(0, 0, 0, 0.1);
-    }
-
-    .btn-secondary:hover {
-        background: rgba(255, 154, 98, 0.1);
-        border-color: var(--primary-orange);
-        transform: translateY(-1px);
-    }
-
-    /* Section d'invitation aux actualités */
-    .news-invitation {
-        background: var(--white); /* blanc pur pour cartes */
-        border: 1px solid rgba(0, 0, 0, 0.05);
-        border-radius: 12px; /* coins arrondis */
-        padding: 1.75rem;
-        margin-top: 2rem;
-        text-decoration: none;
-        display: flex;
-        align-items: center;
-        gap: 1.25rem;
-        transition: all 0.3s ease;
-        position: relative;
-        overflow: hidden;
-    }
-
-    .news-invitation::before {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: -100%;
-        width: 100%;
-        height: 100%;
-        background: linear-gradient(90deg, transparent, rgba(255, 107, 107, 0.1), transparent);
-        transition: all 0.8s ease;
-    }
-
-    .news-invitation:hover::before {
-        left: 100%;
-    }
-
-    .news-invitation:hover {
-        background: #ffffff;
-        transform: translateY(-2px);
-        box-shadow: var(--shadow-gentle);
-        border-color: rgba(0, 0, 0, 0.08);
-    }
-
-    .news-icon {
-        width: 56px;
-        height: 56px;
-        background: var(--gradient-cool);
-        border-radius: 14px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 1.5rem;
-        color: white;
-        flex-shrink: 0;
-        box-shadow: 0 4px 15px rgba(139, 92, 246, 0.3);
-    }
-
-    .news-content {
-        flex: 1;
-    }
-
-    .news-title {
-        font-size: 1.1rem;
-        font-weight: 600;
-        color: var(--noble-charcoal);
-        margin-bottom: 0.375rem;
-    }
-
-    .news-subtitle {
-        color: var(--noble-charcoal-light);
-        font-size: 0.9rem;
-        line-height: 1.5;
-    }
-
-    .news-arrow {
-        color: var(--primary-purple);
-        font-size: 1.2rem;
-        transition: all 0.3s ease;
-    }
-
-    .news-invitation:hover .news-arrow {
-        transform: translateX(4px);
-        color: var(--primary-coral);
-    }
-
-    /* Section du contenu généré avec transparence */
-    .generated-content {
-        background: rgba(255, 255, 255, 0.9);
-        backdrop-filter: blur(20px);
-        border-radius: 20px;
-        padding: 2.5rem;
-        margin-bottom: 2rem;
-        border: 2px solid rgba(255, 107, 107, 0.2);
-        box-shadow: var(--shadow-whisper);
-        position: relative;
-        overflow: hidden;
-    }
-
-    .generated-content::before {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        background: var(--gradient-main);
-        opacity: 0.05;
-        z-index: 0;
-    }
-
-    .content-preview {
-        background: rgba(255, 255, 255, 0.8);
-        backdrop-filter: blur(10px);
-        border-radius: 16px;
-        padding: 2rem;
-        border-left: 4px solid var(--primary-coral);
-        margin-bottom: 2rem;
-        position: relative;
-        z-index: 1;
-    }
-
-    .content-text {
-        line-height: 1.7;
-        color: var(--noble-charcoal);
-        white-space: pre-wrap;
-        font-size: 1rem;
-    }
-
-    /* Actions de publication avec transparence */
-    .publish-section {
-        border-top: 1px solid rgba(255, 107, 107, 0.15);
-        padding-top: 2rem;
-        margin-top: 2rem;
-        position: relative;
-        z-index: 1;
-    }
-
-    .publish-actions-grid {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 2rem;
-        align-items: start;
-    }
-
-    .publish-group {
-        display: flex;
-        flex-direction: column;
-        gap: 1rem;
-    }
-
-    .publish-group.schedule-group {
-        background: rgba(255, 255, 255, 0.7);
-        backdrop-filter: blur(10px);
-        padding: 1.5rem;
-        border-radius: 12px;
-        border: 1px solid rgba(255, 107, 107, 0.15);
-    }
-
-    .publish-group-title {
-        font-weight: 500;
-        color: var(--noble-charcoal);
-        margin-bottom: 0.5rem;
-    }
-
-    /* Responsive */
-    @media (max-width: 992px) {
-        .publish-actions-grid {
-            grid-template-columns: 1fr;
-        }
-    }
-    
-    @media (max-width: 768px) {
-        .welcome-content {
-            flex-direction: column;
-            text-align: center;
-        }
-
-        .form-row {
-            grid-template-columns: 1fr;
-        }
-
-        .user-stats {
-            grid-template-columns: repeat(2, 1fr);
-        }
-
-        .news-invitation {
-            flex-direction: column;
-            text-align: center;
-        }
-
-        .media-tabs {
-            flex-direction: column;
-            gap: 0;
-        }
-
-        .media-tab {
-            border-bottom: none;
-            border-left: 2px solid transparent;
-            padding: 1rem;
-        }
-
-        .media-tab.active {
-            border-left-color: var(--primary-coral);
-            border-bottom-color: transparent;
-        }
-    }
-
-    /* Animations très douces avec les nouvelles couleurs */
-    .fade-in {
-        animation: gentleFadeIn 0.8s ease-out;
-    }
-
-    @keyframes gentleFadeIn {
-        from {
-            opacity: 0;
-            transform: translateY(20px);
-        }
-        to {
-            opacity: 1;
-            transform: translateY(0);
-        }
-    }
-
-    /* Icônes avec style noble et couleurs vibrantes */
-    .icon-noble {
-        color: var(--primary-purple);
-        font-size: 1.125rem;
-        filter: drop-shadow(0 0 3px rgba(107, 71, 255, 0.25));
-    }
-
-    /* Animation de pulsation douce pour les éléments interactifs */
-    .pulse-element {
-        animation: gentle-pulse 3s ease-in-out infinite;
-    }
-
-    /* Effet de survol magnifié pour les cartes importantes */
-    .creation-section:hover {
-        transform: translateY(-1px);
-        box-shadow: var(--shadow-gentle);
-        border-color: rgba(0, 0, 0, 0.08);
-    }
-</style>
 
 <!-- Section d'accueil noble avec fond transparent -->
 <div class="welcome-section fade-in">
@@ -922,38 +113,61 @@
 <p class="section-subtitle">Utilisez l'IA pour créer rapidement un contenu authentique et engageant pour votre audience LinkedIn</p>
 </div>
 <form method="post">
-<div class="form-row">
 <div class="form-group">
-<label class="form-label">Sujet de votre post</label>
-<input class="form-control" name="prompt" placeholder="Ex: Partagez des conseils sur le leadership, Annoncez votre nouvel article..." required="" type="text"/>
+<label class="form-label">
+<i class="fas fa-comment-dots icon-noble"></i>
+                Sujet de votre post
+            </label>
+<input class="form-control" name="subject" type="text" placeholder="Ex: Partagez des conseils sur le leadership en temps de crise" required=""/>
 </div>
 <div class="form-group">
-<label class="form-label">Ton de voix</label>
+<label class="form-label">
+<i class="fas fa-magic icon-noble"></i>
+                Instructions personnalisées (optionnel)
+            </label>
+<textarea class="form-control textarea-control" name="custom_instructions" placeholder="Partagez votre perspective unique sur ce sujet. Par exemple : 'En tant qu'expert en transformation digitale, j'aimerais mettre l'accent sur les défis d'adoption dans les PME...'"></textarea>
+<div class="mention-tip">
+<i class="fas fa-lightbulb icon-noble"></i>
+<span>Personnalisez votre post avec vos propres instructions. Laissez vide pour utiliser les paramètres par défaut.</span>
+</div>
+</div>
+<div class="form-row">
+<div class="form-group">
+<label class="form-label">Ton du post</label>
 <select class="form-control" name="tone">
 <option value="professionnel">Professionnel bienveillant</option>
 <option value="familier">Conversationnel</option>
 <option value="inspirant">Inspirant</option>
 <option value="humoristique">Décontracté</option>
 <option value="factuel">Pédagogique</option>
+<option value="critique">Analytique</option>
 </select>
 </div>
-<button class="btn btn-primary" type="submit">
+<div class="form-group">
+<label class="form-label">Perspective</label>
+<select class="form-control" name="perspective">
+<option value="neutre">Neutre</option>
+<option value="enthousiaste">Enthousiaste</option>
+<option value="analytique">Analytique</option>
+<option value="innovant">Innovateur</option>
+<option value="expert">Expert du domaine</option>
+</select>
+</div>
+<button class="btn btn-primary" name="generate" type="submit">
 <i class="fas fa-magic"></i>
                 Créer
             </button>
 </div>
 </form>
 <a class="news-invitation" href="{{ url_for('news_assistant') }}">
-<div class="news-icon">
-<i class="fas fa-newspaper"></i>
+<div class="invitation-content">
+<div class="invitation-title">
+<i class="fas fa-newspaper icon-noble"></i>
+                    Créer un post basé sur l'actualité
+                </div>
+<div class="invitation-subtitle">Inspirez-vous des sujets tendances de votre secteur</div>
 </div>
-<div class="news-content">
-<h3 class="news-title">Créer un post basé sur l'actualité</h3>
-<p class="news-subtitle">Inspirez-vous des sujets tendances de votre secteur</p>
-</div>
-<div class="news-arrow">
-<i class="fas fa-arrow-right"></i>
-</div>
+<i class="fas fa-arrow-right" style="font-size: 1.5rem; margin-left: auto;"></i>
 </a>
 </div>
 {% endif %}
@@ -961,444 +175,272 @@
 {% if draft %}
 <div class="generated-content fade-in">
 <div class="section-header">
-<div style="display: flex; justify-content: space-between; align-items: center;">
-<div>
 <h2 class="section-title">
 <i class="fas fa-edit icon-noble"></i>
                     Votre contenu personnalisé
                 </h2>
-<p class="section-subtitle">Relisez et ajustez votre message avant publication</p>
+<p class="section-subtitle">Créé spécialement pour votre audience LinkedIn. Ajustez si nécessaire avant publication.</p>
 </div>
-<div class="success-badge">
-<i class="fas fa-circle-check"></i> 
-                Post généré avec succès
-            </div>
-</div>
-</div>
-<!-- Aperçu LinkedIn dynamique -->
-<div class="linkedin-post" id="linkedin-preview">
-<div class="linkedin-header">
-            {% if picture %}
-                <img alt="Photo de profil" class="linkedin-avatar" id="preview-avatar" src="{{ picture }}"/>
-            {% else %}
-                <div class="linkedin-avatar-placeholder" id="preview-avatar">
-                    {{ first_name[0]|upper if first_name else 'U' }}
+<div class="linkedin-post">
+<div class="post-header">
+<div class="post-avatar">
+                    {{ first_name[0]|upper }}{{ last_name[0]|upper if last_name else '' }}
                 </div>
-            {% endif %}
-            
-            <div class="linkedin-user-info">
-<div class="linkedin-name" id="preview-name">
-                    {% if first_name and last_name %}
-                        {{ first_name }} {{ last_name }}
-                    {% elif name %}
-                        {{ name }}
-                    {% else %}
-                        Utilisateur LinkedInBoost
-                    {% endif %}
-                </div>
-<div class="linkedin-subline" id="preview-role">
-                    {% if secteur %}
-                        {{ secteur|title }} • LinkedInBoost
-                    {% else %}
-                        Professionnel LinkedIn • LinkedInBoost
-                    {% endif %}
-                </div>
-<div class="linkedin-date">
-<i class="fas fa-globe-europe"></i>
-                    il y a quelques instants
-                </div>
+<div class="post-user-info">
+<h4>{{ first_name }} {{ last_name }}</h4>
+<p>{{ email }}</p>
 </div>
 </div>
-<div class="linkedin-text" id="preview-text">{{ draft | safe }}</div>
-<div class="linkedin-actions">
-<div class="linkedin-action">
-<i class="far fa-thumbs-up"></i>
-<span>J'aime</span>
+<div class="post-content" id="post-preview">{{ draft|safe }}</div>
 </div>
-<div class="linkedin-action">
-<i class="far fa-comment"></i>
-<span>Commenter</span>
-</div>
-<div class="linkedin-action">
-<i class="fas fa-share"></i>
-<span>Partager</span>
-</div>
-<div class="linkedin-action">
-<i class="fas fa-paper-plane"></i>
-<span>Envoyer</span>
-</div>
-</div>
-</div>
-
-<form action="{{ url_for('publish') }}" enctype="multipart/form-data" method="post">
+<form method="post">
 <div class="form-group">
-<label class="form-label">Contenu de votre post</label>
-<textarea class="form-control textarea-control mention-editor" id="post-content" name="post_content" required="" rows="8">{{ draft }}</textarea>
+<label class="form-label">
+<i class="fas fa-edit icon-noble"></i>
+                    Contenu de votre post
+                </label>
+<div class="mention-editor">
+<textarea class="form-control textarea-control" id="content-editor" name="content" placeholder="Votre contenu LinkedIn..." required="">{{ draft }}</textarea>
+<div class="mention-suggestions" id="mention-suggestions"></div>
 </div>
-
-<!-- Section de sélection des médias avec transparence -->
-<div class="media-section">
-<h3 style="color: var(--noble-charcoal); margin-bottom: 1rem; display: flex; align-items: center; gap: 0.75rem;">
-<i class="fas fa-paperclip icon-noble"></i>
-                Ajouter des fichiers
-            </h3>
-
-<!-- Alerte de limitation LinkedIn -->
-<div class="linkedin-limitation-alert" id="linkedin-limitation-alert" style="display: none;">
-<div style="background: rgba(196, 144, 144, 0.1); border: 1px solid var(--gentle-error); border-radius: 12px; padding: 1rem; margin-bottom: 1.5rem; display: flex; align-items: center; gap: 0.75rem; backdrop-filter: blur(10px);">
-<i class="fas fa-exclamation-triangle" style="color: var(--gentle-error); font-size: 1.2rem;"></i>
-<div>
-<strong style="color: var(--gentle-error);">Limitation LinkedIn :</strong>
-<span style="color: var(--noble-charcoal-light);">Vous ne pouvez pas joindre à la fois des images et un PDF. Veuillez choisir l'un ou l'autre.</span>
+<div class="mention-tip">
+<i class="fas fa-at icon-noble"></i>
+<span>Tapez @ pour mentionner quelqu'un dans votre post (ex: @nomdelapersonne)</span>
 </div>
 </div>
-</div>
-
+<div class="media-selection">
 <div class="media-tabs">
-<button class="media-tab active" onclick="switchMediaTab('local')" type="button">
+<button class="media-tab active" data-tab="upload" type="button">
 <i class="fas fa-upload"></i>
-                    Images locales
-                </button>
-<button class="media-tab" onclick="switchMediaTab('pexels')" type="button">
-<i class="fas fa-search"></i>
-                    Photos Pexels
-                </button>
-<button class="media-tab" onclick="switchMediaTab('pdf')" type="button">
-<i class="fas fa-file-pdf"></i>
-                    Document PDF
-                </button>
+                        Télécharger
+                    </button>
+<button class="media-tab" data-tab="pexels" type="button">
+<i class="fas fa-images"></i>
+                        Photos libres
+                    </button>
 </div>
-
-<!-- Section images locales -->
-<div class="local-images-section active" id="local-images-section">
-<div class="file-upload-area" id="file-upload-area" onclick="document.getElementById('images').click()">
+<div class="media-content active" id="upload-content">
+<div class="upload-area" id="upload-area">
 <div class="upload-icon">
 <i class="fas fa-cloud-upload-alt"></i>
 </div>
-<div class="upload-text">Cliquez pour sélectionner des images</div>
-<div class="upload-hint">ou glissez-déposez vos fichiers ici (JPG, PNG, max 9 images)</div>
+<div class="upload-text">Glissez-déposez vos fichiers ici ou cliquez pour sélectionner</div>
+<div class="upload-hint">JPG, PNG, GIF jusqu'à 10MB</div>
+<input accept="image/*" id="media-upload" name="media" style="display: none;" type="file"/>
 </div>
-<input accept="image/*" class="form-control" id="images" multiple="" name="images[]" style="display: none;" type="file"/>
 </div>
-
-<!-- Section photos Pexels -->
-<div class="pexels-images-section" id="pexels-images-section">
+<div class="media-content" id="pexels-content">
 <div class="pexels-search">
-<input id="pexels-search-input" placeholder="Rechercher des photos : marketing, business, technology..." type="text"/>
-<button id="pexels-search-btn" onclick="searchPexelsPhotos()" type="button">
-<i class="fas fa-search"></i>
-                        Rechercher
-                    </button>
+<input class="pexels-input" id="pexels-query" placeholder="Rechercher des photos..." type="text"/>
+<button class="pexels-btn" id="pexels-search-btn" type="button">Rechercher</button>
 </div>
-<div id="pexels-results-container">
-<div class="pexels-loading" id="pexels-loading" style="display: none;">
-<i class="fas fa-spinner"></i>
-<p>Recherche en cours...</p>
-</div>
-<div class="pexels-error" id="pexels-error" style="display: none;">
-<i class="fas fa-exclamation-triangle"></i>
-<p>Erreur lors de la recherche. Veuillez réessayer.</p>
-</div>
-<div class="pexels-results" id="pexels-results">
-<!-- Les photos seront ajoutées dynamiquement ici -->
-</div>
-<button class="pexels-load-more" id="pexels-load-more" onclick="loadMorePexelsPhotos()" style="display: none;" type="button">
-                        Charger plus de photos
-                    </button>
+<div class="pexels-results" id="pexels-results"></div>
 </div>
 </div>
-
-<!-- Section PDF -->
-<div class="pdf-section" id="pdf-section" style="display: none;">
-<div class="pdf-upload-info" style="background: rgba(139, 154, 124, 0.05); border-radius: 12px; padding: 1.5rem; margin-bottom: 1.5rem; border-left: 4px solid var(--noble-sage); backdrop-filter: blur(10px);">
-<h4 style="color: var(--noble-charcoal); margin-bottom: 0.75rem; display: flex; align-items: center; gap: 0.5rem;">
-<i class="fas fa-info-circle" style="color: var(--noble-sage);"></i>
-                        Joindre un document PDF
-                    </h4>
-<p style="color: var(--noble-charcoal-light); margin-bottom: 1rem; line-height: 1.6;">
-                        Partagez des présentations, rapports, guides ou tout autre document professionnel. 
-                        Le PDF sera visible dans votre post LinkedIn sous forme de document téléchargeable.
-                    </p>
-<ul style="color: var(--noble-charcoal-light); font-size: 0.9rem; line-height: 1.5; padding-left: 1.5rem;">
-<li>Taille maximum : 100 MB</li>
-<li>Formats acceptés : PDF uniquement</li>
-<li>⚠️ <strong>Important :</strong> Un PDF exclut l'ajout d'images</li>
-</ul>
+<div class="selected-media" id="selected-media" style="display: none;">
+<div class="selected-media-title">Média sélectionné</div>
+<div class="selected-media-preview" id="selected-media-preview"></div>
 </div>
-<div class="pdf-upload-area" id="pdf-upload-area" onclick="document.getElementById('pdf_file').click()">
-<div class="upload-icon">
-<i class="fas fa-file-pdf" style="color: var(--gentle-error);"></i>
-</div>
-<div class="upload-text">Cliquez pour sélectionner un document PDF</div>
-<div class="upload-hint">ou glissez-déposez votre fichier ici (max 100 MB)</div>
-</div>
-<input accept=".pdf" class="form-control" id="pdf_file" name="pdf_file" style="display: none;" type="file"/>
-
-<!-- Aperçu du PDF sélectionné -->
-<div class="pdf-preview" id="pdf-preview" style="display: none;">
-<div style="background: rgba(255, 255, 255, 0.9); backdrop-filter: blur(10px); border: 1px solid var(--noble-stone); border-radius: 12px; padding: 1.5rem; margin-top: 1.5rem; display: flex; align-items: center; gap: 1rem;">
-<div style="width: 48px; height: 48px; background: var(--gentle-error); border-radius: 8px; display: flex; align-items: center; justify-content: center; color: white;">
-<i class="fas fa-file-pdf"></i>
-</div>
-<div style="flex: 1;">
-<div id="pdf-filename" style="font-weight: 500; color: var(--noble-charcoal); margin-bottom: 0.25rem;"></div>
-<div id="pdf-filesize" style="font-size: 0.9rem; color: var(--noble-charcoal-light);"></div>
-</div>
-<button onclick="removePdfFile()" style="background: var(--gentle-error); color: white; border: none; border-radius: 8px; padding: 0.5rem; cursor: pointer; transition: all 0.3s ease;" type="button">
-<i class="fas fa-trash"></i>
-</button>
-</div>
-</div>
-</div>
-
-<!-- Aperçu des images sélectionnées -->
-<div class="selected-images-preview" id="selected-images-preview" style="display: none;">
-<h4 style="color: var(--noble-charcoal); margin-bottom: 1rem;">
-<i class="fas fa-check icon-noble"></i>
-                    Images sélectionnées (<span id="selected-count">0</span>/9)
-                </h4>
-<div class="selected-images-grid" id="selected-images-grid">
-<!-- Les images sélectionnées apparaîtront ici -->
-</div>
-</div>
-</div>
-
+<input id="selected-media-input" name="selected_media" type="hidden"/>
 <div class="publish-section">
-<h3 style="color: var(--noble-charcoal); margin-bottom: 1.5rem; display: flex; align-items: center; gap: 0.75rem;">
-<i class="fas fa-paper-plane icon-noble"></i>
-                Finaliser votre post
-            </h3>
-<div class="publish-actions-grid">
-<div class="publish-group schedule-group">
-<label class="publish-group-title" for="publish-time-input">📅 Programmer pour plus tard</label>
-<input class="form-control" id="publish-time-input" name="publish_time" type="datetime-local"/>
-<button class="btn btn-secondary" name="action" style="width: 100%;" type="submit" value="schedule">
-<i class="fas fa-clock"></i> Programmer le post
-                    </button>
+<div class="publish-row">
+<div class="datetime-group">
+<label class="form-label" style="margin-bottom: 0;">Programmer (optionnel)</label>
+<input class="datetime-input" name="publish_date" placeholder="Date" type="date"/>
+<input class="datetime-input" name="publish_time" placeholder="Heure" type="time"/>
 </div>
-<div class="publish-group">
-<label class="publish-group-title">🚀 Actions immédiates</label>
-<button class="btn btn-primary" name="action" style="width: 100%;" type="submit" value="publish_now">
-<i class="fas fa-rocket"></i> Publier maintenant
-                    </button>
-<button class="btn btn-secondary" name="action" style="width: 100%;" type="submit" value="save_draft">
-<i class="fas fa-save"></i> Enregistrer en brouillon
-                    </button>
+<div class="publish-buttons">
+<button class="btn btn-secondary" name="save_draft" type="submit">
+<i class="fas fa-save"></i>
+                            Sauvegarder
+                        </button>
+<button class="btn btn-primary" name="publish" type="submit">
+<i class="fab fa-linkedin"></i>
+                            Publier maintenant
+                        </button>
 </div>
 </div>
 </div>
-
-<a class="btn btn-secondary" href="{{ url_for('dashboard', clear='true') }}" style="margin-top: 2rem;">
-<i class="fas fa-times"></i>
-            Annuler
-        </a>
 </form>
 </div>
 {% endif %}
 
 <script>
-// Script identique à l'original mais avec optimisations pour les nouvelles couleurs
-// Variables globales pour la gestion des médias
-let currentMediaTab = 'local';
-let selectedPexelsPhotos = [];
-let selectedLocalFiles = [];
-let selectedPdfFile = null;
-let pexelsCurrentPage = 1;
-let pexelsCurrentQuery = '';
-let pexelsTotalResults = 0;
-let selectedPexelsPhotos = [];
-
-// Fonction modifiée pour basculer les onglets média avec validation
-function switchMediaTab(tab) {
-    // Vérifier les conflits avant de changer d'onglet
-    if (!canSwitchToTab(tab)) {
-        showLinkedInLimitationAlert();
-        return;
-    }
+// JavaScript pour gestion des médias
+document.addEventListener('DOMContentLoaded', function() {
+    // Sélection d'onglets
+    const tabs = document.querySelectorAll('.media-tab');
+    const contents = document.querySelectorAll('.media-content');
     
-    currentMediaTab = tab;
-    
-    // Mettre à jour les onglets
-    document.querySelectorAll('.media-tab').forEach(t => t.classList.remove('active'));
-    document.querySelector(`.media-tab[onclick="switchMediaTab('${tab}')"]`).classList.add('active');
-    
-    // Mettre à jour les sections
-    document.querySelectorAll('.local-images-section, .pexels-images-section, .pdf-section').forEach(s => {
-        s.classList.remove('active');
-        s.style.display = 'none';
+    tabs.forEach(tab => {
+        tab.addEventListener('click', () => {
+            const target = tab.dataset.tab;
+            
+            tabs.forEach(t => t.classList.remove('active'));
+            contents.forEach(c => c.classList.remove('active'));
+            
+            tab.classList.add('active');
+            document.getElementById(`${target}-content`).classList.add('active');
+        });
     });
     
-    // Afficher la section appropriée
-    let sectionId;
-    if (tab === 'local') {
-        sectionId = 'local-images-section';
-    } else if (tab === 'pexels') {
-        sectionId = 'pexels-images-section';
-    } else if (tab === 'pdf') {
-        sectionId = 'pdf-section';
+    // Upload de fichiers
+    const uploadArea = document.getElementById('upload-area');
+    const fileInput = document.getElementById('media-upload');
+    
+    if (uploadArea && fileInput) {
+        uploadArea.addEventListener('click', () => fileInput.click());
+        
+        uploadArea.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            uploadArea.classList.add('dragover');
+        });
+        
+        uploadArea.addEventListener('dragleave', () => {
+            uploadArea.classList.remove('dragover');
+        });
+        
+        uploadArea.addEventListener('drop', (e) => {
+            e.preventDefault();
+            uploadArea.classList.remove('dragover');
+            
+            const files = e.dataTransfer.files;
+            if (files.length > 0) {
+                fileInput.files = files;
+                handleFileSelection(files[0]);
+            }
+        });
+        
+        fileInput.addEventListener('change', (e) => {
+            if (e.target.files.length > 0) {
+                handleFileSelection(e.target.files[0]);
+            }
+        });
     }
     
-    const targetSection = document.getElementById(sectionId);
-    if (targetSection) {
-        targetSection.classList.add('active');
-        targetSection.style.display = 'block';
+    function handleFileSelection(file) {
+        const selectedMedia = document.getElementById('selected-media');
+        const preview = document.getElementById('selected-media-preview');
+        const input = document.getElementById('selected-media-input');
+        
+        if (file.type.startsWith('image/')) {
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                preview.innerHTML = `
+                    <img src="${e.target.result}" alt="Preview">
+                    <div class="selected-media-info">
+                        <div class="selected-media-name">${file.name}</div>
+                        <div class="selected-media-size">${(file.size / 1024 / 1024).toFixed(2)} MB</div>
+                    </div>
+                    <button type="button" class="remove-media" onclick="removeSelectedMedia()">
+                        <i class="fas fa-times"></i>
+                    </button>
+                `;
+                selectedMedia.style.display = 'block';
+                input.value = `upload:${file.name}`;
+            };
+            reader.readAsDataURL(file);
+        }
     }
     
-    // Masquer l'alerte si l'utilisateur change vers un onglet valide
-    hideLinkedInLimitationAlert();
-}
-
-// Vérifier si on peut basculer vers un onglet
-function canSwitchToTab(targetTab) {
-    const hasImages = selectedLocalFiles.length > 0 || selectedPexelsPhotos.length > 0;
-    const hasPdf = selectedPdfFile !== null;
+    // Pexels API
+    const pexelsBtn = document.getElementById('pexels-search-btn');
+    const pexelsQuery = document.getElementById('pexels-query');
+    const pexelsResults = document.getElementById('pexels-results');
     
-    if (targetTab === 'pdf' && hasImages) {
-        return false;
-    }
-    
-    if ((targetTab === 'local' || targetTab === 'pexels') && hasPdf) {
-        return false;
+    if (pexelsBtn && pexelsQuery) {
+        pexelsBtn.addEventListener('click', searchPexels);
+        pexelsQuery.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                searchPexels();
+            }
+        });
     }
     
-    return true;
-}
-
-// Afficher l'alerte de limitation LinkedIn
-function showLinkedInLimitationAlert() {
-    const alert = document.getElementById('linkedin-limitation-alert');
-    if (alert) {
-        alert.style.display = 'block';
-        alert.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    function searchPexels() {
+        const query = pexelsQuery.value.trim();
+        if (!query) return;
+        
+        pexelsResults.innerHTML = '<div style="text-align: center; padding: 2rem;">Recherche en cours...</div>';
+        
+        fetch(`/search_pexels?query=${encodeURIComponent(query)}&per_page=12`)
+            .then(response => response.json())
+            .then(data => {
+                if (data.photos && data.photos.length > 0) {
+                    pexelsResults.innerHTML = '';
+                    data.photos.forEach(photo => {
+                        const div = document.createElement('div');
+                        div.className = 'pexels-image';
+                        div.innerHTML = `<img src="${photo.src.medium}" alt="${photo.alt}">`;
+                        div.addEventListener('click', () => selectPexelsImage(photo));
+                        pexelsResults.appendChild(div);
+                    });
+                } else {
+                    pexelsResults.innerHTML = '<div style="text-align: center; padding: 2rem; color: var(--gray-medium);">Aucune photo trouvée</div>';
+                }
+            })
+            .catch(error => {
+                console.error('Erreur:', error);
+                pexelsResults.innerHTML = '<div style="text-align: center; padding: 2rem; color: var(--error);">Erreur de recherche</div>';
+            });
     }
-}
-
-// Masquer l'alerte de limitation LinkedIn
-function hideLinkedInLimitationAlert() {
-    const alert = document.getElementById('linkedin-limitation-alert');
-    if (alert) {
-        alert.style.display = 'none';
+    
+    function selectPexelsImage(photo) {
+        const selectedMedia = document.getElementById('selected-media');
+        const preview = document.getElementById('selected-media-preview');
+        const input = document.getElementById('selected-media-input');
+        
+        // Désélectionner les autres images
+        document.querySelectorAll('.pexels-image').forEach(img => img.classList.remove('selected'));
+        event.currentTarget.classList.add('selected');
+        
+        preview.innerHTML = `
+            <img src="${photo.src.medium}" alt="${photo.alt}">
+            <div class="selected-media-info">
+                <div class="selected-media-name">Photo par ${photo.photographer}</div>
+                <div class="selected-media-size">Pexels</div>
+            </div>
+            <button type="button" class="remove-media" onclick="removeSelectedMedia()">
+                <i class="fas fa-times"></i>
+            </button>
+        `;
+        selectedMedia.style.display = 'block';
+        input.value = `pexels:${photo.id}:${photo.src.large}`;
     }
-}
-
-// Initialisation noble au chargement
-document.addEventListener('DOMContentLoaded', function() {
-    // Définir la date par défaut pour le champ de programmation
-    const publishTimeInput = document.getElementById('publish-time-input');
-    if (publishTimeInput) {
-        const now = new Date();
-        now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
-        const formattedDate = now.toISOString().slice(0, 16);
-        publishTimeInput.value = formattedDate;
+    
+    // Mise à jour de l'aperçu du contenu
+    const contentEditor = document.getElementById('content-editor');
+    const postPreview = document.getElementById('post-preview');
+    
+    if (contentEditor && postPreview) {
+        contentEditor.addEventListener('input', () => {
+            let content = contentEditor.value;
+            
+            // Convertir les mentions
+            content = content.replace(/@(\w+)/g, '<span style="color: var(--primary-purple); font-weight: 600;">@$1</span>');
+            
+            // Convertir les retours à la ligne
+            content = content.replace(/\n/g, '<br>');
+            
+            postPreview.innerHTML = content;
+        });
     }
-
+    
     // Animation progressive des éléments avec délais
     const elements = document.querySelectorAll('.fade-in');
     elements.forEach((el, index) => {
         el.style.opacity = '0';
         el.style.transform = 'translateY(20px)';
-        el.style.transition = 'all 0.8s cubic-bezier(0.4, 0, 0.2, 1)';
-        
         setTimeout(() => {
             el.style.opacity = '1';
             el.style.transform = 'translateY(0)';
+            el.style.transition = 'all 0.6s ease';
         }, index * 200);
     });
-
-    // Animation des cartes statistiques
-    document.querySelectorAll('.stat-item').forEach((card, index) => {
-        card.style.opacity = '0';
-        card.style.transform = 'translateY(30px) scale(0.95)';
-        card.style.transition = 'all 0.6s cubic-bezier(0.4, 0, 0.2, 1)';
-        
-        setTimeout(() => {
-            card.style.opacity = '1';
-            card.style.transform = 'translateY(0) scale(1)';
-        }, index * 150);
-    });
-
-    // Interactions nobles sur tous les boutons
-    document.querySelectorAll('.btn, .media-tab, .linkedin-action').forEach(btn => {
-        btn.addEventListener('mouseenter', function() {
-            if (!this.disabled) {
-                this.style.transform = 'translateY(-1px)';
-                if (this.classList.contains('btn-primary')) {
-                    this.style.boxShadow = '0 8px 25px rgba(255, 107, 107, 0.4)';
-                }
-            }
-        });
-        
-        btn.addEventListener('mouseleave', function() {
-            if (!this.disabled) {
-                this.style.transform = 'translateY(0)';
-                this.style.boxShadow = '';
-            }
-        });
-
-        btn.addEventListener('mousedown', function() {
-            if (!this.disabled) {
-                this.style.transform = 'translateY(0) scale(0.98)';
-            }
-        });
-
-        btn.addEventListener('mouseup', function() {
-            if (!this.disabled) {
-                this.style.transform = 'translateY(-1px) scale(1)';
-            }
-        });
-    });
-
-    // Animation spéciale pour les icônes nobles
-    document.querySelectorAll('.icon-noble').forEach(icon => {
-        icon.addEventListener('mouseenter', function() {
-            this.style.transform = 'scale(1.2) rotate(5deg)';
-            this.style.filter = 'drop-shadow(0 0 8px rgba(255, 107, 107, 0.5))';
-        });
-        
-        icon.addEventListener('mouseleave', function() {
-            this.style.transform = 'scale(1) rotate(0deg)';
-            this.style.filter = 'drop-shadow(0 0 3px rgba(255, 107, 107, 0.3))';
-        });
-    });
-
-    // Animation du contenu LinkedIn en temps réel
-    const textarea = document.getElementById('post-content');
-    const previewText = document.getElementById('preview-text');
     
-    if (textarea && previewText) {
-        function updatePreview() {
-            const content = textarea.value;
-            if (content.trim()) {
-                previewText.textContent = content;
-                previewText.classList.remove('empty');
-            } else {
-                previewText.textContent = 'Votre contenu apparaîtra ici...';
-                previewText.classList.add('empty');
-            }
-        }
-        
-        textarea.addEventListener('input', updatePreview);
-        textarea.addEventListener('paste', function() {
-            setTimeout(updatePreview, 50);
-        });
-        
-        // Mise à jour initiale
-        updatePreview();
-    }
-
-    // Animation noble pour le badge de succès
-    const successBadge = document.querySelector('.success-badge');
-    if (successBadge) {
-        setInterval(() => {
-            successBadge.style.transform = 'scale(1.05)';
-            setTimeout(() => {
-                successBadge.style.transform = 'scale(1)';
-            }, 200);
-        }, 3000);
-    }
-
-    // Effet de parallaxe léger sur les éléments ::before
-    window.addEventListener('scroll', function() {
+    // Effet de parallaxe subtil pour les éléments décoratifs
+    window.addEventListener('scroll', () => {
         const scrolled = window.pageYOffset;
         const sections = document.querySelectorAll('.welcome-section, .creation-section');
         
@@ -1409,171 +451,16 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
     });
-
-    // Gestion noble du responsive
-    function handleResponsive() {
-        const isMobile = window.innerWidth <= 768;
-        if (isMobile) {
-            document.querySelectorAll('.form-row').forEach(row => {
-                row.style.gridTemplateColumns = '1fr';
-            });
-        }
-    }
-    
-    window.addEventListener('resize', handleResponsive);
-    handleResponsive();
-
-    // Initialisation des éditeurs de mentions
-    const editors = document.querySelectorAll('.mention-editor');
-    editors.forEach(editor => {
-        // Ici vous pouvez ajouter la logique des mentions si nécessaire
-    });
-    // Pexels search wiring
-    const searchInput = document.getElementById('pexels-search-input');
-    const searchBtn = document.getElementById('pexels-search-btn');
-    if (searchInput && searchBtn) {
-        searchInput.addEventListener('keydown', (e) => {
-            if (e.key === 'Enter') { searchPexelsPhotos(); }
-        });
-    }
 });
 
-// Animation noble des nombres qui montent
-function animateCounter(element, finalValue) {
-    const startValue = 0;
-    const duration = 1000;
-    const startTime = performance.now();
+function removeSelectedMedia() {
+    const selectedMedia = document.getElementById('selected-media');
+    const input = document.getElementById('selected-media-input');
+    selectedMedia.style.display = 'none';
+    input.value = '';
     
-    function updateCounter(currentTime) {
-        const elapsed = currentTime - startTime;
-        const progress = Math.min(elapsed / duration, 1);
-        
-        const currentValue = Math.floor(startValue + (finalValue - startValue) * progress);
-        element.textContent = currentValue;
-        
-        if (progress < 1) {
-            requestAnimationFrame(updateCounter);
-        } else {
-            element.style.transform = 'scale(1.1)';
-            setTimeout(() => {
-                element.style.transform = 'scale(1)';
-            }, 200);
-        }
-    }
-    
-    requestAnimationFrame(updateCounter);
-}
-
-// Animation des statistiques au chargement
-window.addEventListener('load', function() {
-    document.querySelectorAll('.stat-number').forEach(stat => {
-        const value = parseInt(stat.textContent) || 0;
-        if (value > 0) {
-            stat.textContent = '0';
-            setTimeout(() => {
-                animateCounter(stat, value);
-            }, 1000);
-        }
-    });
-});
-</script>
-
-<script>
-async function searchPexelsPhotos(page = 1) {
-    const query = (document.getElementById('pexels-search-input')?.value || '').trim();
-    if (!query || query.length < 2) { return; }
-    pexelsCurrentQuery = query;
-    pexelsCurrentPage = page;
-    const loading = document.getElementById('pexels-loading');
-    const errorEl = document.getElementById('pexels-error');
-    const resultsEl = document.getElementById('pexels-results');
-    const loadMoreBtn = document.getElementById('pexels-load-more');
-    if (!resultsEl) return;
-    if (page === 1) { resultsEl.innerHTML = ''; selectedPexelsPhotos = []; }
-    loading && (loading.style.display = 'block');
-    errorEl && (errorEl.style.display = 'none');
-    try {
-        const res = await fetch('/api/search_photos', {
-            method: 'POST', headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ query, page })
-        });
-        const data = await res.json();
-        if (!res.ok || !data.success || !data.results) { throw new Error('Erreur recherche'); }
-        const photos = data.results.photos || [];
-        pexelsTotalResults = data.results.total_results || 0;
-        renderPexelsResults(photos);
-        // toggle Load more
-        const perPage = data.results.per_page || 12;
-        const shown = page * perPage;
-        if (shown < pexelsTotalResults) {
-            loadMoreBtn && (loadMoreBtn.style.display = 'block');
-        } else {
-            loadMoreBtn && (loadMoreBtn.style.display = 'none');
-        }
-    } catch (e) {
-        errorEl && (errorEl.style.display = 'block');
-    } finally {
-        loading && (loading.style.display = 'none');
-    }
-}
-
-function renderPexelsResults(photos) {
-    const resultsEl = document.getElementById('pexels-results');
-    if (!resultsEl) return;
-    photos.forEach(photo => {
-        const thumb = photo.src && (photo.src.medium || photo.src.small || photo.src.tiny);
-        const large = photo.src && (photo.src.large || photo.src.original);
-        const card = document.createElement('div');
-        card.style.display = 'inline-block';
-        card.style.margin = '6px';
-        card.style.position = 'relative';
-        card.style.cursor = 'pointer';
-        card.style.borderRadius = '12px';
-        card.style.overflow = 'hidden';
-        card.style.boxShadow = '0 4px 10px rgba(0,0,0,0.05)';
-        card.innerHTML = `
-            <img src="${thumb}" alt="pexels" style="width:180px; height:120px; object-fit:cover; display:block;">
-            <div class="overlay-select" style="position:absolute; inset:0; background:rgba(0,0,0,0.35); opacity:0; transition:opacity .2s;"></div>
-            <div class="check-badge" style="position:absolute; top:8px; right:8px; background:#06D6A0; color:#fff; font-size:12px; padding:4px 6px; border-radius:8px; display:none;">Sélectionné</div>
-        `;
-        let selected = false;
-        const toggle = () => {
-            selected = !selected;
-            const overlay = card.querySelector('.overlay-select');
-            const badge = card.querySelector('.check-badge');
-            overlay.style.opacity = selected ? '1' : '0';
-            badge.style.display = selected ? 'block' : 'none';
-            if (selected) {
-                selectedPexelsPhotos.push(photo);
-            } else {
-                selectedPexelsPhotos = selectedPexelsPhotos.filter(p => p.id !== photo.id);
-            }
-            ensureHiddenInputsForPexels();
-        };
-        card.addEventListener('mouseenter', () => card.querySelector('.overlay-select').style.opacity = selected ? '1' : '0.4');
-        card.addEventListener('mouseleave', () => card.querySelector('.overlay-select').style.opacity = selected ? '1' : '0');
-        card.addEventListener('click', toggle);
-        resultsEl.appendChild(card);
-    });
-}
-
-function loadMorePexelsPhotos() {
-    searchPexelsPhotos(pexelsCurrentPage + 1);
-}
-
-function ensureHiddenInputsForPexels() {
-    // Attach selected photo JSON to the publish form as hidden inputs
-    const publishForm = document.querySelector('form[action*="/publish"]') || document.querySelector('form[action*="edit_post"]') || document.querySelector('form');
-    if (!publishForm) return;
-    // Remove existing
-    publishForm.querySelectorAll('input[name="pexels_photos[]"]').forEach(n => n.remove());
-    selectedPexelsPhotos.forEach(photo => {
-        const input = document.createElement('input');
-        input.type = 'hidden';
-        input.name = 'pexels_photos[]';
-        input.value = JSON.stringify(photo);
-        publishForm.appendChild(input);
-    });
+    // Désélectionner l'image Pexels si applicable
+    document.querySelectorAll('.pexels-image').forEach(img => img.classList.remove('selected'));
 }
 </script>
 
