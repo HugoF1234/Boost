@@ -1,43 +1,9 @@
 {% extends "base.html" %}
 {% block content %}
 <style>
-    /* Variables harmonisées avec la nouvelle DA */
-    :root {
-        /* Variables héritées du base.html - nouvelle DA */
-        --primary-orange: #FF9A62;   /* Orange vibrant */
-        --primary-pink: #FF55A1;     /* Rose dynamique */
-        --primary-purple: #6B47FF;   /* Violet profond (CTA) */
-        --gradient-main: linear-gradient(135deg, #FF9A62, #FF55A1, #6B47FF);
-        --gradient-warm: linear-gradient(135deg, #FF9A62, #FF55A1);
-        --gradient-cool: linear-gradient(135deg, #FF55A1, #6B47FF);
-        --white: #FFFFFF;           /* Blanc pur pour cartes */
-        --black: #000000;           /* Noir profond pour titres */
-        --gray-dark: #444444;       /* Gris foncé pour texte secondaire */
-        --gray-light: #AAAAAA;      /* Gris clair pour placeholders */
-        --shadow-soft: 0 4px 10px rgba(0, 0, 0, 0.05);
-        --shadow-gentle: 0 8px 20px rgba(0, 0, 0, 0.08);
-        --shadow-strong: 0 20px 40px rgba(0, 0, 0, 0.12);
-    }
+    /* Styles spécifiques à la page dashboard - Les styles principaux sont dans style.css */
 
-    /* Fond transparent pour voir le dégradé de base.html */
-    body {
-        background: transparent !important;
-        color: var(--black); /* noir profond selon nouvelle DA */
-        line-height: 1.7;
-    }
-
-    /* Cartes blanches avec coins arrondis selon nouvelle DA */
-    .welcome-section {
-        background: var(--white); /* blanc pur pour cartes selon consignes */
-        border-radius: 12px; /* coins arrondis */
-        padding: 2.5rem;
-        margin-bottom: 2rem;
-        border: 1px solid rgba(0, 0, 0, 0.05);
-        box-shadow: var(--shadow-soft); /* ombres légères selon consignes */
-        position: relative;
-        overflow: hidden;
-    }
-
+    /* Animation spécifique pour la page dashboard */
     .welcome-section::before {
         content: '';
         position: absolute;
