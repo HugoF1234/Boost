@@ -48,13 +48,11 @@
 
     /* Header noble avec transparence pour laisser passer le fond animé */
     .welcome-section {
-        background: rgba(255, 255, 255, 0.85);
-        backdrop-filter: blur(20px);
-        -webkit-backdrop-filter: blur(20px);
-        border-radius: 20px;
+        background: #ffffff;
+        border-radius: 12px;
         padding: 2.5rem;
         margin-bottom: 2rem;
-        border: 1px solid rgba(255, 107, 107, 0.2);
+        border: 1px solid rgba(0, 0, 0, 0.05);
         box-shadow: var(--shadow-whisper);
         position: relative;
         overflow: hidden;
@@ -122,20 +120,20 @@
     .stat-item {
         text-align: center;
         padding: 1rem;
-        background: rgba(255, 255, 255, 0.7);
-        backdrop-filter: blur(10px);
+        background: #ffffff;
         border-radius: 12px;
-        border: 1px solid rgba(255, 107, 107, 0.15);
+        border: 1px solid rgba(0, 0, 0, 0.05);
+        box-shadow: var(--shadow-whisper);
         transition: all 0.3s ease;
         position: relative;
         overflow: hidden;
     }
 
     .stat-item:hover {
-        background: rgba(255, 255, 255, 0.9);
+        background: #ffffff;
         transform: translateY(-2px);
         box-shadow: var(--shadow-gentle);
-        border-color: rgba(255, 107, 107, 0.3);
+        border-color: rgba(0, 0, 0, 0.08);
     }
 
     .stat-item::before {
@@ -189,13 +187,11 @@
 
     /* Section principale de création avec transparence */
     .creation-section {
-        background: rgba(255, 255, 255, 0.9);
-        backdrop-filter: blur(20px);
-        -webkit-backdrop-filter: blur(20px);
-        border-radius: 20px;
+        background: #ffffff;
+        border-radius: 12px;
         padding: 2.5rem;
         margin-bottom: 2rem;
-        border: 1px solid rgba(255, 107, 107, 0.15);
+        border: 1px solid rgba(0, 0, 0, 0.05);
         box-shadow: var(--shadow-whisper);
         position: relative;
         overflow: hidden;
@@ -247,10 +243,9 @@
 
     /* Article sélectionné - style très doux avec transparence */
     .selected-article {
-        background: rgba(255, 255, 255, 0.8);
-        backdrop-filter: blur(15px);
-        border: 1px solid rgba(255, 107, 107, 0.2);
-        border-radius: 16px;
+        background: #ffffff;
+        border: 1px solid rgba(0, 0, 0, 0.05);
+        border-radius: 12px;
         padding: 2rem;
         margin-bottom: 2rem;
         position: relative;
@@ -294,10 +289,9 @@
 
     /* Aperçu LinkedIn avec transparence améliorée */
     .linkedin-post {
-        background: rgba(255, 255, 255, 0.95);
-        backdrop-filter: blur(20px);
-        border: 1px solid rgba(255, 107, 107, 0.15);
-        border-radius: 16px;
+        background: #ffffff;
+        border: 1px solid rgba(0, 0, 0, 0.05);
+        border-radius: 12px;
         padding: 1.5rem;
         max-width: 600px;
         margin: 2rem auto;
@@ -311,7 +305,7 @@
     .linkedin-post:hover {
         transform: translateY(-2px);
         box-shadow: var(--shadow-soft);
-        border-color: rgba(255, 107, 107, 0.3);
+        border-color: rgba(0, 0, 0, 0.1);
     }
 
     .linkedin-header {
@@ -514,9 +508,9 @@
     }
 
     .media-tab.active {
-        color: var(--primary-coral);
-        border-bottom-color: var(--primary-coral);
-        background: rgba(255, 107, 107, 0.1);
+        color: var(--primary-purple);
+        border-bottom-color: var(--primary-purple);
+        background: rgba(107, 71, 255, 0.08);
     }
 
     .media-tab:hover {
@@ -613,16 +607,16 @@
     }
 
     .btn-primary {
-        background: var(--gradient-warm);
-        color: white;
-        box-shadow: 0 4px 15px rgba(255, 107, 107, 0.3);
-        border: 1px solid rgba(255, 255, 255, 0.2);
+        background: var(--primary-purple);
+        color: #fff;
+        box-shadow: 0 4px 15px rgba(107, 71, 255, 0.25);
+        border: none;
     }
 
     .btn-primary:hover {
         transform: translateY(-2px);
-        box-shadow: 0 8px 25px rgba(255, 107, 107, 0.4);
-        background: var(--gradient-pink);
+        box-shadow: 0 8px 25px rgba(107, 71, 255, 0.35);
+        filter: brightness(1.05);
     }
 
     .btn-secondary {
@@ -640,10 +634,9 @@
 
     /* Section d'invitation aux actualités avec transparence */
     .news-invitation {
-        background: rgba(255, 255, 255, 0.8);
-        backdrop-filter: blur(15px);
-        border: 1px solid rgba(255, 107, 107, 0.2);
-        border-radius: 16px;
+        background: #ffffff;
+        border: 1px solid rgba(0, 0, 0, 0.05);
+        border-radius: 12px;
         padding: 1.75rem;
         margin-top: 2rem;
         text-decoration: none;
@@ -671,10 +664,10 @@
     }
 
     .news-invitation:hover {
-        background: rgba(255, 255, 255, 0.95);
+        background: #ffffff;
         transform: translateY(-2px);
         box-shadow: var(--shadow-gentle);
-        border-color: var(--primary-coral);
+        border-color: rgba(0, 0, 0, 0.08);
     }
 
     .news-icon {
@@ -859,9 +852,9 @@
 
     /* Icônes avec style noble et couleurs vibrantes */
     .icon-noble {
-        color: var(--primary-coral);
+        color: var(--primary-purple);
         font-size: 1.125rem;
-        filter: drop-shadow(0 0 3px rgba(255, 107, 107, 0.3));
+        filter: drop-shadow(0 0 3px rgba(107, 71, 255, 0.25));
     }
 
     /* Animation de pulsation douce pour les éléments interactifs */
@@ -873,7 +866,7 @@
     .creation-section:hover {
         transform: translateY(-1px);
         box-shadow: var(--shadow-gentle);
-        border-color: rgba(255, 107, 107, 0.3);
+        border-color: rgba(0, 0, 0, 0.08);
     }
 </style>
 
