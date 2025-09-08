@@ -1005,13 +1005,42 @@ html, body {
     max-width: none !important; /* Supprimer toute limite de largeur */
 }
 
-/* Forcer la largeur sur les éléments historique */
+/* SOLUTION KANBAN: Styles manquants pour les colonnes */
+.kanban-container {
+    display: flex !important;
+    gap: 1.5rem;
+    width: 100% !important;
+    max-width: none !important;
+    min-width: 100% !important;
+    box-sizing: border-box !important;
+}
+
+.kanban-column {
+    flex: 1 !important; /* Largeur égale pour toutes les colonnes */
+    width: 33.333% !important; /* 3 colonnes = 33.333% chacune */
+    max-width: none !important;
+    min-width: 0 !important; /* Permettre la flexibilité */
+    box-sizing: border-box !important;
+}
+
+.column-content {
+    width: 100% !important;
+    max-width: none !important;
+    box-sizing: border-box !important;
+}
+
+.column-header {
+    width: 100% !important;
+    max-width: none !important;
+    box-sizing: border-box !important;
+}
+
+/* Forcer la largeur sur les autres éléments historique */
 .posts-navigation,
 .posts-content,
 .tab-content,
 .dedicated-page,
 .posts-grid,
-.kanban-container,
 .linkedin-post-card {
     width: 100% !important; /* Forcer largeur maximale */
     max-width: none !important; /* Supprimer toute limite */
