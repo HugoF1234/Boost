@@ -999,6 +999,26 @@ html, body {
     min-width: 100%; /* Largeur minimale complète */
 }
 
+/* SOLUTION UNIVERSELLE: Forcer largeur maximale */
+.main-content {
+    width: calc(100% - 280px) !important; /* Utiliser toute la largeur disponible */
+    max-width: none !important; /* Supprimer toute limite de largeur */
+}
+
+/* Forcer la largeur sur les éléments historique */
+.posts-navigation,
+.posts-content,
+.tab-content,
+.dedicated-page,
+.posts-grid,
+.kanban-container,
+.linkedin-post-card {
+    width: 100% !important; /* Forcer largeur maximale */
+    max-width: none !important; /* Supprimer toute limite */
+    min-width: 100% !important; /* Largeur minimale */
+    box-sizing: border-box !important; /* Inclure padding/border */
+}
+
 .nav-tab {
     background: none;
     border: none;
