@@ -250,7 +250,6 @@
         .nav-bottom {
             margin-top: auto;
             padding-top: 1.5rem;
-            border-top: 1px solid rgba(0, 0, 0, 0.05);
             background: none !important;
             box-shadow: none !important;
             min-height: 80px;
@@ -757,8 +756,7 @@
             </div>
 </main>
 </div>
-<!-- Bouton flottant global pour créer un nouveau post -->
-{% if request.endpoint in ['calendar', 'historique', 'profil', 'parametres', 'news_assistant'] %}
+<!-- Bouton flottant global pour créer un nouveau post - TOUJOURS PRÉSENT -->
 <a href="{{ url_for('dashboard') }}" class="floating-btn" title="Créer un nouveau post">
     <i class="fas fa-plus"></i>
     <span class="floating-label">Créer un nouveau post</span>
@@ -770,7 +768,7 @@
     right: 2rem;
     width: 60px;
     height: 60px;
-    background: var(--gradient-main);
+    background: var(--gradient-cool);
     color: white;
     border-radius: 50%;
     display: flex;
@@ -808,16 +806,16 @@
     right: 110%; /* espace horizontal à gauche du bouton */
     top: 50%;
     transform: translateY(-50%) translateX(0) scale(0.95);
-    background: var(--glass-white);
-    color: var(--primary-coral);
+    background: var(--white);
+    color: var(--primary-purple);
     padding: 0.32em 0.9em;
     border-radius: 8px;
     font-size: 0.92rem;
-    font-weight: 400;
-    box-shadow: 0 2px 10px rgba(255, 107, 107, 0.08);
+    font-weight: 500;
+    box-shadow: var(--shadow-whisper);
     white-space: nowrap;
     transition: opacity 0.3s, transform 0.3s, right 0.3s;
-    border: 1px solid rgba(255, 107, 107, 0.08);
+    border: 1px solid var(--noble-stone);
     letter-spacing: 0;
     text-align: left;
     margin-left: 0;
