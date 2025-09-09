@@ -1691,7 +1691,11 @@ html, body {
   width: 100% !important;
   max-width: none !important;
   min-width: 100% !important;
-  margin: 0 !important;
+  margin-left: 0 !important;   /* Pas de marge gauche */
+  margin-right: 0 !important;  /* Pas de marge droite */
+  margin-top: 2rem !important;    /* GARDER marge verticale */
+  margin-bottom: 2rem !important; /* GARDER marge verticale */
+  padding: 2.5rem !important;     /* RESTAURER padding interne */
   box-sizing: border-box !important;
 }
 
