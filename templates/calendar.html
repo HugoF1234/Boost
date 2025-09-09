@@ -1,6 +1,24 @@
 {% extends "base.html" %}
 {% block content %}
 <style>
+    /* Variables CSS pour la cohérence avec la DA globale */
+    :root {
+        --primary-coral: #FF6B6B;
+        --noble-charcoal: #2d3748;
+        --noble-charcoal-light: #4a5568;
+        --noble-warm: #f7fafc;
+        --noble-stone: #e2e8f0;
+        --noble-sage: #8b9a7c;
+        --noble-sage-light: #a8b59a;
+        --noble-sage-dark: #6b7865;
+        --white: #ffffff;
+        --black: #000000;
+        --gray-lighter: #f1f5f9;
+        --shadow-whisper: 0 4px 10px rgba(0, 0, 0, 0.05);
+        --shadow-soft: 0 4px 15px rgba(0, 0, 0, 0.08);
+        --shadow-gentle: 0 8px 25px rgba(0, 0, 0, 0.12);
+    }
+    
     /* Styles spécifiques à la page calendrier - Les styles principaux sont dans style.css */
 
     /* Header avec cartes blanches selon nouvelle DA */
@@ -124,7 +142,7 @@
     }
 
     .btn-primary-noble {
-        background: linear-gradient(135deg, var(--noble-sage) 0%, var(--noble-sage-light) 100%);
+        background: linear-gradient(135deg, var(--primary-coral) 0%, rgba(255, 107, 107, 0.8) 100%);
         color: white;
         box-shadow: var(--shadow-whisper);
     }
@@ -636,7 +654,7 @@
 <!-- Actions rapides nobles -->
 <div class="quick-actions fade-in">
     <h3 class="actions-title">
-        <i class="fas fa-lightning-bolt" style="color: var(--noble-sage);"></i>
+        <i class="fas fa-lightning-bolt" style="color: var(--primary-coral);"></i>
         Actions rapides
     </h3>
     <div class="actions-grid">
@@ -963,7 +981,7 @@ function openNewPostDialog(date) {
     
     dialog.innerHTML = `
         <h3 style="color: var(--noble-charcoal); margin-bottom: 1rem; display: flex; align-items: center; gap: 0.75rem;">
-            <i class="fas fa-plus-circle" style="color: var(--noble-sage);"></i>
+            <i class="fas fa-plus-circle" style="color: var(--primary-coral);"></i>
             Nouveau post
         </h3>
         <p style="color: var(--noble-charcoal-light); margin-bottom: 1.5rem; font-size: 0.95rem;">
@@ -1134,7 +1152,7 @@ function generateWeeklyPlan() {
         position: fixed;
         top: 2rem;
         right: 2rem;
-        background: linear-gradient(135deg, var(--noble-sage) 0%, var(--noble-sage-light) 100%);
+        background: linear-gradient(135deg, var(--primary-coral) 0%, rgba(255, 107, 107, 0.8) 100%);
         color: white;
         padding: 1rem 1.5rem;
         border-radius: 12px;
