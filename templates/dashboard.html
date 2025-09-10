@@ -130,7 +130,7 @@
         <p class="section-subtitle spaced-subtitle">Utilisez l'IA pour créer rapidement un contenu authentique et engageant pour votre audience LinkedIn</p>
 </div>
     
-<form method="post">
+    <form method="post" onsubmit="handleCreatePost(event)">
         <!-- Ligne 1 : Sujet du post -->
 <div class="form-group">
             <label class="form-label">
@@ -226,7 +226,89 @@
             </button>
             </div>
 </div>
-</form>
+    </form>
+    
+    <!-- Section de contenu personnalisé (masquée par défaut) -->
+    <div class="custom-content-section" id="customContentSection" style="display: none;">
+        <div class="content-header">
+            <h2 class="content-title">
+                <i class="fas fa-magic icon-noble"></i>
+                Votre contenu personnalisé
+            </h2>
+            <div class="content-settings-summary" id="settingsSummary">
+                <!-- Les paramètres choisis seront affichés ici -->
+            </div>
+        </div>
+        
+        <!-- Post LinkedIn Preview -->
+        <div class="linkedin-post-preview">
+            <div class="linkedin-post-header">
+                <div class="linkedin-avatar">
+                    <i class="fas fa-user"></i>
+                </div>
+                <div class="linkedin-user-info">
+                    <div class="linkedin-name">Votre Nom</div>
+                    <div class="linkedin-title">Votre Titre Professionnel</div>
+                    <div class="linkedin-time">Maintenant</div>
+                </div>
+            </div>
+            
+            <div class="linkedin-post-content">
+                <div class="linkedin-post-text" id="postContent">
+                    <!-- Le contenu généré sera affiché ici -->
+                </div>
+                <div class="linkedin-post-images" id="postImages">
+                    <!-- Les images uploadées seront affichées ici -->
+                </div>
+            </div>
+            
+            <div class="linkedin-post-actions">
+                <button class="linkedin-action-btn">
+                    <i class="fas fa-thumbs-up"></i>
+                    J'aime
+                </button>
+                <button class="linkedin-action-btn">
+                    <i class="fas fa-comment"></i>
+                    Commenter
+                </button>
+                <button class="linkedin-action-btn">
+                    <i class="fas fa-share"></i>
+                    Partager
+                </button>
+            </div>
+        </div>
+        
+        <!-- Zone d'upload de photos -->
+        <div class="photo-upload-section">
+            <div class="photo-upload-area" id="photoUploadArea">
+                <div class="upload-content">
+                    <i class="fas fa-cloud-upload-alt"></i>
+                    <p>Glissez-déposez vos photos ici</p>
+                    <p class="upload-hint">ou cliquez pour sélectionner</p>
+                </div>
+                <input type="file" id="photoInput" multiple accept="image/*" style="display: none;">
+            </div>
+            <div class="uploaded-photos" id="uploadedPhotos">
+                <!-- Les photos uploadées seront affichées ici -->
+            </div>
+        </div>
+        
+        <!-- Actions du post -->
+        <div class="post-actions">
+            <button class="btn btn-secondary post-action-btn" onclick="saveAsDraft()">
+                <i class="fas fa-save"></i>
+                Sauvegarder en brouillon
+            </button>
+            <button class="btn btn-warning post-action-btn" onclick="schedulePost()">
+                <i class="fas fa-clock"></i>
+                Programmer
+            </button>
+            <button class="btn btn-primary post-action-btn" onclick="publishPost()">
+                <i class="fas fa-paper-plane"></i>
+                Publier maintenant
+            </button>
+        </div>
+    </div>
     
     <!-- Bouton "Créer un post basé sur l'actualité" -->
     <div class="news-invitation-section">
@@ -612,6 +694,170 @@ function showSettingsSavedMessage() {
         }, 300);
     }, 3000);
 }
+
+// Fonction pour gérer la soumission du formulaire
+function handleCreatePost(event) {
+    event.preventDefault();
+    
+    // Récupérer les valeurs du formulaire
+    const subject = document.querySelector('input[name="subject"]').value;
+    const tone = document.querySelector('select[name="tone"]').value;
+    const customInstructions = document.querySelector('textarea[name="custom_instructions"]').value;
+    const perspective = document.querySelector('select[name="perspective"]').value;
+    
+    // Masquer les sections existantes
+    document.querySelector('.welcome-section').style.display = 'none';
+    document.querySelector('.creation-section').style.display = 'none';
+    
+    // Afficher la section de contenu personnalisé
+    document.getElementById('customContentSection').style.display = 'block';
+    
+    // Mettre à jour le résumé des paramètres
+    updateSettingsSummary(subject, tone, customInstructions, perspective);
+    
+    // Générer le contenu du post (simulation)
+    generatePostContent(subject, tone, customInstructions, perspective);
+    
+    console.log('Post creation flow started:', { subject, tone, customInstructions, perspective });
+}
+
+// Mettre à jour le résumé des paramètres
+function updateSettingsSummary(subject, tone, customInstructions, perspective) {
+    const summary = document.getElementById('settingsSummary');
+    summary.innerHTML = `
+        <div class="settings-item">
+            <strong>Sujet:</strong> ${subject}
+        </div>
+        <div class="settings-item">
+            <strong>Ton:</strong> ${tone}
+        </div>
+        <div class="settings-item">
+            <strong>Perspective:</strong> ${perspective}
+        </div>
+        ${customInstructions ? `<div class="settings-item"><strong>Instructions:</strong> ${customInstructions}</div>` : ''}
+    `;
+}
+
+// Générer le contenu du post
+function generatePostContent(subject, tone, customInstructions, perspective) {
+    const postContent = document.getElementById('postContent');
+    
+    // Simulation de génération de contenu
+    const content = `
+        <p>🎯 <strong>${subject}</strong></p>
+        <p>Voici quelques conseils pratiques basés sur mon expérience :</p>
+        <p>• Point clé #1</p>
+        <p>• Point clé #2</p>
+        <p>• Point clé #3</p>
+        <p>Qu'en pensez-vous ? Partagez votre expérience en commentaire ! 👇</p>
+        <p>#${subject.replace(/\s+/g, '').toLowerCase()} #conseils #professionnel</p>
+    `;
+    
+    postContent.innerHTML = content;
+}
+
+// Fonctions pour les actions du post
+function saveAsDraft() {
+    console.log('Sauvegarde en brouillon');
+    showMessage('Post sauvegardé en brouillon !', 'success');
+}
+
+function schedulePost() {
+    console.log('Programmation du post');
+    showMessage('Fonctionnalité de programmation à venir !', 'info');
+}
+
+function publishPost() {
+    console.log('Publication du post');
+    showMessage('Post publié avec succès !', 'success');
+}
+
+function showMessage(text, type) {
+    const message = document.createElement('div');
+    message.className = `settings-saved-message ${type}`;
+    message.innerHTML = `
+        <i class="fas fa-${type === 'success' ? 'check-circle' : 'info-circle'}"></i>
+        ${text}
+    `;
+    
+    document.body.appendChild(message);
+    
+    setTimeout(() => {
+        message.classList.add('show');
+    }, 100);
+    
+    setTimeout(() => {
+        message.classList.remove('show');
+        setTimeout(() => {
+            document.body.removeChild(message);
+        }, 300);
+    }, 3000);
+}
+
+// Fonctionnalité d'upload de photos
+function initializePhotoUpload() {
+    const uploadArea = document.getElementById('photoUploadArea');
+    const photoInput = document.getElementById('photoInput');
+    const uploadedPhotos = document.getElementById('uploadedPhotos');
+    
+    // Clic sur la zone d'upload
+    uploadArea.addEventListener('click', () => {
+        photoInput.click();
+    });
+    
+    // Gestion du drag & drop
+    uploadArea.addEventListener('dragover', (e) => {
+        e.preventDefault();
+        uploadArea.classList.add('dragover');
+    });
+    
+    uploadArea.addEventListener('dragleave', () => {
+        uploadArea.classList.remove('dragover');
+    });
+    
+    uploadArea.addEventListener('drop', (e) => {
+        e.preventDefault();
+        uploadArea.classList.remove('dragover');
+        handleFiles(e.dataTransfer.files);
+    });
+    
+    // Gestion de la sélection de fichiers
+    photoInput.addEventListener('change', (e) => {
+        handleFiles(e.target.files);
+    });
+    
+    function handleFiles(files) {
+        Array.from(files).forEach(file => {
+            if (file.type.startsWith('image/')) {
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    addPhotoPreview(e.target.result, file.name);
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+    }
+    
+    function addPhotoPreview(src, filename) {
+        const photoDiv = document.createElement('div');
+        photoDiv.className = 'uploaded-photo';
+        photoDiv.innerHTML = `
+            <img src="${src}" alt="${filename}">
+            <button class="remove-photo" onclick="removePhoto(this)">×</button>
+        `;
+        uploadedPhotos.appendChild(photoDiv);
+    }
+}
+
+// Supprimer une photo
+function removePhoto(button) {
+    button.parentElement.remove();
+}
+
+// Initialiser l'upload de photos quand la page est chargée
+document.addEventListener('DOMContentLoaded', function() {
+    initializePhotoUpload();
+});
 </script>
 
 {% endblock %}
