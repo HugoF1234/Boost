@@ -506,6 +506,76 @@ html, body {
     color: var(--primary-coral);
 }
 
+.settings-panel-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 1rem;
+    margin-top: 2rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid rgba(255, 107, 107, 0.1);
+}
+
+.settings-cancel-btn {
+    background: var(--gray-lighter);
+    color: var(--gray-dark);
+    border: 1px solid var(--gray-light);
+    padding: 0.75rem 1.5rem;
+    border-radius: 8px;
+    font-weight: 500;
+    transition: all 0.3s ease;
+}
+
+.settings-cancel-btn:hover {
+    background: var(--gray-light);
+    color: var(--noble-charcoal);
+}
+
+.settings-ok-btn {
+    background: linear-gradient(135deg, var(--primary-coral) 0%, rgba(255, 107, 107, 0.9) 100%);
+    color: white;
+    border: none;
+    padding: 0.75rem 1.5rem;
+    border-radius: 8px;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(255, 107, 107, 0.3);
+}
+
+.settings-ok-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(255, 107, 107, 0.4);
+}
+
+.settings-saved-message {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    background: var(--white);
+    color: var(--primary-coral);
+    padding: 1rem 1.5rem;
+    border-radius: 12px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
+    border: 1px solid rgba(255, 107, 107, 0.2);
+    z-index: 3000;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    font-weight: 600;
+    transform: translateX(100%);
+    opacity: 0;
+    transition: all 0.3s ease;
+}
+
+.settings-saved-message.show {
+    transform: translateX(0);
+    opacity: 1;
+}
+
+.settings-saved-message i {
+    font-size: 1.2rem;
+    color: var(--primary-coral);
+}
+
 
 .create-btn-wrapper {
     display: flex;
