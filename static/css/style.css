@@ -430,10 +430,10 @@ html, body {
 
 .compact-controls {
     display: grid;
-    grid-template-columns: 1fr auto auto;
+    grid-template-columns: 180px 1fr auto;
     gap: 1.5rem;
     align-items: end;
-    margin-top: 2rem;
+    margin-top: 3rem;
 }
 
 .tone-group {
@@ -441,7 +441,7 @@ html, body {
 }
 
 .tone-group .form-control {
-    min-width: 200px;
+    width: 100%;
 }
 
 .advanced-settings-compact {
@@ -452,7 +452,7 @@ html, body {
     background: var(--white);
     border: 1px solid rgba(255, 107, 107, 0.2);
     border-radius: 12px;
-    padding: 1rem 1.25rem;
+    padding: 1rem 1.5rem;
     font-size: 0.95rem;
     color: var(--noble-charcoal);
     cursor: pointer;
@@ -464,6 +464,8 @@ html, body {
     box-shadow: var(--shadow-whisper);
     font-weight: 500;
     min-height: 56px;
+    width: 100%;
+    justify-content: center;
 }
 
 .settings-toggle:hover {
@@ -1760,6 +1762,12 @@ html, body {
     font-size: 1rem;
     line-height: 1.6;
     font-weight: 400;
+}
+
+.spaced-subtitle {
+    margin-bottom: 2.5rem !important;
+    line-height: 1.7;
+    letter-spacing: 0.01em;
 }
 
 /* ========================================
