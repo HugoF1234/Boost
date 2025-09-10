@@ -733,113 +733,34 @@ function handleCreatePost(event) {
 
     console.log('Form values:', { subject, tone, customInstructions, perspective });
 
-    // Masquer les sections existantes
-    const welcomeSection = document.querySelector('.welcome-section');
-    const creationSection = document.querySelector('.creation-section');
+    // Rediriger vers la nouvelle page d'éditeur
+    const form = document.createElement('form');
+    form.method = 'POST';
+    form.action = '{{ url_for("custom_post_editor") }}';
     
-    if (welcomeSection) welcomeSection.style.display = 'none';
-    if (creationSection) creationSection.style.display = 'none';
-
-    // Afficher la section de contenu personnalisé
-    const customSection = document.getElementById("customContentSection");
-    if (customSection) {
-        customSection.style.display = "block";
-        
-        // Mettre à jour le résumé des paramètres
-        const settingsSummary = document.getElementById("settingsSummary");
-        if (settingsSummary) {
-            settingsSummary.innerHTML = `
-                <div class="settings-item"><strong>Sujet :</strong> ${subject}</div>
-                <div class="settings-item"><strong>Ton :</strong> ${tone}</div>
-                <div class="settings-item"><strong>Perspective :</strong> ${perspective}</div>
-                ${customInstructions ? `<div class="settings-item"><strong>Instructions :</strong> ${customInstructions}</div>` : ''}
-            `;
-        }
-        
-        // Générer le contenu avec Gemini via AJAX
-        generateContentWithGemini(subject, tone, customInstructions, perspective);
-    }
+    // Ajouter les champs cachés
+    const fields = [
+        { name: 'subject', value: subject },
+        { name: 'tone', value: tone },
+        { name: 'custom_instructions', value: customInstructions },
+        { name: 'perspective', value: perspective }
+    ];
+    
+    fields.forEach(field => {
+        const input = document.createElement('input');
+        input.type = 'hidden';
+        input.name = field.name;
+        input.value = field.value;
+        form.appendChild(input);
+    });
+    
+    document.body.appendChild(form);
+    form.submit();
 
     console.log('Post creation completed');
 }
 
-// Fonction pour générer le contenu avec Gemini
-async function generateContentWithGemini(subject, tone, customInstructions, perspective) {
-    const postContent = document.getElementById("postContent");
-    const loadingIndicator = document.getElementById("loadingIndicator");
-    
-    if (loadingIndicator) loadingIndicator.style.display = "block";
-    if (postContent) postContent.innerHTML = "Génération du contenu en cours...";
-    
-    try {
-        const response = await fetch('/generate-content', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-                subject: subject,
-                tone: tone,
-                custom_instructions: customInstructions,
-                perspective: perspective
-            })
-        });
-        
-        const data = await response.json();
-        
-        if (data.success && postContent) {
-            postContent.innerHTML = data.content;
-            
-            // Synchroniser avec l'éditeur
-            const editor = document.getElementById("postContentEditor");
-            if (editor) {
-                editor.value = data.content;
-                updateCharCount();
-            }
-        } else {
-            postContent.innerHTML = "Erreur lors de la génération du contenu.";
-        }
-    } catch (error) {
-        console.error('Erreur:', error);
-        if (postContent) {
-            postContent.innerHTML = "Erreur lors de la génération du contenu.";
-        }
-    } finally {
-        if (loadingIndicator) loadingIndicator.style.display = "none";
-    }
-}
-
-// Fonction pour mettre à jour le compteur de caractères
-function updateCharCount() {
-    const editor = document.getElementById("postContentEditor");
-    const charCount = document.getElementById("charCount");
-    
-    if (editor && charCount) {
-        const count = editor.value.length;
-        charCount.textContent = count;
-        
-        if (count > 900) {
-            charCount.style.color = '#dc3545';
-        } else if (count > 800) {
-            charCount.style.color = '#ffc107';
-        } else {
-            charCount.style.color = '#28a745';
-        }
-    }
-}
-
-// Fonction pour synchroniser l'éditeur avec l'affichage
-function syncEditorWithDisplay() {
-    const editor = document.getElementById("postContentEditor");
-    const postContent = document.getElementById("postContent");
-    
-    if (editor && postContent) {
-        editor.addEventListener('input', function() {
-            postContent.innerHTML = editor.value.replace(/\n/g, '<br>');
-            updateCharCount();
-        });
-    }
-}
+// Fonctions supprimées - maintenant dans custom_post_editor.html
 
 // Fonction supprimée - intégrée dans handleCreatePost
 
