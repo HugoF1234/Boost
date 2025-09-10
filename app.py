@@ -264,7 +264,9 @@ SCOPES = "openid email profile w_member_social"
 GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
 if not GEMINI_API_KEY:
     logger.error("GEMINI_API_KEY not found in environment variables")
-    GEMINI_API_KEY = "AIzaSyAH-hVzlQJQTCOLB1UsznxrObuY8XIsKMQ"  # Clé par défaut pour le développement
+    # Pour le développement local, tu peux mettre ta clé ici temporairement
+    GEMINI_API_KEY = "AIzaSyAH-hVzlQJQTCOLB1UsznxrObuY8XIsKMQ"
+    logger.warning("Using hardcoded API key for development - NOT RECOMMENDED FOR PRODUCTION")
 
 genai.configure(api_key=GEMINI_API_KEY)
 import requests
