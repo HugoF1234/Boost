@@ -2012,6 +2012,9 @@ def custom_post_editor():
             else:
                 generated_content = f"❌ Erreur lors de la génération du contenu: {str(e)}"
     
+    # Récupérer l'URL de la photo de profil
+    profile_picture_url = session['profile'].get("picture", "")
+    
     return render_template(
         "custom_post_editor.html",
         **session['profile'],
@@ -2020,7 +2023,8 @@ def custom_post_editor():
         custom_instructions=custom_instructions,
         perspective=perspective,
         generated_content=generated_content,
-        user=user
+        user=user,
+        profile_picture_url=profile_picture_url
     )
 
 # Première définition supprimée - doublon
