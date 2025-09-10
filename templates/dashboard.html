@@ -74,7 +74,7 @@
             </div>
 </div>
 </div>
-<form method="post">
+<form method="post" onsubmit="handleCreatePost(event)">
 <div class="form-group">
 <label class="form-label">
 <i class="fas fa-magic icon-noble"></i>
@@ -722,12 +722,19 @@ function handleCreatePost(event) {
         perspectiveSelect: !!perspectiveSelect
     });
     
-    if (!subjectInput || !toneSelect) {
-        console.error('Required form elements not found');
+    // Si pas de champ subject, on utilise un sujet par défaut
+    let subject = 'Post LinkedIn';
+    if (subjectInput && subjectInput.value.trim()) {
+        subject = subjectInput.value;
+    } else {
+        console.log('No subject field found, using default subject');
+    }
+    
+    if (!toneSelect) {
+        console.error('Tone select not found');
         return;
     }
     
-    const subject = subjectInput.value;
     const tone = toneSelect.value;
     const customInstructions = customInstructionsTextarea ? customInstructionsTextarea.value : '';
     const perspective = perspectiveSelect ? perspectiveSelect.value : 'neutre';
