@@ -231,10 +231,16 @@
     <!-- Section de contenu personnalisé (masquée par défaut) -->
     <div class="custom-content-section" id="customContentSection" style="display: none;">
         <div class="content-header">
-            <h2 class="content-title">
-                <i class="fas fa-magic icon-noble"></i>
-                Votre contenu personnalisé
-            </h2>
+            <div class="content-title-row">
+                <h2 class="content-title">
+                    <i class="fas fa-magic icon-noble"></i>
+                    Votre contenu personnalisé
+                </h2>
+                <button class="btn btn-secondary back-btn" onclick="resetPageDisplay()">
+                    <i class="fas fa-arrow-left"></i>
+                    Retour
+                </button>
+            </div>
             <div class="content-settings-summary" id="settingsSummary">
                 <!-- Les paramètres choisis seront affichés ici -->
             </div>
@@ -854,9 +860,20 @@ function removePhoto(button) {
     button.parentElement.remove();
 }
 
+// Fonction pour réinitialiser l'affichage des sections
+function resetPageDisplay() {
+    // Afficher les sections par défaut
+    document.querySelector('.welcome-section').style.display = 'block';
+    document.querySelector('.creation-section').style.display = 'block';
+    
+    // Masquer la section de contenu personnalisé
+    document.getElementById('customContentSection').style.display = 'none';
+}
+
 // Initialiser l'upload de photos quand la page est chargée
 document.addEventListener('DOMContentLoaded', function() {
     initializePhotoUpload();
+    resetPageDisplay(); // S'assurer que les sections sont visibles au chargement
 });
 </script>
 
