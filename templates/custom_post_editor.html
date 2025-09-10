@@ -1,0 +1,463 @@
+{% extends "base.html" %}
+
+{% block title %}Éditeur de Post Personnalisé - LinkedInBoost{% endblock %}
+
+{% block content %}
+<div class="main-content">
+    <!-- Header avec navigation -->
+    <div class="content-header">
+        <div class="header-left">
+            <button class="sidebar-toggle" onclick="toggleSidebar()">
+                <i class="fas fa-bars"></i>
+            </button>
+            <h1 class="page-title">
+                <i class="fas fa-magic icon-noble"></i>
+                Votre contenu personnalisé
+            </h1>
+        </div>
+        <div class="header-actions">
+            <a href="{{ url_for('dashboard') }}" class="btn btn-secondary">
+                <i class="fas fa-arrow-left"></i>
+                Retour au dashboard
+            </a>
+        </div>
+    </div>
+
+    <!-- Résumé des choix précédents -->
+    <div class="settings-summary-card">
+        <h3><i class="fas fa-cog icon-noble"></i> Paramètres choisis</h3>
+        <div class="settings-grid">
+            <div class="setting-item">
+                <strong>Sujet :</strong> {{ subject }}
+            </div>
+            <div class="setting-item">
+                <strong>Ton :</strong> {{ tone }}
+            </div>
+            <div class="setting-item">
+                <strong>Perspective :</strong> {{ perspective }}
+            </div>
+            {% if custom_instructions %}
+            <div class="setting-item">
+                <strong>Instructions personnalisées :</strong> {{ custom_instructions }}
+            </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Section de génération du contenu -->
+    <div class="content-generation-section">
+        <div class="section-header">
+            <h2><i class="fas fa-robot icon-noble"></i> Contenu généré par l'IA</h2>
+            <p>Voici le post généré selon vos paramètres :</p>
+        </div>
+        
+        <div class="generated-content-card">
+            <div class="content-preview">
+                <h4>Prévisualisation du post :</h4>
+                <div class="post-preview-content" id="postContent">
+                    {% if generated_content %}
+                        {{ generated_content|safe }}
+                    {% else %}
+                        <div class="loading-indicator">
+                            <i class="fas fa-spinner fa-spin"></i>
+                            <span>Génération du contenu en cours...</span>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Section d'édition du contenu -->
+    <div class="content-editing-section">
+        <div class="section-header">
+            <h2><i class="fas fa-edit icon-noble"></i> Personnaliser votre post</h2>
+            <p>Modifiez le contenu généré selon vos besoins :</p>
+        </div>
+        
+        <form method="post" action="{{ url_for('save_custom_post') }}" class="post-editing-form">
+            <input type="hidden" name="subject" value="{{ subject }}">
+            <input type="hidden" name="tone" value="{{ tone }}">
+            <input type="hidden" name="custom_instructions" value="{{ custom_instructions }}">
+            <input type="hidden" name="perspective" value="{{ perspective }}">
+            
+            <div class="form-group">
+                <label class="form-label">
+                    <i class="fas fa-file-text icon-noble"></i>
+                    Contenu du post
+                </label>
+                <textarea 
+                    class="form-control post-content-textarea" 
+                    name="post_content" 
+                    id="postContentEditor"
+                    rows="8" 
+                    placeholder="Votre contenu de post LinkedIn..."
+                >{{ generated_content if generated_content else '' }}</textarea>
+                <div class="character-count">
+                    <span id="charCount">0</span> / 900 caractères
+                </div>
+            </div>
+
+            <!-- Section upload de photos -->
+            <div class="photo-upload-section">
+                <label class="form-label">
+                    <i class="fas fa-camera icon-noble"></i>
+                    Photos (optionnel)
+                </label>
+                <div class="photo-upload-area" id="photoUploadArea">
+                    <div class="upload-placeholder">
+                        <i class="fas fa-cloud-upload-alt"></i>
+                        <p>Glissez-déposez vos photos ici ou cliquez pour sélectionner</p>
+                        <input type="file" id="photoInput" name="photos" multiple accept="image/*" style="display: none;">
+                    </div>
+                </div>
+                <div class="photo-preview" id="photoPreview"></div>
+            </div>
+
+            <!-- Actions du post -->
+            <div class="post-actions">
+                <div class="action-buttons">
+                    <button type="submit" name="action" value="save_draft" class="btn btn-secondary">
+                        <i class="fas fa-save"></i>
+                        Sauvegarder en brouillon
+                    </button>
+                    <button type="submit" name="action" value="schedule" class="btn btn-warning">
+                        <i class="fas fa-clock"></i>
+                        Programmer
+                    </button>
+                    <button type="submit" name="action" value="publish" class="btn btn-primary">
+                        <i class="fas fa-paper-plane"></i>
+                        Publier maintenant
+                    </button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<style>
+/* Styles spécifiques à la page d'éditeur de post personnalisé */
+.main-content {
+    padding: 2rem;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.content-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+    padding-bottom: 1rem;
+    border-bottom: 2px solid #f0f0f0;
+}
+
+.header-left {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.page-title {
+    color: #333;
+    margin: 0;
+    font-size: 1.8rem;
+}
+
+.settings-summary-card {
+    background: linear-gradient(135deg, #FF6B6B, #FF8E53);
+    color: white;
+    padding: 1.5rem;
+    border-radius: 12px;
+    margin-bottom: 2rem;
+    box-shadow: 0 4px 15px rgba(255, 107, 107, 0.3);
+}
+
+.settings-summary-card h3 {
+    margin: 0 0 1rem 0;
+    font-size: 1.2rem;
+}
+
+.settings-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1rem;
+}
+
+.setting-item {
+    background: rgba(255, 255, 255, 0.1);
+    padding: 0.8rem;
+    border-radius: 8px;
+    backdrop-filter: blur(10px);
+}
+
+.content-generation-section,
+.content-editing-section {
+    background: white;
+    padding: 2rem;
+    border-radius: 12px;
+    margin-bottom: 2rem;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.section-header {
+    margin-bottom: 1.5rem;
+}
+
+.section-header h2 {
+    color: #333;
+    margin: 0 0 0.5rem 0;
+    font-size: 1.4rem;
+}
+
+.section-header p {
+    color: #666;
+    margin: 0;
+}
+
+.generated-content-card {
+    background: #f8f9fa;
+    border: 2px solid #e9ecef;
+    border-radius: 8px;
+    padding: 1.5rem;
+}
+
+.post-preview-content {
+    background: white;
+    padding: 1.5rem;
+    border-radius: 8px;
+    border-left: 4px solid #FF6B6B;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    line-height: 1.6;
+    white-space: pre-wrap;
+}
+
+.loading-indicator {
+    text-align: center;
+    padding: 2rem;
+    color: #FF6B6B;
+}
+
+.loading-indicator i {
+    font-size: 2rem;
+    margin-right: 1rem;
+}
+
+.post-editing-form {
+    margin-top: 1.5rem;
+}
+
+.post-content-textarea {
+    min-height: 200px;
+    resize: vertical;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    line-height: 1.6;
+}
+
+.character-count {
+    text-align: right;
+    color: #666;
+    font-size: 0.9rem;
+    margin-top: 0.5rem;
+}
+
+.photo-upload-section {
+    margin: 2rem 0;
+}
+
+.photo-upload-area {
+    border: 2px dashed #ddd;
+    border-radius: 8px;
+    padding: 2rem;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.photo-upload-area:hover {
+    border-color: #FF6B6B;
+    background: #fff5f5;
+}
+
+.upload-placeholder i {
+    font-size: 2rem;
+    color: #FF6B6B;
+    margin-bottom: 1rem;
+}
+
+.photo-preview {
+    display: flex;
+    gap: 1rem;
+    margin-top: 1rem;
+    flex-wrap: wrap;
+}
+
+.photo-preview img {
+    width: 100px;
+    height: 100px;
+    object-fit: cover;
+    border-radius: 8px;
+    border: 2px solid #e9ecef;
+}
+
+.post-actions {
+    margin-top: 2rem;
+    padding-top: 2rem;
+    border-top: 2px solid #f0f0f0;
+}
+
+.action-buttons {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.btn {
+    padding: 0.8rem 1.5rem;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 600;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    transition: all 0.3s ease;
+}
+
+.btn-primary {
+    background: linear-gradient(135deg, #FF6B6B, #FF8E53);
+    color: white;
+}
+
+.btn-secondary {
+    background: #6c757d;
+    color: white;
+}
+
+.btn-warning {
+    background: #ffc107;
+    color: #212529;
+}
+
+.btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+}
+
+@media (max-width: 768px) {
+    .main-content {
+        padding: 1rem;
+    }
+    
+    .content-header {
+        flex-direction: column;
+        gap: 1rem;
+        align-items: flex-start;
+    }
+    
+    .settings-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .action-buttons {
+        flex-direction: column;
+    }
+    
+    .btn {
+        width: 100%;
+        justify-content: center;
+    }
+}
+</style>
+
+<script>
+// Compteur de caractères
+document.addEventListener('DOMContentLoaded', function() {
+    const textarea = document.getElementById('postContentEditor');
+    const charCount = document.getElementById('charCount');
+    
+    if (textarea && charCount) {
+        function updateCharCount() {
+            const count = textarea.value.length;
+            charCount.textContent = count;
+            
+            if (count > 900) {
+                charCount.style.color = '#dc3545';
+            } else if (count > 800) {
+                charCount.style.color = '#ffc107';
+            } else {
+                charCount.style.color = '#28a745';
+            }
+        }
+        
+        textarea.addEventListener('input', updateCharCount);
+        updateCharCount(); // Initial count
+    }
+    
+    // Gestion de l'upload de photos
+    const photoUploadArea = document.getElementById('photoUploadArea');
+    const photoInput = document.getElementById('photoInput');
+    const photoPreview = document.getElementById('photoPreview');
+    
+    if (photoUploadArea && photoInput && photoPreview) {
+        photoUploadArea.addEventListener('click', () => photoInput.click());
+        
+        photoInput.addEventListener('change', function(e) {
+            const files = Array.from(e.target.files);
+            photoPreview.innerHTML = '';
+            
+            files.forEach(file => {
+                if (file.type.startsWith('image/')) {
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        const img = document.createElement('img');
+                        img.src = e.target.result;
+                        img.alt = file.name;
+                        photoPreview.appendChild(img);
+                    };
+                    reader.readAsDataURL(file);
+                }
+            });
+        });
+        
+        // Drag and drop
+        photoUploadArea.addEventListener('dragover', function(e) {
+            e.preventDefault();
+            photoUploadArea.style.borderColor = '#FF6B6B';
+            photoUploadArea.style.background = '#fff5f5';
+        });
+        
+        photoUploadArea.addEventListener('dragleave', function(e) {
+            e.preventDefault();
+            photoUploadArea.style.borderColor = '#ddd';
+            photoUploadArea.style.background = 'transparent';
+        });
+        
+        photoUploadArea.addEventListener('drop', function(e) {
+            e.preventDefault();
+            photoUploadArea.style.borderColor = '#ddd';
+            photoUploadArea.style.background = 'transparent';
+            
+            const files = Array.from(e.dataTransfer.files);
+            photoInput.files = e.dataTransfer.files;
+            
+            photoPreview.innerHTML = '';
+            files.forEach(file => {
+                if (file.type.startsWith('image/')) {
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        const img = document.createElement('img');
+                        img.src = e.target.result;
+                        img.alt = file.name;
+                        photoPreview.appendChild(img);
+                    };
+                    reader.readAsDataURL(file);
+                }
+            });
+        });
+    }
+});
+</script>
+{% endblock %}
