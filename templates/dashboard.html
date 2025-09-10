@@ -200,6 +200,18 @@
                             <option value="expert">Expert du domaine</option>
                         </select>
                     </div>
+                    
+                    <!-- Boutons d'action -->
+                    <div class="settings-panel-actions">
+                        <button type="button" class="btn btn-secondary settings-cancel-btn" onclick="closeAdvancedSettings()">
+                            <i class="fas fa-times"></i>
+                            Annuler
+                        </button>
+                        <button type="button" class="btn btn-primary settings-ok-btn" onclick="saveAdvancedSettings()">
+                            <i class="fas fa-check"></i>
+                            OK
+                        </button>
+                    </div>
                 </div>
             </div>
             
@@ -545,7 +557,7 @@ function openAdvancedSettings() {
     panel.classList.add('expanded');
     backdrop.classList.add('active');
     toggleIcon.style.transform = 'rotate(180deg)';
-    document.body.style.overflow = 'hidden'; // Empêche le scroll de la page
+    // Ne pas bloquer le scroll pour éviter la disparition de la barre
     console.log('Advanced Settings opened');
 }
 
@@ -557,8 +569,48 @@ function closeAdvancedSettings() {
     panel.classList.remove('expanded');
     backdrop.classList.remove('active');
     toggleIcon.style.transform = 'rotate(0deg)';
-    document.body.style.overflow = 'auto'; // Restaure le scroll
+    // Pas besoin de restaurer le scroll puisqu'on ne l'a pas bloqué
     console.log('Advanced Settings closed');
+}
+
+function saveAdvancedSettings() {
+    // Récupérer les valeurs des champs
+    const customInstructions = document.querySelector('textarea[name="custom_instructions"]').value;
+    const perspective = document.querySelector('select[name="perspective"]').value;
+    
+    // Afficher un message de confirmation
+    showSettingsSavedMessage();
+    
+    // Fermer la modal
+    closeAdvancedSettings();
+    
+    console.log('Advanced Settings saved:', { customInstructions, perspective });
+}
+
+function showSettingsSavedMessage() {
+    // Créer un message de confirmation temporaire
+    const message = document.createElement('div');
+    message.className = 'settings-saved-message';
+    message.innerHTML = `
+        <i class="fas fa-check-circle"></i>
+        Paramètres avancés enregistrés !
+    `;
+    
+    // Ajouter au body
+    document.body.appendChild(message);
+    
+    // Afficher avec animation
+    setTimeout(() => {
+        message.classList.add('show');
+    }, 100);
+    
+    // Supprimer après 3 secondes
+    setTimeout(() => {
+        message.classList.remove('show');
+        setTimeout(() => {
+            document.body.removeChild(message);
+        }, 300);
+    }, 3000);
 }
 </script>
 
