@@ -224,9 +224,6 @@
                     <i class="fas fa-magic"></i>
                     Créer
                 </button>
-                <button class="btn btn-warning" type="button" onclick="testJavaScript()" style="margin-left: 10px;">
-                    Test JS
-                </button>
             </div>
 </div>
     </form>
@@ -706,99 +703,40 @@ function showSettingsSavedMessage() {
 
 // Fonction pour gérer la soumission du formulaire
 function handleCreatePost(event) {
-    event.preventDefault();
-    console.log('handleCreatePost called');
-    
+    event.preventDefault(); // empêche le rechargement de la page
+
+    console.log("Création du post lancée ✅");
+
     // Récupérer les valeurs du formulaire
-    const subjectInput = document.querySelector('input[name="subject"]');
-    const toneSelect = document.querySelector('select[name="tone"]');
-    const customInstructionsTextarea = document.querySelector('textarea[name="custom_instructions"]');
-    const perspectiveSelect = document.querySelector('select[name="perspective"]');
-    
-    console.log('Elements found:', {
-        subjectInput: !!subjectInput,
-        toneSelect: !!toneSelect,
-        customInstructionsTextarea: !!customInstructionsTextarea,
-        perspectiveSelect: !!perspectiveSelect
-    });
-    
-    // Si pas de champ subject, on utilise un sujet par défaut
-    let subject = 'Post LinkedIn';
-    if (subjectInput && subjectInput.value.trim()) {
-        subject = subjectInput.value;
-    } else {
-        console.log('No subject field found, using default subject');
+    const subject = document.querySelector('input[name="subject"]')?.value || "Post LinkedIn";
+    const tone = document.querySelector('select[name="tone"]')?.value || "professionnel";
+    const perspective = document.querySelector('select[name="perspective"]')?.value || "neutre";
+
+    console.log('Form values:', { subject, tone, perspective });
+
+    // Afficher le contenu personnalisé
+    const customSection = document.getElementById("customContentSection");
+    const postContent = document.getElementById("postContent");
+    const settingsSummary = document.getElementById("settingsSummary");
+
+    if (customSection && postContent) {
+        customSection.style.display = "block";
+        postContent.innerHTML = `<p><strong>Sujet:</strong> ${subject}</p><p><strong>Ton:</strong> ${tone}</p><p><strong>Perspective:</strong> ${perspective}</p>`;
+
+        if (settingsSummary) {
+            settingsSummary.innerHTML = `
+                <div class="settings-item"><strong>Ton :</strong> ${tone}</div>
+                <div class="settings-item"><strong>Perspective :</strong> ${perspective}</div>
+            `;
+        }
     }
-    
-    if (!toneSelect) {
-        console.error('Tone select not found');
-        return;
-    }
-    
-    const tone = toneSelect.value;
-    const customInstructions = customInstructionsTextarea ? customInstructionsTextarea.value : '';
-    const perspective = perspectiveSelect ? perspectiveSelect.value : 'neutre';
-    
-    console.log('Form values:', { subject, tone, customInstructions, perspective });
-    
-    // Masquer les sections existantes
-    const welcomeSection = document.querySelector('.welcome-section');
-    const creationSection = document.querySelector('.creation-section');
-    const customContentSection = document.getElementById('customContentSection');
-    
-    console.log('Sections found:', {
-        welcomeSection: !!welcomeSection,
-        creationSection: !!creationSection,
-        customContentSection: !!customContentSection
-    });
-    
-    if (welcomeSection) welcomeSection.style.display = 'none';
-    if (creationSection) creationSection.style.display = 'none';
-    if (customContentSection) customContentSection.style.display = 'block';
-    
-    // Mettre à jour le résumé des paramètres
-    updateSettingsSummary(subject, tone, customInstructions, perspective);
-    
-    // Générer le contenu du post (simulation)
-    generatePostContent(subject, tone, customInstructions, perspective);
-    
-    console.log('Post creation flow completed');
+
+    console.log('Post creation completed');
 }
 
-// Mettre à jour le résumé des paramètres
-function updateSettingsSummary(subject, tone, customInstructions, perspective) {
-    const summary = document.getElementById('settingsSummary');
-    summary.innerHTML = `
-        <div class="settings-item">
-            <strong>Sujet:</strong> ${subject}
-        </div>
-        <div class="settings-item">
-            <strong>Ton:</strong> ${tone}
-        </div>
-        <div class="settings-item">
-            <strong>Perspective:</strong> ${perspective}
-        </div>
-        ${customInstructions ? `<div class="settings-item"><strong>Instructions:</strong> ${customInstructions}</div>` : ''}
-    `;
-}
+// Fonction supprimée - intégrée dans handleCreatePost
 
-// Générer le contenu du post
-function generatePostContent(subject, tone, customInstructions, perspective) {
-    const postContent = document.getElementById('postContent');
-    
-    // Simulation de génération de contenu
-    const content = `
-        <p>🎯 <strong>${subject}</strong></p>
-        <p>Voici quelques conseils pratiques basés sur mon expérience :</p>
-        <p>• Point clé #1</p>
-        <p>• Point clé #2</p>
-        <p>• Point clé #3</p>
-        <p>Qu'en pensez-vous ? Partagez votre expérience en commentaire ! 👇</p>
-        <p>#${subject.replace(/\s+/g, '').toLowerCase()} #conseils #professionnel</p>
-    `;
-    
-    postContent.innerHTML = content;
-}
+// Fonction supprimée - intégrée dans handleCreatePost
 
 // Fonctions pour les actions du post
 function saveAsDraft() {
@@ -908,11 +846,7 @@ function resetPageDisplay() {
     document.getElementById('customContentSection').style.display = 'none';
 }
 
-// Test simple pour vérifier que le JavaScript fonctionne
-function testJavaScript() {
-    console.log('JavaScript is working!');
-    alert('JavaScript is working!');
-}
+// Fonction de test supprimée
 
 // Initialiser l'upload de photos quand la page est chargée
 document.addEventListener('DOMContentLoaded', function() {
