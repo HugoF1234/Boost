@@ -665,16 +665,6 @@ html, body {
     pointer-events: auto;
 }
 
-.settings-panel::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    height: 3px;
-    background: var(--gradient-warm);
-    border-radius: 12px 12px 0 0;
-}
 
 .settings-panel .form-group {
     margin-bottom: 1.5rem;
