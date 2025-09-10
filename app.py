@@ -2023,35 +2023,7 @@ def custom_post_editor():
         user=user
     )
 
-@app.route("/save-custom-post", methods=["POST"])
-def save_custom_post():
-    if 'profile' not in session:
-        return redirect(url_for("index"))
-    
-    try:
-        action = request.form.get("action")
-        post_content = request.form.get("post_content", "")
-        subject = request.form.get("subject", "Post LinkedIn")
-        
-        # Récupérer l'utilisateur
-        user = User.query.filter_by(sub=session['profile'].get("sub", "")).first()
-        
-        if action == "save_draft":
-            flash("Post sauvegardé en brouillon !", "success")
-        elif action == "schedule":
-            flash("Post programmé avec succès !", "success")
-        elif action == "publish":
-            flash("Post publié avec succès !", "success")
-        
-        # Ici tu peux ajouter la logique pour sauvegarder en base de données
-        # ou envoyer vers LinkedIn selon l'action
-        
-        return redirect(url_for("dashboard"))
-        
-    except Exception as e:
-        logger.error(f"Erreur lors de la sauvegarde: {str(e)}")
-        flash("Erreur lors de la sauvegarde du post", "error")
-        return redirect(url_for("custom_post_editor"))
+# Première définition supprimée - doublon
 
 @app.route("/save-custom-post", methods=["POST"])
 def save_custom_post():
