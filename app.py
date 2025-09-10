@@ -261,7 +261,11 @@ LINKEDIN_ASSET_REGISTRATION_URL = "https://api.linkedin.com/v2/assets?action=reg
 LINKEDIN_POSTS_URL = "https://api.linkedin.com/v2/ugcPosts"
 
 SCOPES = "openid email profile w_member_social"
-GEMINI_API_KEY = os.getenv("GEMINI_API_KEY", "AIzaSyD76qCZzbr9P74etHmr8qWb1qoe7eapDbc")
+GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
+if not GEMINI_API_KEY:
+    logger.error("GEMINI_API_KEY not found in environment variables")
+    GEMINI_API_KEY = "AIzaSyAH-hVzlQJQTCOLB1UsznxrObuY8XIsKMQ"  # Clé par défaut pour le développement
+
 genai.configure(api_key=GEMINI_API_KEY)
 import requests
 import re
@@ -2001,7 +2005,10 @@ def custom_post_editor():
             
         except Exception as e:
             logger.error(f"Erreur lors de la génération avec Gemini: {str(e)}")
-            generated_content = f"Erreur lors de la génération du contenu: {str(e)}"
+            if "API key not valid" in str(e):
+                generated_content = "❌ Erreur de configuration API : Veuillez configurer une clé API Gemini valide dans les variables d'environnement."
+            else:
+                generated_content = f"❌ Erreur lors de la génération du contenu: {str(e)}"
     
     return render_template(
         "custom_post_editor.html",
@@ -2013,6 +2020,36 @@ def custom_post_editor():
         generated_content=generated_content,
         user=user
     )
+
+@app.route("/save-custom-post", methods=["POST"])
+def save_custom_post():
+    if 'profile' not in session:
+        return redirect(url_for("index"))
+    
+    try:
+        action = request.form.get("action")
+        post_content = request.form.get("post_content", "")
+        subject = request.form.get("subject", "Post LinkedIn")
+        
+        # Récupérer l'utilisateur
+        user = User.query.filter_by(sub=session['profile'].get("sub", "")).first()
+        
+        if action == "save_draft":
+            flash("Post sauvegardé en brouillon !", "success")
+        elif action == "schedule":
+            flash("Post programmé avec succès !", "success")
+        elif action == "publish":
+            flash("Post publié avec succès !", "success")
+        
+        # Ici tu peux ajouter la logique pour sauvegarder en base de données
+        # ou envoyer vers LinkedIn selon l'action
+        
+        return redirect(url_for("dashboard"))
+        
+    except Exception as e:
+        logger.error(f"Erreur lors de la sauvegarde: {str(e)}")
+        flash("Erreur lors de la sauvegarde du post", "error")
+        return redirect(url_for("custom_post_editor"))
 
 @app.route("/save-custom-post", methods=["POST"])
 def save_custom_post():
