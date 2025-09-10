@@ -459,6 +459,8 @@ html, body {
     box-shadow: var(--shadow-whisper);
     transition: all 0.3s ease;
     border: 1px solid rgba(0, 0, 0, 0.05);
+    display: flex;
+    flex-direction: column;
 }
 
 .news-article-card:hover {
@@ -485,6 +487,10 @@ html, body {
 
 .news-article-content {
     padding: 1.5rem;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
 }
 
 .news-article-title {
@@ -1695,7 +1701,7 @@ html, body {
   margin-right: 0 !important;     /* Pas de marge droite */
   margin-top: 1rem !important;    /* Espacement réduit entre fenêtres */
   margin-bottom: 1rem !important; /* Espacement réduit entre fenêtres */
-  padding: 1.5rem !important;     /* Padding interne réduit */
+  padding: 1rem !important;       /* Padding encore plus réduit pour titre */
   box-sizing: border-box !important;
 }
 
