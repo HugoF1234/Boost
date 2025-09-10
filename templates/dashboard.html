@@ -131,69 +131,69 @@
     </div>
     
     <form method="post">
-        <div class="dashboard-columns">
-            <!-- Colonne gauche : Essentials -->
-            <div class="main-inputs">
-                <div class="form-group">
-                    <label class="form-label">
-                        <i class="fas fa-comment-dots icon-noble"></i>
-                        Sujet de votre post
-                    </label>
-                    <input class="form-control" name="subject" type="text" placeholder="Ex: Partagez des conseils sur le leadership en temps de crise" required=""/>
-                </div>
+        <!-- Ligne 1 : Sujet du post -->
+        <div class="form-group">
+            <label class="form-label">
+                <i class="fas fa-comment-dots icon-noble"></i>
+                Sujet de votre post
+            </label>
+            <input class="form-control" name="subject" type="text" placeholder="Ex: Partagez des conseils sur le leadership en temps de crise" required=""/>
+        </div>
+        
+        <!-- Ligne 2 : Ton + Advanced Settings + Bouton -->
+        <div class="compact-controls">
+            <div class="form-group tone-group">
+                <label class="form-label">
+                    <i class="fas fa-palette icon-noble"></i>
+                    Ton du post
+                </label>
+                <select class="form-control" name="tone">
+                    <option value="professionnel">Professionnel bienveillant</option>
+                    <option value="familier">Conversationnel</option>
+                    <option value="inspirant">Inspirant</option>
+                    <option value="humoristique">Décontracté</option>
+                    <option value="factuel">Pédagogique</option>
+                    <option value="critique">Analytique</option>
+                </select>
+            </div>
+            
+            <!-- Advanced Settings collapsible -->
+            <div class="advanced-settings-compact">
+                <button type="button" class="settings-toggle" onclick="toggleAdvancedSettings()">
+                    <i class="fas fa-cog"></i>
+                    Advanced Settings
+                    <i class="fas fa-chevron-down toggle-icon"></i>
+                </button>
                 
-                <div class="form-group">
-                    <label class="form-label">
-                        <i class="fas fa-palette icon-noble"></i>
-                        Ton du post
-                    </label>
-                    <select class="form-control" name="tone">
-                        <option value="professionnel">Professionnel bienveillant</option>
-                        <option value="familier">Conversationnel</option>
-                        <option value="inspirant">Inspirant</option>
-                        <option value="humoristique">Décontracté</option>
-                        <option value="factuel">Pédagogique</option>
-                        <option value="critique">Analytique</option>
-                    </select>
+                <div class="settings-panel" id="advancedPanel">
+                    <div class="form-group">
+                        <label class="form-label">
+                            <i class="fas fa-magic icon-noble"></i>
+                            Instructions personnalisées (optionnel)
+                        </label>
+                        <textarea class="form-control textarea-control" name="custom_instructions" placeholder="Partagez votre perspective unique sur ce sujet..." rows="3"></textarea>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">
+                            <i class="fas fa-eye icon-noble"></i>
+                            Perspective
+                        </label>
+                        <select class="form-control" name="perspective">
+                            <option value="neutre">Neutre</option>
+                            <option value="enthousiaste">Enthousiaste</option>
+                            <option value="analytique">Analytique</option>
+                            <option value="innovant">Innovateur</option>
+                            <option value="expert">Expert du domaine</option>
+                        </select>
+                    </div>
                 </div>
             </div>
             
-            <!-- Colonne droite : Advanced Settings -->
-            <div class="advanced-settings">
-                <div class="settings-header">
-                    <h3 class="settings-title">
-                        <i class="fas fa-cog"></i>
-                        Advanced Settings
-                    </h3>
-                </div>
-                
-                <div class="form-group">
-                    <label class="form-label">
-                        <i class="fas fa-magic icon-noble"></i>
-                        Instructions personnalisées (optionnel)
-                    </label>
-                    <textarea class="form-control textarea-control" name="custom_instructions" placeholder="Partagez votre perspective unique sur ce sujet..."></textarea>
-                </div>
-                
-                <div class="form-group">
-                    <label class="form-label">
-                        <i class="fas fa-eye icon-noble"></i>
-                        Perspective
-                    </label>
-                    <select class="form-control" name="perspective">
-                        <option value="neutre">Neutre</option>
-                        <option value="enthousiaste">Enthousiaste</option>
-                        <option value="analytique">Analytique</option>
-                        <option value="innovant">Innovateur</option>
-                        <option value="expert">Expert du domaine</option>
-                    </select>
-                </div>
-                
-                <button class="btn btn-primary create-btn" type="submit">
-                    <i class="fas fa-magic"></i>
-                    Créer mon contenu
-                </button>
-            </div>
+            <button class="btn btn-primary create-btn-compact" type="submit">
+                <i class="fas fa-magic"></i>
+                Créer
+            </button>
         </div>
     </form>
     
@@ -502,6 +502,19 @@ function removeSelectedMedia() {
     
     // Désélectionner l'image Pexels si applicable
     document.querySelectorAll('.pexels-image').forEach(img => img.classList.remove('selected'));
+}
+
+function toggleAdvancedSettings() {
+    const panel = document.getElementById('advancedPanel');
+    const toggleIcon = document.querySelector('.toggle-icon');
+    
+    if (panel.classList.contains('expanded')) {
+        panel.classList.remove('expanded');
+        toggleIcon.style.transform = 'rotate(0deg)';
+    } else {
+        panel.classList.add('expanded');
+        toggleIcon.style.transform = 'rotate(180deg)';
+    }
 }
 </script>
 
