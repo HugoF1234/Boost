@@ -430,7 +430,7 @@ html, body {
 
 .compact-controls {
     display: grid;
-    grid-template-columns: 180px 1fr auto;
+    grid-template-columns: 220px 1fr auto;
     gap: 1.5rem;
     align-items: end;
     margin-top: 3rem;
@@ -442,10 +442,22 @@ html, body {
 
 .tone-group .form-control {
     width: 100%;
+    min-height: 56px;
+    padding: 1rem;
+    border-radius: 12px;
+    border: 1px solid rgba(255, 107, 107, 0.2);
+    font-size: 0.95rem;
 }
 
 .advanced-settings-compact {
     position: relative;
+    min-height: 56px;
+}
+
+.creation-section form {
+    position: relative;
+    z-index: 1;
+    padding-bottom: 300px; /* Espace pour le panel expandé */
 }
 
 .settings-toggle {
@@ -507,18 +519,21 @@ html, body {
     border-radius: 12px;
     box-shadow: 0 8px 32px rgba(255, 107, 107, 0.15);
     max-height: 0;
-    overflow: hidden;
+    overflow: visible;
     opacity: 0;
     transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-    z-index: 10;
+    z-index: 1000;
     margin-top: 0.75rem;
-    min-width: 350px;
+    min-width: 400px;
+    transform: translateY(-10px);
 }
 
 .settings-panel.expanded {
     max-height: 500px;
     opacity: 1;
     padding: 1.5rem;
+    transform: translateY(0);
+    overflow: visible;
 }
 
 .settings-panel::before {
