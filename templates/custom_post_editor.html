@@ -3,173 +3,177 @@
 {% block title %}Éditeur de Post Personnalisé - LinkedInBoost{% endblock %}
 
 {% block content %}
-<div class="custom-post-container">
-    <!-- Header avec navigation -->
-    <div class="custom-header">
-        <div class="header-content">
-            <button class="sidebar-toggle" onclick="toggleSidebar()">
-                <i class="fas fa-bars"></i>
-            </button>
-            <h1 class="page-title">
-                <i class="fas fa-magic icon-noble"></i>
-                Votre contenu personnalisé
-            </h1>
+<!-- Header avec flèche de retour -->
+<div class="content-header">
+    <div class="header-left">
+        <a href="{{ url_for('dashboard') }}" class="back-arrow">
+            <i class="fas fa-arrow-left"></i>
+        </a>
+        <h1 class="page-title">
+            <i class="fas fa-magic icon-noble"></i>
+            Votre contenu personnalisé
+        </h1>
+    </div>
+</div>
+
+<!-- Contenu principal dans le style du dashboard -->
+<div class="main-content">
+    <!-- Résumé des paramètres choisis -->
+    <div class="settings-summary-section">
+        <div class="section-header">
+            <h2><i class="fas fa-cog icon-noble"></i> Paramètres choisis</h2>
         </div>
-        <div class="header-actions">
-            <a href="{{ url_for('dashboard') }}" class="btn btn-secondary">
-                <i class="fas fa-arrow-left"></i>
-                Retour au dashboard
-            </a>
+        <div class="settings-grid">
+            <div class="setting-item">
+                <span class="setting-label">Sujet :</span>
+                <span class="setting-value">{{ subject }}</span>
+            </div>
+            <div class="setting-item">
+                <span class="setting-label">Ton :</span>
+                <span class="setting-value">{{ tone }}</span>
+            </div>
+            <div class="setting-item">
+                <span class="setting-label">Perspective :</span>
+                <span class="setting-value">{{ perspective }}</span>
+            </div>
+            {% if custom_instructions %}
+            <div class="setting-item">
+                <span class="setting-label">Instructions :</span>
+                <span class="setting-value">{{ custom_instructions }}</span>
+            </div>
+            {% endif %}
         </div>
     </div>
 
-    <!-- Contenu principal en mode vertical -->
-    <div class="custom-main-content">
-        <!-- Résumé des choix précédents -->
-        <div class="settings-summary-card">
-            <div class="card-header">
-                <h3><i class="fas fa-cog icon-noble"></i> Paramètres choisis</h3>
+    <!-- Section de génération du contenu -->
+    <div class="content-generation-section">
+        <div class="section-header">
+            <h2><i class="fas fa-robot icon-noble"></i> Contenu généré par l'IA</h2>
+            <p>Voici le post généré selon vos paramètres :</p>
+        </div>
+        
+        <div class="post-preview-card">
+            <div class="post-preview-header">
+                <h3>Prévisualisation du post :</h3>
             </div>
-            <div class="settings-list">
-                <div class="setting-item">
-                    <span class="setting-label">Sujet :</span>
-                    <span class="setting-value">{{ subject }}</span>
-                </div>
-                <div class="setting-item">
-                    <span class="setting-label">Ton :</span>
-                    <span class="setting-value">{{ tone }}</span>
-                </div>
-                <div class="setting-item">
-                    <span class="setting-label">Perspective :</span>
-                    <span class="setting-value">{{ perspective }}</span>
-                </div>
-                {% if custom_instructions %}
-                <div class="setting-item">
-                    <span class="setting-label">Instructions :</span>
-                    <span class="setting-value">{{ custom_instructions }}</span>
-                </div>
+            <div class="post-preview-content" id="postContent">
+                {% if generated_content %}
+                    {{ generated_content|safe }}
+                {% else %}
+                    <div class="loading-indicator">
+                        <i class="fas fa-spinner fa-spin"></i>
+                        <span>Génération du contenu en cours...</span>
+                    </div>
                 {% endif %}
             </div>
         </div>
+    </div>
 
-        <!-- Section de génération du contenu -->
-        <div class="content-generation-card">
-            <div class="card-header">
-                <h3><i class="fas fa-robot icon-noble"></i> Contenu généré par l'IA</h3>
-                <p>Voici le post généré selon vos paramètres :</p>
-            </div>
-            
-            <div class="post-preview-container">
-                <div class="post-preview-header">
-                    <h4>Prévisualisation du post :</h4>
-                </div>
-                <div class="post-preview-content" id="postContent">
-                    {% if generated_content %}
-                        {{ generated_content|safe }}
-                    {% else %}
-                        <div class="loading-indicator">
-                            <i class="fas fa-spinner fa-spin"></i>
-                            <span>Génération du contenu en cours...</span>
-                        </div>
-                    {% endif %}
-                </div>
-            </div>
+    <!-- Section d'édition du contenu -->
+    <div class="content-editing-section">
+        <div class="section-header">
+            <h2><i class="fas fa-edit icon-noble"></i> Personnaliser votre post</h2>
+            <p>Modifiez le contenu généré selon vos besoins :</p>
         </div>
-
-        <!-- Section d'édition du contenu -->
-        <div class="content-editing-card">
-            <div class="card-header">
-                <h3><i class="fas fa-edit icon-noble"></i> Personnaliser votre post</h3>
-                <p>Modifiez le contenu généré selon vos besoins :</p>
-            </div>
+        
+        <form method="post" action="{{ url_for('save_custom_post') }}" class="post-editing-form">
+            <input type="hidden" name="subject" value="{{ subject }}">
+            <input type="hidden" name="tone" value="{{ tone }}">
+            <input type="hidden" name="custom_instructions" value="{{ custom_instructions }}">
+            <input type="hidden" name="perspective" value="{{ perspective }}">
             
-            <form method="post" action="{{ url_for('save_custom_post') }}" class="post-editing-form">
-                <input type="hidden" name="subject" value="{{ subject }}">
-                <input type="hidden" name="tone" value="{{ tone }}">
-                <input type="hidden" name="custom_instructions" value="{{ custom_instructions }}">
-                <input type="hidden" name="perspective" value="{{ perspective }}">
-                
-                <div class="form-group">
-                    <label class="form-label">
-                        <i class="fas fa-file-text icon-noble"></i>
-                        Contenu du post
-                    </label>
-                    <textarea 
-                        class="form-control post-content-textarea" 
-                        name="post_content" 
-                        id="postContentEditor"
-                        rows="8" 
-                        placeholder="Votre contenu de post LinkedIn..."
-                    >{{ generated_content if generated_content else '' }}</textarea>
-                    <div class="character-count">
-                        <span id="charCount">0</span> / 900 caractères
-                    </div>
+            <div class="form-group">
+                <label class="form-label">
+                    <i class="fas fa-file-text icon-noble"></i>
+                    Contenu du post
+                </label>
+                <textarea 
+                    class="form-control post-content-textarea" 
+                    name="post_content" 
+                    id="postContentEditor"
+                    rows="8" 
+                    placeholder="Votre contenu de post LinkedIn..."
+                >{{ generated_content if generated_content else '' }}</textarea>
+                <div class="character-count">
+                    <span id="charCount">0</span> / 900 caractères
                 </div>
+            </div>
 
-                <!-- Section upload de photos -->
-                <div class="photo-upload-section">
-                    <label class="form-label">
-                        <i class="fas fa-camera icon-noble"></i>
-                        Photos (optionnel)
-                    </label>
-                    <div class="photo-upload-area" id="photoUploadArea">
-                        <div class="upload-placeholder">
-                            <i class="fas fa-cloud-upload-alt"></i>
-                            <p>Glissez-déposez vos photos ici</p>
-                            <p class="upload-hint">ou cliquez pour sélectionner</p>
-                        </div>
-                        <input type="file" id="photoInput" name="photos" multiple accept="image/*" style="display: none;">
+            <!-- Section upload de photos -->
+            <div class="photo-upload-section">
+                <label class="form-label">
+                    <i class="fas fa-camera icon-noble"></i>
+                    Photos (optionnel)
+                </label>
+                <div class="photo-upload-area" id="photoUploadArea">
+                    <div class="upload-placeholder">
+                        <i class="fas fa-cloud-upload-alt"></i>
+                        <p>Glissez-déposez vos photos ici</p>
+                        <p class="upload-hint">ou cliquez pour sélectionner</p>
                     </div>
-                    <div class="photo-preview" id="photoPreview"></div>
+                    <input type="file" id="photoInput" name="photos" multiple accept="image/*" style="display: none;">
                 </div>
+                <div class="photo-preview" id="photoPreview"></div>
+            </div>
 
-                <!-- Actions du post -->
-                <div class="post-actions">
-                    <div class="action-buttons">
-                        <button type="submit" name="action" value="save_draft" class="btn btn-secondary">
-                            <i class="fas fa-save"></i>
-                            Sauvegarder en brouillon
-                        </button>
-                        <button type="submit" name="action" value="schedule" class="btn btn-warning">
-                            <i class="fas fa-clock"></i>
-                            Programmer
-                        </button>
-                        <button type="submit" name="action" value="publish" class="btn btn-primary">
-                            <i class="fas fa-paper-plane"></i>
-                            Publier maintenant
-                        </button>
-                    </div>
+            <!-- Actions du post -->
+            <div class="post-actions">
+                <div class="action-buttons">
+                    <button type="submit" name="action" value="save_draft" class="btn btn-secondary">
+                        <i class="fas fa-save"></i>
+                        Sauvegarder en brouillon
+                    </button>
+                    <button type="submit" name="action" value="schedule" class="btn btn-warning">
+                        <i class="fas fa-clock"></i>
+                        Programmer
+                    </button>
+                    <button type="submit" name="action" value="publish" class="btn btn-primary">
+                        <i class="fas fa-paper-plane"></i>
+                        Publier maintenant
+                    </button>
                 </div>
-            </form>
-        </div>
+            </div>
+        </form>
     </div>
 </div>
 
 <style>
-/* Styles pour la page d'éditeur de post personnalisé - Design vertical moderne */
-.custom-post-container {
-    min-height: 100vh;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    padding: 0;
-}
-
-.custom-header {
-    background: rgba(255, 255, 255, 0.95);
-    backdrop-filter: blur(10px);
-    padding: 1rem 2rem;
+/* Styles pour la page d'éditeur de post personnalisé - Style dashboard */
+.content-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    box-shadow: 0 2px 20px rgba(0, 0, 0, 0.1);
-    position: sticky;
-    top: 0;
-    z-index: 100;
+    margin-bottom: 2rem;
+    padding-bottom: 1rem;
+    border-bottom: 2px solid #f0f0f0;
 }
 
-.header-content {
+.header-left {
     display: flex;
     align-items: center;
     gap: 1rem;
+}
+
+.back-arrow {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    background: #f8f9fa;
+    border: 2px solid #e9ecef;
+    border-radius: 8px;
+    color: #666;
+    text-decoration: none;
+    transition: all 0.3s ease;
+}
+
+.back-arrow:hover {
+    background: #FF6B6B;
+    border-color: #FF6B6B;
+    color: white;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(255, 107, 107, 0.3);
 }
 
 .page-title {
@@ -179,57 +183,51 @@
     font-weight: 700;
 }
 
-.custom-main-content {
-    max-width: 800px;
-    margin: 0 auto;
-    padding: 2rem;
+.main-content {
     display: flex;
     flex-direction: column;
     gap: 2rem;
 }
 
-/* Cartes avec design moderne */
-.settings-summary-card,
-.content-generation-card,
-.content-editing-card {
+/* Sections dans le style du dashboard */
+.settings-summary-section,
+.content-generation-section,
+.content-editing-section {
     background: white;
-    border-radius: 16px;
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
-    overflow: hidden;
+    padding: 2rem;
+    border-radius: 12px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
     transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
-.settings-summary-card:hover,
-.content-generation-card:hover,
-.content-editing-card:hover {
+.settings-summary-section:hover,
+.content-generation-section:hover,
+.content-editing-section:hover {
     transform: translateY(-2px);
-    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
 }
 
-.card-header {
-    background: linear-gradient(135deg, #FF6B6B, #FF8E53);
-    color: white;
-    padding: 1.5rem;
-    margin: 0;
+.section-header {
+    margin-bottom: 1.5rem;
 }
 
-.card-header h3 {
+.section-header h2 {
+    color: #333;
     margin: 0 0 0.5rem 0;
-    font-size: 1.3rem;
+    font-size: 1.4rem;
     font-weight: 600;
 }
 
-.card-header p {
+.section-header p {
+    color: #666;
     margin: 0;
-    opacity: 0.9;
     font-size: 0.95rem;
 }
 
 /* Résumé des paramètres */
-.settings-list {
-    padding: 1.5rem;
-    display: flex;
-    flex-direction: column;
+.settings-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
     gap: 1rem;
 }
 
@@ -241,6 +239,12 @@
     background: #f8f9fa;
     border-radius: 8px;
     border-left: 4px solid #FF6B6B;
+    transition: all 0.3s ease;
+}
+
+.setting-item:hover {
+    background: #fff5f5;
+    transform: translateX(5px);
 }
 
 .setting-label {
@@ -254,31 +258,33 @@
 }
 
 /* Prévisualisation du post */
-.post-preview-container {
-    padding: 1.5rem;
+.post-preview-card {
+    background: #f8f9fa;
+    border: 2px solid #e9ecef;
+    border-radius: 8px;
+    overflow: hidden;
 }
 
 .post-preview-header {
-    margin-bottom: 1rem;
+    background: linear-gradient(135deg, #FF6B6B, #FF8E53);
+    color: white;
+    padding: 1rem 1.5rem;
+    margin: 0;
 }
 
-.post-preview-header h4 {
-    color: #333;
+.post-preview-header h3 {
     margin: 0;
     font-size: 1.1rem;
     font-weight: 600;
 }
 
 .post-preview-content {
-    background: #f8f9fa;
-    border: 2px solid #e9ecef;
-    border-radius: 12px;
     padding: 1.5rem;
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     line-height: 1.6;
     white-space: pre-wrap;
     min-height: 120px;
-    border-left: 4px solid #FF6B6B;
+    background: white;
 }
 
 .loading-indicator {
@@ -294,7 +300,7 @@
 
 /* Formulaire d'édition */
 .post-editing-form {
-    padding: 1.5rem;
+    margin-top: 1.5rem;
 }
 
 .form-group {
@@ -343,7 +349,7 @@
 
 .photo-upload-area {
     border: 2px dashed #ddd;
-    border-radius: 12px;
+    border-radius: 8px;
     padding: 2rem;
     text-align: center;
     cursor: pointer;
@@ -357,7 +363,7 @@
 }
 
 .upload-placeholder i {
-    font-size: 2.5rem;
+    font-size: 2rem;
     color: #FF6B6B;
     margin-bottom: 1rem;
 }
@@ -407,9 +413,9 @@
 }
 
 .btn {
-    padding: 1rem 2rem;
+    padding: 0.8rem 1.5rem;
     border: none;
-    border-radius: 12px;
+    border-radius: 8px;
     cursor: pointer;
     font-weight: 600;
     text-decoration: none;
@@ -418,8 +424,6 @@
     gap: 0.5rem;
     transition: all 0.3s ease;
     font-size: 1rem;
-    min-width: 180px;
-    justify-content: center;
 }
 
 .btn-primary {
@@ -441,22 +445,24 @@
 }
 
 .btn:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
 }
 
 /* Responsive design */
 @media (max-width: 768px) {
-    .custom-main-content {
-        padding: 1rem;
+    .main-content {
         gap: 1.5rem;
     }
     
-    .custom-header {
-        padding: 1rem;
+    .content-header {
         flex-direction: column;
         gap: 1rem;
         align-items: flex-start;
+    }
+    
+    .settings-grid {
+        grid-template-columns: 1fr;
     }
     
     .action-buttons {
@@ -465,7 +471,7 @@
     
     .btn {
         width: 100%;
-        min-width: auto;
+        justify-content: center;
     }
     
     .setting-item {
