@@ -260,11 +260,29 @@
             </div>
             
             <div class="linkedin-post-content">
+                <div class="loading-indicator" id="loadingIndicator" style="display: none;">
+                    <i class="fas fa-spinner fa-spin"></i>
+                    <span>Génération du contenu en cours...</span>
+                </div>
                 <div class="linkedin-post-text" id="postContent">
                     <!-- Le contenu généré sera affiché ici -->
                 </div>
                 <div class="linkedin-post-images" id="postImages">
                     <!-- Les images uploadées seront affichées ici -->
+                </div>
+            </div>
+            
+            <!-- Zone d'édition du contenu -->
+            <div class="content-editing-section">
+                <h4><i class="fas fa-edit icon-noble"></i> Personnaliser votre post</h4>
+                <textarea 
+                    class="post-content-editor" 
+                    id="postContentEditor" 
+                    rows="6" 
+                    placeholder="Modifiez le contenu généré selon vos besoins..."
+                ></textarea>
+                <div class="character-count">
+                    <span id="charCount">0</span> / 900 caractères
                 </div>
             </div>
             
@@ -710,28 +728,117 @@ function handleCreatePost(event) {
     // Récupérer les valeurs du formulaire
     const subject = document.querySelector('input[name="subject"]')?.value || "Post LinkedIn";
     const tone = document.querySelector('select[name="tone"]')?.value || "professionnel";
+    const customInstructions = document.querySelector('textarea[name="custom_instructions"]')?.value || "";
     const perspective = document.querySelector('select[name="perspective"]')?.value || "neutre";
 
-    console.log('Form values:', { subject, tone, perspective });
+    console.log('Form values:', { subject, tone, customInstructions, perspective });
 
-    // Afficher le contenu personnalisé
+    // Masquer les sections existantes
+    const welcomeSection = document.querySelector('.welcome-section');
+    const creationSection = document.querySelector('.creation-section');
+    
+    if (welcomeSection) welcomeSection.style.display = 'none';
+    if (creationSection) creationSection.style.display = 'none';
+
+    // Afficher la section de contenu personnalisé
     const customSection = document.getElementById("customContentSection");
-    const postContent = document.getElementById("postContent");
-    const settingsSummary = document.getElementById("settingsSummary");
-
-    if (customSection && postContent) {
+    if (customSection) {
         customSection.style.display = "block";
-        postContent.innerHTML = `<p><strong>Sujet:</strong> ${subject}</p><p><strong>Ton:</strong> ${tone}</p><p><strong>Perspective:</strong> ${perspective}</p>`;
-
+        
+        // Mettre à jour le résumé des paramètres
+        const settingsSummary = document.getElementById("settingsSummary");
         if (settingsSummary) {
             settingsSummary.innerHTML = `
+                <div class="settings-item"><strong>Sujet :</strong> ${subject}</div>
                 <div class="settings-item"><strong>Ton :</strong> ${tone}</div>
                 <div class="settings-item"><strong>Perspective :</strong> ${perspective}</div>
+                ${customInstructions ? `<div class="settings-item"><strong>Instructions :</strong> ${customInstructions}</div>` : ''}
             `;
         }
+        
+        // Générer le contenu avec Gemini via AJAX
+        generateContentWithGemini(subject, tone, customInstructions, perspective);
     }
 
     console.log('Post creation completed');
+}
+
+// Fonction pour générer le contenu avec Gemini
+async function generateContentWithGemini(subject, tone, customInstructions, perspective) {
+    const postContent = document.getElementById("postContent");
+    const loadingIndicator = document.getElementById("loadingIndicator");
+    
+    if (loadingIndicator) loadingIndicator.style.display = "block";
+    if (postContent) postContent.innerHTML = "Génération du contenu en cours...";
+    
+    try {
+        const response = await fetch('/generate-content', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                subject: subject,
+                tone: tone,
+                custom_instructions: customInstructions,
+                perspective: perspective
+            })
+        });
+        
+        const data = await response.json();
+        
+        if (data.success && postContent) {
+            postContent.innerHTML = data.content;
+            
+            // Synchroniser avec l'éditeur
+            const editor = document.getElementById("postContentEditor");
+            if (editor) {
+                editor.value = data.content;
+                updateCharCount();
+            }
+        } else {
+            postContent.innerHTML = "Erreur lors de la génération du contenu.";
+        }
+    } catch (error) {
+        console.error('Erreur:', error);
+        if (postContent) {
+            postContent.innerHTML = "Erreur lors de la génération du contenu.";
+        }
+    } finally {
+        if (loadingIndicator) loadingIndicator.style.display = "none";
+    }
+}
+
+// Fonction pour mettre à jour le compteur de caractères
+function updateCharCount() {
+    const editor = document.getElementById("postContentEditor");
+    const charCount = document.getElementById("charCount");
+    
+    if (editor && charCount) {
+        const count = editor.value.length;
+        charCount.textContent = count;
+        
+        if (count > 900) {
+            charCount.style.color = '#dc3545';
+        } else if (count > 800) {
+            charCount.style.color = '#ffc107';
+        } else {
+            charCount.style.color = '#28a745';
+        }
+    }
+}
+
+// Fonction pour synchroniser l'éditeur avec l'affichage
+function syncEditorWithDisplay() {
+    const editor = document.getElementById("postContentEditor");
+    const postContent = document.getElementById("postContent");
+    
+    if (editor && postContent) {
+        editor.addEventListener('input', function() {
+            postContent.innerHTML = editor.value.replace(/\n/g, '<br>');
+            updateCharCount();
+        });
+    }
 }
 
 // Fonction supprimée - intégrée dans handleCreatePost
@@ -853,6 +960,7 @@ document.addEventListener('DOMContentLoaded', function() {
     console.log('DOM loaded, initializing...');
     initializePhotoUpload();
     resetPageDisplay(); // S'assurer que les sections sont visibles au chargement
+    syncEditorWithDisplay(); // Initialiser la synchronisation de l'éditeur
     
     // Test du bouton Créer
     const createButton = document.querySelector('.create-btn-compact');
