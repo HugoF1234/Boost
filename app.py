@@ -13,10 +13,41 @@ from datetime import datetime, timedelta
 from werkzeug.security import generate_password_hash, check_password_hash
 from functools import wraps
 import re
+from pathlib import Path
+from werkzeug.utils import secure_filename
 from datetime import datetime, timedelta
 # Configuration du logging
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
+
+# Configuration pour l'upload d'images
+UPLOAD_DIR = Path("static/uploads/posts")
+UPLOAD_DIR.mkdir(parents=True, exist_ok=True)
+ALLOWED_EXT = {"png", "jpg", "jpeg", "gif", "webp"}
+
+def allowed_file(filename: str) -> bool:
+    return "." in filename and filename.rsplit(".", 1)[1].lower() in ALLOWED_EXT
+
+def save_images(files):
+    """Sauvegarde les images et retourne la liste des chemins statiques."""
+    saved_paths = []
+    for f in files:
+        if not f or f.filename == "" or not allowed_file(f.filename):
+            continue
+        fname = secure_filename(f.filename)
+        ts = datetime.utcnow().strftime("%Y%m%d%H%M%S%f")
+        final = UPLOAD_DIR / f"{ts}_{fname}"
+        f.save(final)
+        saved_paths.append("/" + final.as_posix())  # chemin web
+    return saved_paths
+
+def publish_to_linkedin(text: str, image_paths: list[str]) -> dict:
+    """
+    Publie sur LinkedIn et renvoie un dict contenant l'id du post, etc.
+    Intègre ici ton API LinkedIn (UGC Posts / Assets upload).
+    """
+    # TODO: upload des assets image, puis création du post
+    return {"status": "ok", "linkedin_post_id": "mock_123"}
 
 # -----------------------
 # CONFIGURATION APP
@@ -2036,26 +2067,62 @@ def create_custom_post():
     
     try:
         action = request.form.get("action")
-        post_content = request.form.get("post_content", "")
+        post_content = request.form.get("post_content", "").strip()
         subject = request.form.get("subject", "Post LinkedIn")
         schedule_date = request.form.get("schedule_date")
         schedule_time = request.form.get("schedule_time")
+        files = request.files.getlist("photos")
         
         # Récupérer l'utilisateur
         user = User.query.filter_by(sub=session['profile'].get("sub", "")).first()
         
-        if action == "save_draft":
-            flash("Post sauvegardé en brouillon !", "success")
-        elif action == "schedule":
-            if schedule_date and schedule_time:
-                flash(f"Post programmé pour le {schedule_date} à {schedule_time} !", "success")
-            else:
-                flash("Post programmé avec succès !", "success")
-        elif action == "publish":
-            flash("Post publié avec succès !", "success")
+        # Sauvegarder les images
+        image_paths = save_images(files)
         
-        # Ici tu peux ajouter la logique pour sauvegarder en base de données
-        # ou envoyer vers LinkedIn selon l'action
+        # Créer le post en base
+        post_data = {
+            "user_id": user.id if user else None,
+            "content": post_content,
+            "subject": subject,
+            "images": image_paths,
+            "status": "draft",
+            "scheduled_at": None,
+            "published_at": None,
+            "linkedin_post_urn": None
+        }
+        
+        if action == "save_draft":
+            post_data["status"] = "draft"
+            flash("Brouillon enregistré avec succès.", "success")
+            
+        elif action == "schedule":
+            # Fusion date + heure
+            scheduled_at = None
+            if schedule_date and schedule_time:
+                scheduled_at = datetime.strptime(f"{schedule_date} {schedule_time}", "%Y-%m-%d %H:%M")
+            post_data["status"] = "scheduled"
+            post_data["scheduled_at"] = scheduled_at
+            flash("Post programmé avec succès.", "success")
+            
+        elif action == "publish":
+            # Publier maintenant sur LinkedIn
+            result = publish_to_linkedin(post_content, image_paths)
+            if result.get("status") == "ok":
+                post_data["status"] = "published"
+                post_data["published_at"] = datetime.utcnow()
+                post_data["linkedin_post_urn"] = result.get("linkedin_post_id")
+                flash("Post publié sur LinkedIn ✅", "success")
+            else:
+                post_data["status"] = "draft"
+                flash("Échec de la publication LinkedIn. Le post a été sauvegardé.", "warning")
+        else:
+            flash("Action inconnue.", "error")
+            return redirect(url_for("custom_post_editor"))
+        
+        # TODO: Sauvegarder en base de données
+        # post = Post(**post_data)
+        # db.session.add(post)
+        # db.session.commit()
         
         return redirect(url_for("dashboard"))
         
