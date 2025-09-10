@@ -432,7 +432,7 @@ html, body {
     display: grid;
     grid-template-columns: 220px 1fr auto;
     gap: 1.5rem;
-    align-items: end;
+    align-items: flex-end;
     margin-top: 3rem;
 }
 
@@ -452,6 +452,18 @@ html, body {
 .advanced-settings-compact {
     position: relative;
     min-height: 56px;
+}
+
+.invisible-label {
+    visibility: hidden;
+    margin-bottom: 0.5rem;
+    display: block;
+    height: 1.5rem;
+}
+
+.create-btn-wrapper {
+    display: flex;
+    flex-direction: column;
 }
 
 .creation-section form {
