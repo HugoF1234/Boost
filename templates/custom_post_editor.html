@@ -1,310 +1,222 @@
 {% extends "base.html" %}
-
-{% block title %}Éditeur de Post Personnalisé - LinkedInBoost{% endblock %}
+{% block title %}Créer un post personnalisé{% endblock %}
 
 {% block content %}
-<!-- Header avec flèche de retour -->
-<div class="content-header">
-    <div class="header-left">
-        <a href="{{ url_for('dashboard') }}" class="back-arrow">
-            <i class="fas fa-arrow-left"></i>
-        </a>
-        <h1 class="page-title">
-            <i class="fas fa-magic icon-noble"></i>
-            Votre contenu personnalisé
-        </h1>
-    </div>
-</div>
+<div class="creation-section fade-in">
 
-<!-- Contenu principal dans le style du dashboard -->
-<div class="main-content">
-    <!-- Résumé des paramètres choisis -->
-    <div class="settings-summary-section">
-        <div class="section-header">
-            <h2><i class="fas fa-cog icon-noble"></i> Paramètres choisis</h2>
-        </div>
-        <div class="settings-grid">
-            <div class="setting-item">
-                <span class="setting-label">Sujet :</span>
-                <span class="setting-value">{{ subject }}</span>
-            </div>
-            <div class="setting-item">
-                <span class="setting-label">Ton :</span>
-                <span class="setting-value">{{ tone }}</span>
-            </div>
-            <div class="setting-item">
-                <span class="setting-label">Perspective :</span>
-                <span class="setting-value">{{ perspective }}</span>
-            </div>
-            {% if custom_instructions %}
-            <div class="setting-item">
-                <span class="setting-label">Instructions :</span>
-                <span class="setting-value">{{ custom_instructions }}</span>
-            </div>
-            {% endif %}
+    <!-- Header -->
+    <div class="content-header">
+        <div class="content-title-row">
+            <h2 class="content-title">
+                <i class="fas fa-magic icon-noble"></i> Créer un post personnalisé
+            </h2>
+            <a href="{{ url_for('dashboard') }}" class="btn btn-secondary back-btn">
+                <i class="fas fa-arrow-left"></i> Retour
+            </a>
         </div>
     </div>
 
-    <!-- Section de génération du contenu -->
-    <div class="content-generation-section">
-        <div class="section-header">
-            <h2><i class="fas fa-robot icon-noble"></i> Contenu généré par l'IA</h2>
-            <p>Voici le post généré selon vos paramètres :</p>
-        </div>
-        
-        <div class="post-preview-card">
-            <div class="post-preview-header">
-                <h3>Prévisualisation du post :</h3>
+    <!-- Résumé des paramètres -->
+    <div class="content-settings-summary">
+        <div class="settings-item"><strong>Sujet :</strong> {{ subject }}</div>
+        <div class="settings-item"><strong>Ton :</strong> {{ tone }}</div>
+        <div class="settings-item"><strong>Perspective :</strong> {{ perspective }}</div>
+        {% if custom_instructions %}
+        <div class="settings-item"><strong>Instructions :</strong> {{ custom_instructions }}</div>
+        {% endif %}
+    </div>
+
+    <!-- Aperçu LinkedIn -->
+    <div class="linkedin-post-preview">
+        <div class="linkedin-post-header">
+            <div class="linkedin-avatar"><i class="fas fa-user"></i></div>
+            <div class="linkedin-user-info">
+                <div class="linkedin-name">{{ first_name }} {{ last_name }}</div>
+                <div class="linkedin-title">{{ email }}</div>
+                <div class="linkedin-time">Planifié</div>
             </div>
-            <div class="post-preview-content" id="postContent">
-                {% if generated_content %}
-                    {{ generated_content|safe }}
-                {% else %}
-                    <div class="loading-indicator">
-                        <i class="fas fa-spinner fa-spin"></i>
-                        <span>Génération du contenu en cours...</span>
-                    </div>
-                {% endif %}
+        </div>
+        <div class="linkedin-post-content">
+            <div class="linkedin-post-text">
+                {{ generated_content|safe if generated_content else "Votre contenu apparaîtra ici." }}
             </div>
         </div>
     </div>
 
-    <!-- Section d'édition du contenu -->
-    <div class="content-editing-section">
-        <div class="section-header">
-            <h2><i class="fas fa-edit icon-noble"></i> Personnaliser votre post</h2>
-            <p>Modifiez le contenu généré selon vos besoins :</p>
+    <!-- Formulaire -->
+    <form method="post" action="{{ url_for('create_custom_post') }}" enctype="multipart/form-data">
+
+        <!-- Zone de texte -->
+        <div class="form-group">
+            <label class="form-label"><i class="fas fa-file-alt icon-noble"></i> Contenu du post</label>
+            <textarea 
+                class="form-control textarea-control" 
+                name="post_content" 
+                rows="8" 
+                required>{{ generated_content if generated_content else "" }}</textarea>
         </div>
-        
-        <form method="post" action="{{ url_for('save_custom_post') }}" class="post-editing-form">
-            <input type="hidden" name="subject" value="{{ subject }}">
-            <input type="hidden" name="tone" value="{{ tone }}">
-            <input type="hidden" name="custom_instructions" value="{{ custom_instructions }}">
-            <input type="hidden" name="perspective" value="{{ perspective }}">
-            
+
+        <!-- Upload photo -->
+        <div class="photo-upload-section">
+            <label class="form-label"><i class="fas fa-camera icon-noble"></i> Ajouter des photos</label>
+            <div class="photo-upload-area" id="photoUploadArea">
+                <div class="upload-content">
+                    <i class="fas fa-cloud-upload-alt"></i>
+                    <p>Glissez-déposez vos photos ici ou cliquez pour sélectionner</p>
+                    <input type="file" id="photoInput" name="photos" multiple accept="image/*" style="display:none;">
+                </div>
+            </div>
+            <div class="uploaded-photos" id="photoPreview"></div>
+        </div>
+
+        <!-- Planification -->
+        <div class="form-row">
             <div class="form-group">
-                <label class="form-label">
-                    <i class="fas fa-file-text icon-noble"></i>
-                    Contenu du post
-                </label>
-                <textarea 
-                    class="form-control post-content-textarea" 
-                    name="post_content" 
-                    id="postContentEditor"
-                    rows="8" 
-                    placeholder="Votre contenu de post LinkedIn..."
-                >{{ generated_content if generated_content else '' }}</textarea>
-                <div class="character-count">
-                    <span id="charCount">0</span> / 900 caractères
-                </div>
+                <label class="form-label"><i class="fas fa-calendar-alt icon-noble"></i> Date</label>
+                <input type="date" class="form-control" name="schedule_date" id="scheduleDate">
             </div>
+            <div class="form-group">
+                <label class="form-label"><i class="fas fa-clock icon-noble"></i> Heure</label>
+                <input type="time" class="form-control" name="schedule_time" id="scheduleTime">
+            </div>
+        </div>
 
-            <!-- Section upload de photos -->
-            <div class="photo-upload-section">
-                <label class="form-label">
-                    <i class="fas fa-camera icon-noble"></i>
-                    Photos (optionnel)
-                </label>
-                <div class="photo-upload-area" id="photoUploadArea">
-                    <div class="upload-placeholder">
-                        <i class="fas fa-cloud-upload-alt"></i>
-                        <p>Glissez-déposez vos photos ici</p>
-                        <p class="upload-hint">ou cliquez pour sélectionner</p>
-                    </div>
-                    <input type="file" id="photoInput" name="photos" multiple accept="image/*" style="display: none;">
-                </div>
-                <div class="photo-preview" id="photoPreview"></div>
-            </div>
-
-            <!-- Actions du post -->
-            <div class="post-actions">
-                <div class="action-buttons">
-                    <button type="submit" name="action" value="save_draft" class="btn btn-secondary">
-                        <i class="fas fa-save"></i>
-                        Sauvegarder en brouillon
-                    </button>
-                    <button type="submit" name="action" value="schedule" class="btn btn-warning">
-                        <i class="fas fa-clock"></i>
-                        Programmer
-                    </button>
-                    <button type="submit" name="action" value="publish" class="btn btn-primary">
-                        <i class="fas fa-paper-plane"></i>
-                        Publier maintenant
-                    </button>
-                </div>
-            </div>
-        </form>
-    </div>
+        <!-- Actions -->
+        <div class="post-actions">
+            <button type="submit" name="action" value="save_draft" class="btn btn-secondary post-action-btn">
+                <i class="fas fa-save"></i> Sauvegarder brouillon
+            </button>
+            <button type="submit" name="action" value="schedule" class="btn btn-warning post-action-btn">
+                <i class="fas fa-clock"></i> Programmer
+            </button>
+            <button type="submit" name="action" value="publish" class="btn btn-primary post-action-btn">
+                <i class="fas fa-paper-plane"></i> Publier
+            </button>
+        </div>
+    </form>
 </div>
 
 <style>
-/* Styles pour la page d'éditeur de post personnalisé - Style dashboard */
+/* Styles pour la page d'éditeur de post personnalisé - Nouveau design */
+.creation-section {
+    padding: 2rem;
+    max-width: 800px;
+    margin: 0 auto;
+}
+
 .content-header {
+    margin-bottom: 2rem;
+}
+
+.content-title-row {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 2rem;
-    padding-bottom: 1rem;
-    border-bottom: 2px solid #f0f0f0;
+    margin-bottom: 1rem;
 }
 
-.header-left {
-    display: flex;
-    align-items: center;
-    gap: 1.5rem;
-}
-
-.back-arrow {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 40px;
-    height: 40px;
-    background: #f8f9fa;
-    border: 2px solid #e9ecef;
-    border-radius: 8px;
-    color: #666;
-    text-decoration: none;
-    transition: all 0.3s ease;
-}
-
-.back-arrow:hover {
-    background: #FF6B6B;
-    border-color: #FF6B6B;
-    color: white;
-    transform: translateY(-2px);
-    box-shadow: 0 4px 15px rgba(255, 107, 107, 0.3);
-}
-
-.page-title {
+.content-title {
     color: #333;
     margin: 0;
     font-size: 1.8rem;
     font-weight: 700;
 }
 
-.main-content {
-    display: flex;
-    flex-direction: column;
-    gap: 1rem;
-    width: 100%;
-}
-
-/* Sections dans le style du dashboard */
-.settings-summary-section,
-.content-generation-section,
-.content-editing-section {
-    background: white;
-    padding: 1.5rem;
-    border-radius: 12px;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
-    width: 100%;
-}
-
-.settings-summary-section:hover,
-.content-generation-section:hover,
-.content-editing-section:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
-}
-
-.section-header {
-    margin-bottom: 1rem;
-}
-
-.section-header h2 {
-    color: #333;
-    margin: 0 0 0.5rem 0;
-    font-size: 1.4rem;
-    font-weight: 600;
-}
-
-.section-header p {
-    color: #666;
-    margin: 0;
-    font-size: 0.95rem;
-}
-
-/* Résumé des paramètres */
-.settings-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-    gap: 1rem;
-}
-
-.setting-item {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 1rem;
-    background: #f8f9fa;
+.back-btn {
+    padding: 0.5rem 1rem;
+    background: #6c757d;
+    color: white;
+    text-decoration: none;
     border-radius: 8px;
-    border-left: 4px solid #FF6B6B;
     transition: all 0.3s ease;
 }
 
-.setting-item:hover {
-    background: #fff5f5;
-    transform: translateX(5px);
+.back-btn:hover {
+    background: #5a6268;
+    transform: translateY(-2px);
 }
 
-.setting-label {
-    font-weight: 600;
+/* Résumé des paramètres */
+.content-settings-summary {
+    background: #f8f9fa;
+    padding: 1.5rem;
+    border-radius: 12px;
+    margin-bottom: 2rem;
+    border-left: 4px solid #FF6B6B;
+}
+
+.settings-item {
+    margin-bottom: 0.5rem;
     color: #333;
 }
 
-.setting-value {
-    color: #666;
-    font-style: italic;
+.settings-item:last-child {
+    margin-bottom: 0;
 }
 
-/* Prévisualisation du post */
-.post-preview-card {
-    background: #f8f9fa;
-    border: 2px solid #e9ecef;
-    border-radius: 8px;
+/* Aperçu LinkedIn */
+.linkedin-post-preview {
+    background: white;
+    border: 1px solid #e1e5e9;
+    border-radius: 12px;
+    margin-bottom: 2rem;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
     overflow: hidden;
 }
 
-.post-preview-header {
-    background: linear-gradient(135deg, #FF6B6B, #FF8E53);
-    color: white;
+.linkedin-post-header {
+    display: flex;
+    align-items: center;
     padding: 1rem 1.5rem;
-    margin: 0;
+    border-bottom: 1px solid #e1e5e9;
+    background: #f8f9fa;
 }
 
-.post-preview-header h3 {
-    margin: 0;
-    font-size: 1.1rem;
-    font-weight: 600;
-}
-
-.post-preview-content {
-    padding: 1.5rem;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    line-height: 1.6;
-    white-space: pre-wrap;
-    min-height: 120px;
-    background: white;
-}
-
-.loading-indicator {
-    text-align: center;
-    padding: 2rem;
-    color: #FF6B6B;
-}
-
-.loading-indicator i {
-    font-size: 2rem;
+.linkedin-avatar {
+    width: 48px;
+    height: 48px;
+    background: #0077b5;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 1.2rem;
     margin-right: 1rem;
 }
 
-/* Formulaire d'édition */
-.post-editing-form {
-    margin-top: 1rem;
+.linkedin-user-info {
+    flex: 1;
 }
 
+.linkedin-name {
+    font-weight: 600;
+    color: #333;
+    font-size: 1rem;
+}
+
+.linkedin-title {
+    color: #666;
+    font-size: 0.9rem;
+}
+
+.linkedin-time {
+    color: #999;
+    font-size: 0.8rem;
+}
+
+.linkedin-post-content {
+    padding: 1.5rem;
+}
+
+.linkedin-post-text {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    line-height: 1.6;
+    color: #333;
+    white-space: pre-wrap;
+}
+
+/* Formulaire */
 .form-group {
     margin-bottom: 1.5rem;
 }
@@ -319,34 +231,31 @@
     font-size: 1rem;
 }
 
-.post-content-textarea {
+.form-control {
     width: 100%;
-    min-height: 200px;
-    padding: 1rem;
+    padding: 0.8rem;
     border: 2px solid #e9ecef;
     border-radius: 8px;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    line-height: 1.6;
-    resize: vertical;
+    font-size: 1rem;
     transition: border-color 0.3s ease;
 }
 
-.post-content-textarea:focus {
+.form-control:focus {
     outline: none;
     border-color: #FF6B6B;
     box-shadow: 0 0 0 3px rgba(255, 107, 107, 0.1);
 }
 
-.character-count {
-    text-align: right;
-    color: #666;
-    font-size: 0.9rem;
-    margin-top: 0.5rem;
+.textarea-control {
+    min-height: 200px;
+    resize: vertical;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    line-height: 1.6;
 }
 
 /* Upload de photos */
 .photo-upload-section {
-    margin: 1.5rem 0;
+    margin: 2rem 0;
 }
 
 .photo-upload-area {
@@ -364,30 +273,29 @@
     background: #fff5f5;
 }
 
-.upload-placeholder i {
+.upload-content i {
     font-size: 2rem;
     color: #FF6B6B;
     margin-bottom: 1rem;
 }
 
-.upload-placeholder p {
+.upload-content p {
     margin: 0.5rem 0;
     color: #666;
 }
 
-.upload-hint {
-    font-size: 0.9rem;
-    color: #999;
-}
-
-.photo-preview {
+.uploaded-photos {
     display: flex;
     gap: 1rem;
     margin-top: 1rem;
     flex-wrap: wrap;
 }
 
-.photo-preview img {
+.uploaded-photo {
+    position: relative;
+}
+
+.uploaded-photo img {
     width: 100px;
     height: 100px;
     object-fit: cover;
@@ -396,25 +304,30 @@
     transition: transform 0.3s ease;
 }
 
-.photo-preview img:hover {
+.uploaded-photo img:hover {
     transform: scale(1.05);
+}
+
+/* Planification */
+.form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+    margin-bottom: 2rem;
 }
 
 /* Actions du post */
 .post-actions {
-    margin-top: 1.5rem;
-    padding-top: 1.5rem;
-    border-top: 2px solid #f0f0f0;
-}
-
-.action-buttons {
     display: flex;
     gap: 1rem;
     justify-content: center;
     flex-wrap: wrap;
+    margin-top: 2rem;
+    padding-top: 2rem;
+    border-top: 2px solid #f0f0f0;
 }
 
-.btn {
+.post-action-btn {
     padding: 0.8rem 1.5rem;
     border: none;
     border-radius: 8px;
@@ -446,128 +359,79 @@
     box-shadow: 0 4px 15px rgba(255, 193, 7, 0.3);
 }
 
-.btn:hover {
+.post-action-btn:hover {
     transform: translateY(-2px);
     box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
 }
 
 /* Responsive design */
 @media (max-width: 768px) {
-    .main-content {
-        gap: 1.5rem;
+    .creation-section {
+        padding: 1rem;
     }
     
-    .content-header {
+    .content-title-row {
         flex-direction: column;
         gap: 1rem;
         align-items: flex-start;
     }
     
-    .settings-grid {
+    .form-row {
         grid-template-columns: 1fr;
     }
     
-    .action-buttons {
+    .post-actions {
         flex-direction: column;
     }
     
-    .btn {
+    .post-action-btn {
         width: 100%;
         justify-content: center;
-    }
-    
-    .setting-item {
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 0.5rem;
     }
 }
 </style>
 
 <script>
-// Compteur de caractères
-document.addEventListener('DOMContentLoaded', function() {
-    const textarea = document.getElementById('postContentEditor');
-    const charCount = document.getElementById('charCount');
-    
-    if (textarea && charCount) {
-        function updateCharCount() {
-            const count = textarea.value.length;
-            charCount.textContent = count;
-            
-            if (count > 900) {
-                charCount.style.color = '#dc3545';
-            } else if (count > 800) {
-                charCount.style.color = '#ffc107';
-            } else {
-                charCount.style.color = '#28a745';
+// Préremplir date/heure à +30 minutes
+document.addEventListener("DOMContentLoaded", () => {
+    const now = new Date();
+    now.setMinutes(now.getMinutes() + 30);
+
+    document.getElementById("scheduleDate").value = now.toISOString().split("T")[0];
+    document.getElementById("scheduleTime").value = now.toTimeString().slice(0,5);
+
+    const photoUploadArea = document.getElementById("photoUploadArea");
+    const photoInput = document.getElementById("photoInput");
+    const photoPreview = document.getElementById("photoPreview");
+
+    photoUploadArea.addEventListener("click", () => photoInput.click());
+    photoInput.addEventListener("change", e => previewPhotos(e.target.files));
+    photoUploadArea.addEventListener("dragover", e => {
+        e.preventDefault();
+        photoUploadArea.classList.add("dragover");
+    });
+    photoUploadArea.addEventListener("dragleave", () => {
+        photoUploadArea.classList.remove("dragover");
+    });
+    photoUploadArea.addEventListener("drop", e => {
+        e.preventDefault();
+        photoUploadArea.classList.remove("dragover");
+        previewPhotos(e.dataTransfer.files);
+    });
+
+    function previewPhotos(files) {
+        photoPreview.innerHTML = "";
+        Array.from(files).forEach(file => {
+            if (file.type.startsWith("image/")) {
+                const reader = new FileReader();
+                reader.onload = e => {
+                    const div = document.createElement("div");
+                    div.classList.add("uploaded-photo");
+                    div.innerHTML = `<img src="${e.target.result}" alt="${file.name}">`;
+                    photoPreview.appendChild(div);
+                };
+                reader.readAsDataURL(file);
             }
-        }
-        
-        textarea.addEventListener('input', updateCharCount);
-        updateCharCount(); // Initial count
-    }
-    
-    // Gestion de l'upload de photos
-    const photoUploadArea = document.getElementById('photoUploadArea');
-    const photoInput = document.getElementById('photoInput');
-    const photoPreview = document.getElementById('photoPreview');
-    
-    if (photoUploadArea && photoInput && photoPreview) {
-        photoUploadArea.addEventListener('click', () => photoInput.click());
-        
-        photoInput.addEventListener('change', function(e) {
-            const files = Array.from(e.target.files);
-            photoPreview.innerHTML = '';
-            
-            files.forEach(file => {
-                if (file.type.startsWith('image/')) {
-                    const reader = new FileReader();
-                    reader.onload = function(e) {
-                        const img = document.createElement('img');
-                        img.src = e.target.result;
-                        img.alt = file.name;
-                        photoPreview.appendChild(img);
-                    };
-                    reader.readAsDataURL(file);
-                }
-            });
-        });
-        
-        // Drag and drop
-        photoUploadArea.addEventListener('dragover', function(e) {
-            e.preventDefault();
-            photoUploadArea.style.borderColor = '#FF6B6B';
-            photoUploadArea.style.background = '#fff5f5';
-        });
-        
-        photoUploadArea.addEventListener('dragleave', function(e) {
-            e.preventDefault();
-            photoUploadArea.style.borderColor = '#ddd';
-            photoUploadArea.style.background = 'transparent';
-        });
-        
-        photoUploadArea.addEventListener('drop', function(e) {
-            e.preventDefault();
-            photoUploadArea.style.borderColor = '#ddd';
-            photoUploadArea.style.background = 'transparent';
-            
-            const files = Array.from(e.dataTransfer.files);
-            photoInput.files = e.dataTransfer.files;
-            
-            photoPreview.innerHTML = '';
-            files.forEach(file => {
-                if (file.type.startsWith('image/')) {
-                    const reader = new FileReader();
-                    reader.onload = function(e) {
-                        const img = document.createElement('img');
-                        img.src = e.target.result;
-                        img.alt = file.name;
-                        photoPreview.appendChild(img);
-                    };
-                    reader.readAsDataURL(file);
-                }
-            });
         });
     }
 });
