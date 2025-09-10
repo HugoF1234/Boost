@@ -430,14 +430,18 @@ html, body {
 
 .compact-controls {
     display: grid;
-    grid-template-columns: 200px 1fr auto;
-    gap: 1rem;
-    align-items: start;
-    margin-top: 1.5rem;
+    grid-template-columns: 1fr auto auto;
+    gap: 1.5rem;
+    align-items: end;
+    margin-top: 2rem;
 }
 
 .tone-group {
     margin: 0;
+}
+
+.tone-group .form-control {
+    min-width: 200px;
 }
 
 .advanced-settings-compact {
@@ -445,29 +449,50 @@ html, body {
 }
 
 .settings-toggle {
-    background: var(--gray-lighter);
-    border: 1px solid rgba(0, 0, 0, 0.1);
-    border-radius: 8px;
-    padding: 0.75rem 1rem;
-    font-size: 0.9rem;
-    color: var(--gray-dark);
+    background: var(--white);
+    border: 1px solid rgba(255, 107, 107, 0.2);
+    border-radius: 12px;
+    padding: 1rem 1.25rem;
+    font-size: 0.95rem;
+    color: var(--noble-charcoal);
     cursor: pointer;
     display: flex;
     align-items: center;
-    gap: 0.5rem;
+    gap: 0.75rem;
     transition: all 0.3s ease;
     white-space: nowrap;
+    box-shadow: var(--shadow-whisper);
+    font-weight: 500;
+    min-height: 56px;
 }
 
 .settings-toggle:hover {
-    background: var(--primary-coral);
+    background: linear-gradient(135deg, var(--primary-coral) 0%, rgba(255, 107, 107, 0.9) 100%);
     color: white;
     border-color: var(--primary-coral);
+    box-shadow: 0 4px 20px rgba(255, 107, 107, 0.3);
+    transform: translateY(-2px);
+}
+
+.settings-toggle i:first-child {
+    color: var(--primary-coral);
+    font-size: 1.1rem;
+}
+
+.settings-toggle:hover i:first-child {
+    color: white;
 }
 
 .toggle-icon {
-    transition: transform 0.3s ease;
+    transition: all 0.3s ease;
     margin-left: auto;
+    color: var(--primary-coral);
+    opacity: 0.7;
+}
+
+.settings-toggle:hover .toggle-icon {
+    color: white;
+    opacity: 1;
 }
 
 .settings-panel {
@@ -476,38 +501,79 @@ html, body {
     left: 0;
     right: 0;
     background: var(--white);
-    border: 1px solid rgba(0, 0, 0, 0.1);
-    border-radius: 8px;
-    box-shadow: var(--shadow-gentle);
+    border: 1px solid rgba(255, 107, 107, 0.15);
+    border-radius: 12px;
+    box-shadow: 0 8px 32px rgba(255, 107, 107, 0.15);
     max-height: 0;
     overflow: hidden;
     opacity: 0;
-    transition: all 0.3s ease;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
     z-index: 10;
-    margin-top: 0.5rem;
-    min-width: 300px;
+    margin-top: 0.75rem;
+    min-width: 350px;
 }
 
 .settings-panel.expanded {
-    max-height: 400px;
+    max-height: 500px;
     opacity: 1;
-    padding: 1rem;
+    padding: 1.5rem;
+}
+
+.settings-panel::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: var(--gradient-warm);
+    border-radius: 12px 12px 0 0;
 }
 
 .settings-panel .form-group {
-    margin-bottom: 1rem;
+    margin-bottom: 1.5rem;
 }
 
 .settings-panel .form-group:last-child {
     margin-bottom: 0;
 }
 
+.settings-panel .form-label {
+    font-weight: 600;
+    color: var(--noble-charcoal);
+    margin-bottom: 0.5rem;
+}
+
+.settings-panel .form-control {
+    border: 1px solid rgba(255, 107, 107, 0.2);
+    border-radius: 8px;
+    transition: all 0.3s ease;
+}
+
+.settings-panel .form-control:focus {
+    border-color: var(--primary-coral);
+    box-shadow: 0 0 0 3px rgba(255, 107, 107, 0.1);
+}
+
 .create-btn-compact {
     margin: 0;
-    padding: 0.75rem 1.5rem;
+    padding: 1rem 2rem;
     white-space: nowrap;
     align-self: end;
-    margin-top: 1.5rem;
+    background: linear-gradient(135deg, var(--primary-coral) 0%, rgba(255, 107, 107, 0.9) 100%);
+    border: none;
+    border-radius: 12px;
+    color: white;
+    font-weight: 600;
+    font-size: 0.95rem;
+    box-shadow: 0 4px 20px rgba(255, 107, 107, 0.3);
+    transition: all 0.3s ease;
+    min-height: 56px;
+}
+
+.create-btn-compact:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 28px rgba(255, 107, 107, 0.4);
 }
 
 .news-invitation-section {
@@ -524,18 +590,32 @@ html, body {
     
     .compact-controls {
         grid-template-columns: 1fr;
-        gap: 1rem;
+        gap: 1.5rem;
+        align-items: stretch;
+    }
+    
+    .tone-group .form-control {
+        min-width: 100%;
     }
     
     .create-btn-compact {
         width: 100%;
-        margin-top: 1rem;
+        margin-top: 0;
+        order: 3;
+    }
+    
+    .advanced-settings-compact {
+        order: 2;
     }
     
     .settings-panel {
         min-width: 100%;
-        left: -1rem;
-        right: -1rem;
+        left: -1.5rem;
+        right: -1.5rem;
+    }
+    
+    .settings-toggle {
+        justify-content: center;
     }
 }
 
