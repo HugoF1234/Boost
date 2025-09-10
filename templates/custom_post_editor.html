@@ -3,10 +3,10 @@
 {% block title %}Éditeur de Post Personnalisé - LinkedInBoost{% endblock %}
 
 {% block content %}
-<div class="main-content">
+<div class="custom-post-container">
     <!-- Header avec navigation -->
-    <div class="content-header">
-        <div class="header-left">
+    <div class="custom-header">
+        <div class="header-content">
             <button class="sidebar-toggle" onclick="toggleSidebar()">
                 <i class="fas fa-bars"></i>
             </button>
@@ -23,37 +23,46 @@
         </div>
     </div>
 
-    <!-- Résumé des choix précédents -->
-    <div class="settings-summary-card">
-        <h3><i class="fas fa-cog icon-noble"></i> Paramètres choisis</h3>
-        <div class="settings-grid">
-            <div class="setting-item">
-                <strong>Sujet :</strong> {{ subject }}
+    <!-- Contenu principal en mode vertical -->
+    <div class="custom-main-content">
+        <!-- Résumé des choix précédents -->
+        <div class="settings-summary-card">
+            <div class="card-header">
+                <h3><i class="fas fa-cog icon-noble"></i> Paramètres choisis</h3>
             </div>
-            <div class="setting-item">
-                <strong>Ton :</strong> {{ tone }}
+            <div class="settings-list">
+                <div class="setting-item">
+                    <span class="setting-label">Sujet :</span>
+                    <span class="setting-value">{{ subject }}</span>
+                </div>
+                <div class="setting-item">
+                    <span class="setting-label">Ton :</span>
+                    <span class="setting-value">{{ tone }}</span>
+                </div>
+                <div class="setting-item">
+                    <span class="setting-label">Perspective :</span>
+                    <span class="setting-value">{{ perspective }}</span>
+                </div>
+                {% if custom_instructions %}
+                <div class="setting-item">
+                    <span class="setting-label">Instructions :</span>
+                    <span class="setting-value">{{ custom_instructions }}</span>
+                </div>
+                {% endif %}
             </div>
-            <div class="setting-item">
-                <strong>Perspective :</strong> {{ perspective }}
-            </div>
-            {% if custom_instructions %}
-            <div class="setting-item">
-                <strong>Instructions personnalisées :</strong> {{ custom_instructions }}
-            </div>
-            {% endif %}
         </div>
-    </div>
 
-    <!-- Section de génération du contenu -->
-    <div class="content-generation-section">
-        <div class="section-header">
-            <h2><i class="fas fa-robot icon-noble"></i> Contenu généré par l'IA</h2>
-            <p>Voici le post généré selon vos paramètres :</p>
-        </div>
-        
-        <div class="generated-content-card">
-            <div class="content-preview">
-                <h4>Prévisualisation du post :</h4>
+        <!-- Section de génération du contenu -->
+        <div class="content-generation-card">
+            <div class="card-header">
+                <h3><i class="fas fa-robot icon-noble"></i> Contenu généré par l'IA</h3>
+                <p>Voici le post généré selon vos paramètres :</p>
+            </div>
+            
+            <div class="post-preview-container">
+                <div class="post-preview-header">
+                    <h4>Prévisualisation du post :</h4>
+                </div>
                 <div class="post-preview-content" id="postContent">
                     {% if generated_content %}
                         {{ generated_content|safe }}
@@ -66,93 +75,98 @@
                 </div>
             </div>
         </div>
-    </div>
 
-    <!-- Section d'édition du contenu -->
-    <div class="content-editing-section">
-        <div class="section-header">
-            <h2><i class="fas fa-edit icon-noble"></i> Personnaliser votre post</h2>
-            <p>Modifiez le contenu généré selon vos besoins :</p>
-        </div>
-        
-        <form method="post" action="{{ url_for('save_custom_post') }}" class="post-editing-form">
-            <input type="hidden" name="subject" value="{{ subject }}">
-            <input type="hidden" name="tone" value="{{ tone }}">
-            <input type="hidden" name="custom_instructions" value="{{ custom_instructions }}">
-            <input type="hidden" name="perspective" value="{{ perspective }}">
-            
-            <div class="form-group">
-                <label class="form-label">
-                    <i class="fas fa-file-text icon-noble"></i>
-                    Contenu du post
-                </label>
-                <textarea 
-                    class="form-control post-content-textarea" 
-                    name="post_content" 
-                    id="postContentEditor"
-                    rows="8" 
-                    placeholder="Votre contenu de post LinkedIn..."
-                >{{ generated_content if generated_content else '' }}</textarea>
-                <div class="character-count">
-                    <span id="charCount">0</span> / 900 caractères
-                </div>
+        <!-- Section d'édition du contenu -->
+        <div class="content-editing-card">
+            <div class="card-header">
+                <h3><i class="fas fa-edit icon-noble"></i> Personnaliser votre post</h3>
+                <p>Modifiez le contenu généré selon vos besoins :</p>
             </div>
-
-            <!-- Section upload de photos -->
-            <div class="photo-upload-section">
-                <label class="form-label">
-                    <i class="fas fa-camera icon-noble"></i>
-                    Photos (optionnel)
-                </label>
-                <div class="photo-upload-area" id="photoUploadArea">
-                    <div class="upload-placeholder">
-                        <i class="fas fa-cloud-upload-alt"></i>
-                        <p>Glissez-déposez vos photos ici ou cliquez pour sélectionner</p>
-                        <input type="file" id="photoInput" name="photos" multiple accept="image/*" style="display: none;">
+            
+            <form method="post" action="{{ url_for('save_custom_post') }}" class="post-editing-form">
+                <input type="hidden" name="subject" value="{{ subject }}">
+                <input type="hidden" name="tone" value="{{ tone }}">
+                <input type="hidden" name="custom_instructions" value="{{ custom_instructions }}">
+                <input type="hidden" name="perspective" value="{{ perspective }}">
+                
+                <div class="form-group">
+                    <label class="form-label">
+                        <i class="fas fa-file-text icon-noble"></i>
+                        Contenu du post
+                    </label>
+                    <textarea 
+                        class="form-control post-content-textarea" 
+                        name="post_content" 
+                        id="postContentEditor"
+                        rows="8" 
+                        placeholder="Votre contenu de post LinkedIn..."
+                    >{{ generated_content if generated_content else '' }}</textarea>
+                    <div class="character-count">
+                        <span id="charCount">0</span> / 900 caractères
                     </div>
                 </div>
-                <div class="photo-preview" id="photoPreview"></div>
-            </div>
 
-            <!-- Actions du post -->
-            <div class="post-actions">
-                <div class="action-buttons">
-                    <button type="submit" name="action" value="save_draft" class="btn btn-secondary">
-                        <i class="fas fa-save"></i>
-                        Sauvegarder en brouillon
-                    </button>
-                    <button type="submit" name="action" value="schedule" class="btn btn-warning">
-                        <i class="fas fa-clock"></i>
-                        Programmer
-                    </button>
-                    <button type="submit" name="action" value="publish" class="btn btn-primary">
-                        <i class="fas fa-paper-plane"></i>
-                        Publier maintenant
-                    </button>
+                <!-- Section upload de photos -->
+                <div class="photo-upload-section">
+                    <label class="form-label">
+                        <i class="fas fa-camera icon-noble"></i>
+                        Photos (optionnel)
+                    </label>
+                    <div class="photo-upload-area" id="photoUploadArea">
+                        <div class="upload-placeholder">
+                            <i class="fas fa-cloud-upload-alt"></i>
+                            <p>Glissez-déposez vos photos ici</p>
+                            <p class="upload-hint">ou cliquez pour sélectionner</p>
+                        </div>
+                        <input type="file" id="photoInput" name="photos" multiple accept="image/*" style="display: none;">
+                    </div>
+                    <div class="photo-preview" id="photoPreview"></div>
                 </div>
-            </div>
-        </form>
+
+                <!-- Actions du post -->
+                <div class="post-actions">
+                    <div class="action-buttons">
+                        <button type="submit" name="action" value="save_draft" class="btn btn-secondary">
+                            <i class="fas fa-save"></i>
+                            Sauvegarder en brouillon
+                        </button>
+                        <button type="submit" name="action" value="schedule" class="btn btn-warning">
+                            <i class="fas fa-clock"></i>
+                            Programmer
+                        </button>
+                        <button type="submit" name="action" value="publish" class="btn btn-primary">
+                            <i class="fas fa-paper-plane"></i>
+                            Publier maintenant
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
     </div>
 </div>
 
 <style>
-/* Styles spécifiques à la page d'éditeur de post personnalisé */
-.main-content {
-    padding: 2rem;
-    max-width: 1200px;
-    margin: 0 auto;
+/* Styles pour la page d'éditeur de post personnalisé - Design vertical moderne */
+.custom-post-container {
+    min-height: 100vh;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    padding: 0;
 }
 
-.content-header {
+.custom-header {
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+    padding: 1rem 2rem;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 2rem;
-    padding-bottom: 1rem;
-    border-bottom: 2px solid #f0f0f0;
+    box-shadow: 0 2px 20px rgba(0, 0, 0, 0.1);
+    position: sticky;
+    top: 0;
+    z-index: 100;
 }
 
-.header-left {
+.header-content {
     display: flex;
     align-items: center;
     gap: 1rem;
@@ -162,74 +176,109 @@
     color: #333;
     margin: 0;
     font-size: 1.8rem;
+    font-weight: 700;
 }
 
-.settings-summary-card {
+.custom-main-content {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 2rem;
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+}
+
+/* Cartes avec design moderne */
+.settings-summary-card,
+.content-generation-card,
+.content-editing-card {
+    background: white;
+    border-radius: 16px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.settings-summary-card:hover,
+.content-generation-card:hover,
+.content-editing-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
+}
+
+.card-header {
     background: linear-gradient(135deg, #FF6B6B, #FF8E53);
     color: white;
     padding: 1.5rem;
-    border-radius: 12px;
-    margin-bottom: 2rem;
-    box-shadow: 0 4px 15px rgba(255, 107, 107, 0.3);
+    margin: 0;
 }
 
-.settings-summary-card h3 {
-    margin: 0 0 1rem 0;
-    font-size: 1.2rem;
+.card-header h3 {
+    margin: 0 0 0.5rem 0;
+    font-size: 1.3rem;
+    font-weight: 600;
 }
 
-.settings-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+.card-header p {
+    margin: 0;
+    opacity: 0.9;
+    font-size: 0.95rem;
+}
+
+/* Résumé des paramètres */
+.settings-list {
+    padding: 1.5rem;
+    display: flex;
+    flex-direction: column;
     gap: 1rem;
 }
 
 .setting-item {
-    background: rgba(255, 255, 255, 0.1);
-    padding: 0.8rem;
-    border-radius: 8px;
-    backdrop-filter: blur(10px);
-}
-
-.content-generation-section,
-.content-editing-section {
-    background: white;
-    padding: 2rem;
-    border-radius: 12px;
-    margin-bottom: 2rem;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-}
-
-.section-header {
-    margin-bottom: 1.5rem;
-}
-
-.section-header h2 {
-    color: #333;
-    margin: 0 0 0.5rem 0;
-    font-size: 1.4rem;
-}
-
-.section-header p {
-    color: #666;
-    margin: 0;
-}
-
-.generated-content-card {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem;
     background: #f8f9fa;
-    border: 2px solid #e9ecef;
     border-radius: 8px;
+    border-left: 4px solid #FF6B6B;
+}
+
+.setting-label {
+    font-weight: 600;
+    color: #333;
+}
+
+.setting-value {
+    color: #666;
+    font-style: italic;
+}
+
+/* Prévisualisation du post */
+.post-preview-container {
     padding: 1.5rem;
+}
+
+.post-preview-header {
+    margin-bottom: 1rem;
+}
+
+.post-preview-header h4 {
+    color: #333;
+    margin: 0;
+    font-size: 1.1rem;
+    font-weight: 600;
 }
 
 .post-preview-content {
-    background: white;
+    background: #f8f9fa;
+    border: 2px solid #e9ecef;
+    border-radius: 12px;
     padding: 1.5rem;
-    border-radius: 8px;
-    border-left: 4px solid #FF6B6B;
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     line-height: 1.6;
     white-space: pre-wrap;
+    min-height: 120px;
+    border-left: 4px solid #FF6B6B;
 }
 
 .loading-indicator {
@@ -243,15 +292,41 @@
     margin-right: 1rem;
 }
 
+/* Formulaire d'édition */
 .post-editing-form {
-    margin-top: 1.5rem;
+    padding: 1.5rem;
+}
+
+.form-group {
+    margin-bottom: 2rem;
+}
+
+.form-label {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-weight: 600;
+    color: #333;
+    margin-bottom: 0.8rem;
+    font-size: 1rem;
 }
 
 .post-content-textarea {
+    width: 100%;
     min-height: 200px;
-    resize: vertical;
+    padding: 1rem;
+    border: 2px solid #e9ecef;
+    border-radius: 8px;
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     line-height: 1.6;
+    resize: vertical;
+    transition: border-color 0.3s ease;
+}
+
+.post-content-textarea:focus {
+    outline: none;
+    border-color: #FF6B6B;
+    box-shadow: 0 0 0 3px rgba(255, 107, 107, 0.1);
 }
 
 .character-count {
@@ -261,17 +336,19 @@
     margin-top: 0.5rem;
 }
 
+/* Upload de photos */
 .photo-upload-section {
     margin: 2rem 0;
 }
 
 .photo-upload-area {
     border: 2px dashed #ddd;
-    border-radius: 8px;
+    border-radius: 12px;
     padding: 2rem;
     text-align: center;
     cursor: pointer;
     transition: all 0.3s ease;
+    background: #fafafa;
 }
 
 .photo-upload-area:hover {
@@ -280,9 +357,19 @@
 }
 
 .upload-placeholder i {
-    font-size: 2rem;
+    font-size: 2.5rem;
     color: #FF6B6B;
     margin-bottom: 1rem;
+}
+
+.upload-placeholder p {
+    margin: 0.5rem 0;
+    color: #666;
+}
+
+.upload-hint {
+    font-size: 0.9rem;
+    color: #999;
 }
 
 .photo-preview {
@@ -298,8 +385,14 @@
     object-fit: cover;
     border-radius: 8px;
     border: 2px solid #e9ecef;
+    transition: transform 0.3s ease;
 }
 
+.photo-preview img:hover {
+    transform: scale(1.05);
+}
+
+/* Actions du post */
 .post-actions {
     margin-top: 2rem;
     padding-top: 2rem;
@@ -314,9 +407,9 @@
 }
 
 .btn {
-    padding: 0.8rem 1.5rem;
+    padding: 1rem 2rem;
     border: none;
-    border-radius: 8px;
+    border-radius: 12px;
     cursor: pointer;
     font-weight: 600;
     text-decoration: none;
@@ -324,41 +417,46 @@
     align-items: center;
     gap: 0.5rem;
     transition: all 0.3s ease;
+    font-size: 1rem;
+    min-width: 180px;
+    justify-content: center;
 }
 
 .btn-primary {
     background: linear-gradient(135deg, #FF6B6B, #FF8E53);
     color: white;
+    box-shadow: 0 4px 15px rgba(255, 107, 107, 0.3);
 }
 
 .btn-secondary {
     background: #6c757d;
     color: white;
+    box-shadow: 0 4px 15px rgba(108, 117, 125, 0.3);
 }
 
 .btn-warning {
     background: #ffc107;
     color: #212529;
+    box-shadow: 0 4px 15px rgba(255, 193, 7, 0.3);
 }
 
 .btn:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    transform: translateY(-3px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
 }
 
+/* Responsive design */
 @media (max-width: 768px) {
-    .main-content {
+    .custom-main-content {
         padding: 1rem;
+        gap: 1.5rem;
     }
     
-    .content-header {
+    .custom-header {
+        padding: 1rem;
         flex-direction: column;
         gap: 1rem;
         align-items: flex-start;
-    }
-    
-    .settings-grid {
-        grid-template-columns: 1fr;
     }
     
     .action-buttons {
@@ -367,7 +465,13 @@
     
     .btn {
         width: 100%;
-        justify-content: center;
+        min-width: auto;
+    }
+    
+    .setting-item {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.5rem;
     }
 }
 </style>
