@@ -511,9 +511,26 @@ html, body {
 .news-article-meta {
     display: flex;
     gap: 1rem;
-    font-size: 0.85rem;
-    color: var(--gray-light);
+    font-size: 0.9rem;
+    color: var(--primary-coral);
+    margin-top: 1rem;
     margin-bottom: 1rem;
+    font-weight: 500;
+    background: rgba(255, 107, 107, 0.08);
+    padding: 0.5rem 1rem;
+    border-radius: 8px;
+    border-left: 3px solid var(--primary-coral);
+}
+
+.news-article-meta span {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.news-article-meta i {
+    color: var(--primary-coral);
+    font-weight: 600;
 }
 
 .news-article-actions {
