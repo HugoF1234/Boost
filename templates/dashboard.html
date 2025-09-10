@@ -1,34 +1,51 @@
 {% extends "base.html" %}
 {% block content %}
 
-<!-- Section d'accueil noble avec fond transparent -->
+<!-- Section titre avec métriques améliorées -->
 <div class="welcome-section fade-in">
-<div class="welcome-content">
-<div>
-<h1 class="greeting">Bienvenue, {{ first_name }} </h1>
-<p class="greeting-subtitle">{{ name }} | {{ email }}</p>
-</div>
+    <div class="welcome-content">
+        <div>
+            <h1 class="greeting">Bienvenue, {{ first_name }}</h1>
+            <p class="greeting-subtitle">{{ name }} | {{ email }}</p>
+        </div>
         {% if article_success %}
         <div class="success-badge">
-<i class="fas fa-check-circle"></i>
+            <i class="fas fa-check-circle"></i>
             Article sélectionné avec succès !
         </div>
         {% endif %}
     </div>
-<div class="user-stats">
-<div class="stat-item">
-<span class="stat-number">{{ scheduled_posts }}</span>
-<span class="stat-label">En attente</span>
-</div>
-<div class="stat-item">
-<span class="stat-number">{{ posts|length if posts else 0 }}</span>
-<span class="stat-label">Total posts</span>
-</div>
-<div class="stat-item">
-<span class="stat-number">100%</span>
-<span class="stat-label">Succès</span>
-</div>
-</div>
+    
+    <!-- Métriques redessinées -->
+    <div class="dashboard-metrics">
+        <div class="metric-card">
+            <div class="metric-icon">
+                <i class="fas fa-clock"></i>
+            </div>
+            <div class="metric-content">
+                <span class="metric-number">{{ scheduled_posts }}</span>
+                <span class="metric-label">En attente</span>
+            </div>
+        </div>
+        <div class="metric-card">
+            <div class="metric-icon">
+                <i class="fas fa-edit"></i>
+            </div>
+            <div class="metric-content">
+                <span class="metric-number">{{ posts|length if posts else 0 }}</span>
+                <span class="metric-label">Total posts</span>
+            </div>
+        </div>
+        <div class="metric-card">
+            <div class="metric-icon">
+                <i class="fas fa-chart-line"></i>
+            </div>
+            <div class="metric-content">
+                <span class="metric-number">100%</span>
+                <span class="metric-label">Succès</span>
+            </div>
+        </div>
+    </div>
 </div>
 
 <!-- Section pour l'article sélectionné -->
@@ -103,72 +120,96 @@
     </a>
 </div>
 {% else %}
-<!-- Section de génération de post standard -->
+<!-- Section principale avec colonnes gauche/droite -->
 <div class="creation-section fade-in">
-<div class="section-header">
-<h2 class="section-title">
-<i class="fas fa-pen-fancy icon-noble"></i>
+    <div class="section-header">
+        <h2 class="section-title">
+            <i class="fas fa-pen-fancy icon-noble"></i>
             Créer un nouveau post
         </h2>
-<p class="section-subtitle">Utilisez l'IA pour créer rapidement un contenu authentique et engageant pour votre audience LinkedIn</p>
-</div>
-<form method="post">
-<div class="form-group">
-<label class="form-label">
-<i class="fas fa-comment-dots icon-noble"></i>
-                Sujet de votre post
-            </label>
-<input class="form-control" name="subject" type="text" placeholder="Ex: Partagez des conseils sur le leadership en temps de crise" required=""/>
-</div>
-<div class="form-group">
-<label class="form-label">
-<i class="fas fa-magic icon-noble"></i>
-                Instructions personnalisées (optionnel)
-            </label>
-<textarea class="form-control textarea-control" name="custom_instructions" placeholder="Partagez votre perspective unique sur ce sujet. Par exemple : 'En tant qu'expert en transformation digitale, j'aimerais mettre l'accent sur les défis d'adoption dans les PME...'"></textarea>
-<div class="mention-tip">
-<i class="fas fa-lightbulb icon-noble"></i>
-<span>Personnalisez votre post avec vos propres instructions. Laissez vide pour utiliser les paramètres par défaut.</span>
-</div>
-</div>
-<div class="form-row">
-<div class="form-group">
-<label class="form-label">Ton du post</label>
-<select class="form-control" name="tone">
-<option value="professionnel">Professionnel bienveillant</option>
-<option value="familier">Conversationnel</option>
-<option value="inspirant">Inspirant</option>
-<option value="humoristique">Décontracté</option>
-<option value="factuel">Pédagogique</option>
-<option value="critique">Analytique</option>
-</select>
-</div>
-<div class="form-group">
-<label class="form-label">Perspective</label>
-<select class="form-control" name="perspective">
-<option value="neutre">Neutre</option>
-<option value="enthousiaste">Enthousiaste</option>
-<option value="analytique">Analytique</option>
-<option value="innovant">Innovateur</option>
-<option value="expert">Expert du domaine</option>
-</select>
-</div>
-<button class="btn btn-primary" name="generate" type="submit">
-<i class="fas fa-magic"></i>
-                Créer
-            </button>
-</div>
-</form>
-<a class="news-invitation" href="{{ url_for('news_assistant') }}">
-<div class="invitation-content">
-<div class="invitation-title">
-<i class="fas fa-newspaper icon-noble"></i>
+        <p class="section-subtitle">Utilisez l'IA pour créer rapidement un contenu authentique et engageant pour votre audience LinkedIn</p>
+    </div>
+    
+    <form method="post">
+        <div class="dashboard-columns">
+            <!-- Colonne gauche : Essentials -->
+            <div class="main-inputs">
+                <div class="form-group">
+                    <label class="form-label">
+                        <i class="fas fa-comment-dots icon-noble"></i>
+                        Sujet de votre post
+                    </label>
+                    <input class="form-control" name="subject" type="text" placeholder="Ex: Partagez des conseils sur le leadership en temps de crise" required=""/>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">
+                        <i class="fas fa-palette icon-noble"></i>
+                        Ton du post
+                    </label>
+                    <select class="form-control" name="tone">
+                        <option value="professionnel">Professionnel bienveillant</option>
+                        <option value="familier">Conversationnel</option>
+                        <option value="inspirant">Inspirant</option>
+                        <option value="humoristique">Décontracté</option>
+                        <option value="factuel">Pédagogique</option>
+                        <option value="critique">Analytique</option>
+                    </select>
+                </div>
+            </div>
+            
+            <!-- Colonne droite : Advanced Settings -->
+            <div class="advanced-settings">
+                <div class="settings-header">
+                    <h3 class="settings-title">
+                        <i class="fas fa-cog"></i>
+                        Advanced Settings
+                    </h3>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">
+                        <i class="fas fa-magic icon-noble"></i>
+                        Instructions personnalisées (optionnel)
+                    </label>
+                    <textarea class="form-control textarea-control" name="custom_instructions" placeholder="Partagez votre perspective unique sur ce sujet..."></textarea>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">
+                        <i class="fas fa-eye icon-noble"></i>
+                        Perspective
+                    </label>
+                    <select class="form-control" name="perspective">
+                        <option value="neutre">Neutre</option>
+                        <option value="enthousiaste">Enthousiaste</option>
+                        <option value="analytique">Analytique</option>
+                        <option value="innovant">Innovateur</option>
+                        <option value="expert">Expert du domaine</option>
+                    </select>
+                </div>
+                
+                <button class="btn btn-primary create-btn" type="submit">
+                    <i class="fas fa-magic"></i>
+                    Créer mon contenu
+                </button>
+            </div>
+        </div>
+    </form>
+    
+    <!-- Bouton "Créer un post basé sur l'actualité" -->
+    <div class="news-invitation-section">
+        <a class="news-invitation" href="{{ url_for('news_assistant') }}">
+            <div class="invitation-content">
+                <div class="invitation-title">
+                    <i class="fas fa-newspaper icon-noble"></i>
                     Créer un post basé sur l'actualité
                 </div>
-<div class="invitation-subtitle">Inspirez-vous des sujets tendances de votre secteur</div>
-</div>
-<i class="fas fa-arrow-right" style="font-size: 1.5rem; margin-left: auto;"></i>
-</a>
+                <div class="invitation-subtitle">Inspirez-vous des sujets tendances de votre secteur</div>
+            </div>
+            <i class="fas fa-arrow-right" style="font-size: 1.5rem; margin-left: auto;"></i>
+        </a>
+    </div>
 </div>
 {% endif %}
 
@@ -185,14 +226,14 @@
 <div class="post-header">
 <div class="post-avatar">
                     {{ first_name[0]|upper }}{{ last_name[0]|upper if last_name else '' }}
-                </div>
+            </div>
 <div class="post-user-info">
 <h4>{{ first_name }} {{ last_name }}</h4>
 <p>{{ email }}</p>
 </div>
 </div>
 <div class="post-content" id="post-preview">{{ draft|safe }}</div>
-</div>
+                </div>
 <form method="post">
 <div class="form-group">
 <label class="form-label">
@@ -213,11 +254,11 @@
 <button class="media-tab active" data-tab="upload" type="button">
 <i class="fas fa-upload"></i>
                         Télécharger
-                    </button>
+                </button>
 <button class="media-tab" data-tab="pexels" type="button">
 <i class="fas fa-images"></i>
                         Photos libres
-                    </button>
+                </button>
 </div>
 <div class="media-content active" id="upload-content">
 <div class="upload-area" id="upload-area">
@@ -253,11 +294,11 @@
 <button class="btn btn-secondary" name="save_draft" type="submit">
 <i class="fas fa-save"></i>
                             Sauvegarder
-                        </button>
+                    </button>
 <button class="btn btn-primary" name="publish" type="submit">
 <i class="fab fa-linkedin"></i>
                             Publier maintenant
-                        </button>
+                    </button>
 </div>
 </div>
 </div>
@@ -432,7 +473,7 @@ document.addEventListener('DOMContentLoaded', function() {
     elements.forEach((el, index) => {
         el.style.opacity = '0';
         el.style.transform = 'translateY(20px)';
-        setTimeout(() => {
+            setTimeout(() => {
             el.style.opacity = '1';
             el.style.transform = 'translateY(0)';
             el.style.transition = 'all 0.6s ease';
