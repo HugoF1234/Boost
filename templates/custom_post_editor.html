@@ -200,8 +200,8 @@
 }
 
 .post-avatar {
-    width: 48px;
-    height: 48px;
+    width: 64px;
+    height: 64px;
     margin-right: 1rem;
     position: relative;
 }
@@ -261,6 +261,8 @@
     color: #333;
     white-space: pre-wrap;
     word-wrap: break-word;
+    text-indent: 0;
+    margin: 0;
 }
 
 .linkedin-stats {
@@ -483,6 +485,11 @@
         justify-content: center;
     }
 }
+
+.hashtag {
+    color: #0a66c2;
+    cursor: pointer;
+}
 </style>
 
 <script>
@@ -536,8 +543,23 @@ document.addEventListener("DOMContentLoaded", () => {
     if (textarea && previewText) {
         textarea.addEventListener("input", () => {
             previewText.textContent = textarea.value.trim() || "Votre contenu apparaîtra ici.";
+            // Appliquer le style aux hashtags
+            applyHashtagStyling();
         });
     }
+
+    // Fonction pour styliser les hashtags
+    function applyHashtagStyling() {
+        if (previewText) {
+            previewText.innerHTML = previewText.innerHTML.replace(
+                /(^|\s)(#[a-zA-Z0-9À-ÿ_]+)/g,
+                '$1<span class="hashtag">$2</span>'
+            );
+        }
+    }
+
+    // Appliquer le style aux hashtags au chargement
+    applyHashtagStyling();
 });
 </script>
 {% endblock %}
