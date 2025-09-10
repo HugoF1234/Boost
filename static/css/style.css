@@ -576,6 +576,250 @@ html, body {
     color: var(--primary-coral);
 }
 
+/* ========================================
+   SECTION CONTENU PERSONNALISÉ
+   ======================================== */
+.custom-content-section {
+    background: var(--white);
+    border-radius: 16px;
+    padding: 2rem;
+    margin-bottom: 1rem;
+    border: 1px solid var(--gray-light);
+    box-shadow: var(--shadow-whisper);
+}
+
+.content-header {
+    margin-bottom: 2rem;
+    padding-bottom: 1.5rem;
+    border-bottom: 1px solid rgba(255, 107, 107, 0.1);
+}
+
+.content-title {
+    font-size: 1.75rem;
+    font-weight: 600;
+    color: var(--noble-charcoal);
+    margin: 0 0 1rem 0;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.content-settings-summary {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+    background: var(--gray-lighter);
+    padding: 1rem;
+    border-radius: 8px;
+}
+
+.settings-item {
+    font-size: 0.9rem;
+    color: var(--gray-dark);
+}
+
+.settings-item strong {
+    color: var(--noble-charcoal);
+    font-weight: 600;
+}
+
+/* ========================================
+   PREVIEW POST LINKEDIN
+   ======================================== */
+.linkedin-post-preview {
+    background: var(--white);
+    border: 1px solid var(--gray-light);
+    border-radius: 12px;
+    padding: 1.5rem;
+    margin-bottom: 2rem;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.linkedin-post-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 1rem;
+}
+
+.linkedin-avatar {
+    width: 48px;
+    height: 48px;
+    background: var(--primary-coral);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 1.2rem;
+}
+
+.linkedin-user-info {
+    flex: 1;
+}
+
+.linkedin-name {
+    font-weight: 600;
+    color: var(--noble-charcoal);
+    font-size: 0.95rem;
+}
+
+.linkedin-title {
+    color: var(--gray-medium);
+    font-size: 0.85rem;
+    margin: 2px 0;
+}
+
+.linkedin-time {
+    color: var(--gray-light);
+    font-size: 0.8rem;
+}
+
+.linkedin-post-content {
+    margin-bottom: 1rem;
+}
+
+.linkedin-post-text {
+    line-height: 1.6;
+    color: var(--noble-charcoal);
+    margin-bottom: 1rem;
+}
+
+.linkedin-post-text p {
+    margin: 0 0 0.75rem 0;
+}
+
+.linkedin-post-text p:last-child {
+    margin-bottom: 0;
+}
+
+.linkedin-post-actions {
+    display: flex;
+    gap: 1rem;
+    padding-top: 1rem;
+    border-top: 1px solid var(--gray-lighter);
+}
+
+.linkedin-action-btn {
+    background: none;
+    border: none;
+    color: var(--gray-medium);
+    font-size: 0.9rem;
+    cursor: pointer;
+    padding: 0.5rem 0;
+    transition: color 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.linkedin-action-btn:hover {
+    color: var(--primary-coral);
+}
+
+/* ========================================
+   UPLOAD DE PHOTOS
+   ======================================== */
+.photo-upload-section {
+    margin-bottom: 2rem;
+}
+
+.photo-upload-area {
+    border: 2px dashed var(--gray-light);
+    border-radius: 12px;
+    padding: 2rem;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    background: var(--gray-lighter);
+}
+
+.photo-upload-area:hover {
+    border-color: var(--primary-coral);
+    background: rgba(255, 107, 107, 0.05);
+}
+
+.photo-upload-area.dragover {
+    border-color: var(--primary-coral);
+    background: rgba(255, 107, 107, 0.1);
+}
+
+.upload-content i {
+    font-size: 2rem;
+    color: var(--primary-coral);
+    margin-bottom: 0.5rem;
+}
+
+.upload-content p {
+    margin: 0.25rem 0;
+    color: var(--gray-dark);
+}
+
+.upload-hint {
+    font-size: 0.85rem;
+    color: var(--gray-medium);
+}
+
+.uploaded-photos {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+    gap: 1rem;
+    margin-top: 1rem;
+}
+
+.uploaded-photo {
+    position: relative;
+    border-radius: 8px;
+    overflow: hidden;
+    aspect-ratio: 1;
+}
+
+.uploaded-photo img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.uploaded-photo .remove-photo {
+    position: absolute;
+    top: 4px;
+    right: 4px;
+    background: rgba(0, 0, 0, 0.7);
+    color: white;
+    border: none;
+    border-radius: 50%;
+    width: 24px;
+    height: 24px;
+    cursor: pointer;
+    font-size: 0.8rem;
+}
+
+/* ========================================
+   ACTIONS DU POST
+   ======================================== */
+.post-actions {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    padding-top: 1.5rem;
+    border-top: 1px solid rgba(255, 107, 107, 0.1);
+}
+
+.post-action-btn {
+    padding: 0.75rem 1.5rem;
+    border-radius: 8px;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.post-action-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+}
+
 
 .create-btn-wrapper {
     display: flex;
