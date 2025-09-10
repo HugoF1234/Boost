@@ -333,6 +333,7 @@
             </button>
         </div>
     </div>
+    </div> <!-- Fermeture de la section customContentSection -->
     
     <!-- Bouton "Créer un post basé sur l'actualité" -->
     <div class="news-invitation-section">
@@ -737,16 +738,37 @@ function handleCreatePost(event) {
     const welcomeSection = document.querySelector('.welcome-section');
     const creationSection = document.querySelector('.creation-section');
     
-    if (welcomeSection) welcomeSection.style.display = 'none';
-    if (creationSection) creationSection.style.display = 'none';
+    console.log('Sections found:', {
+        welcomeSection: !!welcomeSection,
+        creationSection: !!creationSection
+    });
+    
+    if (welcomeSection) {
+        welcomeSection.style.display = 'none';
+        console.log('Welcome section hidden');
+    } else {
+        console.error('Welcome section not found!');
+    }
+    
+    if (creationSection) {
+        creationSection.style.display = 'none';
+        console.log('Creation section hidden');
+    } else {
+        console.error('Creation section not found!');
+    }
 
     // Afficher la section de contenu personnalisé
     const customSection = document.getElementById("customContentSection");
+    console.log('Custom section found:', !!customSection);
+    
     if (customSection) {
         customSection.style.display = "block";
+        console.log('Custom section displayed');
         
         // Mettre à jour le résumé des paramètres
         const settingsSummary = document.getElementById("settingsSummary");
+        console.log('Settings summary found:', !!settingsSummary);
+        
         if (settingsSummary) {
             settingsSummary.innerHTML = `
                 <div class="settings-item"><strong>Sujet :</strong> ${subject}</div>
@@ -754,10 +776,14 @@ function handleCreatePost(event) {
                 <div class="settings-item"><strong>Perspective :</strong> ${perspective}</div>
                 ${customInstructions ? `<div class="settings-item"><strong>Instructions :</strong> ${customInstructions}</div>` : ''}
             `;
+            console.log('Settings summary updated');
         }
         
         // Générer le contenu avec Gemini via AJAX
+        console.log('Starting Gemini generation...');
         generateContentWithGemini(subject, tone, customInstructions, perspective);
+    } else {
+        console.error('Custom section not found!');
     }
 
     console.log('Post creation completed');
