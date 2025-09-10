@@ -2906,3 +2906,10 @@ html, body {
         grid-template-columns: 1fr;
     }
 }
+
+/* Règles !important pour corriger le conflit CSS avec custom_post_editor.html */
+.post-content-text {
+    white-space: break-spaces !important;
+    margin: 0 !important;
+    text-indent: 0 !important;
+}
