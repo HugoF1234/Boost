@@ -261,7 +261,7 @@ LINKEDIN_ASSET_REGISTRATION_URL = "https://api.linkedin.com/v2/assets?action=reg
 LINKEDIN_POSTS_URL = "https://api.linkedin.com/v2/ugcPosts"
 
 SCOPES = "openid email profile w_member_social"
-GEMINI_API_KEY = os.getenv("GEMINI_API_KEY", "AIzaSyD76qCZzbr9P74etHmr8qWb1qoe7eapDbc")
+GEMINI_API_KEY = os.getenv("GEMINI_API_KEY", "AIzaSyAH-hVzlQJQTCOLB1UsznxrObuY8XIsKMQ")
 genai.configure(api_key=GEMINI_API_KEY)
 import requests
 import re
