@@ -428,47 +428,86 @@ html, body {
     margin-top: 0.25rem;
 }
 
-.dashboard-columns {
+.compact-controls {
     display: grid;
-    grid-template-columns: 1fr 400px;
-    gap: 2rem;
-    margin-top: 2rem;
+    grid-template-columns: 200px 1fr auto;
+    gap: 1rem;
+    align-items: start;
+    margin-top: 1.5rem;
 }
 
-.main-inputs {
-    display: flex;
-    flex-direction: column;
-    gap: 1.5rem;
-}
-
-.advanced-settings {
-    background: var(--gray-lighter);
-    border-radius: 12px;
-    padding: 1.5rem;
-    border: 1px solid rgba(0, 0, 0, 0.05);
-}
-
-.settings-header {
-    margin-bottom: 1.5rem;
-    padding-bottom: 1rem;
-    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
-}
-
-.settings-title {
-    font-size: 1.1rem;
-    font-weight: 600;
-    color: var(--black);
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
+.tone-group {
     margin: 0;
 }
 
-.create-btn {
-    width: 100%;
-    margin-top: 1rem;
+.advanced-settings-compact {
+    position: relative;
+}
+
+.settings-toggle {
+    background: var(--gray-lighter);
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    padding: 0.75rem 1rem;
+    font-size: 0.9rem;
+    color: var(--gray-dark);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    transition: all 0.3s ease;
+    white-space: nowrap;
+}
+
+.settings-toggle:hover {
+    background: var(--primary-coral);
+    color: white;
+    border-color: var(--primary-coral);
+}
+
+.toggle-icon {
+    transition: transform 0.3s ease;
+    margin-left: auto;
+}
+
+.settings-panel {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background: var(--white);
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    box-shadow: var(--shadow-gentle);
+    max-height: 0;
+    overflow: hidden;
+    opacity: 0;
+    transition: all 0.3s ease;
+    z-index: 10;
+    margin-top: 0.5rem;
+    min-width: 300px;
+}
+
+.settings-panel.expanded {
+    max-height: 400px;
+    opacity: 1;
     padding: 1rem;
-    font-weight: 600;
+}
+
+.settings-panel .form-group {
+    margin-bottom: 1rem;
+}
+
+.settings-panel .form-group:last-child {
+    margin-bottom: 0;
+}
+
+.create-btn-compact {
+    margin: 0;
+    padding: 0.75rem 1.5rem;
+    white-space: nowrap;
+    align-self: end;
+    margin-top: 1.5rem;
 }
 
 .news-invitation-section {
@@ -483,13 +522,20 @@ html, body {
         gap: 1rem;
     }
     
-    .dashboard-columns {
+    .compact-controls {
         grid-template-columns: 1fr;
-        gap: 1.5rem;
+        gap: 1rem;
     }
     
-    .advanced-settings {
-        order: -1;
+    .create-btn-compact {
+        width: 100%;
+        margin-top: 1rem;
+    }
+    
+    .settings-panel {
+        min-width: 100%;
+        left: -1rem;
+        right: -1rem;
     }
 }
 
