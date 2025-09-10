@@ -81,16 +81,22 @@
                 required>{{ generated_content if generated_content else "" }}</textarea>
         </div>
 
-        <!-- Upload photo -->
+        <!-- ========== Upload photo ========== -->
         <div class="photo-upload-section">
-            <label class="form-label"><i class="fas fa-camera icon-noble"></i> Ajouter des photos</label>
+            <label class="form-label">
+                <i class="fas fa-camera icon-noble"></i> Ajouter des photos
+            </label>
+
             <div class="photo-upload-area" id="photoUploadArea">
                 <div class="upload-content">
                     <i class="fas fa-cloud-upload-alt"></i>
                     <p>Glissez-déposez vos photos ici ou cliquez pour sélectionner</p>
+                    <p class="upload-hint">PNG, JPG, JPEG • jusqu'à 10 images</p>
                     <input type="file" id="photoInput" name="photos" multiple accept="image/*" style="display:none;">
                 </div>
             </div>
+
+            <!-- Vignettes -->
             <div class="uploaded-photos" id="photoPreview"></div>
         </div>
 
@@ -490,77 +496,140 @@
     color: #0a66c2;
     cursor: pointer;
 }
+
+/* CSS pour l'upload multi-photos */
+.uploaded-photos {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+    gap: 1rem;
+    margin-top: 1rem;
+}
+
+.uploaded-photo { 
+    position: relative; 
+    border-radius: 8px; 
+    overflow: hidden; 
+    aspect-ratio: 1; 
+}
+
+.uploaded-photo img { 
+    width: 100%; 
+    height: 100%; 
+    object-fit: cover; 
+    display: block; 
+}
+
+.remove-photo {
+    position: absolute; 
+    top: 6px; 
+    right: 6px;
+    width: 26px; 
+    height: 26px; 
+    border-radius: 50%;
+    border: none; 
+    color: #fff; 
+    background: rgba(0,0,0,0.55);
+    cursor: pointer; 
+    opacity: 0; 
+    transition: opacity .2s ease;
+}
+
+.uploaded-photo:hover .remove-photo { 
+    opacity: 1; 
+}
 </style>
 
 <script>
-// Préremplir date/heure à +30 minutes
 document.addEventListener("DOMContentLoaded", () => {
-    const now = new Date();
-    now.setMinutes(now.getMinutes() + 30);
+  // ---------- Pré-remplir date/heure à +30 min ----------
+  const now = new Date();
+  now.setMinutes(now.getMinutes() + 30);
+  const d = document.getElementById("scheduleDate");
+  const t = document.getElementById("scheduleTime");
+  if (d) d.value = now.toISOString().split("T")[0];
+  if (t) t.value = now.toTimeString().slice(0,5);
 
-    document.getElementById("scheduleDate").value = now.toISOString().split("T")[0];
-    document.getElementById("scheduleTime").value = now.toTimeString().slice(0,5);
+  // ---------- Gestion photos : sélection, preview, suppression ----------
+  const area = document.getElementById("photoUploadArea");
+  const input = document.getElementById("photoInput");
+  const grid  = document.getElementById("photoPreview");
+  const form  = input.closest("form");
 
-    const photoUploadArea = document.getElementById("photoUploadArea");
-    const photoInput = document.getElementById("photoInput");
-    const photoPreview = document.getElementById("photoPreview");
+  // Liste interne des fichiers sélectionnés
+  let filesBuffer = [];
 
-    photoUploadArea.addEventListener("click", () => photoInput.click());
-    photoInput.addEventListener("change", e => previewPhotos(e.target.files));
-    photoUploadArea.addEventListener("dragover", e => {
-        e.preventDefault();
-        photoUploadArea.classList.add("dragover");
-    });
-    photoUploadArea.addEventListener("dragleave", () => {
-        photoUploadArea.classList.remove("dragover");
-    });
-    photoUploadArea.addEventListener("drop", e => {
-        e.preventDefault();
-        photoUploadArea.classList.remove("dragover");
-        previewPhotos(e.dataTransfer.files);
-    });
+  area.addEventListener("click", () => input.click());
+  area.addEventListener("dragover", (e) => { e.preventDefault(); area.classList.add("dragover"); });
+  area.addEventListener("dragleave", () => area.classList.remove("dragover"));
+  area.addEventListener("drop", (e) => {
+    e.preventDefault();
+    area.classList.remove("dragover");
+    addFiles([...e.dataTransfer.files]);
+  });
+  input.addEventListener("change", (e) => addFiles([...e.target.files]));
 
-    function previewPhotos(files) {
-        photoPreview.innerHTML = "";
-        Array.from(files).forEach(file => {
-            if (file.type.startsWith("image/")) {
-                const reader = new FileReader();
-                reader.onload = e => {
-                    const div = document.createElement("div");
-                    div.classList.add("uploaded-photo");
-                    div.innerHTML = `<img src="${e.target.result}" alt="${file.name}">`;
-                    photoPreview.appendChild(div);
-                };
-                reader.readAsDataURL(file);
-            }
-        });
+  function addFiles(newFiles) {
+    const accepted = [];
+    for (const f of newFiles) {
+      if (!f.type.startsWith("image/")) continue;
+      if (filesBuffer.length >= 10) break; // limite soft à 10
+      accepted.push(f);
     }
+    filesBuffer = filesBuffer.concat(accepted);
+    renderPreviews();
+  }
 
-    // Mise à jour en direct de l'aperçu LinkedIn
-    const textarea = document.querySelector('textarea[name="post_content"]');
-    const previewText = document.getElementById("postPreviewText");
+  function renderPreviews() {
+    grid.innerHTML = "";
+    filesBuffer.forEach((file, index) => {
+      const url = URL.createObjectURL(file);
+      const card = document.createElement("div");
+      card.className = "uploaded-photo";
+      card.innerHTML = `
+        <img src="${url}" alt="${file.name}">
+        <button type="button" class="remove-photo" title="Retirer" data-index="${index}">✕</button>
+      `;
+      grid.appendChild(card);
+    });
+  }
 
-    if (textarea && previewText) {
-        textarea.addEventListener("input", () => {
-            let value = textarea.value.replace(/^\s+/, ""); // supprime espaces/retours au début
-            previewText.textContent = value || "Votre contenu apparaîtra ici.";
-            // Appliquer le style aux hashtags
-            applyHashtagStyling();
-        });
+  grid.addEventListener("click", (e) => {
+    if (e.target.classList.contains("remove-photo")) {
+      const idx = Number(e.target.dataset.index);
+      filesBuffer.splice(idx, 1);
+      renderPreviews();
     }
+  });
 
-    // Fonction pour styliser les hashtags
-    function applyHashtagStyling() {
-        if (previewText) {
-            previewText.innerHTML = previewText.innerHTML.replace(
-                /(^|\s)(#[a-zA-Z0-9À-ÿ_]+)/g,
-                '$1<span class="hashtag">$2</span>'
-            );
-        }
-    }
+  // Avant l'envoi, synchroniser filesBuffer -> input.files
+  form.addEventListener("submit", () => {
+    const dt = new DataTransfer();
+    filesBuffer.forEach(f => dt.items.add(f));
+    input.files = dt.files;
+  });
 
-    // Appliquer le style aux hashtags au chargement
-    applyHashtagStyling();
+  // ---------- Aperçu LinkedIn : synchro live + hashtags ----------
+  const textarea = document.querySelector('textarea[name="post_content"]');
+  const previewText = document.getElementById("postPreviewText");
+
+  function applyHashtagStyling() {
+    // Transforme #hashtags en spans bleus
+    previewText.innerHTML = previewText.textContent.replace(
+      /(^|\s)(#[\p{L}\p{N}_]+)/gu,
+      '$1<span class="hashtag">$2</span>'
+    );
+  }
+
+  if (textarea && previewText) {
+    const syncPreview = () => {
+      const value = textarea.value.replace(/^\s+/, ""); // retire l'espace/retour initial
+      previewText.textContent = value || "Votre contenu apparaîtra ici.";
+      applyHashtagStyling();
+    };
+    textarea.addEventListener("input", syncPreview);
+    // Premier passage
+    syncPreview();
+  }
 });
 </script>
 {% endblock %}
