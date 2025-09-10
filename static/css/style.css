@@ -377,10 +377,11 @@ html, body {
     font-size: 1.75rem;
     font-weight: 600;
     color: var(--black);
-    margin-bottom: 0.75rem;
+    margin-bottom: 0.5rem;
     display: flex;
     align-items: center;
     gap: 12px;
+    letter-spacing: -0.02em;
 }
 
 .news-subtitle {
