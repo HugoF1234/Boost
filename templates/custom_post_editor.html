@@ -542,7 +542,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
     if (textarea && previewText) {
         textarea.addEventListener("input", () => {
-            previewText.textContent = textarea.value.trim() || "Votre contenu apparaîtra ici.";
+            let value = textarea.value.replace(/^\s+/, ""); // supprime espaces/retours au début
+            previewText.textContent = value || "Votre contenu apparaîtra ici.";
             // Appliquer le style aux hashtags
             applyHashtagStyling();
         });
