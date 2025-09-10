@@ -532,9 +532,9 @@ html, body {
 }
 
 .btn-glass:hover {
-    background: var(--primary-purple);
+    background: var(--primary-coral);
     color: white;
-    border-color: var(--primary-purple);
+    border-color: var(--primary-coral);
 }
 
 /* Classes pour PROFIL */
