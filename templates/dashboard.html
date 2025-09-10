@@ -221,9 +221,12 @@
                     Action
                 </label>
                 <button class="btn btn-primary create-btn-compact" type="submit">
-<i class="fas fa-magic"></i>
-                Créer
-            </button>
+                    <i class="fas fa-magic"></i>
+                    Créer
+                </button>
+                <button class="btn btn-warning" type="button" onclick="testJavaScript()" style="margin-left: 10px;">
+                    Test JS
+                </button>
             </div>
 </div>
     </form>
@@ -704,19 +707,47 @@ function showSettingsSavedMessage() {
 // Fonction pour gérer la soumission du formulaire
 function handleCreatePost(event) {
     event.preventDefault();
+    console.log('handleCreatePost called');
     
     // Récupérer les valeurs du formulaire
-    const subject = document.querySelector('input[name="subject"]').value;
-    const tone = document.querySelector('select[name="tone"]').value;
-    const customInstructions = document.querySelector('textarea[name="custom_instructions"]').value;
-    const perspective = document.querySelector('select[name="perspective"]').value;
+    const subjectInput = document.querySelector('input[name="subject"]');
+    const toneSelect = document.querySelector('select[name="tone"]');
+    const customInstructionsTextarea = document.querySelector('textarea[name="custom_instructions"]');
+    const perspectiveSelect = document.querySelector('select[name="perspective"]');
+    
+    console.log('Elements found:', {
+        subjectInput: !!subjectInput,
+        toneSelect: !!toneSelect,
+        customInstructionsTextarea: !!customInstructionsTextarea,
+        perspectiveSelect: !!perspectiveSelect
+    });
+    
+    if (!subjectInput || !toneSelect) {
+        console.error('Required form elements not found');
+        return;
+    }
+    
+    const subject = subjectInput.value;
+    const tone = toneSelect.value;
+    const customInstructions = customInstructionsTextarea ? customInstructionsTextarea.value : '';
+    const perspective = perspectiveSelect ? perspectiveSelect.value : 'neutre';
+    
+    console.log('Form values:', { subject, tone, customInstructions, perspective });
     
     // Masquer les sections existantes
-    document.querySelector('.welcome-section').style.display = 'none';
-    document.querySelector('.creation-section').style.display = 'none';
+    const welcomeSection = document.querySelector('.welcome-section');
+    const creationSection = document.querySelector('.creation-section');
+    const customContentSection = document.getElementById('customContentSection');
     
-    // Afficher la section de contenu personnalisé
-    document.getElementById('customContentSection').style.display = 'block';
+    console.log('Sections found:', {
+        welcomeSection: !!welcomeSection,
+        creationSection: !!creationSection,
+        customContentSection: !!customContentSection
+    });
+    
+    if (welcomeSection) welcomeSection.style.display = 'none';
+    if (creationSection) creationSection.style.display = 'none';
+    if (customContentSection) customContentSection.style.display = 'block';
     
     // Mettre à jour le résumé des paramètres
     updateSettingsSummary(subject, tone, customInstructions, perspective);
@@ -724,7 +755,7 @@ function handleCreatePost(event) {
     // Générer le contenu du post (simulation)
     generatePostContent(subject, tone, customInstructions, perspective);
     
-    console.log('Post creation flow started:', { subject, tone, customInstructions, perspective });
+    console.log('Post creation flow completed');
 }
 
 // Mettre à jour le résumé des paramètres
@@ -870,10 +901,29 @@ function resetPageDisplay() {
     document.getElementById('customContentSection').style.display = 'none';
 }
 
+// Test simple pour vérifier que le JavaScript fonctionne
+function testJavaScript() {
+    console.log('JavaScript is working!');
+    alert('JavaScript is working!');
+}
+
 // Initialiser l'upload de photos quand la page est chargée
 document.addEventListener('DOMContentLoaded', function() {
+    console.log('DOM loaded, initializing...');
     initializePhotoUpload();
     resetPageDisplay(); // S'assurer que les sections sont visibles au chargement
+    
+    // Test du bouton Créer
+    const createButton = document.querySelector('.create-btn-compact');
+    if (createButton) {
+        console.log('Create button found:', createButton);
+        createButton.addEventListener('click', function(e) {
+            console.log('Create button clicked!');
+            // Ne pas empêcher le comportement par défaut ici, laisser le form gérer
+        });
+    } else {
+        console.error('Create button not found!');
+    }
 });
 </script>
 
