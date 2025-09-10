@@ -3,14 +3,14 @@
 
 <!-- Section titre avec métriques améliorées -->
 <div class="welcome-section fade-in">
-    <div class="welcome-content">
-        <div>
+<div class="welcome-content">
+<div>
             <h1 class="greeting">Bienvenue, {{ first_name }}</h1>
-            <p class="greeting-subtitle">{{ name }} | {{ email }}</p>
-        </div>
+<p class="greeting-subtitle">{{ name }} | {{ email }}</p>
+</div>
         {% if article_success %}
         <div class="success-badge">
-            <i class="fas fa-check-circle"></i>
+<i class="fas fa-check-circle"></i>
             Article sélectionné avec succès !
         </div>
         {% endif %}
@@ -21,12 +21,12 @@
         <div class="metric-card">
             <div class="metric-icon">
                 <i class="fas fa-clock"></i>
-            </div>
+</div>
             <div class="metric-content">
                 <span class="metric-number">{{ scheduled_posts }}</span>
                 <span class="metric-label">En attente</span>
-            </div>
-        </div>
+</div>
+</div>
         <div class="metric-card">
             <div class="metric-icon">
                 <i class="fas fa-edit"></i>
@@ -45,7 +45,7 @@
                 <span class="metric-label">Succès</span>
             </div>
         </div>
-    </div>
+</div>
 </div>
 
 <!-- Section pour l'article sélectionné -->
@@ -122,23 +122,23 @@
 {% else %}
 <!-- Section principale avec colonnes gauche/droite -->
 <div class="creation-section fade-in">
-    <div class="section-header">
-        <h2 class="section-title">
-            <i class="fas fa-pen-fancy icon-noble"></i>
+<div class="section-header">
+<h2 class="section-title">
+<i class="fas fa-pen-fancy icon-noble"></i>
             Créer un nouveau post
         </h2>
         <p class="section-subtitle spaced-subtitle">Utilisez l'IA pour créer rapidement un contenu authentique et engageant pour votre audience LinkedIn</p>
-    </div>
+</div>
     
-    <form method="post">
+<form method="post">
         <!-- Ligne 1 : Sujet du post -->
-        <div class="form-group">
+<div class="form-group">
             <label class="form-label">
                 <i class="fas fa-comment-dots icon-noble"></i>
                 Sujet de votre post
             </label>
             <input class="form-control" name="subject" type="text" placeholder="Ex: Partagez des conseils sur le leadership en temps de crise" required=""/>
-        </div>
+</div>
         
         <!-- Ligne 2 : Ton + Advanced Settings + Bouton -->
         <div class="compact-controls">
@@ -147,15 +147,15 @@
                     <i class="fas fa-palette icon-noble"></i>
                     Ton du post
                 </label>
-                <select class="form-control" name="tone">
-                    <option value="professionnel">Professionnel bienveillant</option>
-                    <option value="familier">Conversationnel</option>
-                    <option value="inspirant">Inspirant</option>
-                    <option value="humoristique">Décontracté</option>
-                    <option value="factuel">Pédagogique</option>
+<select class="form-control" name="tone">
+<option value="professionnel">Professionnel bienveillant</option>
+<option value="familier">Conversationnel</option>
+<option value="inspirant">Inspirant</option>
+<option value="humoristique">Décontracté</option>
+<option value="factuel">Pédagogique</option>
                     <option value="critique">Analytique</option>
-                </select>
-            </div>
+</select>
+</div>
             
             <!-- Advanced Settings collapsible -->
             <div class="advanced-settings-compact">
@@ -169,7 +169,16 @@
                     <i class="fas fa-chevron-down toggle-icon"></i>
                 </button>
                 
+                <!-- Backdrop pour l'overlay -->
+                <div class="settings-backdrop" id="settingsBackdrop" onclick="closeAdvancedSettings()"></div>
+                
                 <div class="settings-panel" id="advancedPanel">
+                    <div class="settings-panel-header">
+                        <h3>Paramètres avancés</h3>
+                        <button type="button" class="settings-close-btn" onclick="closeAdvancedSettings()">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
                     <div class="form-group">
                         <label class="form-label">
                             <i class="fas fa-magic icon-noble"></i>
@@ -200,25 +209,25 @@
                     Action
                 </label>
                 <button class="btn btn-primary create-btn-compact" type="submit">
-                    <i class="fas fa-magic"></i>
-                    Créer
-                </button>
+<i class="fas fa-magic"></i>
+                Créer
+            </button>
             </div>
-        </div>
-    </form>
+</div>
+</form>
     
     <!-- Bouton "Créer un post basé sur l'actualité" -->
     <div class="news-invitation-section">
-        <a class="news-invitation" href="{{ url_for('news_assistant') }}">
+<a class="news-invitation" href="{{ url_for('news_assistant') }}">
             <div class="invitation-content">
                 <div class="invitation-title">
                     <i class="fas fa-newspaper icon-noble"></i>
                     Créer un post basé sur l'actualité
-                </div>
+</div>
                 <div class="invitation-subtitle">Inspirez-vous des sujets tendances de votre secteur</div>
-            </div>
+</div>
             <i class="fas fa-arrow-right" style="font-size: 1.5rem; margin-left: auto;"></i>
-        </a>
+</a>
     </div>
 </div>
 {% endif %}
@@ -516,15 +525,40 @@ function removeSelectedMedia() {
 
 function toggleAdvancedSettings() {
     const panel = document.getElementById('advancedPanel');
+    const backdrop = document.getElementById('settingsBackdrop');
     const toggleIcon = document.querySelector('.toggle-icon');
     
+    console.log('Toggle Advanced Settings clicked');
+    
     if (panel.classList.contains('expanded')) {
-        panel.classList.remove('expanded');
-        toggleIcon.style.transform = 'rotate(0deg)';
+        closeAdvancedSettings();
     } else {
-        panel.classList.add('expanded');
-        toggleIcon.style.transform = 'rotate(180deg)';
+        openAdvancedSettings();
     }
+}
+
+function openAdvancedSettings() {
+    const panel = document.getElementById('advancedPanel');
+    const backdrop = document.getElementById('settingsBackdrop');
+    const toggleIcon = document.querySelector('.toggle-icon');
+    
+    panel.classList.add('expanded');
+    backdrop.classList.add('active');
+    toggleIcon.style.transform = 'rotate(180deg)';
+    document.body.style.overflow = 'hidden'; // Empêche le scroll de la page
+    console.log('Advanced Settings opened');
+}
+
+function closeAdvancedSettings() {
+    const panel = document.getElementById('advancedPanel');
+    const backdrop = document.getElementById('settingsBackdrop');
+    const toggleIcon = document.querySelector('.toggle-icon');
+    
+    panel.classList.remove('expanded');
+    backdrop.classList.remove('active');
+    toggleIcon.style.transform = 'rotate(0deg)';
+    document.body.style.overflow = 'auto'; // Restaure le scroll
+    console.log('Advanced Settings closed');
 }
 </script>
 
