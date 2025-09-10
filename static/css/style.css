@@ -72,12 +72,9 @@
 html, body {
     margin: 0;
     font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-    background: var(--gradient-main);
-    background-attachment: fixed;
-    background-size: 400% 400%;
-    animation: gradientBG 25s ease infinite;
+    background: var(--noble-cream);
     min-height: 100vh;
-    color: var(--black);
+    color: var(--noble-charcoal);
     line-height: 1.6;
     font-weight: 400;
 }
@@ -286,10 +283,10 @@ html, body {
 .card, .welcome-section, .creation-section, .news-section, 
 .settings-card, .calendar-header, .historique-section {
     background: var(--white);
-    border-radius: 12px; /* coins arrondis nobles */
-    padding: 2.5rem;
+    border-radius: 16px; /* coins arrondis plus nobles */
+    padding: 2rem;
     margin-bottom: 2rem;
-    border: 1px solid rgba(0, 0, 0, 0.05); /* bordure subtile */
+    border: 1px solid var(--gray-light); /* bordure subtile */
     box-shadow: var(--shadow-whisper); /* ombres nobles */
     position: relative;
     overflow: hidden;
@@ -430,9 +427,9 @@ html, body {
 
 .compact-controls {
     display: grid;
-    grid-template-columns: 220px 1fr auto;
+    grid-template-columns: 1fr 1fr auto;
     gap: 1.5rem;
-    align-items: flex-end;
+    align-items: start;
     margin-top: 3rem;
 }
 
@@ -454,12 +451,6 @@ html, body {
     min-height: 56px;
 }
 
-.invisible-label {
-    visibility: hidden;
-    margin-bottom: 0.5rem;
-    display: block;
-    height: 1.5rem;
-}
 
 .create-btn-wrapper {
     display: flex;
