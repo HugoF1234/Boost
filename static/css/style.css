@@ -451,6 +451,61 @@ html, body {
     min-height: 56px;
 }
 
+.settings-backdrop {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 1500;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.3s ease;
+}
+
+.settings-backdrop.active {
+    opacity: 1;
+    visibility: visible;
+}
+
+.settings-panel-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid rgba(255, 107, 107, 0.1);
+}
+
+.settings-panel-header h3 {
+    margin: 0;
+    color: var(--noble-charcoal);
+    font-size: 1.25rem;
+    font-weight: 600;
+}
+
+.settings-close-btn {
+    background: none;
+    border: none;
+    color: var(--gray-medium);
+    font-size: 1.2rem;
+    cursor: pointer;
+    padding: 0.5rem;
+    border-radius: 50%;
+    transition: all 0.3s ease;
+    width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.settings-close-btn:hover {
+    background: rgba(255, 107, 107, 0.1);
+    color: var(--primary-coral);
+}
+
 
 .create-btn-wrapper {
     display: flex;
@@ -513,30 +568,31 @@ html, body {
 }
 
 .settings-panel {
-    position: absolute;
-    bottom: 100%;
-    left: 0;
-    right: 0;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) scale(0.8);
     background: var(--white);
     border: 1px solid rgba(255, 107, 107, 0.15);
-    border-radius: 12px;
-    box-shadow: 0 8px 32px rgba(255, 107, 107, 0.15);
+    border-radius: 16px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
     max-height: 0;
-    overflow: visible;
+    overflow: hidden;
     opacity: 0;
     transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-    z-index: 1000;
-    margin-bottom: 0.75rem;
-    min-width: 400px;
-    transform: translateY(10px);
+    z-index: 2000;
+    min-width: 500px;
+    max-width: 90vw;
+    pointer-events: none;
 }
 
 .settings-panel.expanded {
-    max-height: 500px;
+    max-height: 600px;
     opacity: 1;
-    padding: 1.5rem;
-    transform: translateY(0);
+    padding: 2rem;
+    transform: translate(-50%, -50%) scale(1);
     overflow: visible;
+    pointer-events: auto;
 }
 
 .settings-panel::before {
