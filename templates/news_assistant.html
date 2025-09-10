@@ -1,7 +1,8 @@
 {% extends "base.html" %}
 {% block content %}
 
-<div class="news-section fade-in">
+<!-- Section titre séparée -->
+<div class="welcome-section fade-in">
     <div class="news-header">
         <i class="fa-solid fa-newspaper icon-noble"></i>
         Assistant d'actualité
@@ -9,6 +10,10 @@
     <div class="news-subtitle">
         Inspirez vos posts LinkedIn avec les sujets qui font l'actualité de votre secteur.
     </div>
+</div>
+
+<!-- Section contenu séparée -->
+<div class="creation-section fade-in">
     <form method="get">
         <div class="news-form-row">
             <div class="news-form-group">
@@ -67,10 +72,10 @@
             </div>
             <div class="news-article-actions">
                 <a href="{{ article.url }}" target="_blank" class="btn-glass btn-glass-article">
-                    <i class="fas fa-external-link"></i> Lire l'article
+                    <i class="fas fa-external-link"></i> Voir cet article
                 </a>
                 <button onclick='selectArticle({{ loop.index0 }})' class="btn-glass btn-glass-use">
-                    <i class="fas fa-feather-alt"></i> Utiliser cet article
+                    <i class="fas fa-feather-alt"></i> Consulter cet article
                 </button>
             </div>
             <script type="application/json" class="article-data-{{ loop.index0 }}">
@@ -93,6 +98,7 @@
     </div>
     {% endif %}
 </div>
+
 <script>
 function selectArticle(index) {
     const json = document.querySelector('.article-data-' + index).textContent;
