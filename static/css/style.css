@@ -460,7 +460,7 @@ html, body {
 .creation-section form {
     position: relative;
     z-index: 1;
-    padding-bottom: 300px; /* Espace pour le panel expandé */
+    padding-bottom: 50px; /* Espace réduit pour un design plus compact */
 }
 
 .settings-toggle {
@@ -597,8 +597,8 @@ html, body {
 }
 
 .news-invitation-section {
-    margin-top: 2rem;
-    padding-top: 2rem;
+    margin-top: 1rem;
+    padding-top: 1rem;
     border-top: 1px solid rgba(0, 0, 0, 0.1);
 }
 
