@@ -349,14 +349,16 @@ def migrate_postgresql_columns():
             for column_name, column_type in new_columns:
                 if column_name not in existing_columns:
                     try:
-                        # Utiliser ALTER TABLE avec IF NOT EXISTS pour PostgreSQL
+                        # Utiliser ALTER TABLE pour PostgreSQL
                         alter_sql = f"ALTER TABLE posts ADD COLUMN {column_name} {column_type};"
                         logger.info(f"➕ Ajout de la colonne: {column_name} ({column_type})")
-                        db.engine.execute(text(alter_sql))
+                        db.session.execute(text(alter_sql))
+                        db.session.commit()
                         columns_added += 1
                         logger.info(f"✅ Colonne {column_name} ajoutée avec succès")
                     except Exception as e:
                         logger.error(f"❌ Erreur lors de l'ajout de {column_name}: {e}")
+                        db.session.rollback()
                         # Continuer avec les autres colonnes même si une échoue
                 else:
                     logger.info(f"ℹ️ Colonne {column_name} existe déjà")
@@ -364,7 +366,7 @@ def migrate_postgresql_columns():
             # Mettre des valeurs par défaut pour les nouvelles colonnes
             try:
                 # Mettre à jour le status des posts existants
-                db.engine.execute(text("""
+                db.session.execute(text("""
                     UPDATE posts 
                     SET status = CASE 
                         WHEN linkedin_post_urn IS NOT NULL THEN 'published'
@@ -373,10 +375,11 @@ def migrate_postgresql_columns():
                     END
                     WHERE status IS NULL OR status = '';
                 """))
+                db.session.commit()
                 logger.info("✅ Status mis à jour pour les posts existants")
                 
                 # Mettre des valeurs par défaut pour les autres colonnes
-                db.engine.execute(text("""
+                db.session.execute(text("""
                     UPDATE posts 
                     SET subject = COALESCE(subject, ''),
                         tone = COALESCE(tone, 'professionnel'),
@@ -385,10 +388,12 @@ def migrate_postgresql_columns():
                         created_at = COALESCE(created_at, CURRENT_TIMESTAMP)
                     WHERE subject IS NULL OR tone IS NULL OR perspective IS NULL OR images IS NULL OR created_at IS NULL;
                 """))
+                db.session.commit()
                 logger.info("✅ Valeurs par défaut mises à jour")
                 
             except Exception as e:
                 logger.error(f"⚠️ Erreur lors de la mise à jour des valeurs par défaut: {e}")
+                db.session.rollback()
             
             # Vérification finale
             final_columns = inspector.get_columns('posts')
