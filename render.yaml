@@ -4,7 +4,7 @@ services:
     env: python
     region: frankfurt
     plan: free
-    buildCommand: "pip install -r requirements.txt && python3 deploy_migration.py"
+    buildCommand: "pip install -r requirements.txt"
     startCommand: "gunicorn app:app"
     envVars:
       - key: DATABASE_URL
