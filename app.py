@@ -47,7 +47,33 @@ def publish_to_linkedin(text: str, image_paths: list[str]) -> dict:
     Intègre ici ton API LinkedIn (UGC Posts / Assets upload).
     """
     # TODO: upload des assets image, puis création du post
-    return {"status": "ok", "linkedin_post_id": "mock_123"}
+    return {"ok": True, "linkedin_post_id": f"mock_{int(datetime.utcnow().timestamp())}"}
+
+def build_post_payload(req):
+    """Construit le payload du post à partir de la requête."""
+    text = (req.form.get("post_content") or "").strip()
+    date_s = req.form.get("schedule_date")  # "YYYY-MM-DD"
+    time_s = req.form.get("schedule_time")  # "HH:MM"
+    photos = req.files.getlist("photos")
+    images = save_images(photos)
+    payload = {
+        "text": text,
+        "images": images,
+        "subject": req.form.get("subject") or "",
+        "tone": req.form.get("tone") or "",
+        "perspective": req.form.get("perspective") or "",
+        "created_at": datetime.utcnow(),
+    }
+    if date_s and time_s:
+        payload["scheduled_at"] = datetime.strptime(f"{date_s} {time_s}", "%Y-%m-%d %H:%M")
+    else:
+        payload["scheduled_at"] = None
+    return payload
+
+# Listes pour stocker les posts (à remplacer par la DB plus tard)
+draft_posts = []
+scheduled_posts = []
+published_posts = []
 
 # -----------------------
 # CONFIGURATION APP
@@ -2060,75 +2086,69 @@ def custom_post_editor():
 
 # Première définition supprimée - doublon
 
-@app.route("/create-custom-post", methods=["POST"])
-def create_custom_post():
+# -------- BROUILLON --------
+@app.route("/draft", methods=["POST"])
+def draft():
     if 'profile' not in session:
         return redirect(url_for("index"))
     
     try:
-        action = request.form.get("action")
-        post_content = request.form.get("post_content", "").strip()
-        subject = request.form.get("subject", "Post LinkedIn")
-        schedule_date = request.form.get("schedule_date")
-        schedule_time = request.form.get("schedule_time")
-        files = request.files.getlist("photos")
-        
-        # Récupérer l'utilisateur
-        user = User.query.filter_by(sub=session['profile'].get("sub", "")).first()
-        
-        # Sauvegarder les images
-        image_paths = save_images(files)
-        
-        # Créer le post en base
-        post_data = {
-            "user_id": user.id if user else None,
-            "content": post_content,
-            "subject": subject,
-            "images": image_paths,
-            "status": "draft",
-            "scheduled_at": None,
-            "published_at": None,
-            "linkedin_post_urn": None
-        }
-        
-        if action == "save_draft":
-            post_data["status"] = "draft"
-            flash("Brouillon enregistré avec succès.", "success")
-            
-        elif action == "schedule":
-            # Fusion date + heure
-            scheduled_at = None
-            if schedule_date and schedule_time:
-                scheduled_at = datetime.strptime(f"{schedule_date} {schedule_time}", "%Y-%m-%d %H:%M")
-            post_data["status"] = "scheduled"
-            post_data["scheduled_at"] = scheduled_at
-            flash("Post programmé avec succès.", "success")
-            
-        elif action == "publish":
-            # Publier maintenant sur LinkedIn
-            result = publish_to_linkedin(post_content, image_paths)
-            if result.get("status") == "ok":
-                post_data["status"] = "published"
-                post_data["published_at"] = datetime.utcnow()
-                post_data["linkedin_post_urn"] = result.get("linkedin_post_id")
-                flash("Post publié sur LinkedIn ✅", "success")
-            else:
-                post_data["status"] = "draft"
-                flash("Échec de la publication LinkedIn. Le post a été sauvegardé.", "warning")
-        else:
-            flash("Action inconnue.", "error")
-            return redirect(url_for("custom_post_editor"))
-        
-        # TODO: Sauvegarder en base de données
-        # post = Post(**post_data)
-        # db.session.add(post)
-        # db.session.commit()
-        
+        post = build_post_payload(request)
+        post["status"] = "draft"
+        draft_posts.append(post)
+        # TODO: DB.create_post(post) si tu as un modèle
+        flash("Brouillon enregistré avec succès.", "success")
         return redirect(url_for("dashboard"))
-        
     except Exception as e:
-        logger.error(f"Erreur lors de la sauvegarde: {str(e)}")
-        flash("Erreur lors de la sauvegarde du post", "error")
+        logger.error(f"Erreur lors de la sauvegarde du brouillon: {str(e)}")
+        flash("Erreur lors de la sauvegarde du brouillon", "error")
+        return redirect(url_for("custom_post_editor"))
+
+# -------- PROGRAMMER --------
+@app.route("/schedule", methods=["POST"])
+def schedule():
+    if 'profile' not in session:
+        return redirect(url_for("index"))
+    
+    try:
+        post = build_post_payload(request)
+        post["status"] = "scheduled"
+        scheduled_posts.append(post)
+        # TODO: DB.create_post(post)
+        flash("Post programmé avec succès.", "success")
+        return redirect(url_for("dashboard"))
+    except Exception as e:
+        logger.error(f"Erreur lors de la programmation: {str(e)}")
+        flash("Erreur lors de la programmation du post", "error")
+        return redirect(url_for("custom_post_editor"))
+
+# -------- PUBLIER --------
+@app.route("/publish", methods=["POST"])
+def publish():
+    if 'profile' not in session:
+        return redirect(url_for("index"))
+    
+    try:
+        post = build_post_payload(request)
+        # 1) publier réellement sur LinkedIn (texte + images)
+        result = publish_to_linkedin(post["text"], post["images"])
+        if result.get("ok"):
+            post["status"] = "published"
+            post["published_at"] = datetime.utcnow()
+            post["linkedin_post_id"] = result.get("linkedin_post_id")
+            published_posts.append(post)
+            # TODO: DB.create_post(post)
+            flash("Post publié sur LinkedIn ✅", "success")
+        else:
+            # en cas d'erreur on garde le post (brouillon) pour ne rien perdre
+            post["status"] = "draft"
+            draft_posts.append(post)
+            # TODO: DB.create_post(post)
+            flash("Échec de publication LinkedIn. Post enregistré en brouillon.", "warning")
+        return redirect(url_for("dashboard"))
+    except Exception as e:
+        logger.error(f"Erreur lors de la publication: {str(e)}")
+        flash("Erreur lors de la publication", "error")
         return redirect(url_for("custom_post_editor"))
 
 @app.route("/save-custom-post", methods=["POST"])
