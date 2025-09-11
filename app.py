@@ -2325,9 +2325,7 @@ def process_mentions_for_linkedin(content):
     
     return processed_content, mention_entities
     
-@app.route("/publish", methods=["POST"])
-def publish():
-    access_token = session.get("access_token")
+# Fonction publish() supprimée - doublon avec la version plus récente
     if not access_token:
         return redirect(url_for("index"))
 
