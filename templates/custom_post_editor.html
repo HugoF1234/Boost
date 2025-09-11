@@ -114,16 +114,35 @@
 
         <!-- Actions -->
         <div class="post-actions">
-            <button type="submit" name="action" value="save_draft" class="btn btn-secondary post-action-btn">
+            <!-- Brouillon -->
+            <button type="submit"
+                    class="btn btn-secondary post-action-btn"
+                    formmethod="POST"
+                    formaction="/draft">
                 <i class="fas fa-save"></i> Sauvegarder brouillon
             </button>
-            <button type="submit" name="action" value="schedule" class="btn btn-warning post-action-btn">
+
+            <!-- Programmer -->
+            <button type="submit"
+                    class="btn btn-warning post-action-btn"
+                    formmethod="POST"
+                    formaction="/schedule">
                 <i class="fas fa-clock"></i> Programmer
             </button>
-            <button type="submit" name="action" value="publish" class="btn btn-primary post-action-btn">
+
+            <!-- Publier -->
+            <button type="submit"
+                    class="btn btn-primary post-action-btn"
+                    formmethod="POST"
+                    formaction="/publish">
                 <i class="fas fa-paper-plane"></i> Publier
             </button>
         </div>
+
+        <!-- Champs cachés pour le backend -->
+        <input type="hidden" name="subject" value="{{ subject }}">
+        <input type="hidden" name="tone" value="{{ tone }}">
+        <input type="hidden" name="perspective" value="{{ perspective }}">
     </form>
 </div>
 
