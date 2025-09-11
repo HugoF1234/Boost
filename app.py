@@ -1847,7 +1847,7 @@ def dashboard():
     if user:
         # Nombre de posts programmés
         now = datetime.utcnow()
-        scheduled_posts = Post.query.filter_by(user_id=user.id, scheduled=True).filter(Post.published_at > now).count()
+        scheduled_posts = Post.query.filter_by(user_id=user.id, status="scheduled").filter(Post.scheduled_at > now).count()
   
     # Récupérer les actualités tendance pour le secteur de l'utilisateur
     trending_news = []
@@ -2429,12 +2429,17 @@ def process_mentions_for_linkedin(content):
 
         if post_to_edit:
             post_to_edit.content = content
-            post_to_edit.published_at = publish_time
-            post_to_edit.scheduled = True
+            post_to_edit.scheduled_at = publish_time
+            post_to_edit.status = "scheduled"
             post_to_edit.linkedin_post_urn = None
             db.session.commit()
         else:
-            planned_post = Post(content=content, published_at=publish_time, user_id=user.id, scheduled=True)
+            planned_post = Post(
+                content=content, 
+                scheduled_at=publish_time, 
+                user_id=user.id, 
+                status="scheduled"
+            )
             db.session.add(planned_post)
             db.session.commit()
 
@@ -2995,15 +3000,15 @@ def calendar():
     
     now = datetime.utcnow()
     # Posts programmés avec debug
-    upcoming_posts = Post.query.filter_by(user_id=user.id, scheduled=True).filter(
+    upcoming_posts = Post.query.filter_by(user_id=user.id, status="scheduled").filter(
         Post.linkedin_post_urn.is_(None),
-        Post.published_at > now
-    ).order_by(Post.published_at).all()
+        Post.scheduled_at > now
+    ).order_by(Post.scheduled_at).all()
     
     logger.info(f"=== DEBUG CALENDAR pour utilisateur {user.id} ===")
     logger.info(f"Posts programmés trouvés: {len(upcoming_posts)}")
     for post in upcoming_posts:
-        logger.info(f"Post {post.id}: date={post.published_at}, scheduled={post.scheduled}")
+        logger.info(f"Post {post.id}: date={post.scheduled_at}, status={post.status}")
 
     return render_template("calendar.html", posts=upcoming_posts, now=now)
 
@@ -3014,8 +3019,8 @@ def publish_scheduled():
     
     # Récupérer TOUS les posts programmés dont l'heure est arrivée
     posts_to_publish = Post.query.filter(
-        Post.scheduled == True, 
-        Post.published_at <= now,
+        Post.status == "scheduled", 
+        Post.scheduled_at <= now,
         Post.linkedin_post_urn.is_(None)  # Seulement ceux pas encore publiés
     ).all()
 
