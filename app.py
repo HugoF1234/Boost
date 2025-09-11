@@ -129,14 +129,13 @@ from urllib.parse import quote_plus
 # Utilisation de la chaîne de connexion fournie par Render
 db_url = os.getenv("DATABASE_URL")
 if not db_url:
-    # Fallback vers SQLite pour les tests locaux
-    db_url = 'sqlite:///posts.db'
-    logger.info("Utilisation de SQLite pour les tests locaux")
-else:
-    # Pour Render, vérifier et corriger l'URL si nécessaire
-    if db_url.startswith("postgres://"):
-        db_url = db_url.replace("postgres://", "postgresql://", 1)
-    logger.info("Utilisation de la base de données Render")
+    # Erreur si pas de DATABASE_URL - on utilise uniquement PostgreSQL
+    raise RuntimeError("DATABASE_URL environment variable is required for PostgreSQL connection")
+
+# Pour Render, vérifier et corriger l'URL si nécessaire
+if db_url.startswith("postgres://"):
+    db_url = db_url.replace("postgres://", "postgresql://", 1)
+logger.info("Utilisation de la base de données PostgreSQL sur Render")
 
 app.config['SQLALCHEMY_DATABASE_URI'] = db_url
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
@@ -310,6 +309,111 @@ def init_db():
 
 # Initialiser la base de données au démarrage
 init_db()
+
+# Migration automatique des nouvelles colonnes
+def migrate_postgresql_columns():
+    """Migre automatiquement les colonnes manquantes sur PostgreSQL de manière sûre"""
+    try:
+        from sqlalchemy import inspect, text
+        
+        with app.app_context():
+            logger.info("🔄 Début de la migration PostgreSQL sur Render...")
+            
+            inspector = inspect(db.engine)
+            
+            # Vérifier si la table posts existe
+            if 'posts' not in inspector.get_table_names():
+                logger.info("Table posts n'existe pas, création...")
+                db.create_all()
+                logger.info("✅ Table posts créée avec toutes les colonnes")
+                return True
+            
+            # Vérifier les colonnes existantes
+            columns = inspector.get_columns('posts')
+            existing_columns = [col['name'] for col in columns]
+            logger.info(f"📋 Colonnes existantes dans posts: {existing_columns}")
+            
+            # Nouvelles colonnes à ajouter (avec types PostgreSQL corrects)
+            new_columns = [
+                ('subject', 'VARCHAR(255)'),
+                ('tone', 'VARCHAR(50)'),
+                ('perspective', 'VARCHAR(50)'),
+                ('status', 'VARCHAR(20)'),
+                ('scheduled_at', 'TIMESTAMP'),
+                ('images', 'TEXT'),
+                ('created_at', 'TIMESTAMP')
+            ]
+            
+            # Ajouter les colonnes manquantes une par une
+            columns_added = 0
+            for column_name, column_type in new_columns:
+                if column_name not in existing_columns:
+                    try:
+                        # Utiliser ALTER TABLE avec IF NOT EXISTS pour PostgreSQL
+                        alter_sql = f"ALTER TABLE posts ADD COLUMN {column_name} {column_type};"
+                        logger.info(f"➕ Ajout de la colonne: {column_name} ({column_type})")
+                        db.engine.execute(text(alter_sql))
+                        columns_added += 1
+                        logger.info(f"✅ Colonne {column_name} ajoutée avec succès")
+                    except Exception as e:
+                        logger.error(f"❌ Erreur lors de l'ajout de {column_name}: {e}")
+                        # Continuer avec les autres colonnes même si une échoue
+                else:
+                    logger.info(f"ℹ️ Colonne {column_name} existe déjà")
+            
+            # Mettre des valeurs par défaut pour les nouvelles colonnes
+            try:
+                # Mettre à jour le status des posts existants
+                db.engine.execute(text("""
+                    UPDATE posts 
+                    SET status = CASE 
+                        WHEN linkedin_post_urn IS NOT NULL THEN 'published'
+                        WHEN scheduled = true THEN 'scheduled'
+                        ELSE 'draft'
+                    END
+                    WHERE status IS NULL OR status = '';
+                """))
+                logger.info("✅ Status mis à jour pour les posts existants")
+                
+                # Mettre des valeurs par défaut pour les autres colonnes
+                db.engine.execute(text("""
+                    UPDATE posts 
+                    SET subject = COALESCE(subject, ''),
+                        tone = COALESCE(tone, 'professionnel'),
+                        perspective = COALESCE(perspective, 'neutre'),
+                        images = COALESCE(images, '[]'),
+                        created_at = COALESCE(created_at, CURRENT_TIMESTAMP)
+                    WHERE subject IS NULL OR tone IS NULL OR perspective IS NULL OR images IS NULL OR created_at IS NULL;
+                """))
+                logger.info("✅ Valeurs par défaut mises à jour")
+                
+            except Exception as e:
+                logger.error(f"⚠️ Erreur lors de la mise à jour des valeurs par défaut: {e}")
+            
+            # Vérification finale
+            final_columns = inspector.get_columns('posts')
+            final_column_names = [col['name'] for col in final_columns]
+            logger.info(f"📋 Colonnes finales: {final_column_names}")
+            
+            # Vérifier que toutes les colonnes requises sont présentes
+            required_columns = ['subject', 'tone', 'perspective', 'status', 'scheduled_at', 'images', 'created_at']
+            missing_columns = [col for col in required_columns if col not in final_column_names]
+            
+            if missing_columns:
+                logger.error(f"❌ Colonnes manquantes après migration: {missing_columns}")
+                return False
+            else:
+                logger.info(f"🎉 Migration PostgreSQL terminée avec succès! {columns_added} colonnes ajoutées")
+                return True
+            
+    except Exception as e:
+        logger.error(f"❌ Erreur migration PostgreSQL: {e}")
+        import traceback
+        logger.error(f"Traceback: {traceback.format_exc()}")
+        return False
+
+# Exécuter la migration au démarrage
+migrate_postgresql_columns()
 # -----------------------
 # LINKEDIN + GEMINI
 # -----------------------
@@ -3104,6 +3208,31 @@ def test_db():
         <h1>Erreur de test de la base de données</h1>
         <p>❌ La connexion à la base de données a échoué:</p>
         <pre>{str(e)}</pre>
+        <p><a href="/">Retour à l'accueil</a></p>
+        """, 500
+
+@app.route("/migrate-db")
+def migrate_db():
+    """Route pour forcer la migration de la base de données"""
+    try:
+        success = migrate_postgresql_columns()
+        if success:
+            return """
+            <h1>✅ Migration réussie</h1>
+            <p>La base de données a été migrée avec succès !</p>
+            <p><a href="/dashboard">Aller au dashboard</a></p>
+            <p><a href="/">Retour à l'accueil</a></p>
+            """
+        else:
+            return """
+            <h1>❌ Erreur de migration</h1>
+            <p>La migration a échoué. Vérifiez les logs.</p>
+            <p><a href="/">Retour à l'accueil</a></p>
+            """, 500
+    except Exception as e:
+        return f"""
+        <h1>❌ Erreur de migration</h1>
+        <p>Erreur: {str(e)}</p>
         <p><a href="/">Retour à l'accueil</a></p>
         """, 500
         
