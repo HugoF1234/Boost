@@ -51,29 +51,29 @@ def publish_to_linkedin(text: str, image_paths: list[str]) -> dict:
 
 def build_post_payload(req):
     """Construit le payload du post à partir de la requête."""
-    text = (req.form.get("post_content") or "").strip()
+    content = (req.form.get("post_content") or "").strip()
     date_s = req.form.get("schedule_date")  # "YYYY-MM-DD"
     time_s = req.form.get("schedule_time")  # "HH:MM"
     photos = req.files.getlist("photos")
     images = save_images(photos)
-    payload = {
-        "text": text,
-        "images": images,
+    
+    # Debug des données reçues
+    logger.info(f"📝 build_post_payload - Content: {len(content)} chars")
+    logger.info(f"📅 build_post_payload - Date: {date_s}, Time: {time_s}")
+    logger.info(f"📸 build_post_payload - Images: {len(images)} fichiers")
+    logger.info(f"📋 build_post_payload - Subject: {req.form.get('subject')}")
+    
+    return {
+        "content": content,
         "subject": req.form.get("subject") or "",
         "tone": req.form.get("tone") or "",
         "perspective": req.form.get("perspective") or "",
-        "created_at": datetime.utcnow(),
+        "images": images,
+        "schedule_date": date_s,
+        "schedule_time": time_s,
     }
-    if date_s and time_s:
-        payload["scheduled_at"] = datetime.strptime(f"{date_s} {time_s}", "%Y-%m-%d %H:%M")
-    else:
-        payload["scheduled_at"] = None
-    return payload
 
-# Listes pour stocker les posts (à remplacer par la DB plus tard)
-draft_posts = []
-scheduled_posts = []
-published_posts = []
+# Les posts sont maintenant stockés en base de données
 
 # -----------------------
 # CONFIGURATION APP
@@ -129,10 +129,9 @@ from urllib.parse import quote_plus
 # Utilisation de la chaîne de connexion fournie par Render
 db_url = os.getenv("DATABASE_URL")
 if not db_url:
-    # Fallback vers une connexion locale si la variable d'environnement n'est pas définie
-    password = quote_plus("Lexia2025")
-    db_url = f'postgresql://user3:{password}@localhost:5432/Boostdb'
-    logger.info("Utilisation de la base de données locale")
+    # Fallback vers SQLite pour les tests locaux
+    db_url = 'sqlite:///posts.db'
+    logger.info("Utilisation de SQLite pour les tests locaux")
 else:
     # Pour Render, vérifier et corriger l'URL si nécessaire
     if db_url.startswith("postgres://"):
@@ -240,11 +239,18 @@ class User(db.Model):
 class Post(db.Model):
     __tablename__ = 'posts'  # Nom explicite de la table
     id = db.Column(db.Integer, primary_key=True)
-    content = db.Column(db.Text)
-    published_at = db.Column(db.DateTime, default=datetime.utcnow)
+    content = db.Column(db.Text, nullable=False)
+    subject = db.Column(db.String(255))
+    tone = db.Column(db.String(50))
+    perspective = db.Column(db.String(50))
+    status = db.Column(db.String(20), default="draft")  # draft / scheduled / published
+    published_at = db.Column(db.DateTime, nullable=True)
+    scheduled_at = db.Column(db.DateTime, nullable=True)
+    linkedin_post_urn = db.Column(db.String(255), nullable=True)
+    images = db.Column(db.Text)  # JSON contenant la liste des images
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)  # Référence à users.id
-    scheduled = db.Column(db.Boolean, default=False)
-    linkedin_post_urn = db.Column(db.String(100))
+    scheduled = db.Column(db.Boolean, default=False)  # Gardé pour compatibilité
 
 # Fonction d'initialisation de la base de données
 def create_default_admin():
@@ -906,7 +912,7 @@ def get_cached_news(query, language, days=3):
                 print(f"Erreur de lecture du cache: {str(e)}")
     
     # Si pas de cache valide, faire l'appel à l'API
-    articles = get_news_by_sector_actual(query, days=days, language=language)
+        articles = get_news_by_sector("general", query, days=days, language=language)
     
     # Sauvegarder les résultats dans le cache
     try:
@@ -1086,7 +1092,7 @@ def test_news():
     """Route de test pour débugger les actualités"""
     try:
         # Test avec une requête simple
-        test_articles = get_news_by_sector_actual("tech", "intelligence artificielle", days=7, language="fr")
+        test_articles = get_news_by_sector("tech", "intelligence artificielle", days=7, language="fr")
         
         html_debug = f"""
         <h1>🔍 Test News API - Debug</h1>
@@ -2093,12 +2099,26 @@ def draft():
         return redirect(url_for("index"))
     
     try:
-        post = build_post_payload(request)
-        post["status"] = "draft"
-        draft_posts.append(post)
-        # TODO: DB.create_post(post) si tu as un modèle
-        flash("Brouillon enregistré avec succès.", "success")
-        return redirect(url_for("dashboard"))
+        # Récupérer l'utilisateur
+        user = User.query.filter_by(sub=session['profile'].get("sub", "")).first()
+        if not user:
+            flash("Utilisateur introuvable", "error")
+            return redirect(url_for("index"))
+        
+        data = build_post_payload(request)
+        post = Post(
+            content=data["content"],
+            subject=data["subject"],
+            tone=data["tone"],
+            perspective=data["perspective"],
+            status="draft",
+            images=json.dumps(data["images"]),
+            user_id=user.id
+        )
+        db.session.add(post)
+        db.session.commit()
+        flash("✅ Brouillon enregistré", "success")
+        return redirect(url_for("historique"))
     except Exception as e:
         logger.error(f"Erreur lors de la sauvegarde du brouillon: {str(e)}")
         flash("Erreur lors de la sauvegarde du brouillon", "error")
@@ -2111,12 +2131,33 @@ def schedule():
         return redirect(url_for("index"))
     
     try:
-        post = build_post_payload(request)
-        post["status"] = "scheduled"
-        scheduled_posts.append(post)
-        # TODO: DB.create_post(post)
-        flash("Post programmé avec succès.", "success")
-        return redirect(url_for("dashboard"))
+        # Récupérer l'utilisateur
+        user = User.query.filter_by(sub=session['profile'].get("sub", "")).first()
+        if not user:
+            flash("Utilisateur introuvable", "error")
+            return redirect(url_for("index"))
+        
+        data = build_post_payload(request)
+        scheduled_at = None
+        if data["schedule_date"] and data["schedule_time"]:
+            scheduled_at = datetime.strptime(
+                f"{data['schedule_date']} {data['schedule_time']}", "%Y-%m-%d %H:%M"
+            )
+        
+        post = Post(
+            content=data["content"],
+            subject=data["subject"],
+            tone=data["tone"],
+            perspective=data["perspective"],
+            status="scheduled",
+            scheduled_at=scheduled_at,
+            images=json.dumps(data["images"]),
+            user_id=user.id
+        )
+        db.session.add(post)
+        db.session.commit()
+        flash("⏰ Post programmé", "success")
+        return redirect(url_for("historique"))
     except Exception as e:
         logger.error(f"Erreur lors de la programmation: {str(e)}")
         flash("Erreur lors de la programmation du post", "error")
@@ -2129,23 +2170,35 @@ def publish():
         return redirect(url_for("index"))
     
     try:
-        post = build_post_payload(request)
+        # Récupérer l'utilisateur
+        user = User.query.filter_by(sub=session['profile'].get("sub", "")).first()
+        if not user:
+            flash("Utilisateur introuvable", "error")
+            return redirect(url_for("index"))
+        
+        data = build_post_payload(request)
         # 1) publier réellement sur LinkedIn (texte + images)
-        result = publish_to_linkedin(post["text"], post["images"])
+        result = publish_to_linkedin(data["content"], data["images"])
+        
+        post = Post(
+            content=data["content"],
+            subject=data["subject"],
+            tone=data["tone"],
+            perspective=data["perspective"],
+            status="published" if result.get("ok") else "draft",
+            published_at=datetime.utcnow() if result.get("ok") else None,
+            linkedin_post_urn=result.get("linkedin_post_id"),
+            images=json.dumps(data["images"]),
+            user_id=user.id
+        )
+        db.session.add(post)
+        db.session.commit()
+        
         if result.get("ok"):
-            post["status"] = "published"
-            post["published_at"] = datetime.utcnow()
-            post["linkedin_post_id"] = result.get("linkedin_post_id")
-            published_posts.append(post)
-            # TODO: DB.create_post(post)
-            flash("Post publié sur LinkedIn ✅", "success")
+            flash("🚀 Post publié sur LinkedIn", "success")
         else:
-            # en cas d'erreur on garde le post (brouillon) pour ne rien perdre
-            post["status"] = "draft"
-            draft_posts.append(post)
-            # TODO: DB.create_post(post)
-            flash("Échec de publication LinkedIn. Post enregistré en brouillon.", "warning")
-        return redirect(url_for("dashboard"))
+            flash("⚠️ Échec, enregistré en brouillon", "warning")
+        return redirect(url_for("historique"))
     except Exception as e:
         logger.error(f"Erreur lors de la publication: {str(e)}")
         flash("Erreur lors de la publication", "error")
@@ -2240,6 +2293,7 @@ def generate_content():
 
 # Import nécessaire pour les pauses entre requêtes
 import time
+import traceback
 def cleanup_old_cache_files():
     """Nettoie les fichiers de cache anciens pour libérer l'espace"""
     try:
@@ -2848,31 +2902,10 @@ def historique():
     logger.info(f"📊 Total posts: {len(posts)}")
     logger.info(f"🕐 Heure actuelle: {now}")
     
-    # Classification avec debug ultra-détaillé
-    published_posts = []
-    scheduled_posts = []
-    draft_posts = []
-    
-    for post in posts:
-        has_urn = bool(post.linkedin_post_urn)
-        is_scheduled = bool(post.scheduled)
-        future_date = post.published_at and post.published_at > now
-        
-        logger.info(f"📄 Post {post.id}:")
-        logger.info(f"   ├─ scheduled: {is_scheduled}")
-        logger.info(f"   ├─ urn: {'✅' if has_urn else '❌'}")
-        logger.info(f"   ├─ date: {post.published_at}")
-        logger.info(f"   └─ date future: {'✅' if future_date else '❌'}")
-        
-        if has_urn:
-            published_posts.append(post)
-            logger.info(f"   → 📱 PUBLIÉ")
-        elif is_scheduled and future_date:
-            scheduled_posts.append(post)
-            logger.info(f"   → ⏰ PROGRAMMÉ")
-        else:
-            draft_posts.append(post)
-            logger.info(f"   → 📝 BROUILLON")
+    # Classification avec le nouveau champ status
+    published_posts = Post.query.filter_by(user_id=user.id, status="published").order_by(Post.published_at.desc()).all()
+    scheduled_posts = Post.query.filter_by(user_id=user.id, status="scheduled").order_by(Post.scheduled_at.asc()).all()
+    draft_posts = Post.query.filter_by(user_id=user.id, status="draft").order_by(Post.created_at.desc()).all()
     
     logger.info(f"📈 RÉSULTAT: {len(draft_posts)} brouillons, {len(scheduled_posts)} programmés, {len(published_posts)} publiés")
     
