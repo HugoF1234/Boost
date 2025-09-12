@@ -7,8 +7,8 @@
         <div>
             <h1 class="greeting">
                 <i class="fas fa-history" style="color: var(--primary-coral);"></i>
-                Mes posts
-            </h1>
+            Mes posts
+        </h1>
             <p class="greeting-subtitle">Gérez vos publications LinkedIn par statut</p>
         </div>
     </div>
@@ -52,8 +52,8 @@
     <div class="posts-content">
         <!-- Vue d'ensemble Kanban (toujours visible) -->
         <div id="tab-all" class="tab-content active">
-            <div class="kanban-container">
-                <!-- Brouillons -->
+    <div class="kanban-container">
+        <!-- Brouillons -->
                 <div class="kanban-column">
                     <div class="column-header linkedin-style">
                         <h3 class="column-title">
@@ -78,7 +78,7 @@
                                         <div class="post-author">{{ first_name }} {{ last_name }}</div>
                                         <div class="post-date">
                                             <i class="fas fa-calendar" style="color: var(--gray-medium);"></i>
-                                            Créé le {{ post.published_at.strftime('%d/%m/%Y à %H:%M') if post.published_at else 'Date inconnue' }}
+                                            Créé le {{ post.created_at.strftime('%d/%m/%Y à %H:%M') if post.created_at else 'Date inconnue' }}
                                         </div>
                                         <div class="post-status status-draft">
                                             <i class="fas fa-edit"></i> Brouillon
@@ -140,7 +140,7 @@
                                         <div class="post-author">{{ first_name }} {{ last_name }}</div>
                                         <div class="post-date">
                                             <i class="fas fa-clock" style="color: var(--gray-medium);"></i>
-                                            Programmé pour le {{ post.published_at.strftime('%d/%m/%Y à %H:%M') if post.published_at else 'Date inconnue' }}
+                                            Programmé pour le {{ post.scheduled_at.strftime('%d/%m/%Y à %H:%M') if post.scheduled_at else 'Date inconnue' }}
                                         </div>
                                         <div class="post-status status-scheduled">
                                             <i class="fas fa-clock"></i> Programmé
@@ -267,7 +267,7 @@
                                 <div class="post-author">{{ first_name }} {{ last_name }}</div>
                                 <div class="post-date">
                                     <i class="fas fa-calendar" style="color: var(--gray-medium);"></i>
-                                    Créé le {{ post.published_at.strftime('%d/%m/%Y à %H:%M') if post.published_at else 'Date inconnue' }}
+                                    Créé le {{ post.created_at.strftime('%d/%m/%Y à %H:%M') if post.created_at else 'Date inconnue' }}
                                 </div>
                                 <div class="post-status status-draft">
                                     <i class="fas fa-edit"></i> Brouillon
@@ -289,10 +289,10 @@
                 </div>
                 {% else %}
                 <div class="empty-state">
-                    <div class="empty-icon"><i class="fas fa-edit"></i></div>
+                        <div class="empty-icon"><i class="fas fa-edit"></i></div>
                     <p class="empty-text">Aucun brouillon</p>
                     <small>Créez du contenu depuis le dashboard</small>
-                </div>
+                    </div>
                 {% endif %}
             </div>
         </div>
@@ -319,7 +319,7 @@
                                 <div class="post-author">{{ first_name }} {{ last_name }}</div>
                                 <div class="post-date">
                                     <i class="fas fa-clock" style="color: var(--gray-medium);"></i>
-                                    Programmé pour le {{ post.published_at.strftime('%d/%m/%Y à %H:%M') if post.published_at else 'Date inconnue' }}
+                                    Programmé pour le {{ post.scheduled_at.strftime('%d/%m/%Y à %H:%M') if post.scheduled_at else 'Date inconnue' }}
                                 </div>
                                 <div class="post-status status-scheduled">
                                     <i class="fas fa-clock"></i> Programmé
@@ -341,10 +341,10 @@
                 </div>
                 {% else %}
                 <div class="empty-state">
-                    <div class="empty-icon"><i class="fas fa-clock"></i></div>
+                        <div class="empty-icon"><i class="fas fa-clock"></i></div>
                     <p class="empty-text">Aucun post programmé</p>
                     <small>Programmez vos publications à l'avance</small>
-                </div>
+                    </div>
                 {% endif %}
             </div>
         </div>
@@ -395,10 +395,10 @@
                 </div>
                 {% else %}
                 <div class="empty-state">
-                    <div class="empty-icon"><i class="fas fa-check-circle"></i></div>
+                        <div class="empty-icon"><i class="fas fa-check-circle"></i></div>
                     <p class="empty-text">Aucune publication</p>
                     <small>Vos posts publiés apparaîtront ici</small>
-                </div>
+                    </div>
                 {% endif %}
             </div>
         </div>
