@@ -44,10 +44,100 @@ def save_images(files):
 def publish_to_linkedin(text: str, image_paths: list[str]) -> dict:
     """
     Publie sur LinkedIn et renvoie un dict contenant l'id du post, etc.
-    Intègre ici ton API LinkedIn (UGC Posts / Assets upload).
+    Utilise la vraie API LinkedIn pour la publication.
     """
-    # TODO: upload des assets image, puis création du post
-    return {"ok": True, "linkedin_post_id": f"mock_{int(datetime.utcnow().timestamp())}"}
+    try:
+        # Vérifier que l'utilisateur est connecté
+        if 'profile' not in session or 'access_token' not in session:
+            logger.error("❌ Utilisateur non connecté à LinkedIn")
+            return {"ok": False, "error": "Non connecté à LinkedIn"}
+        
+        access_token = session['access_token']
+        profile = session['profile']
+        
+        # Construire l'URN de l'utilisateur
+        sub = profile.get("sub", "")
+        user_id = sub.split("_")[-1] if "_" in sub else sub.replace("urn:li:person:", "")
+        urn = f"urn:li:person:{user_id}"
+        
+        logger.info(f"🚀 Publication LinkedIn pour URN: {urn}")
+        
+        # Headers pour l'API LinkedIn
+        headers = {
+            "Authorization": f"Bearer {access_token}",
+            "Content-Type": "application/json",
+            "X-Restli-Protocol-Version": "2.0.0"
+        }
+        
+        # Traiter les mentions dans le texte
+        processed_content, mention_entities = process_mentions_for_linkedin(text)
+        
+        # Upload des images si présentes
+        media_assets = []
+        share_media_category = "NONE"
+        
+        if image_paths:
+            logger.info(f"📸 Upload de {len(image_paths)} image(s)")
+            for i, image_path in enumerate(image_paths):
+                try:
+                    # Lire le fichier image
+                    with open(image_path.lstrip('/'), 'rb') as f:
+                        image_content = f.read()
+                    
+                    # Upload sur LinkedIn
+                    asset = upload_image_to_linkedin(image_content, access_token, urn, 'image/jpeg')
+                    if asset:
+                        media_assets.append({
+                            "status": "READY",
+                            "media": asset,
+                            "description": {"text": f"Image {i+1}"}
+                        })
+                        logger.info(f"✅ Image {i+1} uploadée: {asset}")
+                    else:
+                        logger.warning(f"⚠️ Échec upload image {i+1}")
+                        
+                except Exception as e:
+                    logger.error(f"❌ Erreur upload image {i+1}: {str(e)}")
+                    continue
+            
+            if media_assets:
+                share_media_category = "IMAGE"
+        
+        # Construire le payload du post
+        post_data = {
+            "author": urn,
+            "lifecycleState": "PUBLISHED",
+            "specificContent": {
+                "com.linkedin.ugc.ShareContent": {
+                    "shareCommentary": {"text": processed_content},
+                    "shareMediaCategory": share_media_category,
+                    "media": media_assets
+                }
+            },
+            "visibility": {
+                "com.linkedin.ugc.MemberNetworkVisibility": "PUBLIC"
+            }
+        }
+        
+        # Ajouter les mentions si présentes
+        if mention_entities:
+            post_data["specificContent"]["com.linkedin.ugc.ShareContent"]["mentions"] = mention_entities
+        
+        # Publication sur LinkedIn
+        logger.info(f"📤 Publication LinkedIn: {share_media_category} avec {len(media_assets)} média(s)")
+        post_resp = requests.post(LINKEDIN_POSTS_URL, headers=headers, json=post_data, timeout=30)
+        
+        if post_resp.status_code == 201:
+            linkedin_urn = post_resp.json().get("id")
+            logger.info(f"✅ Post LinkedIn publié avec succès: {linkedin_urn}")
+            return {"ok": True, "linkedin_post_id": linkedin_urn}
+        else:
+            logger.error(f"❌ Erreur publication LinkedIn: {post_resp.status_code} - {post_resp.text}")
+            return {"ok": False, "error": f"LinkedIn API error: {post_resp.status_code}"}
+            
+    except Exception as e:
+        logger.error(f"❌ Exception lors de la publication LinkedIn: {str(e)}")
+        return {"ok": False, "error": str(e)}
 
 def build_post_payload(req):
     """Construit le payload du post à partir de la requête."""
@@ -2307,9 +2397,12 @@ def publish():
         db.session.commit()
         
         if result.get("ok"):
-            flash("🚀 Post publié sur LinkedIn", "success")
+            flash("🚀 Post publié sur LinkedIn avec succès !", "success")
+            logger.info(f"✅ Post publié sur LinkedIn: {result.get('linkedin_post_id')}")
         else:
-            flash("⚠️ Échec, enregistré en brouillon", "warning")
+            error_msg = result.get("error", "Erreur inconnue")
+            flash(f"⚠️ Échec de publication LinkedIn: {error_msg}. Post sauvegardé en brouillon.", "warning")
+            logger.error(f"❌ Échec publication LinkedIn: {error_msg}")
         return redirect(url_for("historique"))
     except Exception as e:
         logger.error(f"Erreur lors de la publication: {str(e)}")
