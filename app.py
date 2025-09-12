@@ -3111,18 +3111,37 @@ def calendar():
     db.session.expire_all()
     
     now = datetime.utcnow()
-    # Posts programmés avec debug
-    upcoming_posts = Post.query.filter_by(user_id=user.id, status="scheduled").filter(
-        Post.linkedin_post_urn.is_(None),
+    
+    # Récupérer les posts programmés (futurs)
+    scheduled_posts = Post.query.filter_by(user_id=user.id, status="scheduled").filter(
         Post.scheduled_at > now
     ).order_by(Post.scheduled_at).all()
     
+    # Récupérer les posts publiés (des 30 derniers jours)
+    thirty_days_ago = now - timedelta(days=30)
+    published_posts = Post.query.filter_by(user_id=user.id, status="published").filter(
+        Post.published_at >= thirty_days_ago
+    ).order_by(Post.published_at.desc()).all()
+    
+    # Combiner tous les posts pour le calendrier
+    all_posts = scheduled_posts + published_posts
+    
     logger.info(f"=== DEBUG CALENDAR pour utilisateur {user.id} ===")
-    logger.info(f"Posts programmés trouvés: {len(upcoming_posts)}")
-    for post in upcoming_posts:
-        logger.info(f"Post {post.id}: date={post.scheduled_at}, status={post.status}")
+    logger.info(f"Posts programmés trouvés: {len(scheduled_posts)}")
+    logger.info(f"Posts publiés trouvés: {len(published_posts)}")
+    logger.info(f"Total posts pour calendrier: {len(all_posts)}")
+    
+    for post in scheduled_posts:
+        logger.info(f"Post programmé {post.id}: date={post.scheduled_at}, status={post.status}")
+    
+    for post in published_posts:
+        logger.info(f"Post publié {post.id}: date={post.published_at}, status={post.status}")
 
-    return render_template("calendar.html", posts=upcoming_posts, now=now)
+    return render_template("calendar.html", 
+                         scheduled_posts=scheduled_posts, 
+                         published_posts=published_posts,
+                         all_posts=all_posts,
+                         now=now)
 
 @app.route("/publish_scheduled")
 def publish_scheduled():
