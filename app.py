@@ -2222,6 +2222,7 @@ def draft():
             perspective=data["perspective"],
             status="draft",
             images=json.dumps(data["images"]),
+            created_at=datetime.utcnow(),
             user_id=user.id
         )
         db.session.add(post)
@@ -2260,6 +2261,7 @@ def schedule():
             perspective=data["perspective"],
             status="scheduled",
             scheduled_at=scheduled_at,
+            created_at=datetime.utcnow(),
             images=json.dumps(data["images"]),
             user_id=user.id
         )
@@ -2296,6 +2298,7 @@ def publish():
             perspective=data["perspective"],
             status="published" if result.get("ok") else "draft",
             published_at=datetime.utcnow() if result.get("ok") else None,
+            created_at=datetime.utcnow(),
             linkedin_post_urn=result.get("linkedin_post_id"),
             images=json.dumps(data["images"]),
             user_id=user.id
