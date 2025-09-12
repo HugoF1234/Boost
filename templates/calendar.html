@@ -34,7 +34,7 @@
             <i class="fas fa-calendar-check"></i>
         </div>
         <span class="stat-number" id="total-scheduled">
-            {% if posts %}{{ posts|length }}{% else %}0{% endif %}
+            {% if scheduled_posts %}{{ scheduled_posts|length }}{% else %}0{% endif %}
         </span>
         <div class="stat-label">Posts programmés</div>
     </div>
@@ -121,16 +121,28 @@
 const config = {
     currentWeekOffset: 0,
     scheduledPosts: [
-        {% if posts %}
-            {% for post in posts %}
-                {% if post.scheduled and post.published_at %}
+        {% if scheduled_posts %}
+            {% for post in scheduled_posts %}
                 {
                     id: {{ post.id }},
                     content: {{ (post.content or '')|tojson }},
-                    publishedAt: new Date('{{ post.published_at.isoformat() }}'),
-                    scheduled: true
+                    date: new Date('{{ post.scheduled_at.isoformat() }}'),
+                    status: 'scheduled',
+                    subject: {{ (post.subject or '')|tojson }}
                 }{% if not loop.last %},{% endif %}
-                {% endif %}
+            {% endfor %}
+        {% endif %}
+    ],
+    publishedPosts: [
+        {% if published_posts %}
+            {% for post in published_posts %}
+                {
+                    id: {{ post.id }},
+                    content: {{ (post.content or '')|tojson }},
+                    date: new Date('{{ post.published_at.isoformat() }}'),
+                    status: 'published',
+                    subject: {{ (post.subject or '')|tojson }}
+                }{% if not loop.last %},{% endif %}
             {% endfor %}
         {% endif %}
     ]
@@ -228,13 +240,17 @@ function createDayElement(date, index = 0) {
     const contentDiv = document.createElement('div');
     contentDiv.className = 'day-content';
     
-    // Filtrer les posts pour ce jour
-    const dayPosts = config.scheduledPosts.filter(post => 
-        post.scheduled && isSameDay(post.publishedAt, date)
+    // Filtrer les posts pour ce jour (programmés + publiés)
+    const dayScheduledPosts = config.scheduledPosts.filter(post => 
+        isSameDay(post.date, date)
+    );
+    const dayPublishedPosts = config.publishedPosts.filter(post => 
+        isSameDay(post.date, date)
     );
     
-    // Trier par heure
-    dayPosts.sort((a, b) => a.publishedAt.getTime() - b.publishedAt.getTime());
+    // Combiner et trier par heure
+    const dayPosts = [...dayScheduledPosts, ...dayPublishedPosts];
+    dayPosts.sort((a, b) => a.date.getTime() - b.date.getTime());
     
     // Ajouter les posts
     dayPosts.forEach(post => {
@@ -265,9 +281,15 @@ function createDayElement(date, index = 0) {
 // Création noble d'un élément post
 function createPostElement(post) {
     const postDiv = document.createElement('div');
-    postDiv.className = 'scheduled-post';
     
-    const timeFormatted = post.publishedAt.toLocaleTimeString('fr-FR', {
+    // Classe selon le statut
+    if (post.status === 'scheduled') {
+        postDiv.className = 'scheduled-post';
+    } else if (post.status === 'published') {
+        postDiv.className = 'published-post';
+    }
+    
+    const timeFormatted = post.date.toLocaleTimeString('fr-FR', {
         hour: '2-digit',
         minute: '2-digit'
     });
@@ -276,12 +298,17 @@ function createPostElement(post) {
         ? post.content.substring(0, 60) + '...'
         : post.content || 'Post sans contenu';
     
+    // Icône selon le statut
+    const iconClass = post.status === 'scheduled' ? 'fas fa-clock' : 'fas fa-check-circle';
+    const iconColor = post.status === 'scheduled' ? '#ffc107' : '#28a745';
+    
     postDiv.innerHTML = `
         <div class="post-time">
-            <i class="fas fa-clock" style="font-size: 0.7rem;"></i>
+            <i class="${iconClass}" style="font-size: 0.7rem; color: ${iconColor};"></i>
             ${timeFormatted}
         </div>
         <div class="post-preview">${preview}</div>
+        ${post.subject ? `<div class="post-subject">${post.subject}</div>` : ''}
     `;
     
     // Interaction noble
@@ -730,5 +757,65 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 });
 </script>
+
+<style>
+/* Styles pour les posts dans le calendrier */
+.scheduled-post {
+    background: linear-gradient(135deg, #fff3cd, #ffeaa7);
+    border: 1px solid #ffc107;
+    border-radius: 8px;
+    padding: 0.5rem;
+    margin: 0.25rem 0;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-size: 0.8rem;
+}
+
+.scheduled-post:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(255, 193, 7, 0.3);
+}
+
+.published-post {
+    background: linear-gradient(135deg, #d4edda, #a8e6cf);
+    border: 1px solid #28a745;
+    border-radius: 8px;
+    padding: 0.5rem;
+    margin: 0.25rem 0;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-size: 0.8rem;
+}
+
+.published-post:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(40, 167, 69, 0.3);
+}
+
+.post-time {
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+    font-weight: 600;
+    color: #495057;
+    margin-bottom: 0.25rem;
+}
+
+.post-preview {
+    color: #6c757d;
+    line-height: 1.3;
+    margin-bottom: 0.25rem;
+}
+
+.post-subject {
+    font-size: 0.7rem;
+    color: #8b5cf6;
+    font-weight: 600;
+    background: rgba(139, 92, 246, 0.1);
+    padding: 0.2rem 0.4rem;
+    border-radius: 4px;
+    display: inline-block;
+}
+</style>
 
 {% endblock %}
