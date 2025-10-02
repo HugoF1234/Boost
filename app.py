@@ -2314,9 +2314,18 @@ def custom_post_editor():
     tone = request.form.get("tone", "professionnel")
     custom_instructions = request.form.get("custom_instructions", "")
     perspective = request.form.get("perspective", "neutre")
+    from_article = request.form.get("from_article", "false") == "true"
     
     # Récupérer l'utilisateur
     user = User.query.filter_by(sub=session['profile'].get("sub", "")).first()
+    
+    # Récupérer l'article sélectionné si on vient d'un article
+    selected_article = None
+    if from_article:
+        selected_article = session.get('selected_article')
+        if selected_article:
+            # Utiliser le titre de l'article comme sujet
+            subject = selected_article.get('title', subject)
     
     # Générer le contenu avec Gemini
     generated_content = ""
@@ -2324,32 +2333,69 @@ def custom_post_editor():
         try:
             model = genai.GenerativeModel("gemini-2.0-flash")
             
-            # Construire le prompt pour Gemini
-            prompt = f"""
-            Tu es un expert LinkedIn reconnu pour tes posts pertinents et percutants.
-            
-            Rédige un post LinkedIn complet sur le sujet suivant :
-            
-            📝 **Sujet** : {subject}
-            
-            🎯 **Paramètres** :
-            - Ton : {tone}
-            - Perspective : {perspective}
-            - Instructions personnalisées : {custom_instructions if custom_instructions else "Aucune"}
-            
-            🗣️ **Style attendu** :
-            - Écriture fluide, humaine, professionnelle et engageante
-            - Inclus une conclusion forte ou une ouverture pour discussion
-            - Ajoute 2 ou 3 hashtags pertinents à la fin
-            - Maximum 900 caractères
-            - Commence directement par une accroche ou une idée forte
-            - Parle à la première personne ("je") si le ton est personnel
-            
-            Inspire-toi des posts qui génèrent le plus de commentaires sur LinkedIn.
-            """
+            # Construire le prompt selon le contexte
+            if from_article and selected_article:
+                # Prompt pour génération depuis un article
+                prompt = f"""
+                Tu es un expert LinkedIn reconnu pour tes posts pertinents et percutants.
+                
+                Rédige un post LinkedIn complet à partir de l'article suivant :
+                
+                📰 **Titre** : {selected_article.get('title')}
+                📄 **Résumé** : {selected_article.get('description')}
+                🏢 **Source** : {selected_article.get('source', {}).get('name')}
+                
+                🎯 **Objectif** : Réagir à cette actualité en apportant :
+                - une analyse personnelle,
+                - un point de vue argumenté,
+                - des implications concrètes pour ton secteur : {user.secteur if user and user.secteur else "général"},
+                - des insights ou propositions utiles pour les professionnels.
+                
+                🗣️ **Style attendu** :
+                - Ton : {tone}
+                - Perspective : {perspective}
+                - Instructions personnalisées : {custom_instructions if custom_instructions else "Aucune"}
+                - Écriture fluide, humaine, professionnelle et engageante
+                - Inclus une conclusion forte ou une ouverture pour discussion
+                - Ajoute 2 ou 3 hashtags pertinents à la fin
+                - Maximum 900 caractères
+                - Commence directement par une accroche ou une idée forte
+                - Parle à la première personne ("je") si le ton est personnel
+                
+                Inspire-toi des posts qui génèrent le plus de commentaires sur LinkedIn. Structure le contenu comme un mini-point de vue publié par un professionnel engagé.
+                """
+            else:
+                # Prompt standard
+                prompt = f"""
+                Tu es un expert LinkedIn reconnu pour tes posts pertinents et percutants.
+                
+                Rédige un post LinkedIn complet sur le sujet suivant :
+                
+                📝 **Sujet** : {subject}
+                
+                🎯 **Paramètres** :
+                - Ton : {tone}
+                - Perspective : {perspective}
+                - Instructions personnalisées : {custom_instructions if custom_instructions else "Aucune"}
+                
+                🗣️ **Style attendu** :
+                - Écriture fluide, humaine, professionnelle et engageante
+                - Inclus une conclusion forte ou une ouverture pour discussion
+                - Ajoute 2 ou 3 hashtags pertinents à la fin
+                - Maximum 900 caractères
+                - Commence directement par une accroche ou une idée forte
+                - Parle à la première personne ("je") si le ton est personnel
+                
+                Inspire-toi des posts qui génèrent le plus de commentaires sur LinkedIn.
+                """
             
             response = model.generate_content(prompt)
-            generated_content = response.text
+            generated_content = response.text.strip()
+            
+            # Si on vient d'un article, supprimer l'article de la session après génération
+            if from_article and selected_article:
+                session.pop('selected_article', None)
+                logger.info("Post généré depuis un article - article supprimé de la session")
             
         except Exception as e:
             logger.error(f"Erreur lors de la génération avec Gemini: {str(e)}")
@@ -2370,7 +2416,8 @@ def custom_post_editor():
         perspective=perspective,
         generated_content=generated_content,
         user=user,
-        profile_picture_url=profile_picture_url
+        profile_picture_url=profile_picture_url,
+        selected_article=selected_article
     )
 
 # Première définition supprimée - doublon
