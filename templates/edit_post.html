@@ -15,17 +15,6 @@
 
 <style>
     :root {
-        --noble-cream: #faf9f7;
-        --noble-warm: #f5f2ed;
-        --noble-sage: #8b9a7c;
-        --noble-sage-light: #a8b59a;
-        --noble-sage-dark: #6b7865;
-        --noble-stone: #e8e4de;
-        --noble-charcoal: #4a4943;
-        --noble-charcoal-light: #6b6960;
-        --noble-mist: #f0ede8;
-        --noble-accent: #9c8b7a;
-        --noble-accent-light: #b5a495;
         --primary-coral: #FF6B6B;
         --primary-orange: #FF8E53;
         --primary-pink: #FF5F8D;
@@ -40,40 +29,29 @@
         --gentle-warning: #b8a082;
         --gentle-info: #8ba3b8;
         --gentle-error: #c49090;
-        --shadow-whisper: 0 2px 12px rgba(139, 154, 124, 0.08);
-        --shadow-gentle: 0 4px 20px rgba(139, 154, 124, 0.12);
-        --shadow-soft: 0 8px 32px rgba(139, 154, 124, 0.16);
+        --shadow-whisper: 0 2px 12px rgba(0, 0, 0, 0.05);
+        --shadow-gentle: 0 4px 20px rgba(0, 0, 0, 0.1);
+        --shadow-soft: 0 8px 32px rgba(0, 0, 0, 0.15);
     }
 
     body {
         background: transparent !important;
-        color: var(--noble-charcoal);
+        color: #000000;
         line-height: 1.7;
     }
 
-    /* Header noble et accueillant */
+    /* Header avec nouvelle DA */
     .welcome-section {
-        background: linear-gradient(135deg, var(--noble-warm) 0%, var(--noble-mist) 100%);
-        border-radius: 20px;
+        background: #ffffff;
+        border-radius: 12px;
         padding: 2.5rem;
         margin-bottom: 2rem;
-        border: 1px solid var(--noble-stone);
-        box-shadow: var(--shadow-whisper);
+        border: 1px solid rgba(0, 0, 0, 0.05);
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
         position: relative;
         overflow: hidden;
     }
 
-    .welcome-section::before {
-        content: '';
-        position: absolute;
-        top: 0;
-        right: 0;
-        width: 120px;
-        height: 120px;
-        background: radial-gradient(circle, rgba(139, 154, 124, 0.06) 0%, transparent 70%);
-        border-radius: 50%;
-        transform: translate(30%, -30%);
-    }
 
     .welcome-content {
         position: relative;
@@ -87,14 +65,14 @@
 
     .greeting {
         font-size: 1.75rem;
-        font-weight: 600;
-        color: var(--noble-charcoal);
+        font-weight: 700;
+        color: #000000;
         margin-bottom: 0.5rem;
         letter-spacing: -0.02em;
     }
 
     .greeting-subtitle {
-        color: var(--noble-charcoal-light);
+        color: #666666;
         font-size: 1rem;
         font-weight: 400;
     }
@@ -120,12 +98,12 @@
 
     /* Sections principales */
     .creation-section {
-        background: white;
-        border-radius: 20px;
+        background: #ffffff;
+        border-radius: 12px;
         padding: 2.5rem;
         margin-bottom: 2rem;
-        border: 1px solid var(--noble-stone);
-        box-shadow: var(--shadow-whisper);
+        border: 1px solid rgba(0, 0, 0, 0.05);
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
     }
 
     .section-header {
@@ -134,8 +112,8 @@
 
     .section-title {
         font-size: 1.4rem;
-        font-weight: 600;
-        color: var(--noble-charcoal);
+        font-weight: 700;
+        color: #000000;
         margin-bottom: 0.5rem;
         display: flex;
         align-items: center;
@@ -143,20 +121,19 @@
     }
 
     .section-subtitle {
-        color: var(--noble-charcoal-light);
+        color: #666666;
         font-size: 0.95rem;
         line-height: 1.6;
     }
 
     /* Section du contenu généré - version modifiée pour l'édition */
     .generated-content {
-        background: white;
-        border-radius: 20px;
+        background: #ffffff;
+        border-radius: 12px;
         padding: 2.5rem;
         margin-bottom: 2rem;
-        border: 1px solid var(--noble-stone);
-        box-shadow: var(--shadow-whisper);
-        border: 2px solid var(--noble-sage-light);
+        border: 1px solid rgba(0, 0, 0, 0.05);
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
     }
 
     /* Aperçu LinkedIn amélioré */
@@ -189,7 +166,7 @@
         height: 52px;
         border-radius: 50%;
         object-fit: cover;
-        border: 2px solid var(--noble-sage-light);
+        border: 2px solid var(--primary-purple);
         transition: all 0.3s ease;
     }
 
@@ -201,14 +178,14 @@
         width: 52px;
         height: 52px;
         border-radius: 50%;
-        background: linear-gradient(135deg, var(--noble-sage) 0%, var(--noble-accent) 100%);
+        background: linear-gradient(135deg, var(--primary-purple) 0%, var(--primary-pink) 100%);
         display: flex;
         align-items: center;
         justify-content: center;
         color: white;
         font-size: 1.2rem;
         font-weight: 600;
-        border: 2px solid var(--noble-sage-light);
+        border: 2px solid var(--primary-purple);
     }
 
     .linkedin-user-info {
@@ -272,8 +249,8 @@
     }
 
     .linkedin-action:hover {
-        background: var(--noble-mist);
-        color: var(--noble-sage);
+        background: rgba(139, 92, 246, 0.1);
+        color: var(--primary-purple);
     }
 
     /* Formulaires de génération */
@@ -286,25 +263,25 @@
     .form-label {
         font-size: 0.9rem;
         font-weight: 500;
-        color: var(--noble-charcoal);
+        color: #000000;
         margin-bottom: 0.75rem;
     }
 
     .form-control {
         padding: 0.875rem 1.125rem;
-        border: 1.5px solid var(--noble-stone);
+        border: 1.5px solid rgba(0, 0, 0, 0.1);
         border-radius: 12px;
         font-size: 0.95rem;
-        background: var(--noble-cream);
-        color: var(--noble-charcoal);
+        background: #ffffff;
+        color: #000000;
         transition: all 0.3s ease;
         font-family: inherit;
     }
 
     .form-control:focus {
         outline: none;
-        border-color: var(--noble-sage);
-        box-shadow: 0 0 0 3px rgba(139, 154, 124, 0.1);
+        border-color: var(--primary-purple);
+        box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.1);
         background: white;
     }
 
@@ -368,7 +345,7 @@
 
     /* Actions de publication */
     .publish-section {
-        border-top: 1px solid var(--noble-stone);
+        border-top: 1px solid rgba(0, 0, 0, 0.1);
         padding-top: 2rem;
         margin-top: 2rem;
     }
@@ -387,14 +364,14 @@
     }
 
     .publish-group.schedule-group {
-        background: var(--noble-mist);
+        background: rgba(139, 92, 246, 0.05);
         padding: 1.5rem;
         border-radius: 12px;
     }
 
     .publish-group-title {
         font-weight: 500;
-        color: var(--noble-charcoal);
+        color: #000000;
         margin-bottom: 0.5rem;
     }
 
@@ -465,10 +442,10 @@
         font-size: 1.125rem;
     }
     .section-title, .greeting {
-        color: var(--noble-charcoal);
+        color: #000000;
     }
     .form-label, .publish-group-title {
-        color: var(--noble-charcoal);
+        color: #000000;
     }
     .btn-primary {
         background: var(--primary-purple);
@@ -530,7 +507,7 @@
 <div class="welcome-section fade-in">
     <div class="welcome-content">
         <div>
-            <h1 class="greeting">Modifier votre post 🌿</h1>
+            <h1 class="greeting">Modifier votre post</h1>
             <p class="greeting-subtitle">Ajustez le contenu, les images et la programmation de votre publication</p>
         </div>
         <div class="success-badge">
@@ -707,6 +684,35 @@ let selectedLocalFiles = [];
 let pexelsCurrentPage = 1;
 let pexelsCurrentQuery = '';
 let pexelsTotalResults = 0;
+
+// Fonction pour obtenir l'heure locale du device
+function getLocalDateTime() {
+    const now = new Date();
+    const year = now.getFullYear();
+    const month = String(now.getMonth() + 1).padStart(2, '0');
+    const day = String(now.getDate()).padStart(2, '0');
+    const hours = String(now.getHours()).padStart(2, '0');
+    const minutes = String(now.getMinutes()).padStart(2, '0');
+    
+    return `${year}-${month}-${day}T${hours}:${minutes}`;
+}
+
+// Initialiser l'heure locale au chargement de la page
+document.addEventListener('DOMContentLoaded', function() {
+    const dateTimeInput = document.getElementById('publish-time');
+    if (dateTimeInput && !dateTimeInput.value) {
+        // Ajouter 1 heure à l'heure actuelle pour la programmation
+        const now = new Date();
+        now.setHours(now.getHours() + 1);
+        const year = now.getFullYear();
+        const month = String(now.getMonth() + 1).padStart(2, '0');
+        const day = String(now.getDate()).padStart(2, '0');
+        const hours = String(now.getHours()).padStart(2, '0');
+        const minutes = String(now.getMinutes()).padStart(2, '0');
+        
+        dateTimeInput.value = `${year}-${month}-${day}T${hours}:${minutes}`;
+    }
+});
 
 // Mise à jour de l'aperçu en temps réel ET synchronisation des formulaires
 function updatePreview() {
