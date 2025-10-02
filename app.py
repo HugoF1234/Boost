@@ -2993,8 +2993,23 @@ def edit_post(post_id):
                     flash("Token LinkedIn expiré. Veuillez vous reconnecter", "error")
                     return redirect(url_for("linkedin_auth"))
                 
+                # Vérifier la validité du token en testant l'API userinfo
+                try:
+                    test_headers = {"Authorization": f"Bearer {access_token}"}
+                    test_resp = requests.get(LINKEDIN_USERINFO_URL, headers=test_headers, timeout=10)
+                    if test_resp.status_code != 200:
+                        logger.error(f"❌ Token LinkedIn invalide: {test_resp.status_code} - {test_resp.text}")
+                        flash("Token LinkedIn expiré. Veuillez vous reconnecter", "error")
+                        return redirect(url_for("linkedin_auth"))
+                    logger.info("✅ Token LinkedIn valide")
+                except Exception as e:
+                    logger.error(f"❌ Erreur vérification token: {str(e)}")
+                    flash("Erreur de vérification du token LinkedIn. Veuillez vous reconnecter", "error")
+                    return redirect(url_for("linkedin_auth"))
+                
                 # Tenter la publication sur LinkedIn
                 logger.info("🚀 Tentative de publication sur LinkedIn...")
+                logger.info(f"🔑 Token d'accès: {access_token[:20]}...")
                 
                 profile = session.get('profile')
                 sub = profile.get("sub", "")
@@ -3002,6 +3017,7 @@ def edit_post(post_id):
                 urn = f"urn:li:person:{user_id}"
                 
                 logger.info(f"📤 URN utilisateur: {urn}")
+                logger.info(f"📝 Contenu à publier: {new_content[:100]}...")
                 
                 headers = {
                     "Authorization": f"Bearer {access_token}",
@@ -3047,19 +3063,29 @@ def edit_post(post_id):
                         flash("Post publié avec succès sur LinkedIn !", "success")
                     else:
                         logger.error(f"❌ Erreur publication LinkedIn: {post_resp.status_code} - {post_resp.text}")
-                        flash(f"Erreur LinkedIn ({post_resp.status_code}). Réessayez plus tard.", "error")
-                        return render_template("edit_post.html", 
-                                             post=post, 
-                                             formatted_date=new_date_str,
-                                             **session.get('profile', {}))
+                        # Même en cas d'erreur LinkedIn, on met à jour le statut en brouillon
+                        post.scheduled = False
+                        post.status = "draft"
+                        post.linkedin_post_urn = None
+                        # Utiliser l'heure locale (Europe/Paris) au lieu d'UTC
+                        import pytz
+                        paris_tz = pytz.timezone('Europe/Paris')
+                        local_now = datetime.now(paris_tz)
+                        post.published_at = local_now
+                        flash(f"Erreur LinkedIn ({post_resp.status_code}). Post sauvegardé en brouillon. Réessayez plus tard.", "error")
                 
                 except requests.exceptions.RequestException as e:
                     logger.error(f"❌ Exception réseau LinkedIn: {str(e)}")
-                    flash("Erreur de connexion avec LinkedIn. Vérifiez votre connexion internet.", "error")
-                    return render_template("edit_post.html", 
-                                         post=post, 
-                                         formatted_date=new_date_str,
-                                         **session.get('profile', {}))
+                    # Même en cas d'erreur réseau, on met à jour le statut en brouillon
+                    post.scheduled = False
+                    post.status = "draft"
+                    post.linkedin_post_urn = None
+                    # Utiliser l'heure locale (Europe/Paris) au lieu d'UTC
+                    import pytz
+                    paris_tz = pytz.timezone('Europe/Paris')
+                    local_now = datetime.now(paris_tz)
+                    post.published_at = local_now
+                    flash("Erreur de connexion avec LinkedIn. Post sauvegardé en brouillon. Vérifiez votre connexion internet.", "error")
             else:
                 logger.error(f"❌ ACTION INCONNUE: '{action}'")
                 flash(f"Action inconnue: {action}", "error")
