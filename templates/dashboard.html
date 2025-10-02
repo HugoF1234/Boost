@@ -731,9 +731,36 @@ function handleCreatePost(event) {
     const isArticleContext = document.querySelector('button[name="generate_from_article"]') !== null;
     
     if (isArticleContext) {
-        console.log("Contexte article détecté - soumission directe du formulaire");
-        // Si on est dans le contexte d'un article, soumettre directement le formulaire
-        event.target.submit();
+        console.log("Contexte article détecté - redirection vers custom_post_editor");
+        // Si on est dans le contexte d'un article, rediriger vers custom_post_editor
+        // avec les paramètres de l'article
+        const customInstructions = document.querySelector('textarea[name="custom_instructions"]')?.value || "";
+        const tone = document.querySelector('select[name="tone"]')?.value || "professionnel";
+        const perspective = document.querySelector('select[name="perspective"]')?.value || "neutre";
+        
+        // Créer un formulaire pour rediriger vers custom_post_editor
+        const form = document.createElement('form');
+        form.method = 'POST';
+        form.action = '{{ url_for("custom_post_editor") }}';
+        
+        // Ajouter les champs cachés pour l'article
+        const fields = [
+            { name: 'tone', value: tone },
+            { name: 'custom_instructions', value: customInstructions },
+            { name: 'perspective', value: perspective },
+            { name: 'from_article', value: 'true' } // Flag pour indiquer que c'est depuis un article
+        ];
+        
+        fields.forEach(field => {
+            const input = document.createElement('input');
+            input.type = 'hidden';
+            input.name = field.name;
+            input.value = field.value;
+            form.appendChild(input);
+        });
+        
+        document.body.appendChild(form);
+        form.submit();
         return;
     }
 
