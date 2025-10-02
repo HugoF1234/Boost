@@ -232,6 +232,24 @@ logger.info("Utilisation de la base de données PostgreSQL sur Render")
 app.config['SQLALCHEMY_DATABASE_URI'] = db_url
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
+# Filtre Jinja2 pour convertir les dates UTC en timezone locale
+@app.template_filter('to_local_time')
+def to_local_time(dt):
+    """Convertit une datetime UTC en timezone locale (Europe/Paris)"""
+    if not dt:
+        return None
+    import pytz
+    from datetime import timezone
+    
+    # Si la datetime est naive, on assume qu'elle est en UTC
+    if dt.tzinfo is None:
+        dt = dt.replace(tzinfo=timezone.utc)
+    
+    # Convertir en Europe/Paris
+    paris_tz = pytz.timezone('Europe/Paris')
+    local_dt = dt.astimezone(paris_tz)
+    return local_dt
+
 db = SQLAlchemy(app)
 
 # -----------------------
@@ -2069,9 +2087,8 @@ def dashboard():
     
     # Ajouter cette ligne pour gérer le bouton Annuler
     if request.args.get('clear') == 'true':
-        # Supprimer l'article sélectionné de la session
-        if 'selected_article' in session:
-            session.pop('selected_article', None)
+        # Ne pas supprimer l'article sélectionné de la session ici
+        # Il sera supprimé après la génération du post
         return redirect(url_for('dashboard'))
     
     selected_article = session.get('selected_article')  # Récupérer l'article sélectionné
@@ -2246,6 +2263,10 @@ Commence directement par l'accroche, sans titre ni introduction.
                 logger.error(f"Erreur lors de la génération standard: {str(e)}")
 
     session['draft'] = draft
+    
+    # Supprimer l'article de la session après génération du post
+    if 'selected_article' in session:
+        session.pop('selected_article', None)
     
     # Passer les variables supplémentaires au template
     return render_template(
@@ -2919,9 +2940,13 @@ def edit_post(post_id):
                 logger.info("🔄 TRAITEMENT ACTION: save_draft")
                 post.scheduled = False
                 post.status = "draft"
-                post.published_at = datetime.utcnow()
+                # Utiliser l'heure locale (Europe/Paris) au lieu d'UTC
+                import pytz
+                paris_tz = pytz.timezone('Europe/Paris')
+                local_now = datetime.now(paris_tz)
+                post.published_at = local_now
                 post.linkedin_post_urn = None
-                logger.info(f"📝 Post {post_id} → BROUILLON: scheduled=False, status=draft, urn=None")
+                logger.info(f"📝 Post {post_id} → BROUILLON: scheduled=False, status=draft, urn=None, heure={local_now}")
                 flash("Post sauvegardé en brouillon avec succès", "success")
                 
             elif action == "schedule":
@@ -2999,7 +3024,11 @@ def edit_post(post_id):
                         post.linkedin_post_urn = linkedin_urn
                         post.scheduled = False
                         post.status = "published"
-                        post.published_at = datetime.utcnow()
+                        # Utiliser l'heure locale (Europe/Paris) au lieu d'UTC
+                        import pytz
+                        paris_tz = pytz.timezone('Europe/Paris')
+                        local_now = datetime.now(paris_tz)
+                        post.published_at = local_now
                         post.scheduled_at = None
                         logger.info(f"✅ Post {post_id} → PUBLIÉ: urn={linkedin_urn}, status=published")
                         flash("Post publié avec succès sur LinkedIn !", "success")
