@@ -1,168 +1,118 @@
 <!DOCTYPE html>
+
 <html lang="fr">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{ title or "LinkedBoost" }}</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- Remplacez la section <style> dans votre base.html par celle-ci -->
-    <style>
-        /* Variables pour couleurs douces */
-        :root {
-            --primary: #6366f1;
-            --primary-light: #a5b4fc;
-            --primary-ultra-light: #e0e7ff;
-            --secondary: #f8fafc;
-            --accent: #10b981;
-            --accent-light: #6ee7b7;
-            --warm: #fbbf24;
-            --warm-light: #fde68a;
-            --soft-gray: #f1f5f9;
-            --text-primary: #1e293b;
-            --text-secondary: #64748b;
-            --text-light: #94a3b8;
-            --white: #ffffff;
-            --glass: rgba(255, 255, 255, 0.25);
-            --glass-border: rgba(255, 255, 255, 0.3);
-            --shadow-soft: 0 4px 20px rgba(99, 102, 241, 0.1);
-            --shadow-medium: 0 8px 30px rgba(99, 102, 241, 0.15);
-            --shadow-strong: 0 20px 40px rgba(0, 0, 0, 0.1);
-        }
-    
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-    
-        html, body {
-            height: 100%;
-            width: 100%;
-            overflow-x: hidden;
-        }
-    
-        body {
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-            background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
-            color: var(--text-primary);
-            line-height: 1.6;
-        }
-    
-        /* Layout principal */
-        .app-container {
-            display: flex;
-            min-height: 100vh;
-            width: 100%;
-            position: relative;
-        }
-    
-        /* Sidebar ultra moderne avec gradient cohérent */
-        .sidebar {
-            width: 280px;
-            height: 100vh;
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>{{ title or "ResoBoost" }}</title>
+<link rel="icon" type="image/png" href="{{ url_for('static', filename='logo.png') }}">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&amp;family=Crimson+Text:wght@400;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet"/>
+<link href="{{ url_for('static', filename='css/style.css') }}" rel="stylesheet"/>
+<style>
+        /* Styles spécifiques au layout base - Le CSS principal est dans style.css */
+        
+        /* Effet de texture supplémentaire pour plus de profondeur */
+        body::before {
+            content: '';
             position: fixed;
-            left: 0;
             top: 0;
-            background: linear-gradient(145deg, #6366f1 0%, #a5b4fc 50%, #6ee7b7 100%);
-            backdrop-filter: blur(20px);
-            z-index: 100;
-            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-            box-shadow: var(--shadow-strong);
-            overflow-y: auto;
-            display: flex;
-            flex-direction: column;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background:
+                radial-gradient(circle at 20% 80%, rgba(255, 154, 98, 0.03) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(255, 85, 161, 0.03) 0%, transparent 50%),
+                radial-gradient(circle at 60% 60%, rgba(107, 71, 255, 0.05) 0%, transparent 50%);
+            z-index: 1;
+            pointer-events: none;
+            animation: gentle-pulse 15s ease-in-out infinite alternate;
         }
-    
-        /* Sidebar rétractée */
+
+        @keyframes gentle-pulse {
+            0% { opacity: 0.2; }
+            100% { opacity: 0.4; }
+        }
+
+        /* Styles pour sidebar collapsed */
         .sidebar.collapsed {
             width: 80px;
         }
-    
-        .sidebar.collapsed .nav-text,
-        .sidebar.collapsed .logo-text,
-        .sidebar.collapsed .user-name,
-        .sidebar.collapsed .user-role {
-            opacity: 0;
-            visibility: hidden;
-            transform: translateX(-20px);
-            pointer-events: none;
+        .sidebar.collapsed .sidebar-header {
+            padding: 2rem 0;
+            justify-content: center;
         }
-    
-        /* Bouton toggle amélioré et responsive */
+        .sidebar.collapsed .nav-text,
+        .sidebar.collapsed .logo-text {
+            opacity: 0 !important;
+            visibility: hidden !important;
+            width: 0 !important;
+            transition: all 0.3s;
+        }
+        .sidebar.collapsed .nav-link {
+            justify-content: center;
+            padding: 0.875rem;
+        }
+
+        /* Bouton toggle moderne et coloré */
         .sidebar-toggle {
             position: fixed;
             top: 1.5rem;
             left: 300px;
             z-index: 1001;
-            background: var(--white);
-            border: 2px solid rgba(255, 255, 255, 0.3);
-            border-radius: 16px;
-            width: 50px;
-            height: 50px;
+            background: var(--glass-white);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 107, 107, 0.2);
+            border-radius: 12px;
+            width: 44px;
+            height: 44px;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            gap: 4px;
+            gap: 3px;
             cursor: pointer;
-            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-            box-shadow: 0 4px 20px rgba(99, 102, 241, 0.2);
-            backdrop-filter: blur(10px);
+            transition: all 0.3s ease;
+            box-shadow: var(--shadow-gentle);
         }
-    
-        /* Position du bouton selon l'état de la sidebar */
-        body:has(.sidebar.collapsed) .sidebar-toggle {
+
+        .sidebar-toggle.collapsed {
             left: 100px;
         }
-    
-        /* États du bouton toggle */
+
         .sidebar-toggle:hover {
-            background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+            background: var(--gradient-warm);
             border-color: transparent;
-            transform: scale(1.1) rotate(180deg);
-            box-shadow: 0 8px 30px rgba(99, 102, 241, 0.4);
+            transform: scale(1.05);
+            box-shadow: 0 6px 25px rgba(255, 107, 107, 0.3);
         }
-    
-        .sidebar-toggle:active {
-            transform: scale(0.95) rotate(180deg);
-        }
-    
+
         .sidebar-toggle:hover .toggle-line {
             background: white;
         }
-    
+
         .toggle-line {
-            width: 22px;
-            height: 3px;
-            background: var(--primary);
-            border-radius: 3px;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            width: 18px;
+            height: 2px;
+            background: var(--noble-charcoal);
+            border-radius: 2px;
+            transition: all 0.3s ease;
         }
-    
+
         .sidebar-toggle.active .toggle-line:nth-child(1) {
-            transform: rotate(45deg) translate(7px, 7px);
+            transform: rotate(45deg) translate(5px, 5px);
         }
-    
+
         .sidebar-toggle.active .toggle-line:nth-child(2) {
             opacity: 0;
             transform: scale(0);
         }
-    
+
         .sidebar-toggle.active .toggle-line:nth-child(3) {
-            transform: rotate(-45deg) translate(7px, -7px);
+            transform: rotate(-45deg) translate(7px, -6px);
         }
-    
-        .sidebar-header {
-            padding: 2rem;
-            background: rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(20px);
-            position: relative;
-            overflow: hidden;
-            flex-shrink: 0;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
-        }
-    
+
+        /* Header coloré avec animation */
         .sidebar-header::before {
             content: '';
             position: absolute;
@@ -170,65 +120,88 @@
             right: -50%;
             width: 200%;
             height: 200%;
-            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
-            animation: float 6s ease-in-out infinite;
+            background: conic-gradient(from 0deg, transparent, rgba(255, 107, 107, 0.05), transparent);
+            animation: rotate-gentle 20s linear infinite;
         }
-    
-        @keyframes float {
-            0%, 100% { transform: translateY(0px) rotate(0deg); }
-            50% { transform: translateY(-20px) rotate(180deg); }
+
+        @keyframes rotate-gentle {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
         }
-    
+
         .logo-container {
             display: flex;
             align-items: center;
             gap: 1rem;
             position: relative;
             z-index: 2;
+            justify-content: flex-start;
+            width: 100%;
         }
-    
+
         .logo-icon {
-            width: 45px;
-            height: 45px;
-            background: rgba(255, 255, 255, 0.2);
-            backdrop-filter: blur(10px);
-            border-radius: 15px;
+            width: 42px;
+            height: 42px;
+            min-width: 42px;
+            min-height: 42px;
+            max-width: 42px;
+            max-height: 42px;
+            background: var(--gradient-main);
+            border-radius: 12px;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 1.5rem;
+            font-size: 1.3rem;
             color: white;
-            border: 1px solid rgba(255, 255, 255, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.2);
             transition: all 0.3s ease;
             cursor: pointer;
+            box-shadow: var(--shadow-soft);
+            position: relative;
+            overflow: hidden;
         }
-    
+
+        .logo-icon::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+            transition: all 0.6s ease;
+        }
+
+        .logo-icon:hover::before {
+            left: 100%;
+        }
+
         .logo-icon:hover {
-            transform: scale(1.1) rotate(5deg);
-            box-shadow: 0 8px 25px rgba(255,255,255,0.2);
+            transform: scale(1.05);
+            box-shadow: 0 6px 20px rgba(255, 107, 107, 0.4);
         }
-    
+
         .logo-text {
-            color: white;
-            font-size: 1.5rem;
+            color: var(--black); /* noir profond selon consignes */
+            font-family: 'Inter', 'Poppins', Arial, sans-serif;
+            font-size: 1.4rem;
             font-weight: 700;
-            letter-spacing: -0.025em;
+            letter-spacing: -0.02em;
             transition: all 0.3s ease;
         }
-    
+
         .user-info {
             margin-top: 1.5rem;
             padding-top: 1.5rem;
-            border-top: 1px solid rgba(255, 255, 255, 0.2);
+            border-top: 1px solid rgba(0, 0, 0, 0.05);
             position: relative;
             z-index: 2;
         }
-    
+
         .user-avatar {
-            width: 55px;
-            height: 55px;
-            background: rgba(255, 255, 255, 0.2);
-            backdrop-filter: blur(10px);
+            width: 48px;
+            height: 48px;
+            background: var(--gradient-cool);
             border-radius: 50%;
             display: flex;
             align-items: center;
@@ -237,78 +210,91 @@
             border: 2px solid rgba(255, 255, 255, 0.3);
             transition: all 0.3s ease;
             cursor: pointer;
-            font-size: 1.25rem;
+            font-size: 1.1rem;
             color: white;
             overflow: hidden;
+            box-shadow: 0 4px 15px rgba(139, 92, 246, 0.2);
         }
-    
+
         .user-avatar:hover {
-            transform: scale(1.05);
-            box-shadow: 0 8px 20px rgba(255,255,255,0.3);
+            transform: scale(1.03);
+            box-shadow: 0 6px 20px rgba(139, 92, 246, 0.3);
         }
-    
+
         .user-name {
-            color: white;
-            font-weight: 600;
-            font-size: 0.95rem;
+            color: var(--black); /* noir profond pour les titres */
+            font-weight: 500;
+            font-size: 0.9rem;
             transition: all 0.3s ease;
         }
-    
+
         .user-role {
-            color: rgba(255, 255, 255, 0.9);
-            font-size: 0.8rem;
+            color: var(--gray-dark); /* gris foncé pour le texte secondaire */
+            font-size: 0.75rem;
             margin-top: 0.25rem;
             transition: all 0.3s ease;
         }
-    
-        /* Navigation moderne */
+
+        /* Navigation moderne et colorée */
         .nav-menu {
             flex: 1;
             display: flex;
             flex-direction: column;
-            padding: 2rem 0;
+            padding: 1.5rem 0;
         }
-    
+
         .nav-main {
             flex: 1;
         }
-    
+
         .nav-bottom {
             margin-top: auto;
-            padding-top: 2rem;
-            border-top: 1px solid rgba(255, 255, 255, 0.2);
+            padding-top: 1.5rem;
+            background: none !important;
+            box-shadow: none !important;
+            min-height: 80px;
+            display: flex;
+            align-items: flex-end;
+            justify-content: flex-start;
         }
-    
+
         .nav-item {
-            margin: 0.5rem 1.5rem;
-            position: relative;
+            margin: 0.25rem 0;
         }
-    
+
+        .sidebar.collapsed .nav-item {
+            margin: 0.25rem 0;
+        }
+
         .nav-link {
             display: flex;
             align-items: center;
-            gap: 1rem;
-            padding: 1rem 1.5rem;
-            color: rgba(255, 255, 255, 0.9);
+            gap: 0.875rem;
+            padding: 16px 1.25rem; /* espacement généreux selon consignes */
+            color: var(--gray-dark); /* gris foncé pour texte secondaire */
             text-decoration: none;
-            font-weight: 500;
-            border-radius: 15px;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            font-weight: 400; /* typographie légère selon consignes */
+            font-size: 0.9rem;
+            border-radius: 12px; /* coins arrondis */
+            transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
             position: relative;
             overflow: hidden;
+            min-height: 48px;
+            height: 48px;
         }
-    
+
+        .sidebar.collapsed .nav-link {
+            justify-content: center;
+            padding: 0.875rem;
+            min-height: 48px;
+            height: 48px;
+        }
+
         .nav-text {
             transition: all 0.3s ease;
             white-space: nowrap;
         }
-    
-        /* Sidebar rétractée - centrer les icônes */
-        .sidebar.collapsed .nav-link {
-            justify-content: center;
-            padding: 1rem;
-        }
-    
+
         .nav-link::before {
             content: '';
             position: absolute;
@@ -316,155 +302,173 @@
             left: -100%;
             width: 100%;
             height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
-            transition: all 0.5s ease;
+            background: linear-gradient(90deg, transparent, rgba(255, 107, 107, 0.1), transparent);
+            transition: all 0.6s ease;
         }
-    
+
         .nav-link:hover::before {
             left: 100%;
         }
-    
+
         .nav-link:hover {
-            background: rgba(255, 255, 255, 0.2);
-            color: white;
-            transform: translateX(8px);
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            background: rgba(255, 255, 255, 0.8);
+            color: var(--primary-orange);
+            transform: translateX(4px);
+            box-shadow: var(--shadow-soft);
         }
-    
+
         .sidebar.collapsed .nav-link:hover {
             transform: translateX(0) scale(1.05);
         }
-    
+
         .nav-link.active {
-            background: rgba(255, 255, 255, 0.25);
+            background: var(--primary-purple); /* violet profond pour les CTA */
             color: white;
-            transform: translateX(5px);
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            transform: translateX(2px);
+            box-shadow: var(--shadow-gentle);
         }
-    
+
         .sidebar.collapsed .nav-link.active {
             transform: translateX(0);
         }
-    
+
         .nav-link.active::after {
             content: '';
             position: absolute;
             left: 0;
             top: 50%;
             transform: translateY(-50%);
-            width: 4px;
-            height: 60%;
+            width: 3px;
+            height: 50%;
             background: white;
-            border-radius: 0 4px 4px 0;
-            box-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+            border-radius: 0 3px 3px 0;
         }
-    
+
         .nav-icon {
-            font-size: 1.25rem;
-            width: 24px;
+            font-size: 1.1rem;
+            width: 20px;
+            min-width: 20px;
+            min-height: 20px;
+            max-width: 20px;
+            max-height: 20px;
             text-align: center;
             transition: all 0.3s ease;
         }
-    
+
         .nav-link:hover .nav-icon {
-            transform: scale(1.1) rotate(5deg);
+            transform: scale(1.1);
         }
-    
+
         .nav-link.danger {
-            color: rgba(255, 255, 255, 0.9);
+            color: var(--primary-orange);
+            background: none !important;
+            box-shadow: none !important;
+            border: none !important;
+            width: 100%;
+            margin-bottom: 0;
+            border-radius: 12px;
+            align-items: center;
+            justify-content: flex-start;
         }
-    
+
         .nav-link.danger:hover {
-            background: rgba(239, 68, 68, 0.2);
-            color: white;
-            transform: translateX(8px);
+            background: rgba(255, 142, 83, 0.1);
+            color: var(--primary-coral);
+            transform: translateX(4px);
+            box-shadow: none !important;
         }
-    
-        /* Main content */
+
+        /* Contenu principal avec fond transparent */
         .main-content {
             flex: 1;
             margin-left: 280px;
             min-height: 100vh;
             width: calc(100% - 280px);
-            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
             display: flex;
             justify-content: center;
             padding: 2rem;
+            background: transparent; /* transparent pour voir le dégradé */
         }
-    
+
         .main-content.expanded {
             margin-left: 80px;
             width: calc(100% - 80px);
         }
-    
+
         .content-wrapper {
-            width: 100%;
-            max-width: 1200px;
-            margin: 0 auto;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
         }
-    
-        /* Mobile responsive amélioré */
+
+        /* Responsive mobile amélioré */
         @media (max-width: 768px) {
             .sidebar {
                 transform: translateX(-280px);
             }
-    
+
             .sidebar.open {
                 transform: translateX(0);
             }
-    
+
             .main-content {
                 margin-left: 0;
                 width: 100%;
                 padding: 1rem;
             }
-    
+
             .sidebar-toggle {
-                left: 1.5rem !important;
-                background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+                left: 1rem !important;
+                background: var(--gradient-warm);
                 border: none;
-                box-shadow: 0 4px 20px rgba(99, 102, 241, 0.3);
+                box-shadow: 0 4px 20px rgba(255, 107, 107, 0.3);
             }
-    
+
             .sidebar-toggle .toggle-line {
                 background: white;
             }
-    
+
             .sidebar-toggle:hover {
-                transform: scale(1.1);
+                transform: scale(1.05);
+                background: var(--gradient-pink);
+            }
+
+            .sidebar-toggle.collapsed {
+                left: 1rem !important;
             }
         }
-    
+
         /* Tablette responsive */
         @media (min-width: 769px) and (max-width: 1024px) {
             .sidebar {
                 width: 240px;
             }
-    
+
             .sidebar.collapsed {
                 width: 70px;
             }
-    
+
             .main-content {
                 margin-left: 240px;
                 width: calc(100% - 240px);
             }
-    
+
             .main-content.expanded {
                 margin-left: 70px;
                 width: calc(100% - 70px);
             }
-    
+
             .sidebar-toggle {
                 left: 260px;
             }
-    
-            body:has(.sidebar.collapsed) .sidebar-toggle {
+
+            .sidebar-toggle.collapsed {
                 left: 90px;
             }
         }
-    
-        /* Overlay pour mobile */
+
+        /* Overlay coloré pour mobile */
         .sidebar-overlay {
             display: none;
             position: fixed;
@@ -472,137 +476,134 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0, 0, 0, 0.5);
+            background: rgba(255, 107, 107, 0.2);
+            backdrop-filter: blur(8px);
             z-index: 99;
             opacity: 0;
             transition: opacity 0.3s ease;
         }
-    
+
         .sidebar-overlay.active {
             display: block;
             opacity: 1;
         }
-    
+
         @media (max-width: 768px) {
             .sidebar-overlay.active {
                 display: block;
             }
         }
-    
-        /* Animations globales */
+
+        /* Animations modernes */
         .fade-in {
-            animation: fadeInUp 0.6s ease-out;
+            animation: modern-fadeIn 0.8s ease-out;
         }
-    
-        @keyframes fadeInUp {
+
+        @keyframes modern-fadeIn {
             from {
                 opacity: 0;
-                transform: translateY(30px);
+                transform: translateY(20px) scale(0.95);
             }
             to {
                 opacity: 1;
-                transform: translateY(0);
+                transform: translateY(0) scale(1);
             }
         }
-    
+
         .slide-in {
-            animation: slideInRight 0.5s ease-out;
+            animation: modern-slideIn 0.6s ease-out;
         }
-    
-        @keyframes slideInRight {
+
+        @keyframes modern-slideIn {
             from {
                 opacity: 0;
-                transform: translateX(30px);
+                transform: translateX(20px);
             }
             to {
                 opacity: 1;
                 transform: translateX(0);
             }
         }
-    
-        /* États de chargement */
-        .loading {
+
+        /* Scrollbar colorée */
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: rgba(255, 107, 107, 0.05);
+            border-radius: 3px;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--gradient-warm);
+            border-radius: 3px;
+            transition: all 0.3s ease;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--gradient-pink);
+        }
+
+        /* Styles colorés pour les mentions LinkedIn */
+        .mention {
+            color: var(--primary-coral);
+            font-weight: 500;
+            text-decoration: none;
+            background: linear-gradient(135deg, rgba(255, 107, 107, 0.1), rgba(255, 95, 141, 0.1));
+            padding: 2px 6px;
+            border-radius: 6px;
+            transition: all 0.2s ease;
             position: relative;
             overflow: hidden;
         }
-    
-        .loading::after {
+
+        .mention::before {
             content: '';
             position: absolute;
             top: 0;
             left: -100%;
             width: 100%;
             height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.6), transparent);
-            animation: shimmer 2s infinite;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+            transition: all 0.5s ease;
         }
-    
-        @keyframes shimmer {
-            0% { left: -100%; }
-            100% { left: 100%; }
+
+        .mention:hover::before {
+            left: 100%;
         }
-    
-        /* Scrollbar personnalisée */
-        ::-webkit-scrollbar {
-            width: 8px;
-        }
-    
-        ::-webkit-scrollbar-track {
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 4px;
-        }
-    
-        ::-webkit-scrollbar-thumb {
-            background: rgba(255, 255, 255, 0.3);
-            border-radius: 4px;
-            transition: all 0.3s ease;
-        }
-    
-        ::-webkit-scrollbar-thumb:hover {
-            background: rgba(255, 255, 255, 0.5);
-        }
-    
-        /* Styles pour les mentions LinkedIn */
-        .mention {
-            color: var(--primary);
-            font-weight: 500;
-            text-decoration: none;
-            background-color: var(--primary-ultra-light);
-            padding: 2px 6px;
-            border-radius: 6px;
-            transition: all 0.2s ease;
-        }
-    
+
         .mention:hover {
-            background-color: var(--primary-light);
+            background: var(--gradient-warm);
             color: white;
             text-decoration: none;
-            transform: scale(1.05);
+            transform: scale(1.02);
+            box-shadow: 0 2px 10px rgba(255, 107, 107, 0.3);
         }
-    
+
         .mention-dropdown {
-            background: white;
+            background: var(--glass-white);
+            backdrop-filter: blur(20px);
             border-radius: 16px;
-            box-shadow: var(--shadow-strong);
+            box-shadow: var(--shadow-soft);
             z-index: 1000;
             max-height: 350px;
             overflow-y: auto;
             width: 350px;
-            border: 1px solid var(--glass-border);
-            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 107, 107, 0.15);
         }
-    
+
         .mention-suggestion {
             padding: 1rem 1.5rem;
             cursor: pointer;
             display: flex;
             align-items: center;
-            border-bottom: 1px solid var(--soft-gray);
+            border-bottom: 1px solid rgba(255, 107, 107, 0.08);
             transition: all 0.2s ease;
             position: relative;
             overflow: hidden;
         }
-    
+
         .mention-suggestion::before {
             content: '';
             position: absolute;
@@ -610,176 +611,244 @@
             left: -100%;
             width: 100%;
             height: 100%;
-            background: linear-gradient(90deg, transparent, var(--primary-ultra-light), transparent);
+            background: linear-gradient(90deg, transparent, rgba(255, 107, 107, 0.08), transparent);
             transition: all 0.3s ease;
         }
-    
+
         .mention-suggestion:hover::before {
             left: 100%;
         }
-    
+
         .mention-suggestion:last-child {
             border-bottom: none;
         }
-    
+
         .mention-suggestion:hover, 
         .mention-suggestion.active {
-            background: var(--primary-ultra-light);
-            transform: translateX(4px);
+            background: var(--glass-light);
+            transform: translateX(2px);
+            backdrop-filter: blur(15px);
         }
-    
+
         .mention-suggestion img,
         .mention-suggestion .mention-avatar {
-            width: 40px;
-            height: 40px;
+            width: 36px;
+            height: 36px;
             border-radius: 50%;
             margin-right: 12px;
-            border: 2px solid var(--primary-light);
+            border: 2px solid var(--primary-coral);
         }
-    
+
         .mention-avatar {
-            background: var(--primary);
+            background: var(--gradient-warm);
             color: white;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-weight: 600;
+            font-weight: 500;
         }
     </style>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&amp;display=swap" rel="stylesheet"/>
+<style>
+  html, body {
+    height: 100%;
+    margin: 0;
+    font-family: 'Poppins', sans-serif;
+    background: linear-gradient(135deg, #fe7c4d, #ef87f5, #a37dfc, #6a71e3, #ffb5e8);
+    background-size: 400% 400%;
+    background-attachment: fixed;
+    animation: gradientFlow 15s ease infinite;
+  }
+
+  @keyframes gradientFlow {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+  }
+
+  .main-content, .container, .content-wrapper, .dashboard-wrapper {
+    background: transparent !important;
+  }
+</style>
+
 </head>
 <body>
-    <!-- Overlay pour mobile -->
-    <div class="sidebar-overlay" id="sidebar-overlay" onclick="toggleSidebar()"></div>
-
-    <!-- Bouton toggle pour la sidebar -->
-    <button class="sidebar-toggle" id="sidebar-toggle" onclick="toggleSidebar()">
-        <div class="toggle-line"></div>
-        <div class="toggle-line"></div>
-        <div class="toggle-line"></div>
-    </button>
-
-    <!-- Bouton toggle pour la sidebar - POSITIONNÉ APRÈS LA SIDEBAR -->
-    <button class="sidebar-toggle" id="sidebar-toggle" onclick="toggleSidebar()">
-        <div class="toggle-line"></div>
-        <div class="toggle-line"></div>
-        <div class="toggle-line"></div>
-    </button>
-
-    <div class="app-container">
-        <!-- Sidebar moderne -->
-        <aside class="sidebar" id="sidebar">
-            <div class="sidebar-header">
-                <div class="logo-container">
-                    <div class="logo-icon">
-                        <i class="fab fa-linkedin-in"></i>
-                    </div>
-                    <div class="logo-text">LinkedBoost</div>
-                </div>
-                <div class="user-info">
-                    <div class="user-avatar">
-                        {% if picture %}
-                            <img src="{{ picture }}" alt="Avatar" style="width: 100%; height: 100%; border-radius: 50%; object-fit: cover;">
-                        {% elif session.profile and session.profile.picture %}
-                            <img src="{{ session.profile.picture }}" alt="Avatar" style="width: 100%; height: 100%; border-radius: 50%; object-fit: cover;">
-                        {% else %}
-                            <i class="fas fa-user"></i>
-                        {% endif %}
-                    </div>
-                    <div class="user-name">
-                        {% if first_name and last_name %}
-                            {{ first_name }} {{ last_name }}
-                        {% elif name %}
-                            {{ name }}
-                        {% elif session.profile and session.profile.first_name and session.profile.last_name %}
-                            {{ session.profile.first_name }} {{ session.profile.last_name }}
-                        {% elif session.profile and session.profile.name %}
-                            {{ session.profile.name }}
-                        {% else %}
-                            Utilisateur
-                        {% endif %}
-                    </div>
-                    <div class="user-role">
-                        {% if secteur %}
-                            {{ secteur|title }}
-                        {% elif session.profile and session.profile.secteur %}
-                            {{ session.profile.secteur|title }}
-                        {% else %}
-                            Professionnel LinkedIn
-                        {% endif %}
-                    </div>
-                </div>
-            </div>
-
-            <nav class="nav-menu">
-                <div class="nav-main">
-                    <div class="nav-item">
-                        <a href="{{ url_for('dashboard') }}" 
-                           class="nav-link {% if request.endpoint == 'dashboard' %}active{% endif %}">
-                            <i class="fas fa-tachometer-alt nav-icon"></i>
-                            <span class="nav-text">Dashboard</span>
-                        </a>
-                    </div>
-                    <div class="nav-item">
-                        <a href="{{ url_for('news_assistant') }}" 
-                           class="nav-link {% if request.endpoint == 'news_assistant' %}active{% endif %}">
-                            <i class="fas fa-newspaper nav-icon"></i>
-                            <span class="nav-text">Actualités</span>
-                        </a>
-                    </div>
-                    <div class="nav-item">
-                        <a href="{{ url_for('calendar') }}" 
-                           class="nav-link {% if request.endpoint == 'calendar' %}active{% endif %}">
-                            <i class="fas fa-calendar-alt nav-icon"></i>
-                            <span class="nav-text">Calendrier</span>
-                        </a>
-                    </div>
-                    <div class="nav-item">
-                        <a href="{{ url_for('historique') }}" 
-                           class="nav-link {% if request.endpoint == 'historique' %}active{% endif %}">
-                            <i class="fas fa-history nav-icon"></i>
-                            <span class="nav-text">Historique</span>
-                        </a>
-                    </div>
-                    <div class="nav-item">
-                        <a href="{{ url_for('profil') }}" 
-                           class="nav-link {% if request.endpoint == 'profil' %}active{% endif %}">
-                            <i class="fas fa-user-cog nav-icon"></i>
-                            <span class="nav-text">Profil</span>
-                        </a>
-                    </div>
-                    <div class="nav-item">
-                        <a href="{{ url_for('parametres') }}" 
-                           class="nav-link {% if request.endpoint == 'parametres' %}active{% endif %}">
-                            <i class="fas fa-cog nav-icon"></i>
-                            <span class="nav-text">Paramètres</span>
-                        </a>
-                    </div>
-                </div>
-                
-                <!-- Section déconnexion en bas -->
-                <div class="nav-bottom">
-                    <div class="nav-item">
-                        <a href="{{ url_for('logout') }}" class="nav-link danger">
-                            <i class="fas fa-sign-out-alt nav-icon"></i>
-                            <span class="nav-text">Déconnexion</span>
-                        </a>
-                    </div>
-                </div>
-            </nav>
-        </aside>
-
-        <!-- Contenu principal -->
-        <main class="main-content" id="main-content">
-            <div class="content-wrapper">
+<!-- Overlay pour mobile -->
+<div class="sidebar-overlay" id="sidebar-overlay" onclick="toggleSidebar()"></div>
+<!-- Blobs décoratifs site-wide inspirés de la référence -->
+<div class="decor-blobs" aria-hidden="true">
+<div class="blob blob-left-1"></div>
+<div class="blob blob-right-1"></div>
+<div class="blob blob-bottom-left"></div>
+<div class="blob blob-bottom-right"></div>
+</div>
+<!-- Bouton toggle pour la sidebar -->
+<button class="sidebar-toggle" id="sidebar-toggle" onclick="toggleSidebar()">
+<div class="toggle-line"></div>
+<div class="toggle-line"></div>
+<div class="toggle-line"></div>
+</button>
+<div class="app-container">
+<!-- Sidebar noble -->
+<aside class="sidebar" id="sidebar">
+<div class="sidebar-header">
+<div class="logo-container">
+<div class="logo-icon">
+<i class="fab fa-linkedin-in"></i>
+</div>
+<div class="logo-text">ResoBoost</div>
+</div>
+</div>
+<nav class="nav-menu">
+<div class="nav-main">
+<div class="nav-item">
+<a class="nav-link {% if request.endpoint == 'dashboard' %}active{% endif %}" href="{{ url_for('dashboard') }}">
+<i class="fas fa-home nav-icon"></i>
+<span class="nav-text">Accueil</span>
+</a>
+</div>
+<div class="nav-item">
+<a class="nav-link {% if request.endpoint == 'news_assistant' %}active{% endif %}" href="{{ url_for('news_assistant') }}">
+<i class="fas fa-newspaper nav-icon"></i>
+<span class="nav-text">Actualités</span>
+</a>
+</div>
+<div class="nav-item">
+<a class="nav-link {% if request.endpoint == 'calendar' %}active{% endif %}" href="{{ url_for('calendar') }}">
+<i class="fas fa-calendar-alt nav-icon"></i>
+<span class="nav-text">Calendrier</span>
+</a>
+</div>
+<div class="nav-item">
+<a class="nav-link {% if request.endpoint == 'historique' %}active{% endif %}" href="{{ url_for('historique') }}">
+<i class="fas fa-archive nav-icon"></i>
+<span class="nav-text">Mes posts</span>
+</a>
+</div>
+<div class="nav-item">
+<a class="nav-link {% if request.endpoint == 'profil' %}active{% endif %}" href="{{ url_for('profil') }}">
+<i class="fas fa-user-circle nav-icon"></i>
+<span class="nav-text">Profil</span>
+</a>
+</div>
+<div class="nav-item">
+<a class="nav-link {% if request.endpoint == 'parametres' %}active{% endif %}" href="{{ url_for('parametres') }}">
+<i class="fas fa-cog nav-icon"></i>
+<span class="nav-text">Paramètres</span>
+</a>
+</div>
+</div>
+<!-- Section déconnexion en bas -->
+<div class="nav-bottom">
+<div class="nav-item">
+<a class="nav-link danger" href="{{ url_for('logout') }}">
+<i class="fas fa-sign-out-alt nav-icon"></i>
+<span class="nav-text">Déconnexion</span>
+</a>
+</div>
+</div>
+</nav>
+</aside>
+<!-- Contenu principal -->
+<main class="main-content" id="main-content">
+<div class="content-wrapper">
                 {% block content %}{% endblock %}
             </div>
-        </main>
-    </div>
-
-    <!-- Scripts pour les fonctionnalités interactives -->
-    <script>
+</main>
+</div>
+<!-- Bouton flottant global pour créer un nouveau post - TOUJOURS PRÉSENT -->
+<a href="{{ url_for('dashboard') }}" class="floating-btn" title="Créer un nouveau post">
+    <i class="fas fa-plus"></i>
+    <span class="floating-label">Créer un nouveau post</span>
+</a>
+<style>
+.floating-btn {
+    position: fixed;
+    bottom: 2rem;
+    right: 2rem;
+    width: 60px;
+    height: 60px;
+    background: var(--gradient-cool);
+    color: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-decoration: none;
+    font-size: 1.5rem;
+    box-shadow: var(--shadow-gentle);
+    transition: all 0.3s cubic-bezier(.4,1.4,.6,1);
+    z-index: 1000;
+    overflow: visible;
+    position: fixed;
+}
+.floating-btn i {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 1em;
+    height: 1em;
+    font-size: 1.5em;
+    margin: 0;
+    position: relative;
+    left: 0;
+    top: 0;
+    transition: transform 0.3s cubic-bezier(.4,1.4,.6,1);
+}
+.floating-btn:hover i {
+    transform: rotate(20deg) scale(1.15);
+    filter: drop-shadow(0 0 8px rgba(255, 107, 107, 0.25));
+}
+.floating-btn .floating-label {
+    opacity: 0;
+    pointer-events: none;
+    position: absolute;
+    right: 110%; /* espace horizontal à gauche du bouton */
+    top: 50%;
+    transform: translateY(-50%) translateX(0) scale(0.95);
+    background: var(--white);
+    color: var(--primary-purple);
+    padding: 0.32em 0.9em;
+    border-radius: 8px;
+    font-size: 0.92rem;
+    font-weight: 500;
+    box-shadow: var(--shadow-whisper);
+    white-space: nowrap;
+    transition: opacity 0.3s, transform 0.3s, right 0.3s;
+    border: 1px solid var(--noble-stone);
+    letter-spacing: 0;
+    text-align: left;
+    margin-left: 0;
+}
+.floating-btn:hover .floating-label {
+    opacity: 1;
+    right: 110%;
+    transform: translateY(-50%) translateX(-10px) scale(1.05) rotate(-2deg);
+    pointer-events: auto;
+}
+@media (max-width: 600px) {
+    .floating-btn {
+        width: 48px;
+        height: 48px;
+        font-size: 1.1rem;
+        bottom: 1.2rem;
+        right: 1.2rem;
+    }
+    .floating-btn .floating-label {
+        font-size: 0.85rem;
+        right: 110%;
+        padding: 0.3em 0.7em;
+    }
+    .floating-btn:hover .floating-label {
+        right: 110%;
+    }
+}
+</style>
+<!-- Scripts corrigés -->
+<script>
         // Variable pour l'état de la sidebar
         let sidebarCollapsed = false;
+        let lastWindowWidth = window.innerWidth;
 
         // Fonction pour basculer la sidebar
         function toggleSidebar() {
@@ -787,45 +856,44 @@
             const mainContent = document.getElementById('main-content');
             const sidebarToggle = document.getElementById('sidebar-toggle');
             const overlay = document.getElementById('sidebar-overlay');
-            
-            console.log('Toggle sidebar called - Current state:', sidebarCollapsed);
-            
+
             if (window.innerWidth <= 768) {
                 // Mode mobile - sidebar overlay
-                sidebar.classList.toggle('open');
-                overlay.classList.toggle('active');
-                sidebarToggle.classList.toggle('active');
-                console.log('Mobile mode toggled');
+                const isOpen = sidebar.classList.contains('open');
+                if (isOpen) {
+                    sidebar.classList.remove('open');
+                    overlay.classList.remove('active');
+                    sidebarToggle.classList.remove('active');
+                } else {
+                    sidebar.classList.add('open');
+                    overlay.classList.add('active');
+                    sidebarToggle.classList.add('active');
+                }
             } else {
                 // Mode desktop - sidebar rétractable
                 sidebarCollapsed = !sidebarCollapsed;
-                console.log('Desktop mode - New state:', sidebarCollapsed);
-                
                 if (sidebarCollapsed) {
                     sidebar.classList.add('collapsed');
                     mainContent.classList.add('expanded');
+                    sidebarToggle.classList.add('collapsed');
                     sidebarToggle.classList.add('active');
-                    sidebarToggle.style.left = '100px';
-                    console.log('Sidebar collapsed');
                 } else {
                     sidebar.classList.remove('collapsed');
                     mainContent.classList.remove('expanded');
+                    sidebarToggle.classList.remove('collapsed');
                     sidebarToggle.classList.remove('active');
-                    sidebarToggle.style.left = '300px';
-                    console.log('Sidebar expanded');
                 }
             }
         }
 
-        // Fermer la sidebar mobile en cliquant à l'extérieur
+        // Fermer la sidebar mobile en cliquant à l'extérieur ou sur overlay
         document.addEventListener('click', function(e) {
             const sidebar = document.getElementById('sidebar');
             const sidebarToggle = document.getElementById('sidebar-toggle');
             const overlay = document.getElementById('sidebar-overlay');
-            
-            if (window.innerWidth <= 768 && 
-                !sidebar.contains(e.target) && 
-                !sidebarToggle.contains(e.target) && 
+            if (window.innerWidth <= 768 &&
+                !sidebar.contains(e.target) &&
+                !sidebarToggle.contains(e.target) &&
                 sidebar.classList.contains('open')) {
                 sidebar.classList.remove('open');
                 overlay.classList.remove('active');
@@ -839,40 +907,32 @@
             const mainContent = document.getElementById('main-content');
             const overlay = document.getElementById('sidebar-overlay');
             const sidebarToggle = document.getElementById('sidebar-toggle');
-            
-            if (window.innerWidth > 768) {
-                // Mode desktop - réinitialiser les classes mobile
-                sidebar.classList.remove('open');
+            const isMobile = window.innerWidth <= 768;
+            const wasMobile = lastWindowWidth <= 768;
+            lastWindowWidth = window.innerWidth;
+
+            if (!isMobile) {
+                // Mode desktop
                 overlay.classList.remove('active');
-                
-                // Appliquer l'état collapsed si nécessaire
+                sidebar.classList.remove('open');
+                sidebarToggle.classList.remove('active');
                 if (sidebarCollapsed) {
                     sidebar.classList.add('collapsed');
                     mainContent.classList.add('expanded');
+                    sidebarToggle.classList.add('collapsed');
                 } else {
                     sidebar.classList.remove('collapsed');
                     mainContent.classList.remove('expanded');
+                    sidebarToggle.classList.remove('collapsed');
                 }
             } else {
-                // Mode mobile - réinitialiser les classes desktop
+                // Mode mobile
                 sidebar.classList.remove('collapsed');
                 mainContent.classList.remove('expanded');
-                sidebarCollapsed = false;
-                sidebarToggle.classList.remove('active');
-            }
-        });
-
-        // Initialiser l'état au chargement
-        document.addEventListener('DOMContentLoaded', function() {
-            const sidebar = document.getElementById('sidebar');
-            const mainContent = document.getElementById('main-content');
-            
-            // S'assurer que la sidebar est dans le bon état initial
-            if (window.innerWidth > 768) {
-                sidebar.classList.remove('open');
-                if (sidebarCollapsed) {
-                    sidebar.classList.add('collapsed');
-                    mainContent.classList.add('expanded');
+                sidebarToggle.classList.remove('collapsed');
+                // Réinitialiser l'état desktop si on vient de desktop
+                if (!wasMobile) {
+                    sidebarCollapsed = false;
                 }
             }
         });
@@ -963,11 +1023,11 @@
                     suggestionItem.innerHTML = `
                         ${avatarHtml}
                         <div style="flex: 1;">
-                            <div style="font-weight: 600; color: var(--text-primary);">${user.name}</div>
-                            <div style="font-size: 0.875rem; color: var(--text-secondary);">${user.headline || 'Professionnel LinkedIn'}</div>
+                            <div style="font-weight: 500; color: var(--noble-charcoal);">${user.name}</div>
+                            <div style="font-size: 0.8rem; color: var(--noble-charcoal-light);">${user.headline || 'Professionnel LinkedIn'}</div>
                         </div>
                         <div style="opacity: 0.6;">
-                            <i class="fab fa-linkedin" style="color: var(--primary);"></i>
+                            <i class="fab fa-linkedin" style="color: var(--primary-coral);"></i>
                         </div>
                     `;
                     
@@ -1146,14 +1206,14 @@
                 link.addEventListener('mouseenter', function() {
                     const icon = this.querySelector('.nav-icon');
                     if (icon) {
-                        icon.style.transform = 'scale(1.2) rotate(5deg)';
+                        icon.style.transform = 'scale(1.1)';
                     }
                 });
                 
                 link.addEventListener('mouseleave', function() {
                     const icon = this.querySelector('.nav-icon');
                     if (icon) {
-                        icon.style.transform = 'scale(1) rotate(0deg)';
+                        icon.style.transform = 'scale(1)';
                     }
                 });
                 
@@ -1175,10 +1235,10 @@
             const logoIcon = document.querySelector('.logo-icon');
             if (logoIcon) {
                 logoIcon.addEventListener('click', function() {
-                    this.style.transform = 'scale(0.9) rotate(360deg)';
+                    this.style.transform = 'scale(0.95) rotate(5deg)';
                     setTimeout(() => {
                         this.style.transform = 'scale(1) rotate(0deg)';
-                    }, 300);
+                    }, 200);
                 });
             }
         });
@@ -1205,10 +1265,10 @@
             }
         });
 
-        // Animation de chargement de la page
+        // Animation de chargement de la page plus douce
         window.addEventListener('load', function() {
             document.body.style.opacity = '0';
-            document.body.style.transition = 'opacity 0.3s ease';
+            document.body.style.transition = 'opacity 0.5s ease';
             
             setTimeout(() => {
                 document.body.style.opacity = '1';
@@ -1216,4 +1276,4 @@
         });
     </script>
 </body>
-</html>v
+</html>
