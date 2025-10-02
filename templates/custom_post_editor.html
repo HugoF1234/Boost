@@ -49,23 +49,7 @@
                 {{ (generated_content|trim)|safe if generated_content else "Votre contenu apparaîtra ici." }}
             </div>
         </div>
-        <div class="linkedin-stats">
-            <div class="stats-left">
-                <span class="reactions">
-                    &#128077; &#10084;&#65039; &#128079;
-                </span>
-                <span class="count">252</span>
-            </div>
-            <div class="stats-right">
-                <span>4 commentaires</span> · <span>3 republications</span>
-            </div>
-        </div>
-        <div class="linkedin-actions">
-            <button class="btn-linkedin"><i class="far fa-thumbs-up"></i> J'aime</button>
-            <button class="btn-linkedin"><i class="far fa-comment"></i> Commenter</button>
-            <button class="btn-linkedin"><i class="fas fa-retweet"></i> Reposter</button>
-            <button class="btn-linkedin"><i class="fas fa-paper-plane"></i> Envoyer</button>
-        </div>
+        <!-- Aperçu simple sans faux commentaires -->
     </div>
 
     <!-- Formulaire -->
@@ -119,7 +103,8 @@
                     class="btn btn-secondary post-action-btn"
                     formmethod="POST"
                     formaction="/draft">
-                <i class="fas fa-save"></i> Sauvegarder brouillon
+                <i class="fas fa-save"></i> 
+                <span>Sauvegarder brouillon</span>
             </button>
 
             <!-- Programmer -->
@@ -127,7 +112,8 @@
                     class="btn btn-warning post-action-btn"
                     formmethod="POST"
                     formaction="/schedule">
-                <i class="fas fa-clock"></i> Programmer
+                <i class="fas fa-clock"></i> 
+                <span>Programmer</span>
             </button>
 
             <!-- Publier -->
@@ -135,7 +121,8 @@
                     class="btn btn-primary post-action-btn"
                     formmethod="POST"
                     formaction="/publish">
-                <i class="fas fa-paper-plane"></i> Publier
+                <i class="fas fa-paper-plane"></i> 
+                <span>Publier</span>
             </button>
         </div>
 
@@ -147,6 +134,15 @@
 </div>
 
 <style>
+/* Variables CSS pour la cohérence avec la nouvelle DA */
+:root {
+    --primary-purple: #8B5CF6;
+    --primary-orange: #FF8E53;
+    --primary-pink: #FF5F8D;
+    --primary-coral: #FF6B6B;
+    --primary-blue: #06D6A0;
+}
+
 /* Styles pour la page d'éditeur de post personnalisé - Nouveau design */
 .creation-section {
     padding: 2rem;
@@ -440,49 +436,78 @@
 /* Actions du post */
 .post-actions {
     display: flex;
-    gap: 1rem;
+    gap: 1.5rem;
     justify-content: center;
     flex-wrap: wrap;
     margin-top: 2rem;
     padding-top: 2rem;
-    border-top: 2px solid #f0f0f0;
+    border-top: 1px solid rgba(0, 0, 0, 0.1);
 }
 
 .post-action-btn {
-    padding: 0.8rem 1.5rem;
+    padding: 1rem 2rem;
     border: none;
-    border-radius: 8px;
+    border-radius: 12px;
     cursor: pointer;
     font-weight: 600;
     text-decoration: none;
     display: inline-flex;
     align-items: center;
-    gap: 0.5rem;
+    gap: 0.75rem;
     transition: all 0.3s ease;
     font-size: 1rem;
+    min-width: 180px;
+    justify-content: center;
+    position: relative;
+    overflow: hidden;
+}
+
+.post-action-btn i {
+    font-size: 1.1rem;
+}
+
+.post-action-btn span {
+    font-weight: 600;
 }
 
 .btn-primary {
-    background: linear-gradient(135deg, #FF6B6B, #FF8E53);
+    background: var(--primary-purple);
     color: white;
-    box-shadow: 0 4px 15px rgba(255, 107, 107, 0.3);
+    box-shadow: 0 4px 15px rgba(139, 92, 246, 0.25);
+}
+
+.btn-primary:hover {
+    background: #7c3aed;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(139, 92, 246, 0.35);
 }
 
 .btn-secondary {
-    background: #6c757d;
+    background: #6b7280;
     color: white;
-    box-shadow: 0 4px 15px rgba(108, 117, 125, 0.3);
+    box-shadow: 0 4px 15px rgba(107, 114, 128, 0.25);
+}
+
+.btn-secondary:hover {
+    background: #4b5563;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(107, 114, 128, 0.35);
 }
 
 .btn-warning {
-    background: #ffc107;
-    color: #212529;
-    box-shadow: 0 4px 15px rgba(255, 193, 7, 0.3);
+    background: var(--primary-orange);
+    color: white;
+    box-shadow: 0 4px 15px rgba(255, 142, 83, 0.25);
 }
 
-.post-action-btn:hover {
+.btn-warning:hover {
+    background: #ea580c;
     transform: translateY(-2px);
-    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
+    box-shadow: 0 8px 25px rgba(255, 142, 83, 0.35);
+}
+
+.post-action-btn:active {
+    transform: translateY(0);
 }
 
 /* Responsive design */
