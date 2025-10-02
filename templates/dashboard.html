@@ -738,6 +738,8 @@ function handleCreatePost(event) {
         const tone = document.querySelector('select[name="tone"]')?.value || "professionnel";
         const perspective = document.querySelector('select[name="perspective"]')?.value || "neutre";
         
+        console.log("Paramètres article:", { customInstructions, tone, perspective });
+        
         // Créer un formulaire pour rediriger vers custom_post_editor
         const form = document.createElement('form');
         form.method = 'POST';
@@ -759,6 +761,7 @@ function handleCreatePost(event) {
             form.appendChild(input);
         });
         
+        console.log("Formulaire créé avec champs:", fields);
         document.body.appendChild(form);
         form.submit();
         return;
