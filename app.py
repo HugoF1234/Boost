@@ -2918,9 +2918,10 @@ def edit_post(post_id):
             if action == "save_draft":
                 logger.info("🔄 TRAITEMENT ACTION: save_draft")
                 post.scheduled = False
+                post.status = "draft"
                 post.published_at = datetime.utcnow()
                 post.linkedin_post_urn = None
-                logger.info(f"📝 Post {post_id} → BROUILLON: scheduled=False, urn=None")
+                logger.info(f"📝 Post {post_id} → BROUILLON: scheduled=False, status=draft, urn=None")
                 flash("Post sauvegardé en brouillon avec succès", "success")
                 
             elif action == "schedule":
@@ -2939,9 +2940,11 @@ def edit_post(post_id):
                                          **session.get('profile', {}))
                 
                 post.scheduled = True
-                post.published_at = publish_time
+                post.status = "scheduled"
+                post.scheduled_at = publish_time
+                post.published_at = None
                 post.linkedin_post_urn = None
-                logger.info(f"⏰ Post {post_id} → PROGRAMMÉ: scheduled=True, date={publish_time}, urn=None")
+                logger.info(f"⏰ Post {post_id} → PROGRAMMÉ: scheduled=True, status=scheduled, date={publish_time}, urn=None")
                 flash(f"Post programmé pour le {publish_time.strftime('%d/%m/%Y à %H:%M')}", "success")
                 
             elif action == "publish_now":
@@ -2995,8 +2998,10 @@ def edit_post(post_id):
                         linkedin_urn = post_resp.json().get("id")
                         post.linkedin_post_urn = linkedin_urn
                         post.scheduled = False
+                        post.status = "published"
                         post.published_at = datetime.utcnow()
-                        logger.info(f"✅ Post {post_id} → PUBLIÉ: urn={linkedin_urn}")
+                        post.scheduled_at = None
+                        logger.info(f"✅ Post {post_id} → PUBLIÉ: urn={linkedin_urn}, status=published")
                         flash("Post publié avec succès sur LinkedIn !", "success")
                     else:
                         logger.error(f"❌ Erreur publication LinkedIn: {post_resp.status_code} - {post_resp.text}")
