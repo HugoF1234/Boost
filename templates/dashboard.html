@@ -727,6 +727,16 @@ function handleCreatePost(event) {
 
     console.log("Création du post lancée ✅");
 
+    // Vérifier si on est dans le contexte d'un article sélectionné
+    const isArticleContext = document.querySelector('button[name="generate_from_article"]') !== null;
+    
+    if (isArticleContext) {
+        console.log("Contexte article détecté - soumission directe du formulaire");
+        // Si on est dans le contexte d'un article, soumettre directement le formulaire
+        event.target.submit();
+        return;
+    }
+
     // Récupérer les valeurs du formulaire
     const subject = document.querySelector('input[name="subject"]')?.value || "Post LinkedIn";
     const tone = document.querySelector('select[name="tone"]')?.value || "professionnel";
