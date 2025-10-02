@@ -130,7 +130,40 @@
         <input type="hidden" name="subject" value="{{ subject }}">
         <input type="hidden" name="tone" value="{{ tone }}">
         <input type="hidden" name="perspective" value="{{ perspective }}">
+        {% if selected_article %}
+        <input type="hidden" name="article_url" value="{{ selected_article.url }}">
+        {% endif %}
     </form>
+    
+    <!-- Lien vers l'article source (si généré depuis un article) -->
+    {% if selected_article %}
+    <div class="article-source-section">
+        <div class="article-source-card">
+            <h4 class="article-source-title">
+                <i class="fas fa-newspaper icon-noble"></i>
+                Article source
+            </h4>
+            <div class="article-source-content">
+                <h5 class="article-source-article-title">{{ selected_article.title|clean_html }}</h5>
+                <p class="article-source-description">{{ selected_article.description|clean_html }}</p>
+                <div class="article-source-meta">
+                    <span class="article-source-name">
+                        <i class="fas fa-globe"></i>
+                        {{ selected_article.source.name }}
+                    </span>
+                    <span class="article-source-date">
+                        <i class="fas fa-calendar"></i>
+                        {{ selected_article.formatted_date }}
+                    </span>
+                </div>
+                <a href="{{ selected_article.url }}" target="_blank" class="btn btn-secondary article-source-btn">
+                    <i class="fas fa-external-link-alt"></i>
+                    Lire l'article complet
+                </a>
+            </div>
+        </div>
+    </div>
+    {% endif %}
 </div>
 
 <style>
@@ -508,6 +541,83 @@
 
 .post-action-btn:active {
     transform: translateY(0);
+}
+
+/* Section article source */
+.article-source-section {
+    margin-top: 2rem;
+    padding-top: 2rem;
+    border-top: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.article-source-card {
+    background: white;
+    border-radius: 12px;
+    padding: 1.5rem;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+    border: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.article-source-title {
+    color: var(--noble-charcoal);
+    font-size: 1.2rem;
+    font-weight: 600;
+    margin: 0 0 1rem 0;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.article-source-title i {
+    color: var(--primary-purple);
+}
+
+.article-source-content {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.article-source-article-title {
+    color: var(--noble-charcoal);
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin: 0;
+    line-height: 1.4;
+}
+
+.article-source-description {
+    color: var(--noble-accent-light);
+    font-size: 0.95rem;
+    line-height: 1.5;
+    margin: 0;
+}
+
+.article-source-meta {
+    display: flex;
+    gap: 1.5rem;
+    flex-wrap: wrap;
+}
+
+.article-source-name,
+.article-source-date {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: var(--noble-accent-light);
+    font-size: 0.9rem;
+}
+
+.article-source-name i,
+.article-source-date i {
+    color: var(--primary-purple);
+}
+
+.article-source-btn {
+    align-self: flex-start;
+    padding: 0.75rem 1.5rem;
+    font-size: 0.9rem;
+    margin-top: 0.5rem;
 }
 
 /* Responsive design */
