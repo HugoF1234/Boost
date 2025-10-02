@@ -2371,7 +2371,9 @@ def custom_post_editor():
             model = genai.GenerativeModel("gemini-2.0-flash")
             
             # Construire le prompt selon le contexte
+            logger.info(f"Vérification condition: from_article={from_article}, selected_article={selected_article is not None}")
             if from_article and selected_article:
+                logger.info("=== UTILISATION DU PROMPT ARTICLE ===")
                 # Prompt pour génération depuis un article
                 prompt = f"""
                 Tu es un expert LinkedIn reconnu pour tes posts pertinents et percutants.
@@ -2402,6 +2404,8 @@ def custom_post_editor():
                 Inspire-toi des posts qui génèrent le plus de commentaires sur LinkedIn. Structure le contenu comme un mini-point de vue publié par un professionnel engagé.
                 """
             else:
+                logger.info("=== UTILISATION DU PROMPT STANDARD ===")
+                logger.info(f"Raison: from_article={from_article}, selected_article={selected_article is not None}")
                 # Prompt standard
                 prompt = f"""
                 Tu es un expert LinkedIn reconnu pour tes posts pertinents et percutants.
