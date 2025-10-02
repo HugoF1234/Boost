@@ -152,6 +152,7 @@ def build_post_payload(req):
     logger.info(f"📅 build_post_payload - Date: {date_s}, Time: {time_s}")
     logger.info(f"📸 build_post_payload - Images: {len(images)} fichiers")
     logger.info(f"📋 build_post_payload - Subject: {req.form.get('subject')}")
+    logger.info(f"🔗 build_post_payload - Article URL: {req.form.get('article_url')}")
     
     return {
         "content": content,
@@ -161,6 +162,7 @@ def build_post_payload(req):
         "images": images,
         "schedule_date": date_s,
         "schedule_time": time_s,
+        "article_url": req.form.get("article_url") or "",
     }
 
 # Les posts sont maintenant stockés en base de données
@@ -337,6 +339,7 @@ class Post(db.Model):
     scheduled_at = db.Column(db.DateTime, nullable=True)
     linkedin_post_urn = db.Column(db.String(255), nullable=True)
     images = db.Column(db.Text)  # JSON contenant la liste des images
+    article_url = db.Column(db.String(500), nullable=True)  # URL de l'article source
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)  # Référence à users.id
     scheduled = db.Column(db.Boolean, default=False)  # Gardé pour compatibilité
@@ -2312,12 +2315,15 @@ def draft():
             perspective=data["perspective"],
             status="draft",
             images=json.dumps(data["images"]),
+            article_url=data["article_url"],
             created_at=datetime.utcnow(),
             user_id=user.id
         )
         db.session.add(post)
         db.session.commit()
         flash("✅ Brouillon enregistré", "success")
+        # Nettoyer la session après sauvegarde
+        session.pop('selected_article', None)
         return redirect(url_for("historique"))
     except Exception as e:
         logger.error(f"Erreur lors de la sauvegarde du brouillon: {str(e)}")
@@ -2340,9 +2346,19 @@ def schedule():
         data = build_post_payload(request)
         scheduled_at = None
         if data["schedule_date"] and data["schedule_time"]:
-            scheduled_at = datetime.strptime(
+            # Convertir en timezone locale (Europe/Paris)
+            from datetime import timezone
+            import pytz
+            
+            # Créer la datetime naive
+            naive_dt = datetime.strptime(
                 f"{data['schedule_date']} {data['schedule_time']}", "%Y-%m-%d %H:%M"
             )
+            # Localiser en Europe/Paris
+            paris_tz = pytz.timezone('Europe/Paris')
+            local_dt = paris_tz.localize(naive_dt)
+            # Convertir en UTC pour stockage
+            scheduled_at = local_dt.astimezone(timezone.utc)
         
         post = Post(
             content=data["content"],
@@ -2353,11 +2369,14 @@ def schedule():
             scheduled_at=scheduled_at,
             created_at=datetime.utcnow(),
             images=json.dumps(data["images"]),
+            article_url=data["article_url"],
             user_id=user.id
         )
         db.session.add(post)
         db.session.commit()
         flash("⏰ Post programmé", "success")
+        # Nettoyer la session après programmation
+        session.pop('selected_article', None)
         return redirect(url_for("historique"))
     except Exception as e:
         logger.error(f"Erreur lors de la programmation: {str(e)}")
@@ -2391,6 +2410,7 @@ def publish():
             created_at=datetime.utcnow(),
             linkedin_post_urn=result.get("linkedin_post_id"),
             images=json.dumps(data["images"]),
+            article_url=data["article_url"],
             user_id=user.id
         )
         db.session.add(post)
@@ -2399,6 +2419,8 @@ def publish():
         if result.get("ok"):
             flash("🚀 Post publié sur LinkedIn avec succès !", "success")
             logger.info(f"✅ Post publié sur LinkedIn: {result.get('linkedin_post_id')}")
+            # Nettoyer la session après publication réussie
+            session.pop('selected_article', None)
         else:
             error_msg = result.get("error", "Erreur inconnue")
             flash(f"⚠️ Échec de publication LinkedIn: {error_msg}. Post sauvegardé en brouillon.", "warning")
