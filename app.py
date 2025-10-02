@@ -2352,6 +2352,16 @@ def custom_post_editor():
     # Récupérer l'utilisateur
     user = User.query.filter_by(sub=session['profile'].get("sub", "")).first()
     
+    # Debug: Vérifier l'état de la session
+    logger.info(f"=== DEBUG SESSION ===")
+    logger.info(f"Session keys: {list(session.keys())}")
+    logger.info(f"selected_article in session: {'selected_article' in session}")
+    if 'selected_article' in session:
+        article = session.get('selected_article')
+        logger.info(f"Article en session: {article.get('title', 'Sans titre') if article else 'None'}")
+    else:
+        logger.warning("selected_article PAS dans la session")
+    
     # Récupérer l'article sélectionné si on vient d'un article
     selected_article = None
     if from_article:
