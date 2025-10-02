@@ -2035,6 +2035,39 @@ def select_article():
         logger.error(f"Erreur lors de la sélection: {str(e)}")
         return jsonify({'error': str(e)}), 500
 
+@app.route("/test_article_flow")
+def test_article_flow():
+    """Route de test pour vérifier le flux d'article"""
+    if 'profile' not in session:
+        return "Non connecté"
+    
+    # Créer un article de test
+    test_article = {
+        'title': 'Test Article - Intelligence Artificielle',
+        'description': 'Ceci est un article de test pour vérifier le système de génération de posts.',
+        'source': {'name': 'Test Source'},
+        'url': 'https://example.com/test-article',
+        'formatted_date': '01/01/2025',
+        'urlToImage': ''
+    }
+    
+    # Mettre l'article en session
+    session['selected_article'] = test_article
+    session['article_success'] = True
+    
+    return f"""
+    <html>
+    <head><title>Test Article Flow</title></head>
+    <body>
+        <h1>Test Article Flow</h1>
+        <p>Article de test créé et mis en session.</p>
+        <p><a href="/dashboard">Aller au Dashboard</a></p>
+        <p><a href="/debug_articles">Debug Articles</a></p>
+        <pre>Article: {test_article}</pre>
+    </body>
+    </html>
+    """
+
 @app.route("/debug_articles")
 def debug_articles():
     """Route de débogage pour tester le système d'articles"""
@@ -2323,9 +2356,13 @@ def custom_post_editor():
     selected_article = None
     if from_article:
         selected_article = session.get('selected_article')
+        logger.info(f"from_article={from_article}, selected_article={selected_article is not None}")
         if selected_article:
+            logger.info(f"Article trouvé: {selected_article.get('title', 'Sans titre')}")
             # Utiliser le titre de l'article comme sujet
             subject = selected_article.get('title', subject)
+        else:
+            logger.warning("from_article=True mais selected_article est None")
     
     # Générer le contenu avec Gemini
     generated_content = ""
@@ -2392,10 +2429,10 @@ def custom_post_editor():
             response = model.generate_content(prompt)
             generated_content = response.text.strip()
             
-            # Si on vient d'un article, supprimer l'article de la session après génération
+            # Note: On ne supprime pas l'article de la session ici pour qu'il soit disponible pour l'affichage
+            # Il sera supprimé après l'affichage de la page
             if from_article and selected_article:
-                session.pop('selected_article', None)
-                logger.info("Post généré depuis un article - article supprimé de la session")
+                logger.info("Post généré depuis un article - article conservé pour l'affichage")
             
         except Exception as e:
             logger.error(f"Erreur lors de la génération avec Gemini: {str(e)}")
@@ -2406,6 +2443,10 @@ def custom_post_editor():
     
     # Récupérer l'URL de la photo de profil
     profile_picture_url = session['profile'].get("picture", "")
+    
+    # Si on vient d'un article et qu'on a généré du contenu, marquer l'article pour suppression
+    if from_article and selected_article and generated_content:
+        session['article_to_remove'] = True
     
     return render_template(
         "custom_post_editor.html",
@@ -2419,6 +2460,21 @@ def custom_post_editor():
         profile_picture_url=profile_picture_url,
         selected_article=selected_article
     )
+
+# Route pour nettoyer l'article de la session après affichage
+@app.route("/cleanup-article", methods=["POST"])
+def cleanup_article():
+    """Nettoie l'article de la session après affichage"""
+    if 'profile' not in session:
+        return jsonify({'error': 'Non authentifié'}), 401
+    
+    if session.get('article_to_remove'):
+        session.pop('selected_article', None)
+        session.pop('article_to_remove', None)
+        logger.info("Article nettoyé de la session après affichage")
+        return jsonify({'success': True})
+    
+    return jsonify({'success': False, 'message': 'Aucun article à nettoyer'})
 
 # Première définition supprimée - doublon
 
