@@ -78,7 +78,7 @@
                                         <div class="post-author">{{ first_name }} {{ last_name }}</div>
                                         <div class="post-date">
                                             <i class="fas fa-calendar" style="color: var(--gray-medium);"></i>
-                                            Créé le {{ post.created_at.strftime('%d/%m/%Y à %H:%M') if post.created_at else 'Date inconnue' }}
+                                            Créé le {{ post.created_at|to_local_time|strftime('%d/%m/%Y à %H:%M') if post.created_at else 'Date inconnue' }}
                                         </div>
                                         <div class="post-status status-draft">
                                             <i class="fas fa-edit"></i> Brouillon
@@ -140,7 +140,7 @@
                                         <div class="post-author">{{ first_name }} {{ last_name }}</div>
                                         <div class="post-date">
                                             <i class="fas fa-clock" style="color: var(--gray-medium);"></i>
-                                            Programmé pour le {{ post.scheduled_at.strftime('%d/%m/%Y à %H:%M') if post.scheduled_at else 'Date inconnue' }}
+                                            Programmé pour le {{ post.scheduled_at|to_local_time|strftime('%d/%m/%Y à %H:%M') if post.scheduled_at else 'Date inconnue' }}
                                         </div>
                                         <div class="post-status status-scheduled">
                                             <i class="fas fa-clock"></i> Programmé
@@ -202,7 +202,7 @@
                                         <div class="post-author">{{ first_name }} {{ last_name }}</div>
                                         <div class="post-date">
                                             <i class="fas fa-check-circle" style="color: var(--gray-medium);"></i>
-                                            Publié le {{ post.published_at.strftime('%d/%m/%Y à %H:%M') if post.published_at else 'Date inconnue' }}
+                                            Publié le {{ post.published_at|to_local_time|strftime('%d/%m/%Y à %H:%M') if post.published_at else 'Date inconnue' }}
                                         </div>
                                         <div class="post-status status-published">
                                             <i class="fas fa-check-circle"></i> Publié
@@ -319,7 +319,7 @@
                                 <div class="post-author">{{ first_name }} {{ last_name }}</div>
                                 <div class="post-date">
                                     <i class="fas fa-clock" style="color: var(--gray-medium);"></i>
-                                    Programmé pour le {{ post.scheduled_at.strftime('%d/%m/%Y à %H:%M') if post.scheduled_at else 'Date inconnue' }}
+                                    Programmé pour le {{ post.scheduled_at|to_local_time|strftime('%d/%m/%Y à %H:%M') if post.scheduled_at else 'Date inconnue' }}
                                 </div>
                                 <div class="post-status status-scheduled">
                                     <i class="fas fa-clock"></i> Programmé
@@ -371,7 +371,7 @@
                                 <div class="post-author">{{ first_name }} {{ last_name }}</div>
                                 <div class="post-date">
                                     <i class="fas fa-check-circle" style="color: var(--gray-medium);"></i>
-                                    Publié le {{ post.published_at.strftime('%d/%m/%Y à %H:%M') if post.published_at else 'Date inconnue' }}
+                                    Publié le {{ post.published_at|to_local_time|strftime('%d/%m/%Y à %H:%M') if post.published_at else 'Date inconnue' }}
                                 </div>
                                 <div class="post-status status-published">
                                     <i class="fas fa-check-circle"></i> Publié
