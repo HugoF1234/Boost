@@ -876,6 +876,29 @@ function resetPageDisplay() {
     document.getElementById('customContentSection').style.display = 'none';
 }
 
+// Fonction pour initialiser l'heure locale
+function initializeLocalTime() {
+    const dateInput = document.querySelector('input[name="publish_date"]');
+    const timeInput = document.querySelector('input[name="publish_time"]');
+    
+    if (dateInput && timeInput) {
+        // Si les champs sont vides, les initialiser avec l'heure locale + 1 heure
+        if (!dateInput.value || !timeInput.value) {
+            const now = new Date();
+            now.setHours(now.getHours() + 1); // Ajouter 1 heure pour la programmation
+            
+            const year = now.getFullYear();
+            const month = String(now.getMonth() + 1).padStart(2, '0');
+            const day = String(now.getDate()).padStart(2, '0');
+            const hours = String(now.getHours()).padStart(2, '0');
+            const minutes = String(now.getMinutes()).padStart(2, '0');
+            
+            dateInput.value = `${year}-${month}-${day}`;
+            timeInput.value = `${hours}:${minutes}`;
+        }
+    }
+}
+
 // Fonction de test supprimée
 
 // Initialiser l'upload de photos quand la page est chargée
@@ -884,6 +907,9 @@ document.addEventListener('DOMContentLoaded', function() {
     initializePhotoUpload();
     resetPageDisplay(); // S'assurer que les sections sont visibles au chargement
     syncEditorWithDisplay(); // Initialiser la synchronisation de l'éditeur
+    
+    // Initialiser l'heure locale pour la programmation
+    initializeLocalTime();
     
     // Test du bouton Créer
     const createButton = document.querySelector('.create-btn-compact');
