@@ -1,54 +1,81 @@
 {% extends "base.html" %}
 {% block content %}
+{% with messages = get_flashed_messages(with_categories=true) %}
+  {% if messages %}
+    <div class="flashes" style="margin-bottom: 2rem;">
+      {% for category, message in messages %}
+        <div class="alert alert-{{ 'success' if category == 'success' else 'danger' }}" style="background: {% if category == 'success' %}var(--gentle-success){% else %}var(--gentle-error){% endif %}; color: white; padding: 1rem; border-radius: 12px; margin-bottom: 1rem;">
+          <i class="fas fa-{% if category == 'success' %}check-circle{% else %}exclamation-triangle{% endif %}"></i>
+          {{ message }}
+        </div>
+      {% endfor %}
+    </div>
+  {% endif %}
+{% endwith %}
+
 <style>
-    /* Variables pour couleurs douces */
     :root {
-        --primary: #6366f1;
-        --primary-light: #a5b4fc;
-        --primary-ultra-light: #e0e7ff;
-        --secondary: #f8fafc;
-        --accent: #10b981;
-        --accent-light: #6ee7b7;
-        --warm: #fbbf24;
-        --warm-light: #fde68a;
-        --soft-gray: #f1f5f9;
-        --text-primary: #1e293b;
-        --text-secondary: #64748b;
-        --text-light: #94a3b8;
-        --white: #ffffff;
-        --glass: rgba(255, 255, 255, 0.25);
-        --glass-border: rgba(255, 255, 255, 0.3);
-        --shadow-soft: 0 4px 20px rgba(99, 102, 241, 0.1);
-        --shadow-medium: 0 8px 30px rgba(99, 102, 241, 0.15);
-        --shadow-strong: 0 20px 40px rgba(0, 0, 0, 0.1);
-        --success: #10b981;
-        --warning: #f59e0b;
-        --danger: #ef4444;
+        --noble-cream: #faf9f7;
+        --noble-warm: #f5f2ed;
+        --noble-sage: #8b9a7c;
+        --noble-sage-light: #a8b59a;
+        --noble-sage-dark: #6b7865;
+        --noble-stone: #e8e4de;
+        --noble-charcoal: #4a4943;
+        --noble-charcoal-light: #6b6960;
+        --noble-mist: #f0ede8;
+        --noble-accent: #9c8b7a;
+        --noble-accent-light: #b5a495;
+        --primary-coral: #FF6B6B;
+        --primary-orange: #FF8E53;
+        --primary-pink: #FF5F8D;
+        --primary-purple: #8B5CF6;
+        --primary-blue: #06D6A0;
+        --primary-cyan: #118AB2;
+        --gradient-main: linear-gradient(135deg, #FF6B6B 0%, #FF8E53 25%, #FF5F8D 50%, #8B5CF6 75%, #06D6A0 100%);
+        --gradient-warm: linear-gradient(135deg, #FF8E53 0%, #FF6B6B 100%);
+        --gradient-cool: linear-gradient(135deg, #8B5CF6 0%, #06D6A0 100%);
+        --gradient-pink: linear-gradient(135deg, #FF5F8D 0%, #8B5CF6 100%);
+        --gentle-success: #7c9885;
+        --gentle-warning: #b8a082;
+        --gentle-info: #8ba3b8;
+        --gentle-error: #c49090;
+        --shadow-whisper: 0 2px 12px rgba(139, 154, 124, 0.08);
+        --shadow-gentle: 0 4px 20px rgba(139, 154, 124, 0.12);
+        --shadow-soft: 0 8px 32px rgba(139, 154, 124, 0.16);
     }
 
-    /* Header de page moderne */
-    .page-header {
-        background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 50%, var(--accent-light) 100%);
-        color: white;
+    body {
+        background: transparent !important;
+        color: var(--noble-charcoal);
+        line-height: 1.7;
+    }
+
+    /* Header noble et accueillant */
+    .welcome-section {
+        background: linear-gradient(135deg, var(--noble-warm) 0%, var(--noble-mist) 100%);
+        border-radius: 20px;
         padding: 2.5rem;
-        border-radius: 24px;
         margin-bottom: 2rem;
+        border: 1px solid var(--noble-stone);
+        box-shadow: var(--shadow-whisper);
         position: relative;
         overflow: hidden;
-        box-shadow: var(--shadow-strong);
     }
 
-    .page-header::before {
+    .welcome-section::before {
         content: '';
         position: absolute;
         top: 0;
-        left: 0;
         right: 0;
-        bottom: 0;
-        background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="sparkles" width="20" height="20" patternUnits="userSpaceOnUse"><circle cx="5" cy="5" r="1" fill="%23ffffff" opacity="0.3"><animate attributeName="opacity" values="0.3;0.8;0.3" dur="3s" repeatCount="indefinite"/></circle><circle cx="15" cy="15" r="0.5" fill="%23ffffff" opacity="0.5"><animate attributeName="opacity" values="0.5;1;0.5" dur="2s" repeatCount="indefinite" begin="1s"/></circle></pattern></defs><rect width="100" height="100" fill="url(%23sparkles)"/></svg>') repeat;
+        width: 120px;
+        height: 120px;
+        background: radial-gradient(circle, rgba(139, 154, 124, 0.06) 0%, transparent 70%);
+        border-radius: 50%;
+        transform: translate(30%, -30%);
     }
 
-    .page-header-content {
+    .welcome-content {
         position: relative;
         z-index: 1;
         display: flex;
@@ -58,320 +85,373 @@
         gap: 1.5rem;
     }
 
-    .page-title {
-        font-size: 2.2rem;
-        font-weight: 700;
-        margin: 0;
-        text-shadow: 0 2px 4px rgba(0,0,0,0.1);
-        letter-spacing: -0.025em;
-        display: flex;
-        align-items: center;
-        gap: 1rem;
+    .greeting {
+        font-size: 1.75rem;
+        font-weight: 600;
+        color: var(--noble-charcoal);
+        margin-bottom: 0.5rem;
+        letter-spacing: -0.02em;
     }
 
-    /* Boutons modernes */
-    .btn-modern {
-        padding: 0.75rem 1.5rem;
-        border-radius: 16px;
-        font-weight: 600;
-        font-size: 0.9rem;
-        border: none;
-        cursor: pointer;
-        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    .greeting-subtitle {
+        color: var(--noble-charcoal-light);
+        font-size: 1rem;
+        font-weight: 400;
+    }
+
+    .success-badge {
         display: inline-flex;
         align-items: center;
         gap: 0.5rem;
-        text-decoration: none;
-        position: relative;
-        overflow: hidden;
+        background: linear-gradient(135deg, rgba(124, 152, 133, 0.1) 0%, rgba(124, 152, 133, 0.05) 100%);
+        color: var(--gentle-success);
+        padding: 0.5rem 1rem;
+        border-radius: 20px;
+        font-size: 0.85rem;
+        font-weight: 500;
+        border: 1px solid rgba(124, 152, 133, 0.2);
+        animation: pulse 2s infinite;
     }
 
-    .btn-modern::before {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: -100%;
-        width: 100%;
-        height: 100%;
-        background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
-        transition: all 0.6s ease;
+    @keyframes pulse {
+        0%, 100% { transform: scale(1); }
+        50% { transform: scale(1.02); }
     }
 
-    .btn-modern:hover::before {
-        left: 100%;
-    }
-
-    .btn-primary-modern {
-        background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
-        color: white;
-        box-shadow: 0 4px 20px rgba(99, 102, 241, 0.3);
-    }
-
-    .btn-primary-modern:hover {
-        transform: translateY(-3px) scale(1.02);
-        box-shadow: 0 8px 30px rgba(99, 102, 241, 0.4);
-    }
-
-    .btn-secondary-modern {
-        background: var(--glass);
-        backdrop-filter: blur(10px);
-        color: white;
-        border: 1px solid var(--glass-border);
-        box-shadow: var(--shadow-soft);
-    }
-
-    .btn-secondary-modern:hover {
-        background: rgba(255, 255, 255, 0.4);
-        transform: translateY(-3px);
-        box-shadow: var(--shadow-medium);
-    }
-
-    .btn-danger-modern {
-        background: linear-gradient(135deg, var(--danger) 0%, #dc2626 100%);
-        color: white;
-        box-shadow: 0 4px 20px rgba(239, 68, 68, 0.3);
-    }
-
-    .btn-danger-modern:hover {
-        transform: translateY(-3px) scale(1.02);
-        box-shadow: 0 8px 30px rgba(239, 68, 68, 0.4);
-    }
-
-    /* Cartes de contenu */
-    .content-card {
-        background: var(--white);
-        border-radius: 24px;
-        border: 1px solid rgba(99, 102, 241, 0.1);
-        overflow: hidden;
-        transition: all 0.3s ease;
+    /* Sections principales */
+    .creation-section {
+        background: white;
+        border-radius: 20px;
+        padding: 2.5rem;
         margin-bottom: 2rem;
-        box-shadow: var(--shadow-soft);
+        border: 1px solid var(--noble-stone);
+        box-shadow: var(--shadow-whisper);
     }
 
-    .content-card:hover {
-        transform: translateY(-4px);
-        box-shadow: var(--shadow-medium);
-        border-color: var(--primary-light);
+    .section-header {
+        margin-bottom: 2rem;
     }
 
-    .card-header {
-        padding: 2rem 2.5rem 1rem;
-        background: linear-gradient(135deg, var(--soft-gray) 0%, #f8fafc 100%);
-        border-bottom: 1px solid rgba(99, 102, 241, 0.1);
-        position: relative;
-    }
-
-    .card-header::after {
-        content: '';
-        position: absolute;
-        bottom: 0;
-        left: 0;
-        right: 0;
-        height: 1px;
-        background: linear-gradient(90deg, transparent, var(--primary-light), transparent);
-    }
-
-    .card-title {
+    .section-title {
         font-size: 1.4rem;
         font-weight: 600;
-        color: var(--text-primary);
-        margin: 0;
+        color: var(--noble-charcoal);
+        margin-bottom: 0.5rem;
         display: flex;
         align-items: center;
         gap: 0.75rem;
     }
 
-    .card-subtitle {
-        color: var(--text-secondary);
+    .section-subtitle {
+        color: var(--noble-charcoal-light);
         font-size: 0.95rem;
-        line-height: 1.5;
-        margin-top: 0.5rem;
+        line-height: 1.6;
     }
 
-    .card-body {
+    /* Section du contenu généré - version modifiée pour l'édition */
+    .generated-content {
+        background: white;
+        border-radius: 20px;
         padding: 2.5rem;
+        margin-bottom: 2rem;
+        border: 1px solid var(--noble-stone);
+        box-shadow: var(--shadow-whisper);
+        border: 2px solid var(--noble-sage-light);
     }
 
-    /* Formulaires modernes */
+    /* Aperçu LinkedIn amélioré */
+    .linkedin-post {
+        background: white;
+        border: 1px solid #ddd;
+        border-radius: 16px;
+        padding: 1.5rem;
+        max-width: 600px;
+        margin: 2rem auto;
+        font-family: 'Segoe UI', Tahoma, sans-serif;
+        box-shadow: var(--shadow-gentle);
+        transition: all 0.3s ease;
+    }
+
+    .linkedin-post:hover {
+        transform: translateY(-2px);
+        box-shadow: var(--shadow-soft);
+    }
+
+    .linkedin-header {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        margin-bottom: 1rem;
+    }
+
+    .linkedin-avatar {
+        width: 52px;
+        height: 52px;
+        border-radius: 50%;
+        object-fit: cover;
+        border: 2px solid var(--noble-sage-light);
+        transition: all 0.3s ease;
+    }
+
+    .linkedin-avatar:hover {
+        transform: scale(1.05);
+    }
+
+    .linkedin-avatar-placeholder {
+        width: 52px;
+        height: 52px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, var(--noble-sage) 0%, var(--noble-accent) 100%);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-size: 1.2rem;
+        font-weight: 600;
+        border: 2px solid var(--noble-sage-light);
+    }
+
+    .linkedin-user-info {
+        flex: 1;
+    }
+
+    .linkedin-name {
+        font-weight: 600;
+        font-size: 1rem;
+        color: #0a66c2;
+        margin-bottom: 0.25rem;
+    }
+
+    .linkedin-subline {
+        font-size: 0.875rem;
+        color: #555;
+        margin-bottom: 0.25rem;
+    }
+
+    .linkedin-date {
+        font-size: 0.75rem;
+        color: #888;
+        display: flex;
+        align-items: center;
+        gap: 0.25rem;
+    }
+
+    .linkedin-text {
+        font-size: 1rem;
+        color: #222;
+        line-height: 1.5;
+        margin-bottom: 1rem;
+        white-space: pre-wrap;
+        word-wrap: break-word;
+        min-height: 60px;
+        transition: all 0.3s ease;
+    }
+
+    .linkedin-text.empty {
+        color: #999;
+        font-style: italic;
+    }
+
+    .linkedin-actions {
+        display: flex;
+        justify-content: space-around;
+        font-size: 0.875rem;
+        color: #666;
+        border-top: 1px solid #eee;
+        padding-top: 0.75rem;
+    }
+
+    .linkedin-action {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.5rem 1rem;
+        border-radius: 8px;
+        transition: all 0.3s ease;
+        cursor: pointer;
+    }
+
+    .linkedin-action:hover {
+        background: var(--noble-mist);
+        color: var(--noble-sage);
+    }
+
+    /* Formulaires de génération */
     .form-group {
+        display: flex;
+        flex-direction: column;
         margin-bottom: 1.5rem;
-        position: relative;
     }
 
     .form-label {
-        display: block;
+        font-size: 0.9rem;
+        font-weight: 500;
+        color: var(--noble-charcoal);
         margin-bottom: 0.75rem;
-        font-weight: 600;
-        color: var(--text-primary);
-        font-size: 0.95rem;
     }
 
     .form-control {
-        width: 100%;
-        padding: 1rem 1.5rem;
-        border: 2px solid rgba(99, 102, 241, 0.1);
-        border-radius: 16px;
-        font-size: 1rem;
-        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        background: rgba(248, 250, 252, 0.5);
-        backdrop-filter: blur(10px);
+        padding: 0.875rem 1.125rem;
+        border: 1.5px solid var(--noble-stone);
+        border-radius: 12px;
+        font-size: 0.95rem;
+        background: var(--noble-cream);
+        color: var(--noble-charcoal);
+        transition: all 0.3s ease;
         font-family: inherit;
     }
 
     .form-control:focus {
         outline: none;
-        border-color: var(--primary);
-        box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.1);
-        transform: translateY(-2px);
-        background: var(--white);
+        border-color: var(--noble-sage);
+        box-shadow: 0 0 0 3px rgba(139, 154, 124, 0.1);
+        background: white;
     }
 
-    .textarea-modern {
-        min-height: 150px;
+    .textarea-control {
+        min-height: 200px;
         resize: vertical;
-        line-height: 1.7;
+        line-height: 1.6;
     }
 
-    /* Preview du post */
-    .post-preview {
-        background: linear-gradient(135deg, var(--primary-ultra-light) 0%, rgba(16, 185, 129, 0.05) 100%);
-        border: 2px solid var(--primary-light);
-        border-radius: 20px;
-        padding: 2rem;
-        margin-bottom: 2rem;
+    /* Boutons nobles */
+    .btn {
+        padding: 0.875rem 1.75rem;
+        border-radius: 12px;
+        font-weight: 500;
+        font-size: 0.95rem;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.625rem;
+        text-decoration: none;
+        border: none;
         position: relative;
         overflow: hidden;
     }
 
-    .post-preview::before {
-        content: '';
-        position: absolute;
-        top: 0;
-        right: 0;
-        width: 100px;
-        height: 100px;
-        background: radial-gradient(circle, rgba(99, 102, 241, 0.1) 0%, transparent 70%);
-        border-radius: 50%;
-        transform: translate(30%, -30%);
+    .btn-primary {
+        background: var(--primary-purple);
+        color: #fff;
+        box-shadow: 0 4px 15px rgba(107, 71, 255, 0.25);
     }
 
-    .post-preview-title {
-        font-size: 1.2rem;
-        font-weight: 600;
-        color: var(--primary);
-        margin-bottom: 1rem;
-        position: relative;
-        z-index: 1;
+    .btn-primary:hover {
+        filter: brightness(1.05);
+        box-shadow: 0 8px 25px rgba(107, 71, 255, 0.35);
+        color: #fff;
+    }
+
+    .btn-secondary {
+        background: #fff;
+        color: var(--primary-purple);
+        border: 1.5px solid var(--primary-purple);
+    }
+
+    .btn-secondary:hover {
+        background: var(--primary-purple);
+        color: #fff;
+    }
+
+    .btn-danger {
+        background: var(--primary-coral);
+        color: #fff;
+        box-shadow: var(--shadow-whisper);
+    }
+
+    .btn-danger:hover {
+        background: #b87d7d;
+        transform: translateY(-1px);
+        box-shadow: var(--shadow-gentle);
+    }
+
+    /* Actions de publication */
+    .publish-section {
+        border-top: 1px solid var(--noble-stone);
+        padding-top: 2rem;
+        margin-top: 2rem;
+    }
+
+    .publish-actions-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 2rem;
+        align-items: start;
+    }
+
+    .publish-group {
         display: flex;
-        align-items: center;
-        gap: 0.75rem;
-    }
-
-    .post-preview-content {
-        background: var(--white);
-        padding: 1.5rem;
-        border-radius: 16px;
-        border-left: 4px solid var(--primary);
-        line-height: 1.7;
-        color: var(--text-primary);
-        position: relative;
-        z-index: 1;
-        white-space: pre-wrap;
-        word-wrap: break-word;
-    }
-
-    /* Checkbox moderne */
-    .checkbox-modern {
-        display: flex;
-        align-items: center;
-        gap: 0.75rem;
-        padding: 1rem;
-        background: var(--soft-gray);
-        border-radius: 12px;
-        transition: all 0.3s ease;
-        cursor: pointer;
-        margin-bottom: 1.5rem;
-    }
-
-    .checkbox-modern:hover {
-        background: var(--primary-ultra-light);
-        transform: scale(1.02);
-    }
-
-    .checkbox-modern input[type="checkbox"] {
-        width: 20px;
-        height: 20px;
-        accent-color: var(--primary);
-        cursor: pointer;
-    }
-
-    .checkbox-modern label {
-        font-weight: 500;
-        color: var(--text-primary);
-        cursor: pointer;
-        user-select: none;
-        flex: 1;
-    }
-
-    /* Actions du formulaire */
-    .form-actions {
-        display: flex;
+        flex-direction: column;
         gap: 1rem;
+    }
+
+    .publish-group.schedule-group {
+        background: var(--noble-mist);
+        padding: 1.5rem;
+        border-radius: 12px;
+    }
+
+    .publish-group-title {
+        font-weight: 500;
+        color: var(--noble-charcoal);
+        margin-bottom: 0.5rem;
+    }
+
+    /* Actions en bas */
+    .bottom-actions {
+        margin-top: 2rem;
+        display: flex;
         justify-content: space-between;
         align-items: center;
         flex-wrap: wrap;
-        margin-top: 2rem;
-        padding-top: 2rem;
-        border-top: 1px solid rgba(99, 102, 241, 0.1);
+        gap: 1rem;
     }
 
-    .form-actions-left {
-        display: flex;
-        gap: 1rem;
-        flex-wrap: wrap;
+    /* Compteur de caractères */
+    .character-counter {
+        font-size: 0.8rem;
+        color: var(--primary-coral);
+        text-align: right;
+        margin-top: 0.5rem;
     }
 
-    .form-actions-right {
-        display: flex;
-        gap: 1rem;
-        flex-wrap: wrap;
+    .character-counter.warning {
+        color: var(--primary-orange);
+    }
+
+    .character-counter.error {
+        color: var(--primary-coral);
     }
 
     /* Responsive */
+    @media (max-width: 992px) {
+        .publish-actions-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+    
     @media (max-width: 768px) {
-        .page-header-content {
+        .welcome-content {
             flex-direction: column;
             text-align: center;
         }
 
-        .page-title {
-            font-size: 1.8rem;
-        }
-
-        .card-body {
-            padding: 1.5rem;
-        }
-
-        .form-actions {
+        .bottom-actions {
             flex-direction: column;
-            align-items: stretch;
-        }
-
-        .form-actions-left,
-        .form-actions-right {
-            justify-content: center;
+            text-align: center;
         }
     }
 
-    /* Animations */
+    /* Animations très douces */
     .fade-in {
-        animation: fadeInUp 0.6s ease-out;
+        animation: gentleFadeIn 0.8s ease-out;
     }
 
-    @keyframes fadeInUp {
+    @keyframes gentleFadeIn {
         from {
             opacity: 0;
-            transform: translateY(30px);
+            transform: translateY(20px);
         }
         to {
             opacity: 1;
@@ -379,184 +459,368 @@
         }
     }
 
-    .slide-in {
-        animation: slideInRight 0.5s ease-out;
+    /* Icônes avec style noble */
+    .icon-noble {
+        color: var(--primary-purple);
+        font-size: 1.125rem;
     }
-
-    @keyframes slideInRight {
-        from {
-            opacity: 0;
-            transform: translateX(30px);
-        }
-        to {
-            opacity: 1;
-            transform: translateX(0);
-        }
+    .section-title, .greeting {
+        color: var(--noble-charcoal);
+    }
+    .form-label, .publish-group-title {
+        color: var(--noble-charcoal);
+    }
+    .btn-primary {
+        background: var(--primary-purple);
+        color: #fff;
+        border: none;
+        box-shadow: 0 4px 15px rgba(107, 71, 255, 0.25);
+    }
+    .btn-primary:hover {
+        filter: brightness(1.05);
+        color: #fff;
+    }
+    .btn-secondary {
+        background: #fff;
+        color: var(--primary-purple);
+        border: 1.5px solid var(--primary-purple);
+    }
+    .btn-secondary:hover {
+        background: var(--primary-purple);
+        color: #fff;
+    }
+    .btn-danger {
+        background: var(--primary-coral);
+        color: #fff;
+        border: none;
+    }
+    .btn-danger:hover {
+        background: #b87d7d;
+        color: #fff;
+    }
+    .character-counter {
+        color: var(--primary-coral);
+    }
+    .character-counter.warning {
+        color: var(--primary-orange);
+    }
+    .character-counter.error {
+        color: var(--primary-coral);
+    }
+    .alert-success {
+        background: var(--primary-blue);
+        color: #fff;
+    }
+    .alert-danger {
+        background: var(--primary-coral);
+        color: #fff;
+    }
+    a, a:visited {
+        color: var(--primary-coral);
+    }
+    a:hover {
+        color: var(--primary-blue);
+    }
+    .icon-noble {
+        color: var(--primary-purple);
     }
 </style>
 
-<!-- Header de page -->
-<div class="page-header fade-in">
-    <div class="page-header-content">
+<!-- Section d'accueil noble -->
+<div class="welcome-section fade-in">
+    <div class="welcome-content">
         <div>
-            <h1 class="page-title">
-                <i class="fas fa-edit"></i>
-                Modifier le post
-            </h1>
+            <h1 class="greeting">Modifier votre post 🌿</h1>
+            <p class="greeting-subtitle">Ajustez le contenu, les images et la programmation de votre publication</p>
         </div>
-        <a href="{{ url_for('calendar') }}" class="btn-modern btn-secondary-modern">
-            <i class="fa-solid fa-arrow-left"></i>
-            Retour au calendrier
+        <div class="success-badge">
+            <i class="fas fa-edit"></i>
+            Mode édition activé
+        </div>
+    </div>
+</div>
+
+<!-- Section d'aperçu du contenu -->
+<div class="generated-content fade-in">
+    <div class="section-header">
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+            <div>
+                <h2 class="section-title">
+                    <i class="fas fa-eye icon-noble"></i>
+                    Aperçu de votre post
+                </h2>
+                <p class="section-subtitle">Visualisez votre contenu tel qu'il apparaîtra sur LinkedIn</p>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Aperçu LinkedIn dynamique -->
+    <div class="linkedin-post" id="linkedin-preview">
+        <div class="linkedin-header">
+            {% if picture %}
+                <img src="{{ picture }}" alt="Photo de profil" class="linkedin-avatar" id="preview-avatar">
+            {% else %}
+                <div class="linkedin-avatar-placeholder" id="preview-avatar">
+                    {{ first_name[0]|upper if first_name else 'U' }}
+                </div>
+            {% endif %}
+            
+            <div class="linkedin-user-info">
+                <div class="linkedin-name" id="preview-name">
+                    {% if first_name and last_name %}
+                        {{ first_name }} {{ last_name }}
+                    {% elif name %}
+                        {{ name }}
+                    {% else %}
+                        Utilisateur ResoBoost
+                    {% endif %}
+                </div>
+                <div class="linkedin-subline" id="preview-role">
+                    {% if secteur %}
+                        {{ secteur|title }} • ResoBoost
+                    {% else %}
+                        Professionnel LinkedIn • ResoBoost
+                    {% endif %}
+                </div>
+                <div class="linkedin-date">
+                    <i class="fas fa-globe-europe"></i>
+                    {% if post.published_at %}
+                        {{ post.published_at.strftime('%d/%m/%Y à %H:%M') }}
+                    {% else %}
+                        il y a quelques instants
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        
+        <div class="linkedin-text" id="preview-text">{{ post.content | safe }}</div>
+        
+        <div class="linkedin-actions">
+            <div class="linkedin-action">
+                <i class="far fa-thumbs-up"></i>
+                <span>J'aime</span>
+            </div>
+            <div class="linkedin-action">
+                <i class="far fa-comment"></i>
+                <span>Commenter</span>
+            </div>
+            <div class="linkedin-action">
+                <i class="fas fa-share"></i>
+                <span>Partager</span>
+            </div>
+            <div class="linkedin-action">
+                <i class="fas fa-paper-plane"></i>
+                <span>Envoyer</span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Section d'édition du contenu avec TROIS FORMULAIRES SÉPARÉS -->
+<div class="creation-section fade-in">
+    <div class="section-header">
+        <h2 class="section-title">
+            <i class="fas fa-pen-to-square icon-noble"></i>
+            Éditer votre contenu
+        </h2>
+        <p class="section-subtitle">Modifiez le texte de votre publication - l'aperçu se met à jour automatiquement</p>
+    </div>
+    
+    <!-- CONTENU COMMUN (en dehors des formulaires) -->
+    <div class="form-group">
+        <label class="form-label" for="post-content-textarea">
+            <i class="fas fa-edit icon-noble"></i>
+            Contenu de votre post
+        </label>
+        <textarea name="post_content" 
+                  class="form-control textarea-control" 
+                  rows="8" 
+                  required 
+                  id="post-content-textarea"
+                  placeholder="Rédigez votre contenu LinkedIn...">{{ post.content }}</textarea>
+        <div class="character-counter" id="character-counter">
+            <span id="char-count">{{ post.content|length if post.content else 0 }}</span> / 3000 caractères
+        </div>
+    </div>
+    
+    <!-- FORMULAIRE 1: SAUVEGARDER EN BROUILLON -->
+    <form method="post" action="{{ url_for('edit_post', post_id=post.id) }}" id="draft-form" style="margin-bottom: 2rem;">
+        <input type="hidden" name="post_content" id="draft-content">
+        <input type="hidden" name="action" value="save_draft">
+        <button type="submit" class="btn btn-secondary" style="width: 100%;">
+            <i class="fas fa-save"></i>
+            Enregistrer en brouillon
+        </button>
+    </form>
+    
+    <!-- FORMULAIRE 2: PROGRAMMER -->
+    <form method="post" action="{{ url_for('edit_post', post_id=post.id) }}" id="schedule-form" style="margin-bottom: 2rem;">
+        <input type="hidden" name="post_content" id="schedule-content">
+        <input type="hidden" name="action" value="schedule">
+        
+        <div class="publish-group schedule-group">
+            <label class="publish-group-title" for="schedule-time-input">
+                📅 Programmer pour plus tard
+            </label>
+            <input type="datetime-local" 
+                   id="schedule-time-input" 
+                   name="publish_time" 
+                   class="form-control" 
+                   value="{{ formatted_date }}"
+                   style="margin-bottom: 1rem;">
+            <button type="submit" class="btn btn-secondary" style="width: 100%;">
+                <i class="fas fa-clock"></i>
+                Programmer le post
+            </button>
+        </div>
+    </form>
+    
+    <!-- FORMULAIRE 3: PUBLIER MAINTENANT -->
+    <form method="post" action="{{ url_for('edit_post', post_id=post.id) }}" id="publish-form" style="margin-bottom: 2rem;">
+        <input type="hidden" name="post_content" id="publish-content">
+        <input type="hidden" name="action" value="publish_now">
+        <button type="submit" class="btn btn-primary" style="width: 100%;" onclick="return confirm('Êtes-vous sûr de vouloir publier ce post maintenant ?');">
+            <i class="fas fa-rocket"></i>
+            Publier maintenant
+        </button>
+    </form>
+
+    <!-- Actions en bas -->
+    <div class="bottom-actions">
+        <a href="{{ url_for('historique') }}" class="btn btn-secondary">
+            <i class="fas fa-arrow-left"></i>
+            Retour à l'historique
+        </a>
+        
+        <a href="{{ url_for('delete_post', post_id=post.id) }}" class="btn btn-danger" onclick="return confirm('Êtes-vous sûr de vouloir supprimer ce post définitivement ?')">
+            <i class="fas fa-trash"></i>
+            Supprimer ce post
         </a>
     </div>
 </div>
 
-<!-- Preview du post actuel -->
-<div class="content-card slide-in">
-    <div class="card-header">
-        <h2 class="card-title">
-            <i class="fas fa-eye"></i>
-            Aperçu du post actuel
-        </h2>
-        <p class="card-subtitle">Voici le contenu actuel de votre post programmé</p>
-    </div>
-    
-    <div class="card-body">
-        <div class="post-preview">
-            <h3 class="post-preview-title">
-                <i class="fa-solid fa-calendar"></i>
-                Post programmé pour le {{ post.published_at.strftime("%d/%m/%Y à %H:%M") if post.published_at else "Date inconnue" }}
-            </h3>
-            <div class="post-preview-content">{{ post.content }}</div>
-        </div>
-    </div>
-</div>
-
-<!-- Formulaire d'édition -->
-<div class="content-card slide-in">
-    <div class="card-header">
-        <h2 class="card-title">
-            <i class="fas fa-pen"></i>
-            Éditer le contenu
-        </h2>
-        <p class="card-subtitle">Modifiez le contenu et la date de publication de votre post</p>
-    </div>
-    
-    <div class="card-body">
-        <form method="post" action="{{ url_for('edit_post', post_id=post.id) }}">
-            <div class="form-group">
-                <label class="form-label">📝 Contenu du post</label>
-                <textarea name="post_content" class="form-control textarea-modern mention-editor" rows="8" required>{{ post.content }}</textarea>
-                <div style="margin-top: 0.75rem; font-size: 0.9rem; color: var(--text-light); display: flex; align-items: center; gap: 0.5rem; padding: 0.75rem; background: var(--primary-ultra-light); border-radius: 12px; border-left: 4px solid var(--primary);">
-                    <i class="fa-solid fa-at"></i>
-                    <span>Tapez @ pour mentionner une personne ou une entreprise</span>
-                </div>
-            </div>
-            
-            <div class="form-group">
-                <label class="form-label">📅 Date et heure de publication</label>
-                <input type="datetime-local" name="publish_time" class="form-control" value="{{ formatted_date }}" required>
-            </div>
-            
-            <div class="checkbox-modern">
-                <input type="checkbox" id="publish-now" name="publish_now">
-                <label for="publish-now">⚡ Publier maintenant au lieu de programmer</label>
-            </div>
-            
-            <div class="form-actions">
-                <div class="form-actions-left">
-                    <button type="submit" class="btn-modern btn-primary-modern">
-                        <i class="fa-solid fa-save"></i>
-                        Enregistrer les modifications
-                    </button>
-                    <a href="{{ url_for('calendar') }}" class="btn-modern" style="background: var(--white); color: var(--text-secondary); border: 2px solid var(--soft-gray);">
-                        <i class="fa-solid fa-times"></i>
-                        Annuler
-                    </a>
-                </div>
-                <div class="form-actions-right">
-                    <a href="{{ url_for('delete_post', post_id=post.id) }}" class="btn-modern btn-danger-modern">
-                        <i class="fa-solid fa-trash"></i>
-                        Supprimer ce post
-                    </a>
-                </div>
-            </div>
-        </form>
-    </div>
-</div>
-
 <script>
-// Animation des éléments au scroll
-const observerOptions = {
-    threshold: 0.1,
-    rootMargin: '0px 0px -50px 0px'
-};
+// Variables globales pour la gestion des médias
+let currentMediaTab = 'local';
+let selectedPexelsPhotos = [];
+let selectedLocalFiles = [];
+let pexelsCurrentPage = 1;
+let pexelsCurrentQuery = '';
+let pexelsTotalResults = 0;
 
-const observer = new IntersectionObserver((entries) => {
-    entries.forEach(entry => {
-        if (entry.isIntersecting) {
-            entry.target.style.opacity = '1';
-            entry.target.style.transform = 'translateY(0)';
+// Mise à jour de l'aperçu en temps réel ET synchronisation des formulaires
+function updatePreview() {
+    const content = document.getElementById('post-content-textarea').value;
+    const previewText = document.getElementById('preview-text');
+    
+    if (content.trim()) {
+        previewText.textContent = content;
+        previewText.classList.remove('empty');
+    } else {
+        previewText.textContent = 'Votre contenu apparaîtra ici...';
+        previewText.classList.add('empty');
+    }
+    
+    // SYNCHRONISER tous les champs cachés avec le contenu
+    const hiddenFields = ['draft-content', 'schedule-content', 'publish-content'];
+    hiddenFields.forEach(id => {
+        const field = document.getElementById(id);
+        if (field) {
+            field.value = content;
         }
     });
-}, observerOptions);
-
-// Observer tous les éléments avec animation
-document.querySelectorAll('.fade-in, .slide-in').forEach(el => {
-    el.style.opacity = '0';
-    el.style.transform = 'translateY(30px)';
-    el.style.transition = 'all 0.6s cubic-bezier(0.4, 0, 0.2, 1)';
-    observer.observe(el);
-});
-
-// Amélioration des interactions des boutons
-document.querySelectorAll('.btn-modern').forEach(btn => {
-    btn.addEventListener('mouseenter', function() {
-        this.style.transform = 'translateY(-3px) scale(1.02)';
-    });
     
-    btn.addEventListener('mouseleave', function() {
-        this.style.transform = 'translateY(0) scale(1)';
-    });
+    // Mise à jour du compteur de caractères
+    updateCharacterCounter(content.length);
+}
+
+// Compteur de caractères
+function updateCharacterCounter(count) {
+    const counter = document.getElementById('char-count');
+    const counterContainer = document.getElementById('character-counter');
     
-    btn.addEventListener('mousedown', function() {
-        this.style.transform = 'translateY(-1px) scale(0.98)';
-    });
+    counter.textContent = count;
     
-    btn.addEventListener('mouseup', function() {
-        this.style.transform = 'translateY(-3px) scale(1.02)';
-    });
-});
-
-// Animation du formulaire
-document.querySelectorAll('.form-control').forEach(input => {
-    input.addEventListener('focus', function() {
-        this.parentElement.style.transform = 'translateY(-2px)';
-    });
+    // Réinitialiser les classes
+    counterContainer.classList.remove('warning', 'error');
     
-    input.addEventListener('blur', function() {
-        this.parentElement.style.transform = 'translateY(0)';
+    if (count > 2500) {
+        counterContainer.classList.add('warning');
+    }
+    if (count > 3000) {
+        counterContainer.classList.add('error');
+    }
+}
+
+// Initialisation
+document.addEventListener('DOMContentLoaded', function() {
+    // Configuration de la date par défaut pour la programmation
+    const scheduleTimeInput = document.getElementById('schedule-time-input');
+    if (scheduleTimeInput && !scheduleTimeInput.value) {
+        const now = new Date();
+        now.setMinutes(now.getMinutes() - now.getTimezoneOffset() + 60); // +1 heure par défaut
+        const formattedDate = now.toISOString().slice(0, 16);
+        scheduleTimeInput.value = formattedDate;
+    }
+    
+    // Écouter les changements dans le textarea pour l'aperçu en temps réel
+    const textarea = document.getElementById('post-content-textarea');
+    if (textarea) {
+        // Mise à jour initiale
+        updatePreview();
+        
+        // Écouter les changements
+        textarea.addEventListener('input', updatePreview);
+        textarea.addEventListener('paste', function() {
+            // Délai pour laisser le temps au paste de s'effectuer
+            setTimeout(updatePreview, 50);
+        });
+    }
+    
+    // Debug des formulaires
+    console.log('🔧 DEBUG EDIT POST:');
+    console.log('  - 3 formulaires séparés créés');
+    console.log('  - Synchronisation du contenu activée');
+    
+    // Ajouter des listeners pour déboguer les soumissions
+    const forms = ['draft-form', 'schedule-form', 'publish-form'];
+    forms.forEach(formId => {
+        const form = document.getElementById(formId);
+        if (form) {
+            form.addEventListener('submit', function(e) {
+                const action = form.querySelector('input[name="action"]').value;
+                const content = form.querySelector('input[name="post_content"]').value;
+                console.log(`🚀 SOUMISSION ${action.toUpperCase()}:`);
+                console.log(`   Contenu: "${content.substring(0, 50)}..."`);
+                console.log(`   Longueur: ${content.length} caractères`);
+            });
+        }
     });
 });
 
-// Animation de la checkbox
-document.querySelector('.checkbox-modern')?.addEventListener('click', function() {
-    this.style.transform = 'scale(0.98)';
-    setTimeout(() => {
-        this.style.transform = 'scale(1.02)';
-        setTimeout(() => {
-            this.style.transform = 'scale(1)';
-        }, 100);
-    }, 100);
-});
-
-// Animation de la preview du post
-document.querySelector('.post-preview')?.addEventListener('mouseenter', function() {
-    this.style.transform = 'scale(1.01)';
-});
-
-document.querySelector('.post-preview')?.addEventListener('mouseleave', function() {
-    this.style.transform = 'scale(1)';
+// Gestion des raccourcis clavier
+document.addEventListener('keydown', function(e) {
+    // Ctrl/Cmd + S pour sauvegarder
+    if ((e.ctrlKey || e.metaKey) && e.key === 's') {
+        e.preventDefault();
+        document.getElementById('draft-form').submit();
+    }
+    
+    // Ctrl/Cmd + Enter pour publier
+    if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
+        e.preventDefault();
+        if (confirm('Êtes-vous sûr de vouloir publier ce post maintenant ?')) {
+            document.getElementById('publish-form').submit();
+        }
+    }
+    
+    // Echap pour annuler
+    if (e.key === 'Escape') {
+        if (confirm('Êtes-vous sûr de vouloir annuler ? Les modifications non sauvegardées seront perdues.')) {
+            window.location.href = '/historique';
+        }
+    }
 });
 </script>
+
 {% endblock %}
