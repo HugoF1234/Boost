@@ -75,6 +75,8 @@
 </div>
 </div>
 <form method="post" onsubmit="handleCreatePost(event)">
+<!-- Champ caché pour l'URL de l'article -->
+<input type="hidden" name="article_url" value="{{ selected_article.url if selected_article else '' }}">
 <div class="form-group">
 <label class="form-label">
 <i class="fas fa-magic icon-noble"></i>
@@ -177,15 +179,15 @@
                         <h3>Paramètres avancés</h3>
                         <button type="button" class="settings-close-btn" onclick="closeAdvancedSettings()">
                             <i class="fas fa-times"></i>
-                        </button>
-                    </div>
+            </button>
+</div>
                     <div class="form-group">
                         <label class="form-label">
                             <i class="fas fa-magic icon-noble"></i>
                             Instructions personnalisées (optionnel)
                         </label>
                         <textarea class="form-control textarea-control" name="custom_instructions" placeholder="Partagez votre perspective unique sur ce sujet..." rows="3"></textarea>
-                    </div>
+</div>
                     
                     <div class="form-group">
                         <label class="form-label">
@@ -199,7 +201,7 @@
                             <option value="innovant">Innovateur</option>
                             <option value="expert">Expert du domaine</option>
                         </select>
-                    </div>
+</div>
                     
                     <!-- Boutons d'action -->
                     <div class="settings-panel-actions">
@@ -211,9 +213,9 @@
                             <i class="fas fa-check"></i>
                             OK
                         </button>
-                    </div>
-                </div>
+</div>
             </div>
+</div>
             
             <div class="create-btn-wrapper">
                 <label class="form-label">
@@ -224,8 +226,8 @@
                     <i class="fas fa-magic"></i>
                     Créer
                 </button>
-            </div>
 </div>
+                </div>
     </form>
     
     <!-- Section de contenu personnalisé (masquée par défaut) -->
@@ -240,38 +242,38 @@
                     <i class="fas fa-arrow-left"></i>
                     Retour
                 </button>
-            </div>
+                </div>
             <div class="content-settings-summary" id="settingsSummary">
                 <!-- Les paramètres choisis seront affichés ici -->
-            </div>
-        </div>
+                </div>
+                </div>
         
         <!-- Post LinkedIn Preview -->
         <div class="linkedin-post-preview">
             <div class="linkedin-post-header">
                 <div class="linkedin-avatar">
                     <i class="fas fa-user"></i>
-                </div>
+</div>
                 <div class="linkedin-user-info">
                     <div class="linkedin-name">Votre Nom</div>
                     <div class="linkedin-title">Votre Titre Professionnel</div>
                     <div class="linkedin-time">Maintenant</div>
-                </div>
-            </div>
+</div>
+</div>
             
             <div class="linkedin-post-content">
                 <div class="loading-indicator" id="loadingIndicator" style="display: none;">
                     <i class="fas fa-spinner fa-spin"></i>
                     <span>Génération du contenu en cours...</span>
-                </div>
+</div>
                 <div class="linkedin-post-text" id="postContent">
                     <!-- Le contenu généré sera affiché ici -->
-                </div>
+</div>
                 <div class="linkedin-post-images" id="postImages">
                     <!-- Les images uploadées seront affichées ici -->
-                </div>
-            </div>
-            
+</div>
+</div>
+
             <!-- Zone d'édition du contenu -->
             <div class="content-editing-section">
                 <h4><i class="fas fa-edit icon-noble"></i> Personnaliser votre post</h4>
@@ -283,9 +285,9 @@
                 ></textarea>
                 <div class="character-count">
                     <span id="charCount">0</span> / 900 caractères
-                </div>
-            </div>
-            
+</div>
+</div>
+
             <div class="linkedin-post-actions">
                 <button class="linkedin-action-btn">
                     <i class="fas fa-thumbs-up"></i>
@@ -300,23 +302,23 @@
                     Partager
                 </button>
             </div>
-        </div>
-        
+</div>
+
         <!-- Zone d'upload de photos -->
         <div class="photo-upload-section">
             <div class="photo-upload-area" id="photoUploadArea">
                 <div class="upload-content">
-                    <i class="fas fa-cloud-upload-alt"></i>
+<i class="fas fa-cloud-upload-alt"></i>
                     <p>Glissez-déposez vos photos ici</p>
                     <p class="upload-hint">ou cliquez pour sélectionner</p>
-                </div>
+</div>
                 <input type="file" id="photoInput" multiple accept="image/*" style="display: none;">
-            </div>
+</div>
             <div class="uploaded-photos" id="uploadedPhotos">
                 <!-- Les photos uploadées seront affichées ici -->
             </div>
-        </div>
-        
+</div>
+
         <!-- Actions du post -->
         <div class="post-actions">
             <button class="btn btn-secondary post-action-btn" onclick="saveAsDraft()">
@@ -330,9 +332,9 @@
             <button class="btn btn-primary post-action-btn" onclick="publishPost()">
                 <i class="fas fa-paper-plane"></i>
                 Publier maintenant
-            </button>
-        </div>
-    </div>
+                    </button>
+</div>
+</div>
     
     <!-- Bouton "Créer un post basé sur l'actualité" -->
     <div class="news-invitation-section">
@@ -346,7 +348,7 @@
 </div>
             <i class="fas fa-arrow-right" style="font-size: 1.5rem; margin-left: auto;"></i>
 </a>
-    </div>
+</div>
 </div>
 {% endif %}
 
@@ -363,14 +365,14 @@
 <div class="post-header">
 <div class="post-avatar">
                     {{ first_name[0]|upper }}{{ last_name[0]|upper if last_name else '' }}
-            </div>
+</div>
 <div class="post-user-info">
 <h4>{{ first_name }} {{ last_name }}</h4>
 <p>{{ email }}</p>
 </div>
 </div>
 <div class="post-content" id="post-preview">{{ draft|safe }}</div>
-                </div>
+</div>
 <form method="post">
 <div class="form-group">
 <label class="form-label">
@@ -395,7 +397,7 @@
 <button class="media-tab" data-tab="pexels" type="button">
 <i class="fas fa-images"></i>
                         Photos libres
-                </button>
+</button>
 </div>
 <div class="media-content active" id="upload-content">
 <div class="upload-area" id="upload-area">
@@ -604,19 +606,19 @@ document.addEventListener('DOMContentLoaded', function() {
             postPreview.innerHTML = content;
         });
     }
-    
+
     // Animation progressive des éléments avec délais
     const elements = document.querySelectorAll('.fade-in');
     elements.forEach((el, index) => {
         el.style.opacity = '0';
         el.style.transform = 'translateY(20px)';
-            setTimeout(() => {
+        setTimeout(() => {
             el.style.opacity = '1';
             el.style.transform = 'translateY(0)';
             el.style.transition = 'all 0.6s ease';
         }, index * 200);
     });
-    
+
     // Effet de parallaxe subtil pour les éléments décoratifs
     window.addEventListener('scroll', () => {
         const scrolled = window.pageYOffset;
@@ -706,7 +708,7 @@ function showSettingsSavedMessage() {
     document.body.appendChild(message);
     
     // Afficher avec animation
-    setTimeout(() => {
+            setTimeout(() => {
         message.classList.add('show');
     }, 100);
     
@@ -716,8 +718,8 @@ function showSettingsSavedMessage() {
         setTimeout(() => {
             document.body.removeChild(message);
         }, 300);
-    }, 3000);
-}
+        }, 3000);
+    }
 
 // Fonction pour gérer la soumission du formulaire
 function handleCreatePost(event) {
@@ -792,7 +794,7 @@ function showMessage(text, type) {
     
     document.body.appendChild(message);
     
-    setTimeout(() => {
+            setTimeout(() => {
         message.classList.add('show');
     }, 100);
     
