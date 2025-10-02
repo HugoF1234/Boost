@@ -2129,6 +2129,12 @@ def dashboard():
         prompt = request.form.get("prompt")
         tone = request.form.get("tone", "professionnel")
         
+        # Debug: Log des données de la requête
+        logger.info(f"POST reçu - generate_from_article: {'generate_from_article' in request.form}")
+        logger.info(f"selected_article dans session: {selected_article is not None}")
+        if selected_article:
+            logger.info(f"Titre de l'article: {selected_article.get('title', 'Pas de titre')}")
+        
         # Vérifier si l'utilisateur veut générer un post basé sur un article sélectionné
         if 'generate_from_article' in request.form and selected_article:
             try:
@@ -2196,11 +2202,17 @@ def dashboard():
                 # Effacer l'article de la session après génération
                 session.pop('selected_article', None)
                 logger.info("Post généré avec succès à partir de l'article avec prompt personnalisé")
+                logger.info("Article supprimé de la session après génération")
                 
             except Exception as e:
                 draft = f"Erreur Gemini : {str(e)}"
                 logger.error(f"Erreur lors de la génération du post: {str(e)}")
         else:
+            # Debug: Log si la condition n'est pas remplie
+            if 'generate_from_article' in request.form:
+                logger.warning("generate_from_article détecté mais selected_article est None")
+            else:
+                logger.info("Génération normale (pas d'article sélectionné)")
             # Génération standard basée sur un prompt optimisé LinkedIn
             try:
                 model = genai.GenerativeModel("gemini-2.0-flash")
