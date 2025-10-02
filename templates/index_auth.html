@@ -393,111 +393,7 @@
             line-height: 1.6;
         }
 
-        /* Section témoignages */
-        .testimonials-section {
-            padding: 3rem;
-            background: rgba(255, 255, 255, 0.9);
-            backdrop-filter: blur(10px);
-            border-radius: 24px;
-            border: 1px solid var(--accent-light);
-            box-shadow: var(--shadow-soft);
-        }
 
-        .testimonials-title {
-            font-size: 2rem;
-            font-weight: 700;
-            color: var(--text-primary);
-            text-align: center;
-            margin-bottom: 3rem;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 1rem;
-        }
-
-        .testimonials-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 2rem;
-        }
-
-        .testimonial-card {
-            background: rgba(255, 255, 255, 0.9);
-            border-radius: 20px;
-            padding: 2rem;
-            border: 1px solid var(--accent-light);
-            transition: all 0.3s ease;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .testimonial-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 3px;
-            background: var(--primary);
-            transform: scaleX(0);
-            transition: all 0.6s ease;
-        }
-
-        .testimonial-card:hover::before {
-            transform: scaleX(1);
-        }
-
-        .testimonial-card:hover {
-            transform: translateY(-5px);
-            box-shadow: var(--shadow-medium);
-            border-color: var(--primary);
-        }
-
-        .testimonial-content {
-            margin-bottom: 1.5rem;
-        }
-
-        .stars {
-            display: flex;
-            gap: 0.25rem;
-            margin-bottom: 1rem;
-            color: var(--warm);
-        }
-
-        .testimonial-content p {
-            font-style: italic;
-            color: var(--text-secondary);
-            line-height: 1.6;
-            font-size: 1rem;
-        }
-
-        .testimonial-author {
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-        }
-
-        .author-avatar {
-            width: 50px;
-            height: 50px;
-            background: var(--primary);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-size: 1.2rem;
-        }
-
-        .author-info h4 {
-            font-weight: 600;
-            color: var(--text-primary);
-            margin-bottom: 0.25rem;
-        }
-
-        .author-info span {
-            font-size: 0.9rem;
-            color: var(--text-light);
         }
 
         /* Footer */
@@ -568,11 +464,11 @@
                 gap: 2rem;
             }
 
-            .features-grid, .testimonials-grid {
+            .features-grid {
                 grid-template-columns: 1fr;
             }
 
-            .features-section, .testimonials-section {
+            .features-section {
                 padding: 2rem;
             }
         }
@@ -595,14 +491,6 @@
         .feature-item:nth-child(2) { animation-delay: 0.8s; }
         .feature-item:nth-child(3) { animation-delay: 1s; }
 
-        .testimonial-card {
-            animation: fadeInUp 0.6s ease-out;
-            animation-fill-mode: both;
-        }
-
-        .testimonial-card:nth-child(1) { animation-delay: 0.2s; }
-        .testimonial-card:nth-child(2) { animation-delay: 0.4s; }
-        .testimonial-card:nth-child(3) { animation-delay: 0.6s; }
 
         @keyframes fadeInUp {
             from {
@@ -650,7 +538,7 @@
                 </h1>
                 <p class="main-subtitle">
                     Créez du contenu viral, programmez vos publications et développez votre influence 
-                    professionnelle avec l'intelligence artificielle.
+                    professionnelle et efficace.
                 </p>
             </div>
             
@@ -695,7 +583,7 @@
                         <ul class="auth-benefits">
                             <li>
                                 <i class="fa-solid fa-check"></i>
-                                <span>Assistant IA pour le contenu</span>
+                                <span>Assistant intelligent pour le contenu</span>
                             </li>
                             <li>
                                 <i class="fa-solid fa-check"></i>
@@ -725,9 +613,9 @@
                     <div class="feature-icon">
                         <i class="fa-solid fa-brain"></i>
                     </div>
-                    <h3 class="feature-title">IA Générative</h3>
+                    <h3 class="feature-title">Génération Intelligente</h3>
                     <p class="feature-description">
-                        Notre intelligence artificielle crée du contenu engageant adapté à votre secteur et à votre audience.
+                        Notre moteur intelligent crée du contenu engageant adapté à votre secteur et à votre audience.
                     </p>
                 </div>
 
@@ -753,83 +641,10 @@
             </div>
         </div>
 
-        <div class="testimonials-section">
-            <h2 class="testimonials-title">
-                <i class="fa-solid fa-quote-left"></i>
-                Ce que disent nos utilisateurs
-            </h2>
-            <div class="testimonials-grid">
-                <div class="testimonial-card">
-                    <div class="testimonial-content">
-                        <div class="stars">
-                            <i class="fa-solid fa-star"></i>
-                            <i class="fa-solid fa-star"></i>
-                            <i class="fa-solid fa-star"></i>
-                            <i class="fa-solid fa-star"></i>
-                            <i class="fa-solid fa-star"></i>
-                        </div>
-                        <p>"ResoBoost a transformé ma présence LinkedIn. Mes posts génèrent 3x plus d'engagement !"</p>
-                    </div>
-                    <div class="testimonial-author">
-                        <div class="author-avatar">
-                            <i class="fa-solid fa-user"></i>
-                        </div>
-                        <div class="author-info">
-                            <h4>Marie L.</h4>
-                            <span>Directrice Marketing</span>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="testimonial-card">
-                    <div class="testimonial-content">
-                        <div class="stars">
-                            <i class="fa-solid fa-star"></i>
-                            <i class="fa-solid fa-star"></i>
-                            <i class="fa-solid fa-star"></i>
-                            <i class="fa-solid fa-star"></i>
-                            <i class="fa-solid fa-star"></i>
-                        </div>
-                        <p>"L'IA de ResoBoost crée du contenu parfaitement adapté à mon secteur. Un gain de temps énorme !"</p>
-                    </div>
-                    <div class="testimonial-author">
-                        <div class="author-avatar">
-                            <i class="fa-solid fa-user"></i>
-                        </div>
-                        <div class="author-info">
-                            <h4>Thomas R.</h4>
-                            <span>Consultant IT</span>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="testimonial-card">
-                    <div class="testimonial-content">
-                        <div class="stars">
-                            <i class="fa-solid fa-star"></i>
-                            <i class="fa-solid fa-star"></i>
-                            <i class="fa-solid fa-star"></i>
-                            <i class="fa-solid fa-star"></i>
-                            <i class="fa-solid fa-star"></i>
-                        </div>
-                        <p>"Grâce à la programmation automatique, je maintiens une présence constante sans effort."</p>
-                    </div>
-                    <div class="testimonial-author">
-                        <div class="author-avatar">
-                            <i class="fa-solid fa-user"></i>
-                        </div>
-                        <div class="author-info">
-                            <h4>Sophie M.</h4>
-                            <span>Entrepreneure</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
 
         <div class="hero-card">
             <div class="hero-footer">
-                <p>&copy; 2025 ResoBoost - Développé avec ❤️ pour les professionnels ambitieux</p>
+                <p>&copy; 2025 ResoBoost - Plateforme professionnelle pour LinkedIn</p>
                 <div class="social-links">
                     <a href="#" class="social-link" title="LinkedIn">
                         <i class="fab fa-linkedin-in"></i>
@@ -882,16 +697,6 @@
                 });
             });
 
-            // Animation des testimonials
-            document.querySelectorAll('.testimonial-card').forEach(card => {
-                card.addEventListener('mouseenter', function() {
-                    this.style.transform = 'translateY(-8px) scale(1.02)';
-                });
-                
-                card.addEventListener('mouseleave', function() {
-                    this.style.transform = 'translateY(0) scale(1)';
-                });
-            });
         });
 
         // Créer des étincelles
@@ -946,7 +751,7 @@
         }, observerOptions);
 
         // Observer les éléments avec animation
-        document.querySelectorAll('.auth-card, .feature-item, .testimonial-card').forEach(el => {
+        document.querySelectorAll('.auth-card, .feature-item').forEach(el => {
             el.style.opacity = '0';
             el.style.transform = 'translateY(30px)';
             el.style.transition = 'all 0.6s cubic-bezier(0.4, 0, 0.2, 1)';
