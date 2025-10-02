@@ -344,6 +344,37 @@ class Post(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)  # Référence à users.id
     scheduled = db.Column(db.Boolean, default=False)  # Gardé pour compatibilité
 
+# Fonction de migration automatique
+def migrate_article_url_column():
+    """Ajoute la colonne article_url si elle n'existe pas"""
+    try:
+        from sqlalchemy import text
+        # Vérifier si la colonne existe déjà
+        result = db.session.execute(text("""
+            SELECT column_name 
+            FROM information_schema.columns 
+            WHERE table_name = 'posts' AND column_name = 'article_url'
+        """))
+        
+        if result.fetchone():
+            logger.info("ℹ️ Colonne article_url existe déjà")
+            return True
+        
+        # Ajouter la colonne
+        db.session.execute(text("""
+            ALTER TABLE posts 
+            ADD COLUMN article_url VARCHAR(500)
+        """))
+        
+        db.session.commit()
+        logger.info("✅ Colonne article_url ajoutée avec succès")
+        return True
+        
+    except Exception as e:
+        logger.error(f"❌ Erreur lors de la migration article_url: {str(e)}")
+        db.session.rollback()
+        return False
+
 # Fonction d'initialisation de la base de données
 def create_default_admin():
     """Créer un utilisateur admin par défaut sur Render"""
@@ -402,6 +433,10 @@ def init_db():
 
 # Initialiser la base de données au démarrage
 init_db()
+
+# Exécuter la migration de la colonne article_url
+with app.app_context():
+    migrate_article_url_column()
 
 # Migration automatique des nouvelles colonnes
 def migrate_postgresql_columns():
