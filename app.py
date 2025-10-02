@@ -250,6 +250,19 @@ def to_local_time(dt):
     local_dt = dt.astimezone(paris_tz)
     return local_dt
 
+# Filtre Jinja2 pour formater les dates en timezone locale
+@app.template_filter('format_local_time')
+def format_local_time(dt, format_str='%d/%m/%Y à %H:%M'):
+    """Convertit une datetime UTC en timezone locale et la formate"""
+    if not dt:
+        return 'Date inconnue'
+    
+    local_dt = to_local_time(dt)
+    if not local_dt:
+        return 'Date inconnue'
+    
+    return local_dt.strftime(format_str)
+
 db = SQLAlchemy(app)
 
 # -----------------------
