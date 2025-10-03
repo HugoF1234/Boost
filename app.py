@@ -2131,6 +2131,11 @@ def dashboard():
     # Récupérer le message de succès de l'article
     article_success = session.pop('article_success', None)
     
+    # Debug: Vérifier si l'article est toujours dans la session après pop
+    logger.info(f"=== DEBUG DASHBOARD AFTER POP ===")
+    logger.info(f"Session keys après pop: {list(session.keys())}")
+    logger.info(f"selected_article in session après pop: {'selected_article' in session}")
+    
     # Ajouter cette ligne pour gérer le bouton Annuler
     if request.args.get('clear') == 'true':
         # Ne pas supprimer l'article sélectionné de la session ici
