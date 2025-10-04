@@ -1,5 +1,11 @@
 {% extends "base.html" %}
 {% block content %}
+<style>
+    /* Masquer le bouton flottant sur cette page */
+    .floating-btn {
+        display: none !important;
+    }
+</style>
 {% with messages = get_flashed_messages(with_categories=true) %}
   {% if messages %}
     <div class="flashes" style="margin-bottom: 2rem;">
@@ -14,7 +20,7 @@
 {% endwith %}
 
 <style>
-    /* Styles spécifiques à la page edit_post */
+    /* Styles spécifiques à la page edit_post avec nouvelle DA */
     body {
         background: transparent !important;
         color: #000000;
@@ -62,13 +68,13 @@
         display: inline-flex;
         align-items: center;
         gap: 0.5rem;
-        background: linear-gradient(135deg, rgba(124, 152, 133, 0.1) 0%, rgba(124, 152, 133, 0.05) 100%);
-        color: var(--gentle-success);
+        background: linear-gradient(135deg, rgba(139, 92, 246, 0.1) 0%, rgba(139, 92, 246, 0.05) 100%);
+        color: var(--primary-purple);
         padding: 0.5rem 1rem;
         border-radius: 20px;
         font-size: 0.85rem;
         font-weight: 500;
-        border: 1px solid rgba(124, 152, 133, 0.2);
+        border: 1px solid rgba(139, 92, 246, 0.2);
         animation: pulse 2s infinite;
     }
 
@@ -466,7 +472,7 @@
         color: var(--primary-coral);
     }
     .alert-success {
-        background: var(--primary-blue);
+        background: var(--primary-purple);
         color: #fff;
     }
     .alert-danger {
@@ -474,10 +480,11 @@
         color: #fff;
     }
     a, a:visited {
-        color: var(--primary-coral);
+        color: var(--primary-purple);
     }
     a:hover {
-        color: var(--primary-blue);
+        color: var(--primary-purple);
+        opacity: 0.8;
     }
     .icon-noble {
         color: var(--primary-purple);
