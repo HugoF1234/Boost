@@ -2007,6 +2007,7 @@ def select_article():
             return jsonify({'error': 'Aucune donnée reçue'}), 400
         
         logger.info(f"Article sélectionné: {article_data.get('title', 'Sans titre')}")
+        logger.info(f"URL de l'article reçue: {article_data.get('url', 'URL non trouvée')}")
         
         # Valider les données minimales
         if not article_data.get('title') or not article_data.get('description'):
@@ -2406,6 +2407,7 @@ def custom_post_editor():
             if from_article and selected_article:
                 logger.info("=== UTILISATION DU PROMPT ARTICLE ===")
                 logger.info(f"URL de l'article: {selected_article.get('url', 'URL non trouvée')}")
+                logger.info(f"Article complet: {selected_article}")
                 # Prompt pour génération depuis un article
                 prompt = f"""
                 Tu es un expert LinkedIn reconnu pour tes posts pertinents et percutants.
