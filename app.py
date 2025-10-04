@@ -2222,6 +2222,7 @@ def dashboard():
                 📰 **Titre** : {selected_article.get('title')}
                 📄 **Résumé** : {selected_article.get('description')}
                 🏢 **Source** : {selected_article.get('source', {}).get('name')}
+                🔗 **URL** : {selected_article.get('url')}
                 
                 🎯 **Objectif** : Réagir à cette actualité en apportant :
                 - une analyse personnelle,
@@ -2235,7 +2236,7 @@ def dashboard():
                 - Format : {format_text}
                 - Écriture fluide, humaine, professionnelle et engageante
                 - Inclus une conclusion forte ou une ouverture pour discussion
-                - Ajoute la source de l'article avant les hashtags au format "Source : [URL de l'article]"
+                - Ajoute la source de l'article avant les hashtags au format "Source : [URL fournie ci-dessus]"
                 - Ajoute 2 ou 3 hashtags pertinents à la fin
                 
                 📝 **Contraintes** :
@@ -2412,6 +2413,7 @@ def custom_post_editor():
                 📰 **Titre** : {selected_article.get('title')}
                 📄 **Résumé** : {selected_article.get('description')}
                 🏢 **Source** : {selected_article.get('source', {}).get('name')}
+                🔗 **URL** : {selected_article.get('url')}
                 
                 🎯 **Objectif** : Réagir à cette actualité en apportant :
                 - une analyse personnelle,
