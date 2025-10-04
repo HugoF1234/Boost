@@ -2204,15 +2204,6 @@ html, body {
     animation: morph-float 30s ease-in-out infinite reverse;
 }
 
-.blob-bottom-left {
-    bottom: -200px; left: -100px;
-    width: 400px; height: 350px;
-    background: radial-gradient(ellipse at 30% 60%, 
-        rgba(240, 98, 146, 0.35) 0%, 
-        rgba(255, 138, 101, 0.25) 50%, 
-        transparent 100%);
-    animation: morph-float 28s ease-in-out infinite;
-}
 
 .blob-bottom-right {
     bottom: -180px; right: -150px;
