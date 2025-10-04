@@ -2235,10 +2235,11 @@ def dashboard():
                 - Format : {format_text}
                 - Écriture fluide, humaine, professionnelle et engageante
                 - Inclus une conclusion forte ou une ouverture pour discussion
+                - Ajoute la source de l'article avant les hashtags au format "Source : [URL de l'article]"
                 - Ajoute 2 ou 3 hashtags pertinents à la fin
                 
                 📝 **Contraintes** :
-                - Maximum 900 caractères
+                - Entre 700 et 900 caractères
                 - Pas de lien externe
                 - Commence directement par une accroche ou une idée forte
                 - Parle à la première personne ("je") si le ton est personnel
