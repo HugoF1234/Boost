@@ -2236,8 +2236,9 @@ def dashboard():
                 - Format : {format_text}
                 - Écriture fluide, humaine, professionnelle et engageante
                 - Inclus une conclusion forte ou une ouverture pour discussion
-                - Ajoute la source de l'article avant les hashtags au format "Source : [URL fournie ci-dessus]"
+                - OBLIGATOIRE : Ajoute la source de l'article avant les hashtags au format exact "Source : [URL fournie ci-dessus]"
                 - Ajoute 2 ou 3 hashtags pertinents à la fin
+                - La structure finale doit être : [contenu du post] + "Source : [URL]" + [hashtags]
                 
                 📝 **Contraintes** :
                 - Entre 700 et 900 caractères
@@ -2404,6 +2405,7 @@ def custom_post_editor():
             logger.info(f"Vérification condition: from_article={from_article}, selected_article={selected_article is not None}")
             if from_article and selected_article:
                 logger.info("=== UTILISATION DU PROMPT ARTICLE ===")
+                logger.info(f"URL de l'article: {selected_article.get('url', 'URL non trouvée')}")
                 # Prompt pour génération depuis un article
                 prompt = f"""
                 Tu es un expert LinkedIn reconnu pour tes posts pertinents et percutants.
