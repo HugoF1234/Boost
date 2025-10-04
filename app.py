@@ -2344,10 +2344,6 @@ Commence directement par l'accroche, sans titre ni introduction.
 
     session['draft'] = draft
     
-    # Supprimer l'article de la session après génération du post
-    if 'selected_article' in session:
-        session.pop('selected_article', None)
-    
     # Passer les variables supplémentaires au template
     return render_template(
         "dashboard.html", 
