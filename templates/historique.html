@@ -212,7 +212,7 @@
                                 <div class="post-content-text">{{ post.content|truncate(150) }}</div>
                                 <div class="post-actions linkedin-actions">
                                     {% if post.linkedin_post_urn %}
-                                    <a href="#" class="btn-linkedin btn-view" onclick="window.open('https://linkedin.com', '_blank')">
+                                    <a href="https://www.linkedin.com/feed/update/{{ post.linkedin_post_urn }}" class="btn-linkedin btn-view" target="_blank">
                                         <i class="fab fa-linkedin"></i> Voir sur LinkedIn
                                     </a>
                                     {% endif %}
@@ -381,7 +381,7 @@
                         <div class="post-content-text">{{ post.content }}</div>
                         <div class="post-actions linkedin-actions">
                             {% if post.linkedin_post_urn %}
-                            <a href="#" class="btn-linkedin btn-view" onclick="window.open('https://linkedin.com', '_blank')">
+                            <a href="https://www.linkedin.com/feed/update/{{ post.linkedin_post_urn }}" class="btn-linkedin btn-view" target="_blank">
                                 <i class="fab fa-linkedin"></i> Voir sur LinkedIn
                             </a>
                             {% endif %}
