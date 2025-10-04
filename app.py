@@ -2136,6 +2136,13 @@ def dashboard():
     logger.info(f"Session keys après pop: {list(session.keys())}")
     logger.info(f"selected_article in session après pop: {'selected_article' in session}")
     
+    # Vérifier si l'article est supprimé quelque part
+    if 'selected_article' in session:
+        article = session.get('selected_article')
+        logger.info(f"Article toujours présent après pop: {article.get('title', 'Sans titre') if article else 'None'}")
+    else:
+        logger.warning("Article supprimé après pop!")
+    
     # Ajouter cette ligne pour gérer le bouton Annuler
     if request.args.get('clear') == 'true':
         # Ne pas supprimer l'article sélectionné de la session ici
