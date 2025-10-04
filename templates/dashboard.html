@@ -139,7 +139,7 @@
                 <i class="fas fa-comment-dots icon-noble"></i>
                 Sujet de votre post
             </label>
-            <input class="form-control" name="subject" type="text" placeholder="Ex: Partagez des conseils sur le leadership en temps de crise" required=""/>
+            <input class="form-control" name="subject" type="text" placeholder="Ex: Partagez des conseils sur le leadership en temps de crise" value="{% if selected_article %}{{ selected_article.title|clean_html }}{% endif %}" required=""/>
 </div>
         
         <!-- Ligne 2 : Ton + Advanced Settings + Bouton -->
@@ -941,6 +941,17 @@ function initializeLocalTime() {
 
 // Fonction de test supprimée
 
+// Fonction pour mettre à jour le champ subject avec le titre de l'article
+function updateSubjectWithArticle() {
+    {% if selected_article %}
+    const subjectInput = document.querySelector('input[name="subject"]');
+    if (subjectInput && !subjectInput.value) {
+        subjectInput.value = "{{ selected_article.title|clean_html|replace('"', '\\"') }}";
+        console.log('Sujet mis à jour avec l\'article:', subjectInput.value);
+    }
+    {% endif %}
+}
+
 // Initialiser l'upload de photos quand la page est chargée
 document.addEventListener('DOMContentLoaded', function() {
     console.log('DOM loaded, initializing...');
@@ -950,6 +961,9 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Initialiser l'heure locale pour la programmation
     initializeLocalTime();
+    
+    // Mettre à jour le sujet avec l'article sélectionné
+    updateSubjectWithArticle();
     
     // Test du bouton Créer
     const createButton = document.querySelector('.create-btn-compact');
