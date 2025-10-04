@@ -2469,6 +2469,12 @@ def custom_post_editor():
             response = model.generate_content(prompt)
             generated_content = response.text.strip()
             
+            # Ajouter automatiquement la source si c'est un article
+            if from_article and selected_article and selected_article.get('url'):
+                article_url = selected_article.get('url')
+                generated_content += f"\n\nSource : {article_url}"
+                logger.info(f"Source ajoutée automatiquement : {article_url}")
+            
             # Note: On ne supprime pas l'article de la session ici pour qu'il soit disponible pour l'affichage
             # Il sera supprimé après l'affichage de la page
             if from_article and selected_article:
