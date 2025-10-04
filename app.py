@@ -2237,9 +2237,10 @@ def dashboard():
                 - Format : {format_text}
                 - Écriture fluide, humaine, professionnelle et engageante
                 - Inclus une conclusion forte ou une ouverture pour discussion
-                - OBLIGATOIRE : Ajoute la source de l'article avant les hashtags au format exact "Source : [URL fournie ci-dessus]"
+                - OBLIGATOIRE : Tu DOIS inclure la source de l'article avant les hashtags
+                - Format exact requis : "Source : {selected_article.get('url')}"
                 - Ajoute 2 ou 3 hashtags pertinents à la fin
-                - La structure finale doit être : [contenu du post] + "Source : [URL]" + [hashtags]
+                - Structure finale OBLIGATOIRE : [contenu] + ligne vide + "Source : {selected_article.get('url')}" + ligne vide + [hashtags]
                 
                 📝 **Contraintes** :
                 - Entre 700 et 900 caractères
