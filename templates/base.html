@@ -750,6 +750,7 @@
 <!-- Bouton flottant global pour créer un nouveau post - TOUJOURS PRÉSENT -->
 <a href="{{ url_for('dashboard') }}" class="floating-btn" title="Créer un nouveau post">
     <i class="fas fa-plus"></i>
+    <span class="floating-label">Créer un post</span>
 </a>
 <style>
 .floating-btn {
@@ -832,6 +833,11 @@
     .floating-btn:hover .floating-label {
         right: 110%;
     }
+}
+
+/* Masquer le bouton flottant sur la page dashboard uniquement */
+body.dashboard-page .floating-btn {
+    display: none !important;
 }
 </style>
 <!-- Scripts corrigés -->
