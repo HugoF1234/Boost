@@ -1,5 +1,11 @@
 {% extends "base.html" %}
 {% block content %}
+<style>
+/* Masquer le bouton flottant sur la page dashboard */
+.floating-btn {
+    display: none !important;
+}
+</style>
 
 <!-- Section titre avec métriques améliorées -->
 <div class="welcome-section fade-in">
@@ -843,8 +849,8 @@ function showMessage(text, type) {
         setTimeout(() => {
             document.body.removeChild(message);
         }, 300);
-    }, 3000);
-}
+        }, 3000);
+    }
 
 // Fonctionnalité d'upload de photos
 function initializePhotoUpload() {
